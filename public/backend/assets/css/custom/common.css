@@ -1,0 +1,151 @@
+*{
+    scrollbar-width: thin !important;
+}
+
+th {
+    text-align: left !important; 
+}
+.dt-input{
+    text-align: left;
+}
+.dt-length {
+    text-transform: capitalize;
+}
+.card .card-title, .btn {
+  font-weight: 400 !important;
+}
+
+.table th,.table td{
+    background-color: transparent;
+    color: var(--text-secondary-light) !important;
+}
+.pharmacy-footer {
+  position: sticky;
+  bottom: 0;
+ background-color: var(--white) !important;
+  z-index: 10;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--neutral-300)  !important ;
+}
+/* model header color change starts */
+.modal-header .btn-close.btn-custom {
+  filter: brightness(0) invert(1);
+  opacity: 1;
+}
+/* model header color change ends */
+/*sweet alert layout font starts*/
+.swal-title-custom, .swal2-title {
+    font-size: 24px !important;
+    font-weight: 500 !important;
+  }
+/*sweet alert layout font ends*/
+
+/* to remove tick and error background image from bootstrap form validation starts*/
+.was-validated .form-control:invalid {
+  background-image: none !important;
+}
+.was-validated .form-control:valid{
+  background-image: none !important;
+}
+.was-validated .form-select:invalid{
+  background-image: none !important;
+}
+.was-validated .form-select:valid{
+  background-image: none !important;
+}
+/* to remove tick and error background image from bootstrap form validation ends*/
+/* scroll function on pages start*/
+
+.dt-layout-row.dt-layout-table {
+  overflow: scroll;
+  scrollbar-width: none !important;
+}
+
+/* scroll function on pages ends*/
+
+
+.form-select:focus, .form-select:active, .form-control:focus, .form-control:active, textarea:focus, textarea:active{
+  background: #fff;
+}
+
+
+/* select 2 custom css start---------------------------- */
+ span.selection {
+    width: 100%;
+}
+.select2-container{
+    height: 40px;
+    background-color: var(--white) !important;
+    
+}
+.select2-dropdown{
+background-color: var(--white) !important;
+border:1px solid var(--input-form-light)!important;
+
+}
+.select2-selection__arrow {
+    top: 6px !important;
+    right: 5px !important;
+    
+} 
+.select2-results__options{
+    font-size: 14px;
+} 
+
+.select2-container--default{
+    border: 1px solid var(--input-form-light) !important;
+    border-radius: 5px;
+    font-size: 14px;
+    
+   
+}
+.select2-selection--single{
+    border: none !important;
+    padding-top: 6px;
+     background-color: transparent !important;
+    
+}
+.select2-selection__rendered{
+ color:var(--text-primary-light) !important;
+}
+
+.select2-results__options{
+    font-size: 14px;
+}
+/* select 2 end---------------------------- */
+
+ /* validateField custom validation css */
+ .is_field_invalid{
+    border: 1px solid #f1523d  !important;
+ }
+ .is_invalid{
+    color: #f1523d !important;
+    font-size: 12px !important;
+    margin-top: 5px;
+ }
+  /* validateField custom validation css ends*/
+  
+ /* space between action buttons on forms */
+ .w-32-px {
+    margin-right: 8px; /* Adjust spacing */
+}
+ /* space between action buttons on forms ends*/
+  /* border search start */
+.border-gradient-tab{
+    border-top: none !important;
+}
+.border-gradient-tab .nav-link::before{
+    border-top: none !important;
+    border-bottom: 1px solid var(--primary-600);
+}
+.basic-data-table .dt-layout-row .dt-search .dt-input, .basic-data-table .dt-layout-row select {
+border-radius: 4px !important;
+}
+.sidebar-menu li a {
+      border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+}
+/* -border search start   end*/

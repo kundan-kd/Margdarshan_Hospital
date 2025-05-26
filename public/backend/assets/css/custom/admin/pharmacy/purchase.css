@@ -1,0 +1,115 @@
+.pharmacy-purchase-wrapper {
+  height: calc(100vh - 243px); /* Or a fixed height like 700px */
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.pharmacy-purchase-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  
+}
+
+.pharmacy-footer {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  z-index: 10;
+  padding: 0.75rem 1rem;
+  /* box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1); */
+}
+span.dt-column-order {
+    margin-right: -14px;
+}
+.form-select{
+    background-size: 29px 12px;
+}
+.form-select{
+    background-size: 29px 12px;
+}
+
+.dt-layout-row.dt-layout-table {
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.dt-input{
+    text-align: left;
+}
+
+
+
+/* table start------------------------------------- */
+.table-height {
+    width: 100%;
+    max-height: 160px;
+    scrollbar-width: none;
+    border-radius: 8px !important;
+}
+.table-height thead th {
+    position: sticky;
+    top: 0;
+    background-color: var(--white) !important;
+    z-index: 1;
+    border-top: 1px solid var(--neutral-200);
+  }
+
+  .table-sm td, .table-sm th { padding: .4rem !important; 
+font-size: 14px;
+}
+/* table end------------------------------------- */
+
+/* data table start ------------------------- */
+.basic-data-table th, .basic-data-table td{
+  text-align: left !important;
+  font-size: 15px !important;
+}
+
+.basic-data-table .dt-column-order {
+    margin: 10px 0 !important;
+    right: 0px !important;
+}
+.basic-data-table .dt-column-order::before{
+    bottom: 22px !important;
+}
+.basic-data-table thead>tr>th.dt-orderable-desc:hover{
+    outline: none !important;
+    outline-offset: none !important;
+}
+/* data table end ------------------------- */
+
+/* input placeholder start */
+.form-control::placeholder{
+    font-size: 14px !important;
+}
+
+/* flatpickr-input start */
+.flatpickr-input{
+    height: 40px !important;
+    border-radius: 4px !important;
+}
+.pharmacy-purchase-bill-table td{
+    /* padding:5px;*/
+       width: 10%;
+    border-bottom-width: 0;
+}
+td .addMore,td .remove{
+    margin-top: 5px;
+}
+.pharmacy-purchase-bill-table{
+  th{
+    font-weight: 500;
+  }
+}
+
+.discount-value-field {
+    border-right-width: 0;
+    border-radius: 0;
+    border-top-width: 0;
+    border-left-width: 0;
+    padding: 0;
+    height: 25px !important;
+    margin-bottom: 0;
+    text-align: right;
+}

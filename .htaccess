@@ -1,0 +1,8 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+    
+</IfModule>
+RewriteCond %{HTTP_HOST} ^mdh.techiesquad\.in$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.mdh.techiesquad\.in$
+RewriteRule ^public\/index1$ "https\:\/\/www\.mdh.techiesquad\.in\/index" [R=301,L]

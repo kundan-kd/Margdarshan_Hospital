@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('medicines', function (Blueprint $table) {
             $table->id();
-            $table->string('category',80)->nullable();
-            $table->string('company',80)->nullable();
-            $table->string('group',80)->nullable();
-            $table->string('unit',80)->nullable();
+            $table->string('name',100)->nullable();
+            $table->integer('category_id')->nullable();
+            $table->integer('company_id')->nullable();
+            $table->integer('group_id')->nullable();
+            $table->integer('unit')->nullable();
             $table->string('re_ordering_level',100)->nullable();
             $table->string('rack',80)->nullable();
-            $table->string('name',100)->nullable();
             $table->string('composition',200)->nullable();
             $table->double('taxes',50)->nullable();
             $table->string('box_packing',100)->nullable();

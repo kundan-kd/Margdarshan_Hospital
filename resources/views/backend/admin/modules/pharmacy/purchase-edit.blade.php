@@ -90,25 +90,20 @@ purchase-edit
                                 <input type="hidden" id="purchaseEdit_id{{$purchaseItem->id}}" name="purchaseEdit_id[]" value="{{$purchaseItem->id}}">
                              
                                   <select id="purchaseEdit_category{{$purchaseItem->id}}" name="purchaseEdit_category[]" class="form-select form-select-sm select2Edit-cls" required>
-                                        <option value="" selected disabled>Select</option>
-                                        <option value="Syrup" {{ $purchaseItem->category_id == 'Syrup' ? 'selected' : '' }}>Syrup</option>
-                                        <option value="Injection" {{ $purchaseItem->category_id == 'Injection' ? 'selected' : '' }}>Injection</option>
-                                        <option value="Capsule" {{ $purchaseItem->category_id == 'Capsule' ? 'selected' : '' }}>Capsule</option>
-                                        <option value="Tablet" {{ $purchaseItem->category_id == 'Tablet' ? 'selected' : '' }}>Tablet</option>
-                                        <option value="Ointment" {{ $purchaseItem->category_id == 'Ointment' ? 'selected' : '' }}>Ointment</option>
+                                      <option value="" disabled>Select</option>
+                                      @foreach ($categories as $category)
+                                        <option value="{{$category->id}}"{{ $purchaseItem->category_id == $category->id ? 'selected' : '' }}> {{$category->name}}
+                                      </option>
+                                      @endforeach
 
                                   </select>
                               </td>
                               <td>
                                   <select id="purchaseEdit_name{{$purchaseItem->id}}" name="purchaseEdit_name[]" class="form-select form-select-sm select2Edit-cls" required>
                                       <option value="" selected disabled>Select</option>
-                                        <option value="Paracitamol" {{ $purchaseItem->name_id == 'Paracitamol' ? 'selected' : '' }}>Paracitamol</option>
-                                        <option value="Azrithimycin" {{ $purchaseItem->name_id == 'Azrithimycin' ? 'selected' : '' }}>Azrithimycin</option>
-                                        <option value="Aceloc" {{ $purchaseItem->name_id == 'Aceloc' ? 'selected' : '' }}>Aceloc</option>
-                                        <option value="Calpol" {{ $purchaseItem->name_id == 'Calpol' ? 'selected' : '' }}>Calpol</option>
-                                        <option value="Metrogly" {{ $purchaseItem->name_id == 'Metrogly' ? 'selected' : '' }}>Metrogly</option>
-                                        <option value="Oxalgin" {{ $purchaseItem->name_id == 'Oxalgin' ? 'selected' : '' }}>Oxalgin</option>
-                                        <option value="Metacin" {{ $purchaseItem->name_id == 'Metacin' ? 'selected' : '' }}>Metacin</option>
+                                        @foreach ($medicines as $medicine)
+                                        <option value="{{$medicine->id}}"{{ $purchaseItem->name_id == $medicine->id ? 'selected' : '' }}>{{$medicine->name}}</option>
+                                        @endforeach
 
                                   </select>
                               </td>

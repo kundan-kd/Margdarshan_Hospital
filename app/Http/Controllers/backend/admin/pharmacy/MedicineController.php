@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\backend\admin\pharmacy;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\Medicine;
+use App\Models\MedicineCategory;
+use App\Models\MedicineGroup;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -11,7 +15,11 @@ use Yajra\DataTables\Facades\DataTables;
 class MedicineController extends Controller
 {
     public function index(){
-        return view('backend.admin.modules.pharmacy.medicine');
+        $categories = MedicineCategory::get();
+        $companies = Company::get();
+        $groups = MedicineGroup::get();
+        $units = Unit::get();
+        return view('backend.admin.modules.pharmacy.medicine',compact('categories','companies','groups','units'));
     }
     public function medicineView(Request $request){
         if($request->ajax()){
@@ -21,19 +29,19 @@ class MedicineController extends Controller
                 return $row->name;
             })
             ->addColumn('category',function($row){
-                return $row->category;
+                return $row->categoryData->name;
             })
             ->addColumn('company',function($row){
-                return $row->company;
+                return $row->companyData->name;
             })
             ->addColumn('composition',function($row){
                 return $row->composition;
             })
             ->addColumn('group',function($row){
-                return $row->group;
+                return $row->groupData->name;
             })
             ->addColumn('unit',function($row){
-                return $row->unit;
+                return $row->unitData->unit;
             })
             ->addColumn('re_ordering_level',function($row){
                 return $row->re_ordering_level;
@@ -78,13 +86,13 @@ class MedicineController extends Controller
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
         $medicines = new Medicine();
-        $medicines->category = $request->category;
-        $medicines->company = $request->company;
-        $medicines->group = $request->group;
-        $medicines->unit = $request->unit;
+        $medicines->name = $request->name;
+        $medicines->category_id = $request->category;
+        $medicines->company_id = $request->company;
+        $medicines->group_id = $request->group;
+        $medicines->unit_id = $request->unit;
         $medicines->re_ordering_level = $request->re_order_level;
         $medicines->rack = $request->rack;
-        $medicines->name = $request->name;
         $medicines->composition = $request->composition;
         $medicines->taxes = $request->taxes;
         $medicines->box_packing = $request->box_pack;

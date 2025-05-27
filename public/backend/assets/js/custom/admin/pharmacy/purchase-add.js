@@ -40,7 +40,6 @@
 
  
 
- $('.select2-cls').select2();
 
 
 function addNewRow() {
@@ -201,7 +200,7 @@ $('#purchaseAdd_form').on('submit',function(e){
     url:purchaseAddDatas,
     type:"POST",
     headers:{
-        'X_CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
+        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
     },
     data:{
         billNo:billNo,vendorID:vendorID,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
@@ -230,4 +229,23 @@ $('#purchaseAdd_form').on('submit',function(e){
     // console.log(randNumNew);
     // getDatePicker('#purchaseAdd_expiry'+randNumNew); 
  
-    
+    function getPurchaseMedicine(id){
+         $.ajax({
+        url:getPurchaseNames,
+        type:"GET",
+        headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:id},
+        success:function(response){
+            console.log(response);
+        let getData = response.data;
+        let medicineDropdown1 = $("#purchaseAdd_name0"); 
+        medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
+        getData.forEach(element => {
+            medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);
+        });
+        medicineDropdown1.trigger("change"); // Refresh Select2 dropdown
+        }
+    });
+    }

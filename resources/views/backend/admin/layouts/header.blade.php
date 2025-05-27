@@ -54,7 +54,7 @@
     <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
   </button>
   <div>
-    <a href="#" class="sidebar-logo">
+    <a href="{{route('auth.dashboard')}}" class="sidebar-logo">
       <img src="{{asset('backend/assets/images/logo.png')}}" alt="site logo1" class="light-logo">
       <img src="{{asset('backend/assets/images/logo.png')}}" alt="site logo2" class="dark-logo">
       <img src="{{asset('backend/assets/images/favicon.png')}}" alt="site logo3" class="logo-icon">
@@ -84,26 +84,29 @@
         </ul>
       </li> 
 
-      <!-- <li class="dropdown">-->
-      <!--  <a href="javascript:void(0)">-->
-      <!--    <i class="ri-capsule-line"></i>-->
-      <!--    <span>Pharmacy</span> -->
-      <!--  </a>-->
-      <!--  <ul class="sidebar-submenu">-->
-      <!--    <li>-->
-      <!--      <a href="{{route('medicine.index')}}"><i class="ri-capsule-fill"></i></i>Medicine</a>-->
-      <!--    </li>-->
-      <!--    <li>-->
-      <!--      <a href="{{route('purchase.index')}}"><i class="ri-user-2-line"></i>Purchase</a>-->
-      <!--    </li>-->
-      <!--  </ul>-->
-      <!--</li>-->
-      <!--<li>-->
-      <!--  <a href="{{route('opd-out.index')}}">-->
-      <!--    <i class="ri-stethoscope-line"></i>-->
-      <!--    <span>OPD-Out</span>-->
-      <!--  </a>-->
-      <!--</li>-->
+      <li class="dropdown">
+        <a href="javascript:void(0)">
+          <i class="ri-capsule-line"></i>
+          <span>Pharmacy</span> 
+        </a>
+        <ul class="sidebar-submenu">
+          <li>
+            <a href="{{route('billing.index')}}"><i class="ri-bill-line"></i>Billing</a>
+          </li>
+          <li>
+            <a href="{{route('medicine.index')}}"><i class="ri-capsule-fill"></i>Medicine</a>
+          </li>
+          <li>
+            <a href="{{route('purchase.index')}}"><i class="ri-user-2-line"></i>Purchase</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="{{route('opd-out.index')}}">
+          <i class="ri-stethoscope-line"></i>
+          <span>OPD-Out</span>
+        </a>
+      </li>
       <li class="dropdown">
         <a href="javascript:void(0)">
          <i class="ri-settings-3-line"></i>

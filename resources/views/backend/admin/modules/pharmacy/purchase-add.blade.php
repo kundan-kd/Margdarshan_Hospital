@@ -81,25 +81,16 @@ purchase-add
                       <tbody>
                           <tr class="fieldGroup">
                               <td>
-                                  <select id="purchaseAdd_category0" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" required>
+                                  <select id="purchaseAdd_category0" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" onchange="getPurchaseMedicine(this.value)" required>
                                         <option value="" selected disabled>Select</option>
-                                        <option value="Syrup">Syrup</option>
-                                        <option value="Injection">Injection</option>
-                                        <option value="Capsule">Capsule</option>
-                                        <option value="Tablet">Tablet</option>
-                                        <option value="Ointment">Ointment</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{$category->id}}">{{$category->name}}</option>
+                                        @endforeach
                                   </select>
                               </td>
                               <td>
                                   <select id="purchaseAdd_name0" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls" required>
-                                      <option value="" selected disabled>Select</option>
-                                      <option value="Paracitamol">Paracitamol</option>
-                                      <option value="Azrithimycin">Azrithimycin</option>
-                                      <option value="Aceloc">Aceloc</option>
-                                      <option value="Calpol">Calpol</option>
-                                      <option value="Metrogly">Metrogly</option>
-                                      <option value="Oxalgin">Oxalgin</option>
-                                      <option value="Metacin">Metacin</option>
+                                      <option value="" selected>Select</option>
                                   </select>
                               </td>
                               <td>
@@ -243,6 +234,7 @@ purchase-add
     
     // getDatePicker('#purchaseAdd_expiry0'); 
     const purchaseAddDatas = "{{route('purchase.purchaseAddDatas')}}";
+     const getPurchaseNames = "{{route('billing.getMedicineNames')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/pharmacy/purchase-add.js')}}"></script>
 @endsection

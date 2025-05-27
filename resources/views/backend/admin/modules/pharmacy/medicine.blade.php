@@ -8,9 +8,9 @@ medicines
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
   <h6 class="fw-normal mb-0">Medicines</h6>
   <div class="btns">
-    <a class="btn btn-primary-600  btn-sm fw-normal mx-2 createNewBtn" data-bs-toggle="modal" data-bs-target="#medician-list-add"><i class="ri-add-line"></i></i>Add Medicine</a>
+    <a class="btn btn-primary-600  btn-sm fw-normal mx-2 createNewBtn" data-bs-toggle="modal" data-bs-target="#medician-list-add" onclick="resetMedicineAdd()"><i class="ri-add-line"></i>Add Medicine</a>
     {{-- <a class="btn btn-warning-600  btn-sm fw-normal "><i class="ri-download-line"></i> Import</a> --}}
-    <a class="btn btn-warning-600  btn-sm fw-normal "><i class="ri-file-pdf-2-line"></i> Export</a>
+    {{-- <a class="btn btn-warning-600  btn-sm fw-normal "><i class="ri-file-pdf-2-line"></i> Export</a> --}}
   </div>
 </div>
     
@@ -25,7 +25,7 @@ medicines
         <table class="table bordered-table mb-0" id="medicine-create-table" data-page-length='10'>
           <thead>
             <tr>
-              <th scope="col" class="fw-medium">Medicines</th>
+              <th scope="col" class="fw-medium">Name</th>
               <th scope="col" class="fw-medium">Category</th>
               <th scope="col" class="fw-medium">Company</th>
               <th scope="col" class="fw-medium">Composition</th>
@@ -49,7 +49,7 @@ medicines
 <div class="modal fade" id="medician-list-add" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="medician-list-addLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content border-0">
-    <form id="createMed_form" class="needs-validation" novalidate>
+    <form id="createMed_form">
       <div class="modal-header bg-primary-600 p-11">
         <h6 class="modal-title fw-normal text-lg text-white" id="medician-list-addLabel">Add Medicine</h6>
         <button type="button" class="btn-close btn-custom text-sm" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -58,102 +58,75 @@ medicines
          <div class="row">
           <input type="hidden" id="createMed_id">
             <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal">Category</label>
-                <select id="createMed_category" class="form-select form-select-sm" required>
-                    <option value="">Select a Category</option>
-                      <option value="Syrup">Syrup</option>
-                      <option value="Injection">Injection</option>
-                      <option value="Capsule">Capsule</option>
-                      <option value="Tablet">Tablet</option>
-                      <option value="Ointment">Ointment</option>
+              <label class="form-label fw-normal" for="createMed_name">Medician Name</label>
+                <input id="createMed_name" type="text" class="form-control form-control-sm" placeholder=" Medician Name" oninput="validateField(this.id,'input')">
+                  <div class="createMed_name_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="createMed_category">Category</label>
+                <select id="createMed_category" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                    <option value="">Select</option>
+                      @foreach ($categories as $category)
+                          <option value="{{$category->id}}">{{$category->name}}</option>
+                      @endforeach
                   </select>
-                  <div class="invalid-feedback">
-                    Select Category
-                  </div>
+                 <div class="createMed_category_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal">Company</label>
-                <select id="createMed_company" class="form-select form-select-sm" required>
-                    <option value="">Company</option>
-                     <option value="Cipla">Cipla</option>
-                      <option value="Lupin">Lupin</option>
-                      <option value="Biocon">Biocon</option>
-                      <option value="Zydus">Zydus</option>
-                      <option value="Alkem">Alkem</option>
+              <label class="form-label fw-normal" for="createMed_company">Company</label>
+                <select id="createMed_company" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                    <option value="">Select</option>
+                    @foreach ($companies as $company)
+                          <option value="{{$company->id}}">{{$company->name}}</option>
+                    @endforeach
                   </select>
-                    <div class="invalid-feedback">
-                    Select Company
-                  </div>
+                 <div class="createMed_company_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal">Group</label>
-                <select id="createMed_group" class="form-select form-select-sm" required>
-                    <option value="">Group</option>
-                      <option value="Analgesics">Analgesics</option>
-                      <option value="Antibiotics">Antibiotics</option>
-                      <option value="Antihistamines">Antihistamines</option>
-                      <option value="Antacids">Antacids</option>
-                      <option value="Antidepressants">Antidepressants</option>
+              <label class="form-label fw-normal" for="createMed_group">Group</label>
+                <select id="createMed_group" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                    <option value="">Select</option>
+                    @foreach ($groups as $group)
+                          <option value="{{$group->id}}">{{$group->name}}</option>
+                    @endforeach
                   </select>
-                    <div class="invalid-feedback">
-                    Select Group
-                  </div>
+                  <div class="createMed_group_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal">Unit</label>
-                <select id="createMed_unit" class="form-select form-select-sm" required>
-                    <option value="">Unit</option>
-                    <option value="mg">mg</option>
-                    <option value="ml">ml</option>
-                    <option value="g">g</option>
-                    <option value="IU">IU</option>
-                    <option value="mcg">mcg</option>
+              <label class="form-label fw-normal" for="createMed_unit">Unit</label>
+                <select id="createMed_unit" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                   <option value="">Select</option>
+                    @foreach ($units as $unit)
+                          <option value="{{$unit->id}}">{{$unit->unit}}</option>
+                    @endforeach
                   </select>
-                   <div class="invalid-feedback">
-                    Select Unit
-                  </div>
+                 <div class="createMed_unit_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal">Re-Ordering Level</label>
-              <input id="createMed_reOrderingLevel" type="text" class="form-control form-control-sm" placeholder="Re-Ordering Level" required>
-               <div class="invalid-feedback">
-                    Enter Re-Ordering Level
-                  </div>
+              <label class="form-label fw-normal" for="createMed_reOrderingLevel">Re-Ordering Level</label>
+              <input id="createMed_reOrderingLevel" type="text" class="form-control form-control-sm" placeholder="Re-Ordering Level" oninput="validateField(this.id,'input')">
+             <div class="createMed_reOrderingLevel_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal">Rack</label>
-                <input id="createMed_rack" type="text" class="form-control form-control-sm" placeholder="Rack" required>
-                 <div class="invalid-feedback">
-                    Enter Rack
-                  </div>
+              <label class="form-label fw-normal" for="createMed_rack">Rack</label>
+                <input id="createMed_rack" type="text" class="form-control form-control-sm" placeholder="Rack" oninput="validateField(this.id,'select')">
+                <div class="createMed_rack_errorCls d-none"></div>
+            </div>
+          
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="createMed_composition">Composition</label>
+                <input id="createMed_composition" type="text" class="form-control form-control-sm" placeholder="Composition" oninput="validateField(this.id,'input')"> 
+               <div class="createMed_composition_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal">Medician Name</label>
-                <input id="createMed_name" type="text" class="form-control form-control-sm" placeholder=" Medician Name" required>
-                 <div class="invalid-feedback">
-                    Enter Medicine Name
-                  </div>
+              <label class="form-label fw-normal" for="createMed_taxes">Taxes</label>
+                <input id="createMed_taxes" type="number" class="form-control form-control-sm" placeholder="Taxes" oninput="validateField(this.id,'select')">
+                <div class="createMed_taxes_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal">Composition</label>
-                <input id="createMed_composition" type="text" class="form-control form-control-sm" placeholder="Composition" required> 
-                 <div class="invalid-feedback">
-                    Enter Composition Name
-                  </div>
-            </div>
-            <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal">Taxes</label>
-                <input id="createMed_taxes" type="number" class="form-control form-control-sm" placeholder="Taxes" required>
-                 <div class="invalid-feedback">
-                    Enter Tax Amount
-                  </div>
-            </div>
-            <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal">Box / Packing</label>
-                <input id="createMed_boxPacking" type="text" class="form-control form-control-sm" placeholder="Box / Packing" required>
-                 <div class="invalid-feedback">
-                    Enter Box/Packing
-                  </div>
+              <label class="form-label fw-normal" for="createMed_boxPacking">Box / Packing</label>
+                <input id="createMed_boxPacking" type="text" class="form-control form-control-sm" placeholder="Box / Packing" oninput="validateField(this.id,'select')">
+                 <div class="createMed_boxPacking_errorCls d-none"></div>
             </div>
             <div class="col-md-12">
               <label class="form-label fw-normal">Narration</label>
@@ -162,6 +135,7 @@ medicines
         </div>
       </div>
       <div class="modal-footer pt-2 pb-3 border-top-0">
+        <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
         <button type="submit" class="btn btn-primary-600  btn-sm fw-normal medicineAddBtn">Save</button>
         <button type="button" class="btn btn-primary-600  btn-sm fw-normal medicineUpdateBtn d-none" onclick="medicineUpdate(document.getElementById('createMed_id').value)">Update</button>
          </form>
@@ -172,6 +146,7 @@ medicines
 <!-- Move to medician-list-addend -->
 @endsection
 @section('extra-js')
+
 {{-- <script>
 // tooltip starts
    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]'); 
@@ -203,6 +178,11 @@ medicines
     // tooltip ended
     </script> --}}
 <script>
+   window.addEventListener('load', () => {
+    $('.select2-cls').select2({
+    dropdownParent: $('#medician-list-add')
+  });
+});
   const medicineView = "{{route('medicine.medicineView')}}";
   const medicineAdd = "{{route('medicine.medicineAdd')}}";
   const getMedicineData = "{{route('medicine.getMedicineData')}}";

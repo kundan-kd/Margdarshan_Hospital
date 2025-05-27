@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\backend\admin\pharmacy;
 
 use App\Http\Controllers\Controller;
+use App\Models\Medicine;
+use App\Models\MedicineCategory;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use Illuminate\Http\Request;
@@ -16,7 +18,9 @@ class PurchaseController extends Controller
         return view('backend.admin.modules.pharmacy.purchase');
     }
     public function purchaseAdd(){
-        return view('backend.admin.modules.pharmacy.purchase-add');
+        $categories = MedicineCategory::get();
+        // $medicines = Medicine::with('categoryData')->select('category_id')->distinct()->get(); // to fetch distinct categories of medicines category field required
+        return view('backend.admin.modules.pharmacy.purchase-add',compact('categories'));
     }
     public function purchaseView(Request $request){
         if($request->ajax()){
@@ -145,8 +149,10 @@ class PurchaseController extends Controller
     }
 
     public function purchaseEditPage($id){
+        $categories = MedicineCategory::get();
+        $medicines = Medicine::get(); // to fetch distinct categories of medicines category_id field required
         $purchase = Purchase::where('id',$id)->get();
-        $purchaseItems = PurchaseItem::where('purchase_id',$id)->get();
+        $purchaseItems = PurchaseItem::with('categoryData','medicineNameData')->where('purchase_id',$id)->get(); // Fetching purchase items with their category_id and medicine name_id data
         // return response()->json(['purchase'=>$purchase,'items'=>$purchaseItems]);
       
         // $currTaxData = [];
@@ -161,7 +167,7 @@ class PurchaseController extends Controller
 
         // }
         // $currTaxDataValue = json_encode($currTaxData);
-        return view('backend.admin.modules.pharmacy.purchase-edit',compact('purchase','purchaseItems'));
+        return view('backend.admin.modules.pharmacy.purchase-edit',compact('categories','medicines','purchase','purchaseItems'));
     }
 
     public function purchaseUpdateDatas(Request $request){

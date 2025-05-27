@@ -88,7 +88,7 @@ $ddate = date("d/m/yy");
                   <button type="button" class="mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center"
                   data-bs-toggle="tooltip" data-bs-placement="top"
                   data-bs-custom-class="tooltip-primary"
-                  data-bs-title="Add Patient" onclick="resetAddPatient()" >
+                  data-bs-title="Add Patient" onclick="resetAddPatient()" style="margin-top: 4px;">
                   <i class="ri-add-line fw-bold"></i>
                   </button>
                   {{-- <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" style="margin-top: 4px" onclick="manageAddPatient()">

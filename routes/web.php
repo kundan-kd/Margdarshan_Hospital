@@ -14,6 +14,7 @@ use App\Http\Controllers\backend\auth\AuthenticationController;
 use App\Http\Controllers\backend\admin\master\UsertypeController;
 use App\Http\Controllers\backend\admin\master\VendorController;
 use App\Http\Controllers\backend\admin\opdout\OpdoutController;
+use App\Http\Controllers\backend\admin\pharmacy\BillingController;
 use App\Http\Controllers\backend\admin\pharmacy\MedicineController;
 use App\Http\Controllers\backend\admin\pharmacy\PurchaseController;
 use App\Http\Middleware\RedirectIfNotAuthenticated;
@@ -142,6 +143,10 @@ Route::post('/vendor-getdetails',[VendorController::class,'getVendorData'])->nam
 Route::post('/vendor-update',[VendorController::class,'updateVendorData'])->name('vendor.updateVendorData');
 Route::post('/vendor-status-update',[VendorController::class,'statusUpdate'])->name('vendor.statusUpdate');
 Route::post('/vendor-delete',[VendorController::class,'deleteVendor'])->name('vendor.deleteVendor');
+
+Route::get('/billing',[BillingController::class,'index'])->name('billing.index');
+Route::get('/billing-add',[BillingController::class,'billingAdd'])->name('billing.billingAdd');
+Route::get('/billing-medicine-name',[BillingController::class,'getMedicineNames'])->name('billing.getMedicineNames');
 });
 
 

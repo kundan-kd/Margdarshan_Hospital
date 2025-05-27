@@ -69,15 +69,39 @@ $('.createNewBtn').on('click',function(e){
     $('#medician-list-addLabel').html('Add Medicine');
     $('.medicineUpdateBtn').addClass('d-none');
     $('.medicineAddBtn').removeClass('d-none');
-})
+});
+
+function resetMedicineAdd(){
+    $('#createMed_category').val('').trigger('change'); //reset select2 dropdown
+    $('#createMed_company').val('').trigger('change'); //reset select2 dropdown
+    $('#createMed_group').val('').trigger('change'); //reset select2 dropdown
+    $('#createMed_unit').val('').trigger('change'); //reset select2 dropdown
+    $('.createMed_name_errorCls').addClass('d-none');
+    $('.createMed_category_errorCls').addClass('d-none');
+    $('.createMed_company_errorCls').addClass('d-none');
+    $('.createMed_group_errorCls').addClass('d-none');
+    $('.createMed_unit_errorCls').addClass('d-none');
+    $('.createMed_reOrderingLevel_errorCls').addClass('d-none');
+    $('.createMed_rack_errorCls').addClass('d-none');
+    $('.createMed_composition_errorCls').addClass('d-none');
+    $('.createMed_taxes_errorCls').addClass('d-none');
+    $('.createMed_boxPacking_errorCls').addClass('d-none');
+}
 
 $('#createMed_form').on('submit', function(e) {
     e.preventDefault(); // Prevent default form submission
-    let form = $(this);
-    if (!form[0].checkValidity()) {
-        form.addClass('was-validated'); // Apply Bootstrap validation styles to restrict page ajax request till all mandatory fields are filled
-        return;
-    }
+    let createMed_name = validateField('createMed_name', 'Medicine select');
+    let createMed_category = validateField('createMed_category', 'select');
+    let createMed_company = validateField('createMed_company', 'select');
+    let createMed_group = validateField('createMed_group', 'select');
+    let createMed_unit = validateField('createMed_unit', 'select');
+    let createMed_reOrderingLevel = validateField('createMed_reOrderingLevel', 'input');
+    let createMed_rack = validateField('createMed_rack', 'select');
+    let createMed_composition = validateField('createMed_composition', 'input');
+    let createMed_taxes = validateField('createMed_taxes', 'select');
+    let createMed_boxPacking = validateField('createMed_boxPacking', 'select');
+    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_group === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_rack === true && createMed_composition === true && createMed_taxes === true && createMed_boxPacking === true){
+
     let category = $('#createMed_category').val();
     let company = $('#createMed_company').val();
     let group = $('#createMed_group').val();
@@ -117,8 +141,12 @@ $('#createMed_form').on('submit', function(e) {
             alert('Error: '+thrown);
         }
     });
+}else{
+    console.log('Please fill all mandatory fields');
+}
 });
 function medicineEdit(id){
+    resetMedicineAdd();
     $.ajax({
         url:getMedicineData,
         type:"POST",
@@ -134,10 +162,10 @@ function medicineEdit(id){
             $('.medicineAddBtn').addClass('d-none');
             $('.medicineUpdateBtn').removeClass('d-none');
             $('#createMed_id').val(getData.id);
-            $('#createMed_category').val(getData.category);
-            $('#createMed_company').val(getData.company);
-            $('#createMed_group').val(getData.group);
-            $('#createMed_unit').val(getData.unit);
+            $('#createMed_category').val(getData.category).trigger('change'); //set select2 dropdown value
+            $('#createMed_company').val(getData.company).trigger('change'); //set select2 dropdown value
+            $('#createMed_group').val(getData.group).trigger('change'); //set select2 dropdown value
+            $('#createMed_unit').val(getData.unit).trigger('change'); //set select2 dropdown value
             $('#createMed_reOrderingLevel').val(getData.re_ordering_level);
             $('#createMed_rack').val(getData.rack);
             $('#createMed_name').val(getData.name);
@@ -150,43 +178,53 @@ function medicineEdit(id){
     });
 }
 function medicineUpdate(id){
-    let form = $('#createMed_form');
-    if(!form[0].checkValidity()){
-        form.addClass('was-validated');
-        return;
-    } //if all required fields are filled then ajax call other wise return.
-    let category = $('#createMed_category').val();
-    let company = $('#createMed_company').val();
-    let group = $('#createMed_group').val();
-    let unit = $('#createMed_unit').val();
-    let re_order_level = $('#createMed_reOrderingLevel').val();
-    let rack = $('#createMed_rack').val();
-    let name = $('#createMed_name').val();
-    let composition = $('#createMed_composition').val();
-    let taxes = $('#createMed_taxes').val();
-    let box_pack = $('#createMed_boxPacking').val();
-    let narration = $('#createMed_narration').val();
-    $.ajax({
-        url:updateMedicineData,
-        type:"POST",
-        headers:{
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data:{
-            id:id,category:category,company:company,group:group,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition,taxes:taxes,box_pack:box_pack,narration:narration
-        },
-        success:function(response){
-            if(response.success){
-                $('#medician-list-add').modal('hide');
-                $('#createMed_form').removeClass('was-validated');
-                $('#createMed_form')[0].reset();
-                $('#medicine-create-table').DataTable().ajax.reload();
-                toastSuccessAlert(response.success);
-            }else{
-                toastErrorAlert(response.error_success);
+let createMed_name = validateField('createMed_name', 'Medicine select');
+    let createMed_category = validateField('createMed_category', 'select');
+    let createMed_company = validateField('createMed_company', 'select');
+    let createMed_group = validateField('createMed_group', 'select');
+    let createMed_unit = validateField('createMed_unit', 'select');
+    let createMed_reOrderingLevel = validateField('createMed_reOrderingLevel', 'input');
+    let createMed_rack = validateField('createMed_rack', 'select');
+    let createMed_composition = validateField('createMed_composition', 'input');
+    let createMed_taxes = validateField('createMed_taxes', 'select');
+    let createMed_boxPacking = validateField('createMed_boxPacking', 'select');
+    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_group === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_rack === true && createMed_composition === true && createMed_taxes === true && createMed_boxPacking === true){
+
+        let category = $('#createMed_category').val();
+        let company = $('#createMed_company').val();
+        let group = $('#createMed_group').val();
+        let unit = $('#createMed_unit').val();
+        let re_order_level = $('#createMed_reOrderingLevel').val();
+        let rack = $('#createMed_rack').val();
+        let name = $('#createMed_name').val();
+        let composition = $('#createMed_composition').val();
+        let taxes = $('#createMed_taxes').val();
+        let box_pack = $('#createMed_boxPacking').val();
+        let narration = $('#createMed_narration').val();
+        $.ajax({
+            url:updateMedicineData,
+            type:"POST",
+            headers:{
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data:{
+                id:id,category:category,company:company,group:group,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition,taxes:taxes,box_pack:box_pack,narration:narration
+            },
+            success:function(response){
+                if(response.success){
+                    $('#medician-list-add').modal('hide');
+                    $('#createMed_form').removeClass('was-validated');
+                    $('#createMed_form')[0].reset();
+                    $('#medicine-create-table').DataTable().ajax.reload();
+                    toastSuccessAlert(response.success);
+                }else{
+                    toastErrorAlert(response.error_success);
+                }
             }
-        }
-    });
+        });
+    }else{
+    console.log('Please fill all mandatory fields');
+    }    
 }
 
 function medicineDelete(id){

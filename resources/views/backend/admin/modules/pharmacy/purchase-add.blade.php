@@ -20,12 +20,11 @@ purchase-add
                     <input id="purchaseAdd_billNo" class="form-control form-control-sm" type="text" placeholder="Bill No">
                 </div>
                 <div class="col-md-3 d-flex align-items-center">
-                    <select id="purchaseAdd_vendor" class="form-select form-select-sm select2 medician-category" style="width: 100%;">
-                        <option selected disabled>Select Vendor</option>
-                        <option value="Sunil Kumar">Sunil Kumar</option>
-                        <option value="Gautam Singh">Gautam Singh</option>
-                        <option value="Pardep Kumar">Pardep Kumar</option>
-                        <option value="Mukesh Kumar">Mukesh Kumar</option>
+                    <select id="purchaseAdd_vendor" class="form-select form-select-sm select2-cls medician-category" style="width: 100%;">
+                        <option value="" selected disabled>Select Vendor</option>
+                        @foreach ($vendors as $vendor)
+                            <option value="{{$vendor->id}}">{{$vendor->name}}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="col-md-3 offset-md-3 text-end">
@@ -81,7 +80,7 @@ purchase-add
                       <tbody>
                           <tr class="fieldGroup">
                               <td>
-                                  <select id="purchaseAdd_category0" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" onchange="getPurchaseMedicine(this.value)" required>
+                                  <select id="purchaseAdd_category0" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" onchange="getPurchaseMedicine(this.value,0)" required>
                                         <option value="" selected disabled>Select</option>
                                         @foreach ($categories as $category)
                                             <option value="{{$category->id}}">{{$category->name}}</option>
@@ -118,11 +117,7 @@ purchase-add
                               <td>
                                   <input id="purchaseAdd_amount0" name="purchaseAdd_amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
                               </td>
-                              <td>
-                                  <button class="mx-1 fw-semibold w-32-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRow()">
-                                      <i class="ri-add-line"></i>
-                                  </button>
-                              </td>
+                              
                           </tr>
                           <!-- replica table start -->
                           <tr class="newRowAppend">
@@ -131,6 +126,11 @@ purchase-add
                           <!-- replica table end -->
                       </tbody>
                   </table>
+                  <div>
+                        <button type="button" class="mx-1 fw-semibold w-64-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRow()">
+                            <i class="ri-add-line">Add</i>
+                        </button>
+                  </div>
               </div>
           </div>
 
@@ -235,6 +235,7 @@ purchase-add
     // getDatePicker('#purchaseAdd_expiry0'); 
     const purchaseAddDatas = "{{route('purchase.purchaseAddDatas')}}";
      const getPurchaseNames = "{{route('billing.getMedicineNames')}}";
+     const getCategoryDatas = "{{route('purchase.getCategoryDatas')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/pharmacy/purchase-add.js')}}"></script>
 @endsection

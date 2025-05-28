@@ -96,3 +96,8 @@ function purchaseDelete(id){
         }
     });
 }
+function purchaseDetails(id) {
+      window.open('purchase-view/' + id, '_blank');
+    // let url = pruchaseViewIndex.replace(':id', id); // Replace placeholder with actual ID
+    // window.open(url, '_blank'); // Open page in new tab
+}

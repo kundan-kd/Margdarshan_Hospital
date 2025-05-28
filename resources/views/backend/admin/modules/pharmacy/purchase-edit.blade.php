@@ -21,12 +21,11 @@ purchase-edit
                     <input id="purchaseEdit_billNo" class="form-control form-control-sm" type="text" value="{{$purchase[0]->bill_no}}">
                 </div>
                 <div class="col-md-3 d-flex align-items-center">
-                    <select id="purchaseEdit_vendor" class="form-select form-select-sm select2 medician-category" style="width: 100%;">
-                        <option selected disabled>Select Vendor</option>
-                        <option value="Sunil Kumar" {{$purchase[0]->vendor_id == 'Sunil Kumar' ? 'selected' : ''}}>Sunil Kumar</option>
-                        <option value="Gautam Singh" {{$purchase[0]->vendor_id == 'Gautam Singh' ? 'selected' : ''}}>Gautam Singh</option>
-                        <option value="Pardep Kumar" {{$purchase[0]->vendor_id == 'Pardep Kumar' ? 'selected' : ''}}>Pardep Kumar</option>
-                        <option value="Mukesh Kumar" {{$purchase[0]->vendor_id == 'Mukesh Kumar' ? 'selected' : ''}}>Mukesh Kumar</option>
+                    <select id="purchaseEdit_vendor" class="form-select form-select-sm select2-cls medician-category" style="width: 100%;">
+                       <option value="" selected disabled>Select Vendor</option>
+                        @foreach ($vendors as $vendor)
+                            <option value="{{$vendor->id}}" {{$purchase[0]->vendor_id == $vendor->id ? 'selected' : '' }}>{{$vendor->name}}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="col-md-3 offset-md-3 text-end">
@@ -89,7 +88,7 @@ purchase-edit
                               <td>
                                 <input type="hidden" id="purchaseEdit_id{{$purchaseItem->id}}" name="purchaseEdit_id[]" value="{{$purchaseItem->id}}">
                              
-                                  <select id="purchaseEdit_category{{$purchaseItem->id}}" name="purchaseEdit_category[]" class="form-select form-select-sm select2Edit-cls" required>
+                                  <select id="purchaseEdit_category{{$purchaseItem->id}}" name="purchaseEdit_category[]" class="form-select form-select-sm select2Edit-cls" onchange="getPurchaseMedicineEdit(this.value,{{$purchaseItem->id}})"required>
                                       <option value="" disabled>Select</option>
                                       @foreach ($categories as $category)
                                         <option value="{{$category->id}}"{{ $purchaseItem->category_id == $category->id ? 'selected' : '' }}> {{$category->name}}
@@ -101,10 +100,7 @@ purchase-edit
                               <td>
                                   <select id="purchaseEdit_name{{$purchaseItem->id}}" name="purchaseEdit_name[]" class="form-select form-select-sm select2Edit-cls" required>
                                       <option value="" selected disabled>Select</option>
-                                        @foreach ($medicines as $medicine)
-                                        <option value="{{$medicine->id}}"{{ $purchaseItem->name_id == $medicine->id ? 'selected' : '' }}>{{$medicine->name}}</option>
-                                        @endforeach
-
+                                       {{-- data appended by purchase-edit.js using getPurchaseMedicineSelectedEdit function --}}
                                   </select>
                               </td>
                               <td>
@@ -155,7 +151,7 @@ purchase-edit
                     
                   </table>
                     <div>
-                        <button class="mx-1 fw-semibold w-64-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowEdit()">
+                        <button type="button" class="mx-1 fw-semibold w-64-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowEdit()">
                         <i class="ri-add-line">Add</i>
                         </button>
                     </div>
@@ -254,15 +250,23 @@ purchase-edit
 @endsection
 @section('extra-js')
 <script>
+// Function to get purchase medicine name based on selected category for each row
+window.onload = function() {
+    document.querySelectorAll('[id^="purchaseEdit_category"]').forEach(function(selectElement) {
+        var selectedValue = selectElement.value;
+        var purchaseItemId = selectElement.id.replace("purchaseEdit_category", "");
+        
+        if (selectedValue) {
+            getPurchaseMedicineSelectedEdit(selectedValue, purchaseItemId);
+        }
+    });
+};
+</script>
+<script>
   const purchaseUpdateDatas = "{{route('purchase.purchaseUpdateDatas')}}";
+  const getPurchaseNamesEdit = "{{route('billing.getMedicineNames')}}";
+  const getPurchaseNamesSelectEdit = "{{route('purchase.getPurchaseNamesSelectEdit')}}";
+  const getCategoryEditDatas = "{{route('purchase.getCategoryDatas')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/pharmacy/purchase-edit.js')}}"></script>
 @endsection
-
-    {{-- abc();
-    function abc(){
-    let taxes = JSON.parse('<?php //print_r($currTaxDataValue) ?>'); // currTaxDataValue passed from controller
-    taxes.forEach(element => {
-        getTaxEdit(element.id);
-    });
-      } --}}

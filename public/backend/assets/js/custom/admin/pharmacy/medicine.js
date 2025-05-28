@@ -260,3 +260,6 @@ function medicineDelete(id){
         }
     });
 }
+function medicineDetails(id){
+    window.open('medicine-view/'+id, '_blank');
+}

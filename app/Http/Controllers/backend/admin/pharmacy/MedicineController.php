@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\Medicine;
 use App\Models\MedicineCategory;
 use App\Models\MedicineGroup;
+use App\Models\PurchaseItem;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -56,7 +57,10 @@ class MedicineController extends Controller
                 return 'NA';
             })
             ->addColumn('action',function($row){
-                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <iconify-icon icon="iconamoon:eye-light" onclick="medicineDetails('.$row->id.')"></iconify-icon>
+                        </a>
+                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                          <iconify-icon icon="lucide:edit" onclick="medicineEdit('.$row->id.')"></iconify-icon>
                          </a>
                          <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -130,5 +134,10 @@ class MedicineController extends Controller
      public function deleteMedicineData(Request $request){
         Medicine::where('id',$request->id)->delete();
         return response()->json(['success'=>'Medicine deleted successfully'],200);
+     }
+     public function medicineViewIndex($id){
+        $medicines = Medicine::where('id',$id)->first();
+        $purchaseItems = PurchaseItem::where('name_id',$id)->get();
+        return view('backend.admin.modules.pharmacy.medicine-view',compact('medicines','purchaseItems'));
      }
 }

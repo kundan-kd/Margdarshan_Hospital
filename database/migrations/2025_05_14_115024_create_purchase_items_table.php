@@ -22,6 +22,7 @@ return new class extends Migration
             $table->double('sales_price')->nullable();
             $table->double('tax')->nullable();
             $table->double('qty')->nullable();
+            $table->integer('stock_out')->default(0);
             $table->double('purchase_rate')->nullable();
             $table->double('amount')->nullable();
             $table->integer('status')->default(1);

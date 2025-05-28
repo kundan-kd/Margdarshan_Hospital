@@ -45,27 +45,25 @@
 function addNewRow() {
     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
     $('.randNumNew').html(rand);
+    $.ajax({
+        url:getCategoryDatas,
+        type:"GET",
+        success:function(response){
+            let getCategoryData = response.data;
+          
     let newRowData = `<tr class="fieldGroupCopy">
         <td>
-            <select id="purchaseAdd_category${rand}" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" style="width: 100%;" required>
-                <option value="" selected disabled>Select</option>
-                <option value="Syrup">Syrup</option>
-                <option value="Injection">Injection</option>
-                <option value="Capsule">Capsule</option>
-                <option value="Tablet">Tablet</option>
-                <option value="Ointment">Ointment</option>
-            </select>
+            <select id="purchaseAdd_category${rand}" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" style="width: 100%;" onchange="getPurchaseMedicine(this.value,${rand})" required>
+                <option value="" selected disabled>Select</option>`;
+                  getCategoryData.forEach(element =>{
+                     newRowData += ` <option value="${element.id}">${element.name}</option>`;
+                     });
+            newRowData += ` </select>
         </td>
         <td>
             <select id="purchaseAdd_name${rand}" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls" style="width: 100%;" required>
                 <option value="" selected disabled>Select</option>
-                <option value="Paracitamol">Paracitamol</option>
-                <option value="Azrithimycin">Azrithimycin</option>
-                <option value="Aceloc">Aceloc</option>
-                <option value="Calpol">Calpol</option>
-                <option value="Metrogly">Metrogly</option>
-                <option value="Oxalgin">Oxalgin</option>
-                <option value="Metacin">Metacin</option>
+                <!-- Options will be populated dynamically based on category selection -->
             </select>
         </td>
         <td>
@@ -99,11 +97,14 @@ function addNewRow() {
             </button>
         </td>
     </tr>`;
-
     $('.newRowAppend').parent().append(newRowData); // Append properly to tbody
+   $('.select2-cls').select2();
+        }
+    });
+
 
     // Reinitialize Select2 for newly added row
-    $('.select2-cls').select2();
+    
 }
  function removeRow(x){
     x.closest("tr").remove(); // remove entire row with tr selector
@@ -229,7 +230,8 @@ $('#purchaseAdd_form').on('submit',function(e){
     // console.log(randNumNew);
     // getDatePicker('#purchaseAdd_expiry'+randNumNew); 
  
-    function getPurchaseMedicine(id){
+    function getPurchaseMedicine(id,randNum){
+        console.log(id, randNum);
          $.ajax({
         url:getPurchaseNames,
         type:"GET",
@@ -240,7 +242,7 @@ $('#purchaseAdd_form').on('submit',function(e){
         success:function(response){
             console.log(response);
         let getData = response.data;
-        let medicineDropdown1 = $("#purchaseAdd_name0"); 
+        let medicineDropdown1 = $("#purchaseAdd_name" + randNum); // Use the randNum to target the specific dropdown
         medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
         getData.forEach(element => {
             medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);

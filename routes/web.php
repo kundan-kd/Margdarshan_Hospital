@@ -87,6 +87,7 @@ Route::post('/medicine-add',[MedicineController::class,'medicineAdd'])->name('me
 Route::post('/medicine-data',[MedicineController::class,'getMedicineData'])->name('medicine.getMedicineData');
 Route::post('/medicine-update',[MedicineController::class,'updateMedicineData'])->name('medicine.updateMedicineData');
 Route::post('/medicine-delete',[MedicineController::class,'deleteMedicineData'])->name('medicine.deleteMedicineData');
+Route::get('/medicine-view/{id}',[MedicineController::class,'medicineViewIndex']);
 
 Route::get('/purchase',[PurchaseController::class,'index'])->name('purchase.index');
 Route::get('/purchase-add',[PurchaseController::class,'purchaseAdd'])->name('purchase.purchaseAdd');
@@ -95,6 +96,9 @@ Route::post('/purchase-add',[PurchaseController::class,'purchaseAddDatas'])->nam
 Route::get('/purchase-edit/{id}',[PurchaseController::class,'purchaseEditPage']);
 Route::post('/purchase-update',[PurchaseController::class,'purchaseUpdateDatas'])->name('purchase.purchaseUpdateDatas');
 Route::post('/purchase-details-delete',[PurchaseController::class,'deletePurchasedetails'])->name('purchase.deletePurchasedetails');
+Route::get('/purchase-edit-details',[PurchaseController::class,'getPurchaseNamesSelectEdit'])->name('purchase.getPurchaseNamesSelectEdit');
+Route::get('/purchase-category-data',[PurchaseController::class,'getCategoryDatas'])->name('purchase.getCategoryDatas');
+Route::get('/purchase-view/{id}',[PurchaseController::class,'pruchaseViewIndex']);
 
 Route::get('/medicine-category',[MedicinecategoryController::class,'index'])->name('medicine-category.index');
 Route::post('/medicine-category-details',[MedicinecategoryController::class,'viewMedicineCategory'])->name('medicine-category.viewMedicineCategory');

@@ -10,29 +10,26 @@ $(document).ready(function() {
     $('.select2Edit-cls').select2(); // Initialize Select2 for existing elements
 });
 function addNewRowEdit(){
+    console.log('addNewRowEdit');
  let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
+  $.ajax({
+        url:getCategoryEditDatas,
+        type:"GET",
+        success:function(response){
+            let getCategoryEditData = response.data;
     let newRowDataEdit = `<tr class="fieldGroupCopy">
         <td>
          <input type="hidden" id="purchaseEdit_id${rand}" name="purchaseEdit_id[]" value="">
-            <select id="purchaseEdit_category${rand}" name="purchaseEdit_category[]" class="form-select form-select-sm select2Edit-cls" style="width: 100%;" required>
-                <option value="" selected disabled>Select</option>
-                <option value="Syrup">Syrup</option>
-                <option value="Injection">Injection</option>
-                <option value="Capsule">Capsule</option>
-                <option value="Tablet">Tablet</option>
-                <option value="Ointment">Ointment</option>
-            </select>
+            <select id="purchaseEdit_category${rand}" name="purchaseEdit_category[]" class="form-select form-select-sm select2Edit-cls" style="width: 100%;" onchange="getPurchaseMedicineEdit(this.value,${rand})" required>
+               <option value="" selected disabled>Select</option>`;
+                getCategoryEditData.forEach(element =>{
+                     newRowDataEdit += ` <option value="${element.id}">${element.name}</option>`;
+                     });
+            newRowDataEdit += ` </select>
         </td>
         <td>
             <select id="purchaseEdit_name${rand}" name="purchaseEdit_name[]" class="form-select form-select-sm select2Edit-cls" style="width: 100%;" required>
                 <option value="" selected disabled>Select</option>
-                <option value="Paracitamol">Paracitamol</option>
-                <option value="Azrithimycin">Azrithimycin</option>
-                <option value="Aceloc">Aceloc</option>
-                <option value="Calpol">Calpol</option>
-                <option value="Metrogly">Metrogly</option>
-                <option value="Oxalgin">Oxalgin</option>
-                <option value="Metacin">Metacin</option>
             </select>
         </td>
         <td>
@@ -74,6 +71,9 @@ function addNewRowEdit(){
 
     // Reinitialize Select2 for newly added row
     $('.select2Edit-cls').select2();
+      }
+    });
+
 }
  function removeRowEdit(x){
     x.closest("tr").remove(); // remove entire row with tr selector
@@ -170,3 +170,50 @@ function deleteRowEdit(x){
  x.closest("tr").remove(); // remove entire row with tr selector
  updateAmountEdit();
 }
+
+
+    function getPurchaseMedicineEdit(id,randNum) {
+        $.ajax({
+            url: getPurchaseNamesEdit,
+            type: "GET",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: { id: id },
+            success: function (response) {
+                console.log(response);
+                let getData = response.data;
+                let medicineDropdown = $("#purchaseEdit_name" + randNum);
+                medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
+                getData.forEach(element => {
+                    medicineDropdown.append(`<option value="${element.id}">${element.name}</option>`);
+                });
+                medicineDropdown.trigger("change"); // Refresh Select2 dropdown
+            }
+        });
+    }
+    function getPurchaseMedicineSelectedEdit(id,randNum) {
+        console.log('onload');
+         let purchaseID = $('#purchaseEdit_id' + randNum).val();
+        $.ajax({
+            url: getPurchaseNamesSelectEdit,
+            type: "GET",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: { id: id, purchaseID: purchaseID },
+            success: function (response) {
+                console.log(response);
+                let getData = response.data.nameData[0];
+                let getNameID = getData.name_id;
+                let getMedicineData = response.data.medicines;
+                // console.log(getNameID);
+                 let medicineDropdown = $("#purchaseEdit_name" + randNum);
+                medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
+                getMedicineData.forEach(element => {
+                   medicineDropdown.append(`<option value="${element.id}"${element.id == getNameID ? 'selected':''}>${element.name}</option>`);
+                });
+                medicineDropdown.trigger("change"); // Refresh Select2 dropdown
+            }
+        });
+    }

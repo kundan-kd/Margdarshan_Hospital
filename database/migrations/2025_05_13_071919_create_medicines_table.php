@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('composition',200)->nullable();
             $table->double('taxes',50)->nullable();
             $table->string('box_packing',100)->nullable();
+            $table->integer('stock_in')->default(0);
+            $table->integer('stock_out')->default(0);
             $table->string('naration',200)->nullable();
             $table->timestamps();
             $table->softDeletes();

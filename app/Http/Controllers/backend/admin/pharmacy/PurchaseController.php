@@ -7,7 +7,9 @@ use App\Models\Medicine;
 use App\Models\MedicineCategory;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -18,9 +20,10 @@ class PurchaseController extends Controller
         return view('backend.admin.modules.pharmacy.purchase');
     }
     public function purchaseAdd(){
-        $categories = MedicineCategory::get();
+        $categories = MedicineCategory::where('status',1)->get();
+        $vendors = Vendor::where('status',1)->get();
         // $medicines = Medicine::with('categoryData')->select('category_id')->distinct()->get(); // to fetch distinct categories of medicines category field required
-        return view('backend.admin.modules.pharmacy.purchase-add',compact('categories'));
+        return view('backend.admin.modules.pharmacy.purchase-add',compact('categories','vendors'));
     }
     public function purchaseView(Request $request){
         if($request->ajax()){
@@ -54,7 +57,12 @@ class PurchaseController extends Controller
                 return $row->naration;
             })
             ->addColumn('action',function($row){
-                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+
+                // $encryptedId = Crypt::encryptString($row->id);
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <iconify-icon icon="iconamoon:eye-light" onclick="purchaseDetails('.$row->id.')"></iconify-icon>
+                        </a>
+                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                          <iconify-icon icon="lucide:edit" onclick="purchaseEdit('.$row->id.')"></iconify-icon>
                          </a>
                          <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -66,7 +74,7 @@ class PurchaseController extends Controller
         }
     }
     public function purchaseAddDatas(Request $request){
-        // Validate request
+        // dd($request->all());
     $validator = Validator::make($request->all(), [
         'billNo' => 'required',
         'vendorID' => 'required',
@@ -130,11 +138,18 @@ class PurchaseController extends Controller
             $purchaseItem->qty = $request->qty[$index];
             $purchaseItem->purchase_rate = $request->purchaseRate[$index];
             $purchaseItem->amount = $request->amount[$index];
+            //update stock_in for the medicine starts
+            $oldStocks = Medicine::where('id', $request->name[$index])->get(['stock_in']);
+            $oldMedicineStock = $oldStocks[0]->stock_in ?? 0;
+            Medicine::where('id', $request->name[$index])->update([
+                'stock_in' => $oldMedicineStock + $request->qty[$index]
+            ]);
+            //update stock_in for the medicine ends
             if (!$purchaseItem->save()) {
                 throw new \Exception("Failed to insert purchase item record");
             }
         }
-
+       
         // Commit transaction if all operations succeed
         DB::commit();
 
@@ -149,10 +164,12 @@ class PurchaseController extends Controller
     }
 
     public function purchaseEditPage($id){
-        $categories = MedicineCategory::get();
+        $categories = MedicineCategory::where('status',1)->get();
         $medicines = Medicine::get(); // to fetch distinct categories of medicines category_id field required
         $purchase = Purchase::where('id',$id)->get();
+        $vendors = Vendor::where('status',1)->get();
         $purchaseItems = PurchaseItem::with('categoryData','medicineNameData')->where('purchase_id',$id)->get(); // Fetching purchase items with their category_id and medicine name_id data
+        
         // return response()->json(['purchase'=>$purchase,'items'=>$purchaseItems]);
       
         // $currTaxData = [];
@@ -167,7 +184,7 @@ class PurchaseController extends Controller
 
         // }
         // $currTaxDataValue = json_encode($currTaxData);
-        return view('backend.admin.modules.pharmacy.purchase-edit',compact('categories','medicines','purchase','purchaseItems'));
+        return view('backend.admin.modules.pharmacy.purchase-edit',compact('categories','medicines','purchase','vendors','purchaseItems'));
     }
 
     public function purchaseUpdateDatas(Request $request){
@@ -236,14 +253,28 @@ class PurchaseController extends Controller
         return response()->json(['success' => false, 'message' => 'Something went wrong', 'error' => $e->getMessage()]);
     }
 
-
-
-
-        
     }
     function deletePurchasedetails(Request $request){
         Purchase::where('id',$request->id)->delete();
-            return response()->json(['success'=>'Purchase deleted successfully'],200);
-        
+        return response()->json(['success'=>'Purchase deleted successfully'],200);
+    }
+
+    function getPurchaseNamesSelectEdit(Request $request){
+        $getData = Medicine::where('category_id',$request->id)->get();
+        $getNameData = PurchaseItem::where('id',$request->purchaseID)->get(['name_id']);
+         $data = ['medicines'=>$getData,'nameData'=>$getNameData];
+         return response()->json(['success'=>'Medicine data found','data'=>$data],200);
+    }
+
+    public function getCategoryDatas(){
+     $getData = MedicineCategory::get();
+     return response()->json(['success'=>'Category data found','data'=>$getData],200);   
+    }
+    public function pruchaseViewIndex($id){
+        // dd($request);
+        $purchases = Purchase::with('vendorData')->where('id',$id)->get();
+        $purchaseItems = PurchaseItem::with('categoryData','medicineNameData')->where('purchase_id',$id)->get();
+        // dd($purchases,$purchaseItems);
+        return view('backend.admin.modules.pharmacy.purchase-view',compact('purchases','purchaseItems'));
     }
 }

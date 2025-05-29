@@ -7,7 +7,7 @@ Department
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
     <h6 class="fw-normal mb-0">Department</h6>
     <div class="btns">
-      <a class="btn btn-primary-600  btn-sm fw-normal" data-bs-toggle="modal" data-bs-target="#addDepartmentModel"><i class="ri-add-line "></i> Add Department</a>
+      <a class="btn btn-primary-600  btn-sm fw-normal department-add" data-bs-toggle="modal" data-bs-target="#addDepartmentModel"><i class="ri-add-line "></i> Add Department</a>
     </div>
   </div>
      <!-- Department modal start -->

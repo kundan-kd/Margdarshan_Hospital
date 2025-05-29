@@ -48,33 +48,38 @@ $('.paymentMode-add').on('click',function(e){
 // ------usertype add starts----
 $('#paymentModeForm').on('submit',function(e){
    e.preventDefault();
+    let id = $('#paymentModeID').val();
    let paymentmode = $('#paymentModeName').val();
    if(paymentmode == ''){
     $('#paymentModeName').focus();
    }else{
-    $.ajax({
-        url: addPaymentMode,
-        method:"POST",
-        headers:{
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data:{paymentmode:paymentmode},
-        success:function(response){
-            if(response.success){
-                $('#addPaymentModeModel').modal('hide');
-                $('#paymentModeForm').removeClass('was-validated');
-                $('#paymentModeForm')[0].reset();
-                $('#paymentMode-table').DataTable().ajax.reload();
-                toastSuccessAlert('Payment Mode added successfully');
-            }else{
-                toastErrorAlert('error found!');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            alert("An error occurred: " + error);
+        if ($('.paymentModeUpdate').is(':visible')) {
+            paymentModeUpdate(id); // Trigger update function when update btn is active
+        } else {
+            $.ajax({
+                url: addPaymentMode,
+                method:"POST",
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:{paymentmode:paymentmode},
+                success:function(response){
+                    if(response.success){
+                        $('#addPaymentModeModel').modal('hide');
+                        $('#paymentModeForm').removeClass('was-validated');
+                        $('#paymentModeForm')[0].reset();
+                        $('#paymentMode-table').DataTable().ajax.reload();
+                        toastSuccessAlert('Payment Mode added successfully');
+                    }else{
+                        toastErrorAlert('error found!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("An error occurred: " + error);
+                }
+            });
         }
-    });
    }
 });
 // ------usertype add ends----

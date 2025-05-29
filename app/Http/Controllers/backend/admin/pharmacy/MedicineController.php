@@ -113,10 +113,10 @@ class MedicineController extends Controller
      }
      public function updateMedicineData(Request $request){
        $update = Medicine::where('id',$request->id)->update([
-        'category'=>$request->category,
-        'company'=>$request->company, 
-        'group'=>$request->group, 
-        'unit'=>$request->unit, 
+        'category_id'=>$request->category,
+        'company_id'=>$request->company, 
+        'group_id'=>$request->group, 
+        'unit_id'=>$request->unit, 
         're_ordering_level'=>$request->re_order_level, 
         'rack'=>$request->rack, 
         'name'=>$request->name, 

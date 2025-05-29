@@ -46,33 +46,38 @@ $('.medicineGroup-add').on('click',function(e){
 
 $('#medicineGroupForm').on('submit',function(e){
    e.preventDefault();
+   let id = $('#medicineGroupID').val();
    let group = $('#medicineGroupName').val();
    if(group == ''){
     $('#medicineGroupName').focus();
    }else{
-    $.ajax({
-        url: addMedicineGroup,
-        method:"POST",
-        headers:{
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data:{group:group},
-        success:function(response){
-            if(response.success){
-                $('#addMedicineGroupModel').modal('hide');
-                $('#medicineGroupForm').removeClass('was-validated');
-                $('#medicineGroupForm')[0].reset();
-                $('#medicineGroup-table').DataTable().ajax.reload();
-                toastSuccessAlert('Medicine Group added successfully');
-            }else{
-                 toastErrorAlert('error found!');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            alert("An error occurred: " + error);
+      if ($('.medicineGroupUpdate').is(':visible')) {
+            medicineGroupUpdate(id); // Trigger update function when update btn is active
+        } else {
+            $.ajax({
+                url: addMedicineGroup,
+                method:"POST",
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:{group:group},
+                success:function(response){
+                    if(response.success){
+                        $('#addMedicineGroupModel').modal('hide');
+                        $('#medicineGroupForm').removeClass('was-validated');
+                        $('#medicineGroupForm')[0].reset();
+                        $('#medicineGroup-table').DataTable().ajax.reload();
+                        toastSuccessAlert('Medicine Group added successfully');
+                    }else{
+                        toastErrorAlert('error found!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("An error occurred: " + error);
+                }
+            });
         }
-    });
    }
 });
 

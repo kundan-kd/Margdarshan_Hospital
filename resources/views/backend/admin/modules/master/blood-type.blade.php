@@ -7,7 +7,7 @@ Blood Type
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
     <h6 class="fw-normal mb-0">Blood Type</h6>
     <div class="btns">
-      <a class="btn btn-primary-600  btn-sm fw-normal" data-bs-toggle="modal" data-bs-target="#addBloodTypeModel"><i class="ri-add-line "></i> Add Blood Type</a>
+      <a class="btn btn-primary-600  btn-sm fw-normal bloodType-add" data-bs-toggle="modal" data-bs-target="#addBloodTypeModel"><i class="ri-add-line "></i> Add Blood Type</a>
     </div>
   </div>
      <!-- Blood Type modal start -->

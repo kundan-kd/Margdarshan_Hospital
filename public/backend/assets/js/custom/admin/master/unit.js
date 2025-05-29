@@ -51,6 +51,7 @@ $('.unit-add').on('click',function(e){
 
 $('#unitForm').on('submit',function(e){
    e.preventDefault();
+   let id = $('#unitID').val();
    let unitname = $('#unitName').val();
    let unit = $('#unit').val();
    if(unitname == ''){
@@ -58,29 +59,33 @@ $('#unitForm').on('submit',function(e){
    }else if(unit == ''){
         $('#unit').focus();
    }else{
-    $.ajax({
-        url: addUnit,
-        method:"POST",
-        headers:{
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data:{unitname:unitname,unit:unit},
-        success:function(response){
-            if(response.success){
-                $('#addUnitModel').modal('hide');
-                $('#unitForm').removeClass('was-validated');
-                $('#unitForm')[0].reset();
-                $('#unit-table').DataTable().ajax.reload();
-                toastSuccessAlert('Unit added successfully');
-            }else{
-                 toastErrorAlert('error found!');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            alert("An error occurred: " + error);
+        if ($('.unitUpdate').is(':visible')) {
+            unitUpdate(id); // Trigger update function when update btn is active
+        } else {
+            $.ajax({
+                url: addUnit,
+                method:"POST",
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:{unitname:unitname,unit:unit},
+                success:function(response){
+                    if(response.success){
+                        $('#addUnitModel').modal('hide');
+                        $('#unitForm').removeClass('was-validated');
+                        $('#unitForm')[0].reset();
+                        $('#unit-table').DataTable().ajax.reload();
+                        toastSuccessAlert('Unit added successfully');
+                    }else{
+                        toastErrorAlert('error found!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("An error occurred: " + error);
+                }
+            });
         }
-    });
    }
 });
 

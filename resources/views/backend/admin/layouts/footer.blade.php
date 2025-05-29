@@ -44,7 +44,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+{{-- for date month format --}}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
 
 {{-- <!-- Buttons Extension for Datatable to perform extra functions -->
 <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>

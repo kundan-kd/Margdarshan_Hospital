@@ -46,33 +46,38 @@ $('.bloodType-add').on('click',function(e){
 
 $('#bloodTypeForm').on('submit',function(e){
    e.preventDefault();
+   let id = $('#bloodTypeID').val();
    let bloodType = $('#bloodTypeName').val();
    if(bloodType == ''){
     $('#bloodTypeName').focus();
    }else{
-    $.ajax({
-        url: addBloodType,
-        method:"POST",
-        headers:{
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data:{bloodType:bloodType},
-        success:function(response){
-            if(response.success){
-                $('#addBloodTypeModel').modal('hide');
-                $('#bloodTypeForm').removeClass('was-validated');
-                $('#bloodTypeForm')[0].reset();
-                $('#bloodType-table').DataTable().ajax.reload();
-                toastSuccessAlert('Blood Type added successfully');
-            }else{
-                 toastErrorAlert('error found!');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            alert("An error occurred: " + error);
+        if ($('.bloodTypeUpdate').is(':visible')) {
+            bloodTypeUpdate(id); // Trigger update function when update btn is active
+        } else {
+            $.ajax({
+                url: addBloodType,
+                method:"POST",
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:{bloodType:bloodType},
+                success:function(response){
+                    if(response.success){
+                        $('#addBloodTypeModel').modal('hide');
+                        $('#bloodTypeForm').removeClass('was-validated');
+                        $('#bloodTypeForm')[0].reset();
+                        $('#bloodType-table').DataTable().ajax.reload();
+                        toastSuccessAlert('Blood Type added successfully');
+                    }else{
+                        toastErrorAlert('error found!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("An error occurred: " + error);
+                }
+            });
         }
-    });
    }
 });
 

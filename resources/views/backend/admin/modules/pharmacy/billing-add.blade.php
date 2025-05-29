@@ -89,51 +89,43 @@ Billing-add
                       <tbody>
                           <tr class="fieldGroup">
                            <td>
-                                  <select id="billingAdd-category0" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getMedicine(this.value)">
+                                  <select id="billingAdd-category0" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicine(this.value,0)">
                                       <option selected disabled>Select</option>
-                                      @foreach ($medicines as $category)
-                                      <option value="{{$category->category}}">{{$category->categoryData->name}}</option>
+                                      @foreach ($categories as $category)
+                                      <option value="{{$category->id}}">{{$category->name}}</option>
                                       @endforeach
                                   </select>
                               </td>
                               <td>
-                                  <select id="billingAdd-name0" name="billingAdd-name[]" class="form-select form-select-sm select2-cls w-100">
-                                      <option selected disabled>Select</option>
-                                      <span class="medicine-names"></span>
-                                      {{-- <option value="1">Azethromicne</option>
-                                      <option value="2">Paracitamol</option>
-                                      <option value="3">Lisinopril</option>
-                                      <option value="4">Amlodipine</option> --}}
+                                  <select id="billingAdd-name0" name="billingAdd-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetails(this.value,0)">
+                                      <option value="" selected>Select</option>
                                   </select>
                               </td>
                               <td>
-                                  <select id="billingAdd-batch0" name="billingAdd-batch[]" class="form-select form-select-sm select2-cls w-100">
+                                  <select id="billingAdd-batch0" name="billingAdd-batch[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchExpiry(this.value,0)">
                                       <option selected>Select</option>
-                                      <option value="1">Batch A</option>
-                                      <option value="2">Batch B</option>
-                                      <option value="3">Batch C</option>
                                   </select>
                               </td>
                               <td>
                                   <div class=" position-relative">
-                                      <input id="billingAdd-expiry0" name="billingAdd-expiry[]" class="form-control radius-8 bg-base expiry-date"  type="text" placeholder="12/2024">
-                                      <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
+                                      <input id="billingAdd-expiry0" name="billingAdd-expiry[]" class="form-control radius-8 bg-base"  type="text" value="" placeholder="00/00/0000" readonly>
+                                      {{-- <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span> --}}
                                   </div>
                               </td>
                               <td>
-                                  <input id="billingAdd-qty0" name="billingAdd-qty[]" name="billingAdd-name" class="form-control form-control-sm" type="number" placeholder="Quantity">
+                                  <input id="billingAdd-qty0" name="billingAdd-qty[]" name="billingAdd-name" class="form-control form-control-sm" type="number" placeholder="Quantity" oninput="getBillingAmount(0)">
                               </td>
                               <td>
-                                  <input id="billingAdd-avlQty0" name="billingAdd-avlQty[]" type="number" class="form-control form-control-sm" placeholder="Avilable Qty">
+                                  <input id="billingAdd-avlQty0" name="billingAdd-avlQty[]" type="number" class="form-control form-control-sm" value="" placeholder="Avilable Qty" readonly>
                               </td>
                               <td>
-                                  <input id="billingAdd-salesPrice0" name="billingAdd-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price">
+                                  <input id="billingAdd-salesPrice0" name="billingAdd-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" readonly>
                               </td>
                               <td>
-                                  <input id="billingAdd-tax0" name="billingAdd-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax">
+                                  <input id="billingAdd-tax0" name="billingAdd-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" readonly>
                               </td>
                               <td>
-                                  <input id="billingAdd-amount0" name="billingAdd-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount">
+                                  <input id="billingAdd-amount0" name="billingAdd-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
                               </td>
                               {{-- <td>
                                     <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove">
@@ -149,7 +141,7 @@ Billing-add
                           <!-- replica table end -->
                       </tbody>
                   </table>
-                  <button class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowBilling()">
+                  <button type="button" class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowBilling()">
                       <i class="ri-add-line"></i> Add
                   </button>
               </div>
@@ -160,16 +152,16 @@ Billing-add
                 <div class="row ">
                       <div class="col-md-6 mb-3">
                         <label class="form-label fw-medium">Res Doctor</label>
-                         <select class="form-select form-select-sm select2 medician-category w-100">
-                            <option selected disabled>Res Doctor</option>
-                            <option value="1">Doctor</option>
-                            <option value="2">Doctor</option>
-                            <option value="3">Doctor</option>
+                         <select id="resDoctor_id" class="form-select form-select-sm select2-cls  w-100">
+                            <option value="" selected>Select</option>
+                           @foreach ($doctors as $doctor)
+                              <option value="{{$doctor->id}}">{{$doctor->firstname}} {{$doctor->lastname}}</option>
+                           @endforeach
                         </select>
                       </div>
                       <div class="col-md-6 mb-3">
                          <label class="form-label fw-medium">Out Doctor Name</label>
-                         <input type="text" class="form-control form-control-sm" placeholder="Out Doctor Name">
+                         <input id="outDoctor" type="text" class="form-control form-control-sm" placeholder="Out Doctor Name">
                       </div>
                    </div>
                   <label class="form-label fw-medium">Note</label>
@@ -178,8 +170,8 @@ Billing-add
               <div class="col-md-4 offset-2">
                   <table class="table table-sm">
                     <tr>
-                      <td class="border-0" colspan="2">Total (₹)</td>
-                      <td class="border-0 text-end fs-6">204.00</td>
+                      <td class="border-0" colspan="2">Total</td>
+                      <td class="border-0 text-end fs-6">₹ <span class="billingAdd-totalAmount">0</span></td>
                     </tr>
                     <tr>
                       <td class="border-0 align-middle">Discount (₹)</td>
@@ -188,11 +180,11 @@ Billing-add
                     </tr>
                     <tr>
                       <td class="border-0" colspan="2">Taxes (₹)</td>
-                      <td class="border-0 text-end fs-6">5124.00</td>
+                      <td class="border-0 text-end fs-6">₹ <span class="billingAdd-totalTax">0</span></td>
                     </tr>
                     <tr>
                       <td class="border-0" colspan="2">Net Amount (₹)</td>
-                      <td class="border-0 text-end fs-6">20412.00</td>
+                      <td class="border-0 text-end fs-6">₹ <span class="billingAdd-totalNetAmount">0</span></td>
                     </tr>
                     <tr>
                       <td colspan="2" class="border-0">
@@ -318,7 +310,10 @@ Billing-add
 @endsection
 @section('extra-js')
 <script>
- const getMedicineNames = "{{route('billing.getMedicineNames')}}";
+ const getBillingMedicineNames = "{{route('billing.getMedicineNames')}}";
+ const getBillingCategoryDatas = "{{route('purchase.getCategoryDatas')}}";
+ const getBatchNumbers = "{{route('billing-add.getBatchNumbers')}}";
+ const getBatchExpiryDate = "{{route('billing-add.getBatchExpiryDate')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/pharmacy/billing-add.js')}}"></script>
 @endsection

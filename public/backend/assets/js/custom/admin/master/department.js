@@ -48,33 +48,38 @@ $('.department-add').on('click',function(e){
 // ------usertype add starts----
 $('#departmentForm').on('submit',function(e){
    e.preventDefault();
+   let id = $('#departmentID').val();
    let department = $('#departmentName').val();
    if(department == ''){
     $('#departmentName').focus();
    }else{
-    $.ajax({
-        url: addDepartment,
-        method:"POST",
-        headers:{
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data:{department:department},
-        success:function(response){
-            if(response.success){
-                $('#addDepartmentModel').modal('hide');
-                $('#departmentForm').removeClass('was-validated');
-                $('#departmentForm')[0].reset();
-                $('#department-table').DataTable().ajax.reload();
-                toastSuccessAlert('Department added successfully');
-            }else{
-                alert('error found!');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            alert("An error occurred: " + error);
+      if ($('.departmentUpdate').is(':visible')) {
+            departmentUpdate(id); // Trigger update function when update btn is active
+        } else {
+            $.ajax({
+                url: addDepartment,
+                method:"POST",
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:{department:department},
+                success:function(response){
+                    if(response.success){
+                        $('#addDepartmentModel').modal('hide');
+                        $('#departmentForm').removeClass('was-validated');
+                        $('#departmentForm')[0].reset();
+                        $('#department-table').DataTable().ajax.reload();
+                        toastSuccessAlert('Department added successfully');
+                    }else{
+                        alert('error found!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("An error occurred: " + error);
+                }
+            });
         }
-    });
    }
 });
 // ------usertype add ends----

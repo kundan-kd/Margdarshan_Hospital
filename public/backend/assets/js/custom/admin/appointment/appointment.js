@@ -312,10 +312,10 @@ function appointmentEdit(id){
                 $('#patient-search').val(getData.patient_name);
                 $('#searchPatientID').val(getData.patient_name);
                 $('#patientNameAppt').val(getData.patient_name);
-                $('#departmentAppt').val(getData.department_id);
-                $('#doctorAppt').val(getData.doctor_id);
+                $('#departmentAppt').val(getData.department_id).trigger('change');
+                $('#doctorAppt').val(getData.doctor_id).trigger('change');
                 $('#dateAppt').val(getData.appointment_date);
-                $('#paymentModeAppt').val(getData.payment_mode);
+                $('#paymentModeAppt').val(getData.payment_mode).trigger('change');
                 $('#roomNumAppt').val(getData.room_number);
                 $('#opd_fee').val(getData.fee);
             }

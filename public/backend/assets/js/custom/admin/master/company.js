@@ -46,33 +46,38 @@ $('.company-add').on('click',function(e){
 
 $('#companyForm').on('submit',function(e){
    e.preventDefault();
+    let id = $('#companyID').val();
    let company = $('#companyName').val();
    if(company == ''){
     $('#companyName').focus();
    }else{
-    $.ajax({
-        url: addCompany,
-        method:"POST",
-        headers:{
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data:{company:company},
-        success:function(response){
-            if(response.success){
-                $('#addCompanyModel').modal('hide');
-                $('#companyForm').removeClass('was-validated');
-                $('#companyForm')[0].reset();
-                $('#company-table').DataTable().ajax.reload();
-                toastSuccessAlert('Company added successfully');
-            }else{
-                 toastErrorAlert('error found!');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            alert("An error occurred: " + error);
+     if ($('.companyUpdate').is(':visible')) {
+            companyUpdate(id); // Trigger update function when update btn is active
+        } else {
+            $.ajax({
+                url: addCompany,
+                method:"POST",
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:{company:company},
+                success:function(response){
+                    if(response.success){
+                        $('#addCompanyModel').modal('hide');
+                        $('#companyForm').removeClass('was-validated');
+                        $('#companyForm')[0].reset();
+                        $('#company-table').DataTable().ajax.reload();
+                        toastSuccessAlert('Company added successfully');
+                    }else{
+                        toastErrorAlert('error found!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("An error occurred: " + error);
+                }
+            });
         }
-    });
    }
 });
 

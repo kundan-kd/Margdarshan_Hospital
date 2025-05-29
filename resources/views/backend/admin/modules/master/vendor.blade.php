@@ -7,7 +7,7 @@ Vendor
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
     <h6 class="fw-normal mb-0">Vendor</h6>
     <div class="btns">
-      <a class="btn btn-primary-600  btn-sm fw-normal" data-bs-toggle="modal" data-bs-target="#addVendorModel"><i class="ri-add-line "></i> Add Vendor</a>
+      <a class="btn btn-primary-600  btn-sm fw-normal vendor-add" data-bs-toggle="modal" data-bs-target="#addVendorModel"><i class="ri-add-line "></i> Add Vendor</a>
     </div>
   </div>
      <!-- vendor modal start -->

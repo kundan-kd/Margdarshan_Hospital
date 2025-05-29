@@ -7,7 +7,7 @@ Payment Mode
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
     <h6 class="fw-normal mb-0">Payment Mode</h6>
     <div class="btns">
-      <a class="btn btn-primary-600  btn-sm fw-normal" data-bs-toggle="modal" data-bs-target="#addPaymentModeModel"><i class="ri-add-line "></i> Add Payment Mode</a>
+      <a class="btn btn-primary-600  btn-sm fw-normal paymentMode-add" data-bs-toggle="modal" data-bs-target="#addPaymentModeModel"><i class="ri-add-line "></i> Add Payment Mode</a>
     </div>
   </div>
      <!-- Payment Mode modal start -->

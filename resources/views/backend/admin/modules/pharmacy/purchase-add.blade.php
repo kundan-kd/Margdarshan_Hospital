@@ -231,7 +231,6 @@ purchase-add
     //         dateFormat: "d/m/Y H:i",
     //     });
     // }
-    
     // getDatePicker('#purchaseAdd_expiry0'); 
     const purchaseAddDatas = "{{route('purchase.purchaseAddDatas')}}";
      const getPurchaseNames = "{{route('billing.getMedicineNames')}}";

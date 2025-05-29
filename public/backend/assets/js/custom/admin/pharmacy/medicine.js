@@ -155,17 +155,18 @@ function medicineEdit(id){
         },
         data:{id:id},
         success:function(response){
-           getData = response.data[0];
+            let getData = response.data[0];
+            console.log(getData);
            if(response.success){
             $('#medician-list-add').modal('show');
             $('#medician-list-addLabel').html('Update Medicine');
             $('.medicineAddBtn').addClass('d-none');
             $('.medicineUpdateBtn').removeClass('d-none');
             $('#createMed_id').val(getData.id);
-            $('#createMed_category').val(getData.category).trigger('change'); //set select2 dropdown value
-            $('#createMed_company').val(getData.company).trigger('change'); //set select2 dropdown value
-            $('#createMed_group').val(getData.group).trigger('change'); //set select2 dropdown value
-            $('#createMed_unit').val(getData.unit).trigger('change'); //set select2 dropdown value
+            $('#createMed_category').val(getData.category_id).trigger('change'); //set select2 dropdown value
+            $('#createMed_company').val(getData.company_id).trigger('change'); //set select2 dropdown value
+            $('#createMed_group').val(getData.group_id).trigger('change'); //set select2 dropdown value
+            $('#createMed_unit').val(getData.unit_id).trigger('change'); //set select2 dropdown value
             $('#createMed_reOrderingLevel').val(getData.re_ordering_level);
             $('#createMed_rack').val(getData.rack);
             $('#createMed_name').val(getData.name);

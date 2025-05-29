@@ -222,13 +222,17 @@ $('#purchaseAdd_form').on('submit',function(e){
   // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
         flatpickr(receiveID, {
-            dateFormat: "m/d/Y ",
+            dateFormat: "m/Y",
+            plugins: [
+                        new monthSelectPlugin({
+                            shorthand: true,  
+                            dateFormat: "m/Y",  
+                            altFormat: "F Y"    
+                        })
+                    ]
         });
     }
     getDatePicker('.expiry-date'); 
-    // let randNumNew = $('.randNumNew').html();
-    // console.log(randNumNew);
-    // getDatePicker('#purchaseAdd_expiry'+randNumNew); 
  
     function getPurchaseMedicine(id,randNum){
         console.log(id, randNum);

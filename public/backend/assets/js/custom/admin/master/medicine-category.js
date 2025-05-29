@@ -48,33 +48,38 @@ $('.medicineCategory-add').on('click',function(e){
 
 $('#medicineCategoryForm').on('submit',function(e){
    e.preventDefault();
+    let id = $('#medicineCategoryID').val();
    let category = $('#medicineCategoryName').val();
    if(category == ''){
     $('#medicineCategoryName').focus();
    }else{
-    $.ajax({
-        url: addMedicineCategory,
-        method:"POST",
-        headers:{
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data:{category:category},
-        success:function(response){
-            if(response.success){
-                $('#addMedicineCategoryModel').modal('hide');
-                $('#medicineCategoryForm').removeClass('was-validated');
-                $('#medicineCategoryForm')[0].reset();
-                $('#medicineCategory-table').DataTable().ajax.reload();
-                toastSuccessAlert('Medicine category added successfully');
-            }else{
-                 toastErrorAlert('error found!');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            alert("An error occurred: " + error);
+      if ($('.medicineCategoryUpdate').is(':visible')) {
+            medicineCategoryUpdate(id); // Trigger update function when update btn is active
+        } else {
+            $.ajax({
+                url: addMedicineCategory,
+                method:"POST",
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:{category:category},
+                success:function(response){
+                    if(response.success){
+                        $('#addMedicineCategoryModel').modal('hide');
+                        $('#medicineCategoryForm').removeClass('was-validated');
+                        $('#medicineCategoryForm')[0].reset();
+                        $('#medicineCategory-table').DataTable().ajax.reload();
+                        toastSuccessAlert('Medicine category added successfully');
+                    }else{
+                        toastErrorAlert('error found!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("An error occurred: " + error);
+                }
+            });
         }
-    });
    }
 });
 

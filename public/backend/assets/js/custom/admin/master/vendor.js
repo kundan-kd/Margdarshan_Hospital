@@ -70,6 +70,7 @@ $('.vendor-add').on('click',function(e){
 
 $('#vendorForm').on('submit',function(e){
    e.preventDefault();
+   let id = $('#vendorID').val();
    let name = $('#vendorName').val();
    let phone = $('#vendorPhone').val();
    let email = $('#vendorEmail').val();
@@ -79,29 +80,33 @@ $('#vendorForm').on('submit',function(e){
     $('#vendorName').focus();
     $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
    }else{
-    $.ajax({
-        url: addVendor,
-        method:"POST",
-        headers:{
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data:{name:name, phone:phone, email:email, address:address, gst:gst},
-        success:function(response){
-            if(response.success){
-                $('#addVendorModel').modal('hide');
-                $('#vendorForm').removeClass('was-validated');
-                $('#vendorForm')[0].reset();
-                $('#vendor-table').DataTable().ajax.reload();
-                toastSuccessAlert('Vendor added successfully');
-            }else{
-                 toastErrorAlert('error found!');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-            alert("An error occurred: " + error);
+        if ($('.vendorUpdate').is(':visible')) {
+            vendorUpdate(id); // Trigger update function when update btn is active
+        } else {
+            $.ajax({
+                url: addVendor,
+                method:"POST",
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:{name:name, phone:phone, email:email, address:address, gst:gst},
+                success:function(response){
+                    if(response.success){
+                        $('#addVendorModel').modal('hide');
+                        $('#vendorForm').removeClass('was-validated');
+                        $('#vendorForm')[0].reset();
+                        $('#vendor-table').DataTable().ajax.reload();
+                        toastSuccessAlert('Vendor added successfully');
+                    }else{
+                        toastErrorAlert('error found!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("An error occurred: " + error);
+                }
+            });
         }
-    });
    }
 });
 

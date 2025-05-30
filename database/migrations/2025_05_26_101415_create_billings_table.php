@@ -16,10 +16,11 @@ return new class extends Migration
             $table->string('type',20)->nullable();
             $table->integer('patient_id')->nullable();
             $table->string('bill_no',100)->nullable();
-            $table->integer('doctor_id')->nullable();
-            $table->string('our_doctor_name',100)->nullable();
+            $table->integer('res_doctor_id')->nullable();
+            $table->string('out_doctor_name',100)->nullable();
             $table->double('total_amount')->nullable();
-            $table->double('discount')->nullable();
+            $table->double('discount_per')->nullable();
+            $table->double('discount_amount')->nullable();
             $table->double('taxes')->nullable();
             $table->double('net_amount')->nullable();
             $table->double('paid_amount')->nullable();

@@ -103,7 +103,9 @@ class AppointmentController extends Controller
         }
     }
     public function searchPatient(Request $request){
-        $getData = Patient::where('name','LIKE',"%{$request->name}%")->get(['id','patient_id','name']);
+        $getData = Patient::where('name','LIKE',"%{$request->name}%")
+                            ->orWhere('patient_id', 'LIKE', "%{$request->name}%")
+                            ->get(['id','patient_id','name']);
         return response()->json(['success'=>'Patient data fetched successfully','data'=>$getData],200);
     }
     public function getPatient(Request $request){

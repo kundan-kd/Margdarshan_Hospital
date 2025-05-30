@@ -21,7 +21,8 @@ return new class extends Migration
             $table->integer('qty')->nullable();
             $table->integer('avl_qty')->nullable();
             $table->double('sales_price')->nullable();
-            $table->double('tax')->nullable();
+            $table->double('tax_per')->nullable();
+            $table->double('tax_amount')->nullable();
             $table->double('amount')->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();

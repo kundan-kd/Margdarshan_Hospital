@@ -10,178 +10,178 @@ purchase-add
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">Purchase Bill</h6>
     </div>
+    <div class="randNumNew" style="display: none;"></div>
+    <div class="sumTaxAmountCls" style="display: none;"></div>
     <div class="pharmacy-purchase-wrapper card">
-      <div class="card-header pb-4 border-bottom-0">
-        <div class="row bg-neutral-100 align-items-center mx-2">
-                 <!-- <div class="col-md-1"><label class="form-label fw-medium mb-0">Bill No :</label></div>
-                 <div class="col-md-2"><input class="form-control form-control-sm" type="number" placeholder="Bill No" ></div> -->
-                <div class="col-md-3 d-flex align-items-center">
-                    <span class="form-label fw-medium mb-0" style="width: 28%;">Bill No :</span>
-                    <input id="purchaseAdd_billNo" class="form-control form-control-sm" type="text" placeholder="Bill No">
+        <div class="card-header pb-4 border-bottom-0">
+                <div class="row bg-neutral-100 align-items-center mx-2">
+                    <!-- <div class="col-md-1"><label class="form-label fw-medium mb-0">Bill No :</label></div>
+                    <div class="col-md-2"><input class="form-control form-control-sm" type="number" placeholder="Bill No" ></div> -->
+                    <div class="col-md-3 d-flex align-items-center">
+                        <span class="form-label fw-medium mb-0" style="width: 28%;">Bill No :</span>
+                        <input id="purchaseAdd_billNo" class="form-control form-control-sm" type="text" placeholder="Bill No">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                        <select id="purchaseAdd_vendor" class="form-select form-select-sm select2-cls medician-category" style="width: 100%;">
+                            <option value="" selected disabled>Select Vendor</option>
+                            @foreach ($vendors as $vendor)
+                                <option value="{{$vendor->id}}">{{$vendor->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 offset-md-3 text-end">
+                        <p class="mt-3 fw-medium">Date : <span class="fw-normal">09/05/2025 12:40 PM</span></p>
+                    </div>
                 </div>
-                <div class="col-md-3 d-flex align-items-center">
-                    <select id="purchaseAdd_vendor" class="form-select form-select-sm select2-cls medician-category" style="width: 100%;">
-                        <option value="" selected disabled>Select Vendor</option>
-                        @foreach ($vendors as $vendor)
-                            <option value="{{$vendor->id}}">{{$vendor->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3 offset-md-3 text-end">
-                    <p class="mt-3 fw-medium">Date : <span class="fw-normal">09/05/2025 12:40 PM</span></p>
+        </div>
+        <form id="purchaseAdd_form">
+        <div class="card-body pharmacy-purchase-content pt-1">
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <table class="pharmacy-purchase-bill-table table table-hover">
+                        <thead >
+                            <tr class="border-bottom">
+                                <th class="text-nowrap text-neutral-700">
+                                    Category
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    Name
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    Batch
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    Expiry Date1
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    MRP
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    Sale Price
+                                </th>
+                                
+                                <th class="text-nowrap text-neutral-700">
+                                    Qty
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    Purchase Rate
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    Tax
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    Amount
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fieldGroup">
+                                <td>
+                                    <select id="purchaseAdd_category0" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" onchange="getPurchaseMedicine(this.value,0)" required>
+                                            <option value="" selected disabled>Select</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{$category->id}}">{{$category->name}}</option>
+                                            @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                    <select id="purchaseAdd_name0" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls" required>
+                                        <option value="" selected>Select</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input id="purchaseAdd_batch0" name="purchaseAdd_batch[]" class="form-control form-control-sm" type="text" placeholder="Batch No" required>
+                                </td>
+                                <td>
+                                    <input id="purchaseAdd_expiry0" name="purchaseAdd_expiry[]" class="form-control form-control-sm expiry-date" type="text" placeholder="Expiry Date" required>
+                                </td>
+                                <td>
+                                    <input id="purchaseAdd_mrp0" name="purchaseAdd_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required>
+                                </td>
+                                <td>
+                                    <input id="purchaseAdd_salesPrice0" name="purchaseAdd_salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sale Price" required>
+                                </td>
+                                
+                                <td>
+                                    <input id="purchaseAdd_qty0" name="purchaseAdd_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" oninput="getAmount(0)" required>
+                                </td>
+                                <td>
+                                    <input id="purchaseAdd_purchaseRate0" name="purchaseAdd_purchaseRate[]" type="number" class="form-control form-control-sm" placeholder="Purchase Rate" oninput="getAmount(0)" required>
+                                </td>
+                                <td>
+                                    <input id="purchaseAdd_tax0" name="purchaseAdd_tax[]" type="number" class="form-control form-control-sm" placeholder="Tax" oninput="getTax(0)" required>
+                                </td>
+                                <td>
+                                    <input id="purchaseAdd_amount0" name="purchaseAdd_amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
+                                </td>
+                                
+                            </tr>
+                            <!-- replica table start -->
+                            <tr class="newRowAppend">
+                                
+                            </tr>
+                            <!-- replica table end -->
+                        </tbody>
+                    </table>
+                    <div>
+                            <button type="button" class="mx-1 fw-semibold w-64-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRow()">
+                                <i class="ri-add-line">Add</i>
+                            </button>
+                    </div>
                 </div>
             </div>
-      </div>
-      <div class="randNumNew" style="display: none;"></div>
-      <div class="sumTaxAmountCls" style="display: none;"></div>
-      <form id="purchaseAdd_form">
-      <div class="card-body pharmacy-purchase-content pt-1">
-          <div class="row mb-3">
-              <div class="col-md-12">
-                  <table class="pharmacy-purchase-bill-table table table-hover">
-                      <thead >
-                          <tr class="border-bottom">
-                              <th class="text-nowrap text-neutral-700">
-                                  Category
-                              </th>
-                              <th class="text-nowrap text-neutral-700">
-                                  Name
-                              </th>
-                              <th class="text-nowrap text-neutral-700">
-                                  Batch
-                              </th>
-                              <th class="text-nowrap text-neutral-700">
-                                  Expiry Date1
-                              </th>
-                              <th class="text-nowrap text-neutral-700">
-                                  MRP
-                              </th>
-                              <th class="text-nowrap text-neutral-700">
-                                  Sale Price
-                              </th>
-                             
-                              <th class="text-nowrap text-neutral-700">
-                                  Qty
-                              </th>
-                              <th class="text-nowrap text-neutral-700">
-                                  Purchase Rate
-                              </th>
-                               <th class="text-nowrap text-neutral-700">
-                                  Tax
-                              </th>
-                              <th class="text-nowrap text-neutral-700">
-                                  Amount
-                              </th>
-                              <th class="text-nowrap text-neutral-700">
-                                  
-                              </th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <tr class="fieldGroup">
-                              <td>
-                                  <select id="purchaseAdd_category0" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" onchange="getPurchaseMedicine(this.value,0)" required>
-                                        <option value="" selected disabled>Select</option>
-                                        @foreach ($categories as $category)
-                                            <option value="{{$category->id}}">{{$category->name}}</option>
-                                        @endforeach
-                                  </select>
-                              </td>
-                              <td>
-                                  <select id="purchaseAdd_name0" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls" required>
-                                      <option value="" selected>Select</option>
-                                  </select>
-                              </td>
-                              <td>
-                                  <input id="purchaseAdd_batch0" name="purchaseAdd_batch[]" class="form-control form-control-sm" type="text" placeholder="Batch No" required>
-                              </td>
-                              <td>
-                                  <input id="purchaseAdd_expiry0" name="purchaseAdd_expiry[]" class="form-control form-control-sm expiry-date" type="text" placeholder="Expiry Date" required>
-                              </td>
-                              <td>
-                                  <input id="purchaseAdd_mrp0" name="purchaseAdd_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required>
-                              </td>
-                              <td>
-                                  <input id="purchaseAdd_salesPrice0" name="purchaseAdd_salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sale Price" required>
-                              </td>
-                              
-                              <td>
-                                  <input id="purchaseAdd_qty0" name="purchaseAdd_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" oninput="getAmount(0)" required>
-                              </td>
-                              <td>
-                                  <input id="purchaseAdd_purchaseRate0" name="purchaseAdd_purchaseRate[]" type="number" class="form-control form-control-sm" placeholder="Purchase Rate" oninput="getAmount(0)" required>
-                              </td>
-                              <td>
-                                  <input id="purchaseAdd_tax0" name="purchaseAdd_tax[]" type="number" class="form-control form-control-sm" placeholder="Tax" oninput="getTax(0)" required>
-                              </td>
-                              <td>
-                                  <input id="purchaseAdd_amount0" name="purchaseAdd_amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
-                              </td>
-                              
-                          </tr>
-                          <!-- replica table start -->
-                          <tr class="newRowAppend">
-                             
-                          </tr>
-                          <!-- replica table end -->
-                      </tbody>
-                  </table>
-                  <div>
-                        <button type="button" class="mx-1 fw-semibold w-64-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRow()">
-                            <i class="ri-add-line">Add</i>
-                        </button>
-                  </div>
-              </div>
-          </div>
 
-          <div class="row">
-              <div class="col-md-6">
-                  <label class="form-label">Note</label>
-                  <textarea id="purchaseAdd_naration" name="#0" class="form-control " rows="4" cols="50" placeholder="Note"></textarea>
-              </div>
-               <div class="col-md-4 offset-2">
-                  <table class="table table-sm">
-                    <tr>
-                      <td class="border-0" colspan="2">Total</td>
-                      <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_totalAmt">0</span></td>
-                    </tr>
-                    <tr>
-                      <td class="border-0 align-middle">Discount</td>
-                      <td class="border-0"><div class="d-flex align-items-center">
-                        <input id="purchaseAdd_discount" class="form-control form-control-sm discount-value-field" type="text" value="0" placeholder="Discount" oninput="getDiscount(this.value)"><span class="ms-1">%</span></div>
-                      </td>
-                      <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_discountAmt"></td>
-                    </tr>
-                    <tr>
-                      <td class="border-0" colspan="2">Taxes</td>
-                      <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_taxAmt">0</span></td>
-                    </tr>
-                    <tr>
-                      <td class="border-0" colspan="2">Net Amount</td>
-                      <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_netTotalAmt">0</span></td>
-                    </tr>
-                    <tr>
-                      <td colspan="2" class="border-0">
-                        <select id="purchaseAdd_paymentMode" class="form-select form-select-sm ">
-                          <option value="">Payment Mode</option>
-                          <option value="Card">Card</option>
-                          <option value="UPI">UPI</option>
-                          <option value="Cash">Cash</option>
-                      </select></td>
-                      <td class="border-0">
-                         <input id="purchaseAdd_payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount">
-                      </td>
-                    </tr>
-                  </table>
-              </div>
-          </div>
-      </div>
-      <div class=" pharmacy-footer card-footer border-top">
-        <div class="text-end">
-              <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-          </div>
-      </div>
-      <form>
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Note</label>
+                    <textarea id="purchaseAdd_naration" name="#0" class="form-control " rows="4" cols="50" placeholder="Note"></textarea>
+                </div>
+                <div class="col-md-4 offset-2">
+                    <table class="table table-sm">
+                        <tr>
+                        <td class="border-0" colspan="2">Total</td>
+                        <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_totalAmt">0</span></td>
+                        </tr>
+                        <tr>
+                        <td class="border-0 align-middle">Discount</td>
+                        <td class="border-0"><div class="d-flex align-items-center">
+                            <input id="purchaseAdd_discount" class="form-control form-control-sm discount-value-field" type="text" value="0" placeholder="Discount" oninput="getDiscount(this.value)"><span class="ms-1">%</span></div>
+                        </td>
+                        <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_discountAmt"></td>
+                        </tr>
+                        <tr>
+                        <td class="border-0" colspan="2">Taxes</td>
+                        <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_taxAmt">0</span></td>
+                        </tr>
+                        <tr>
+                        <td class="border-0" colspan="2">Net Amount</td>
+                        <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_netTotalAmt">0</span></td>
+                        </tr>
+                        <tr>
+                        <td colspan="2" class="border-0">
+                            <select id="purchaseAdd_paymentMode" class="form-select form-select-sm ">
+                            <option value="">Payment Mode</option>
+                            <option value="Card">Card</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Cash">Cash</option>
+                        </select></td>
+                        <td class="border-0">
+                            <input id="purchaseAdd_payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount">
+                        </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class=" pharmacy-footer card-footer border-top">
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
+            </div>
+        </div>
+    <form>
     </div>
 </div>
 <!-- modal extra-field start -->

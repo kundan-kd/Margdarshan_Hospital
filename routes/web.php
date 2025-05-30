@@ -153,6 +153,7 @@ Route::get('/billing-add',[BillingController::class,'billingAdd'])->name('billin
 Route::get('/billing-medicine-name',[BillingController::class,'getMedicineNames'])->name('billing.getMedicineNames');
 Route::get('/billing-add-batch',[BillingController::class,'getBatchNumbers'])->name('billing-add.getBatchNumbers');
 Route::get('/billing-add-batch-expity',[BillingController::class,'getBatchExpiryDate'])->name('billing-add.getBatchExpiryDate');
+Route::post('/billing-add-data',[BillingController::class,'billingAddDatas'])->name('billing-add.billingAddDatas');
 });
 
 

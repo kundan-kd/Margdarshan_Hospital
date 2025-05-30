@@ -261,7 +261,7 @@ $ddate = date("d/m/yy");
 @section('extra-js')
 <script>
   const viewAppointments = "{{route('appointment.viewAppointments')}}";
-  const addNewPatient = "{{route('appointment-patient.addNewPatient')}}";
+  const addNewPatient = "{{route('appointment-patient.addNewPatient')}}"; // this route also used in 'billing-add.blade.php' page
   const searchPatient = "{{route('appointment-patient.searchPatient')}}";
   const getPatient = "{{route('appointment-patient.getPatient')}}";
   const getDoctorData = "{{route('appointment-patient.getDoctorData')}}";

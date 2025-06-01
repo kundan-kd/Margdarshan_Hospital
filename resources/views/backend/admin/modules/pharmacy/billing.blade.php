@@ -13,18 +13,18 @@ Billing
     </div>
     <div class="card basic-data-table">
       <div class="card-body">
-        <table class="table bordered-table mb-0" id="purchase-list-table" data-page-length='10'>
+        <table class="table bordered-table mb-0" id="billing-list-table" data-page-length='10'>
           <thead>
             <tr>
               <th scope="col" class="fw-medium">Patient Name</th>
               <th scope="col" class="fw-medium">Billing Date & Time</th>
               <th scope="col" class="fw-medium">Bill No.</th>
-              <th scope="col" class="fw-medium">Net Amount</th>
+              <th scope="col" class="fw-medium">Doctor</th>
               <th scope="col" class="fw-medium">Discount</th>
               <th scope="col" class="fw-medium">Total</th>
+              <th scope="col" class="fw-medium">Net Amount</th>
               <th scope="col" class="fw-medium">Paid Amount</th>
               <th scope="col" class="fw-medium">Due</th>
-              <th scope="col" class="fw-medium">Naration</th>
               <th scope="col" class="fw-medium">Action</th>
             </tr>
           </thead>
@@ -39,8 +39,7 @@ Billing
 @endsection
 @section('extra-js')
 <script>
-  const purchaseView = "{{route('purchase.purchaseView')}}";
-  const deletePurchasedetails = "{{route('purchase.deletePurchasedetails')}}";
+  const billingView = "{{route('billing.billingView')}}";
 </script>
-<script src="{{asset('backend/assets/js/custom/admin/pharmacy/purchase.js')}}"></script>
+<script src="{{asset('backend/assets/js/custom/admin/pharmacy/billing.js')}}"></script>
 @endsection

@@ -1,18 +1,18 @@
-function addNewRowBilling() {
+function addNewRowBillingEddit() {
     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
       $.ajax({
         url:getBillingCategoryDatas,
         type:"GET",
         success:function(response){
-            let getCategoryData = response.data;
-    let newRowDataBilling = `<tr class="fieldGroup">
+            let getCategoryDataEdit = response.data;
+    let newRowDataBillingEdit = `<tr class="fieldGroup">
                               <td>
                                   <select id="billingAdd-category${rand}" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicine(this.value,${rand})">
                                         <option value="" selected disabled>Select</option>`;
-                    getCategoryData.forEach(element =>{
-                        newRowDataBilling += ` <option value="${element.id}">${element.name}</option>`;
+                    getCategoryDataEdit.forEach(element =>{
+                        newRowDataBillingEdit += ` <option value="${element.id}">${element.name}</option>`;
                         });
-                    newRowDataBilling += ` </select>
+                    newRowDataBillingEdit += ` </select>
                               </td>
                               <td>
                                   <select id="billingAdd-name${rand}" name="billingAdd-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetails(this.value,${rand})">
@@ -58,20 +58,20 @@ function addNewRowBilling() {
                               </td>
                           </tr>`;
 
-    $('.newRowAppendBilling').parent().append(newRowDataBilling); // Append properly to tbody
+    $('.newRowAppendBillingEdit').parent().append(newRowDataBillingEdit); // Append properly to tbody
 
     // Reinitialize Select2 for newly added row
     $('.select2-cls').select2();
        }
     });
 }
- function removeRowBilling(x){
+ function removeRowBillingEdit(x){
     x.closest("tr").remove(); // remove entire row with tr selector
-     getBillingAmount();
+     getBillingAmountEdit();
 
 }
 
-function getBillingMedicine(id,randNum){
+function getBillingMedicineEdit(id,randNum){
  $.ajax({
         url:getBillingMedicineNames,
         type:"GET",
@@ -82,7 +82,7 @@ function getBillingMedicine(id,randNum){
         success:function(response){
             // console.log(response);
         let getData = response.data;
-        let medicineDropdown1 = $("#billingAdd-name" + randNum); // Use the randNum to target the specific dropdown
+        let medicineDropdown1 = $("#billingEdit-name" + randNum); // Use the randNum to target the specific dropdown
         medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
         getData.forEach(element => {
             medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);
@@ -92,7 +92,7 @@ function getBillingMedicine(id,randNum){
     });
 }
 
-function getBatchDetails(id,randB){
+function getBatchDetailsEdit(id,randB){
     let medID = id;
     if(medID == null || medID == ''){
         medID = 0;}
@@ -104,9 +104,8 @@ function getBatchDetails(id,randB){
             },
             data:{id:medID},
             success:function(response){
-           //     console.log(response);
             let getData = response.data;
-            let batchDropdown2 = $("#billingAdd-batch" + randB); // Use the randNum to target the specific dropdown
+            let batchDropdown2 = $("#billingEdit-batch" + randB); // Use the randNum to target the specific dropdown
             batchDropdown2.find("option:not(:first)").remove(); // empity dropdown except first one
             getData.forEach(element => {
                 batchDropdown2.append(`<option value="${element.id}">${element.batch_no}</option>`);
@@ -116,7 +115,7 @@ function getBatchDetails(id,randB){
     });
 }
 
-function getBatchExpiry(id,randE){
+function getBatchExpiryEdit(id,randE){
     $.ajax({
         url:getBatchExpiryDate,
         type:"GET",
@@ -128,26 +127,52 @@ function getBatchExpiry(id,randE){
             // console.log(response);
         let getData = response.data[0];
         let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
-        $("#billingAdd-expiry" + randE).val(getData.expiry); 
-        $("#billingAdd-avlQty" + randE).val(avlQty); 
-        $("#billingAdd-salesPrice" + randE).val(getData.sales_price); 
-        $("#billingAdd-tax" + randE).val(getData.tax); 
+        $("#billingEdit-expiry" + randE).val(getData.expiry); 
+        $("#billingEdit-avlQty" + randE).val(avlQty); 
+        $("#billingEdit-salesPrice" + randE).val(getData.sales_price); 
+        $("#billingEdit-tax" + randE).val(getData.tax); 
         }
     });
 }
-function getBillingAmount(randA){
-    let qty = $("#billingAdd-qty" + randA).val();
+ function getBillingMedicineSelectedEdit(id,randNum) {
+        console.log('onload');
+         let billingID = $('#billingEdit_id' + randNum).val();
+        $.ajax({
+            url: getBillingNamesSelectEdit,
+            type: "GET",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: { id: id, billingID: billingID },
+            success: function (response) {
+                console.log(response);
+                let getData = response.data.nameData[0];
+                let getNameID = getData.name_id;
+                let getMedicineData = response.data.medicines;
+                // console.log(getNameID);
+                 let medicineDropdown = $("#billingEdit_name" + randNum);
+                medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
+                getMedicineData.forEach(element => {
+                   medicineDropdown.append(`<option value="${element.id}"${element.id == getNameID ? 'selected':''}>${element.name}</option>`);
+                });
+                medicineDropdown.trigger("change"); // Refresh Select2 dropdown
+            }
+        });
+    }
+
+function getBillingAmountEdit(randA){
+    let qty = $("#billingEdit-qty" + randA).val();
     if(qty <= 0){
         qty = 0;
     }
-    let salesPrice = $("#billingAdd-salesPrice" + randA).val();
-    let tax = $("#billingAdd-tax" + randA).val();
+    let salesPrice = $("#billingEdit-salesPrice" + randA).val();
+    let tax = $("#billingEdit-tax" + randA).val();
     let amount = qty * salesPrice; // Calculate total amount before taxng tax
-    $('#billingAdd-amount'+randA).val(amount);
-    let currAmount = $('#billingAdd-amount'+randA).val();
+    $('#billingEdit-amount'+randA).val(amount);
+    let currAmount = $('#billingEdit-amount'+randA).val();
     let currTaxAmount = (currAmount * tax)/100;
-    $('#billingAdd-taxAmount'+randA).val(currTaxAmount);
-    updateTotalBilling();
+    $('#billingEdit-taxAmount'+randA).val(currTaxAmount);
+    updateTotalBillingEdit();
 
     
 }
@@ -174,7 +199,7 @@ function getBillingAmount(randA){
 //     let net_amount_after_discount = parseFloat(total_amount) - discountAmount + total_tax_after_discount;
 //      $('.billingAdd-totalNetAmount').html(net_amount_after_discount.toFixed(2));
 // }
-function updateTotalBilling() {
+function updateTotalBillingEdit() {
     // Calculate total amount and total tax amount
     let total_amount = $('input[name="billingAdd-amount[]"]').map(function() { return parseFloat($(this).val()) || 0; }).get();
     let total_tax_amount = $('input[name="billingAdd-taxAmount[]"]').map(function() { return parseFloat($(this).val()) || 0; }).get();
@@ -203,7 +228,7 @@ function updateTotalBilling() {
         $('.billingAdd-discountAmount').html('0.00');
     }
 }
-function resetAddPatient(){
+function resetAddPatientEdit(){
     $('#billingAdd-patientForm')[0].reset();
     $('.billingAdd-patientName_errorCls').addClass('d-none');
     $('.billingAdd-guardianName_errorCls').addClass('d-none');
@@ -214,106 +239,106 @@ function resetAddPatient(){
     $('.billingAdd-patientAddess_errorCls').addClass('d-none');
 }
 
-$('#billingAdd-patientForm').on('submit',function(e){
-     e.preventDefault();
-    let patientName  = validateField('billingAdd-patientName', 'input');
-    let guardianName = validateField('billingAdd-guardianName', 'input');
-    // let patientGender = validateField('patientGender', 'radio');
-    let patientBloodType = validateField('billingAdd-patientBloodType', 'select');
-    let patientDOB = validateField('billingAdd-patientDOB', 'select');
-    let patientMStatus = validateField('billingAdd-patientMStatus', 'select');     
-    let patientMobile = validateField('billingAdd-patientMobile', 'mobile');
-    let patientAddess = validateField('billingAdd-patientAddess', 'input');
-        if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
+// $('#billingAdd-patientForm').on('submit',function(e){
+//      e.preventDefault();
+//     let patientName  = validateField('billingAdd-patientName', 'input');
+//     let guardianName = validateField('billingAdd-guardianName', 'input');
+//     // let patientGender = validateField('patientGender', 'radio');
+//     let patientBloodType = validateField('billingAdd-patientBloodType', 'select');
+//     let patientDOB = validateField('billingAdd-patientDOB', 'select');
+//     let patientMStatus = validateField('billingAdd-patientMStatus', 'select');     
+//     let patientMobile = validateField('billingAdd-patientMobile', 'mobile');
+//     let patientAddess = validateField('billingAdd-patientAddess', 'input');
+//         if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
            
-            let name = $('#billingAdd-patientName').val();
-            let guardian_name = $('#billingAdd-guardianName').val();
-            let gender = $('input[name="billingAdd-patientGender"]:checked').val(); // Corrected na
-            let bloodtype = $('#billingAdd-patientBloodType').val();
-            let dob = $('#billingAdd-patientDOB').val();
-            let mstatus = $('#billingAdd-patientMStatus').val();
-            let mobile = $('#billingAdd-patientMobile').val();
-            let address = $('#billingAdd-patientAddess').val();
-            let alt_mobile = $('#billingAdd-patientAltMobile').val();
-            let allergy = $('#billingAdd-patientAllergy').val();
-            $.ajax({
-                url: billingAddNewPatient,
-                type:"POST",
-                headers:{
-                    'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-                },
-                data:{
-                name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
-                },
-                success:function(response){
-                    if(response.success){
-                        toastSuccessAlert('New Patient added successfully');
-                        $('#billingAdd-patientModal').modal('hide');
-                        setTimeout(function(){
-                            window.location.reload();
-                        },1500);
-                    }else{
-                        console.log('error found');
-                    }
-                },
-                error:function(xhr, status, error){
-                    console.log(xhr.respnseText);
-                    alert('An error occurred: '+error);
-                }
-            });
-        }else{
-            console.log("Please fill all required fields");
-        }    
-});
+//             let name = $('#billingAdd-patientName').val();
+//             let guardian_name = $('#billingAdd-guardianName').val();
+//             let gender = $('input[name="billingAdd-patientGender"]:checked').val(); // Corrected na
+//             let bloodtype = $('#billingAdd-patientBloodType').val();
+//             let dob = $('#billingAdd-patientDOB').val();
+//             let mstatus = $('#billingAdd-patientMStatus').val();
+//             let mobile = $('#billingAdd-patientMobile').val();
+//             let address = $('#billingAdd-patientAddess').val();
+//             let alt_mobile = $('#billingAdd-patientAltMobile').val();
+//             let allergy = $('#billingAdd-patientAllergy').val();
+//             $.ajax({
+//                 url: billingAddNewPatient,
+//                 type:"POST",
+//                 headers:{
+//                     'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+//                 },
+//                 data:{
+//                 name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
+//                 },
+//                 success:function(response){
+//                     if(response.success){
+//                         toastSuccessAlert('New Patient added successfully');
+//                         $('#billingAdd-patientModal').modal('hide');
+//                         setTimeout(function(){
+//                             window.location.reload();
+//                         },1500);
+//                     }else{
+//                         console.log('error found');
+//                     }
+//                 },
+//                 error:function(xhr, status, error){
+//                     console.log(xhr.respnseText);
+//                     alert('An error occurred: '+error);
+//                 }
+//             });
+//         }else{
+//             console.log("Please fill all required fields");
+//         }    
+// });
 
-$('#billingAdd-Form').on('submit',function(e){
-  e.preventDefault();
+// $('#billingAdd-Form').on('submit',function(e){
+//   e.preventDefault();
  
-  let patientIDCheck  = validateField('billingAdd-patient', 'select');
-  console.log(patientIDCheck);
-  if(patientIDCheck == false){
-    return;
-  }
-  let category = $('select[name="billingAdd-category[]"]').map(function(){return $(this).val();}).get();
-  let name = $('select[name="billingAdd-name[]"]').map(function(){return $(this).val();}).get();
-  let batchNo = $('select[name="billingAdd-batch[]"]').map(function(){return $(this).val();}).get();
-  let expiry = $('input[name="billingAdd-expiry[]"]').map(function(){return $(this).val();}).get();
-  let qty = $('input[name="billingAdd-qty[]"]').map(function(){return $(this).val();}).get();
-  let salesPrice = $('input[name="billingAdd-salesPrice[]"]').map(function(){return $(this).val();}).get();
-  let taxPer = $('input[name="billingAdd-tax[]"]').map(function(){return $(this).val();}).get();
-  let taxAmount = $('input[name="billingAdd-taxAmount[]"]').map(function(){return $(this).val();}).get();
-  let amount = $('input[name="billingAdd-amount[]"]').map(function(){return $(this).val();}).get();
+//   let patientIDCheck  = validateField('billingAdd-patient', 'select');
+//   console.log(patientIDCheck);
+//   if(patientIDCheck == false){
+//     return;
+//   }
+//   let category = $('select[name="billingAdd-category[]"]').map(function(){return $(this).val();}).get();
+//   let name = $('select[name="billingAdd-name[]"]').map(function(){return $(this).val();}).get();
+//   let batchNo = $('select[name="billingAdd-batch[]"]').map(function(){return $(this).val();}).get();
+//   let expiry = $('input[name="billingAdd-expiry[]"]').map(function(){return $(this).val();}).get();
+//   let qty = $('input[name="billingAdd-qty[]"]').map(function(){return $(this).val();}).get();
+//   let salesPrice = $('input[name="billingAdd-salesPrice[]"]').map(function(){return $(this).val();}).get();
+//   let taxPer = $('input[name="billingAdd-tax[]"]').map(function(){return $(this).val();}).get();
+//   let taxAmount = $('input[name="billingAdd-taxAmount[]"]').map(function(){return $(this).val();}).get();
+//   let amount = $('input[name="billingAdd-amount[]"]').map(function(){return $(this).val();}).get();
 
-   let billNo = $('.billingAdd-billNo').html();
-  let patientID = $('#billingAdd-patient').val();
-  let resDoctor = $('#billingAdd-resDoctor').val();
-  let outDoctor = $('#billingAdd-outDoctor').val();
-  let notes = $('#billingAdd-note').val();
-  let totalAmount = parseFloat($('.billingAdd-totalAmount').html());
-  let discountPer = $('#billingAdd-discountPer').val();
-  let totalDiscountAmount = parseFloat($('.billingAdd-discountAmount').html());
-  let totalTaxAmount = parseFloat($('.billingAdd-totalTax').html());
-  let totalNetAmount = parseFloat($('.billingAdd-totalNetAmount').html());
-  let paymentMode = $('#billingAdd-paymentMode').val();
-  let payAmount = $('#billingAdd-payAmount').val();
-  let dueAmount = totalNetAmount - payAmount;
-  dueAmount = dueAmount.toFixed(2);
-  $.ajax({
-    url:billingAddDatas,
-    type:"POST",
-    headers:{
-        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-    },
-    data:{
-        category:category,name:name,batchNo:batchNo,expiry:expiry,qty:qty,salesPrice:salesPrice,taxPer:taxPer,taxAmount:taxAmount,amount:amount,billNo:billNo,patientID:patientID,resDoctor:resDoctor,outDoctor:outDoctor,notes:notes,totalAmount:totalAmount,discountPer:discountPer,totalDiscountAmount:totalDiscountAmount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
-    },
-    success:function(response){
-        console.log(response);
-        if(response.success){
-             toastSuccessAlert('Medicine Billings successfully done');
-        }else{
-             toastErrorAlert('something error found');
-        }
-    }
-  });
-});
+//    let billNo = $('.billingAdd-billNo').html();
+//   let patientID = $('#billingAdd-patient').val();
+//   let resDoctor = $('#billingAdd-resDoctor').val();
+//   let outDoctor = $('#billingAdd-outDoctor').val();
+//   let notes = $('#billingAdd-note').val();
+//   let totalAmount = parseFloat($('.billingAdd-totalAmount').html());
+//   let discountPer = $('#billingAdd-discountPer').val();
+//   let totalDiscountAmount = parseFloat($('.billingAdd-discountAmount').html());
+//   let totalTaxAmount = parseFloat($('.billingAdd-totalTax').html());
+//   let totalNetAmount = parseFloat($('.billingAdd-totalNetAmount').html());
+//   let paymentMode = $('#billingAdd-paymentMode').val();
+//   let payAmount = $('#billingAdd-payAmount').val();
+//   let dueAmount = totalNetAmount - payAmount;
+//   dueAmount = dueAmount.toFixed(2);
+//   $.ajax({
+//     url:billingAddDatas,
+//     type:"POST",
+//     headers:{
+//         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+//     },
+//     data:{
+//         category:category,name:name,batchNo:batchNo,expiry:expiry,qty:qty,salesPrice:salesPrice,taxPer:taxPer,taxAmount:taxAmount,amount:amount,billNo:billNo,patientID:patientID,resDoctor:resDoctor,outDoctor:outDoctor,notes:notes,totalAmount:totalAmount,discountPer:discountPer,totalDiscountAmount:totalDiscountAmount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
+//     },
+//     success:function(response){
+//         console.log(response);
+//         if(response.success){
+//              toastSuccessAlert('Medicine Billings successfully done');
+//         }else{
+//              toastErrorAlert('something error found');
+//         }
+//     }
+//   });
+// });

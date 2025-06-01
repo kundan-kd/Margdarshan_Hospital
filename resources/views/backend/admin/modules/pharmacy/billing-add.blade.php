@@ -24,12 +24,14 @@ Billing-add
           </div>
           <div class="d-flex align-items-center">
               <div class="mx-1">
-               <select id="billingAdd-patient" class="form-select form-select-sm select2-cls" required>
+                <label for="billingAdd-patient" style="display: none;">Patient Name</label>
+               <select id="billingAdd-patient" class="form-select form-select-sm select2-cls" oninput="validateField(this.id,'select')">
                 <option value="">Select Patient</option>
                 @foreach ($patients as $patient)
                 <option value="{{$patient->id}}">{{$patient->name}} ({{$patient->patient_id}})</option>
                 @endforeach
               </select>
+              <div class="billingAdd-patient_errorCls d-none"></div>
               </div>
               <button class="mx-1 fw-semibold w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#billingAdd-patientModal" onclick="resetAddPatient()">
                   <i class="ri-add-line"></i>
@@ -66,7 +68,7 @@ Billing-add
                                     Sales Price (₹)
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
-                                    Tax
+                                    Tax (%)
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
                                     Amount (₹)

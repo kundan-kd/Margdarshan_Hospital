@@ -80,7 +80,7 @@ Billing-edit
                             <tr class="fieldGroup">
                             <td>
                                 <input type="hidden" id="billingEdit_id{{$item->id}}" name="billingEdit_id[]" value="{{$item->id}}">
-                                    <select id="billingEdit-category0" name="billingEdit-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicineEdit(this.value,0)" required>
+                                    <select id="billingEdit-category{{$item->id}}" name="billingEdit-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicineEdit(this.value,{{$item->id}})" required>
                                         <option value="" selected>Select</option>
                                         @foreach ($categories as $category)
                                         <option value="{{$category->id}}"{{$item->category_id == $category->id ? 'selected':''}}>{{$category->name}}</option>
@@ -88,39 +88,38 @@ Billing-edit
                                     </select>
                                 </td>
                                 <td>
-                                    <select id="billingEdit-name0" name="billingEdit-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetailsEdit(this.value,0)" required>
-                                        <option value="" selected>Select</option>
+                                    <select id="billingEdit-name{{$item->id}}" name="billingEdit-name[]" class="form-select form-select-sm select2-cls w-100"  required>
+                                        <option value="">Select</option>
                                     </select>
                                 </td>
                                 <td>
-                                    <select id="billingEdit-batch0" name="billingEdit-batch[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchExpiryEdit(this.value,0)" required>
-                                        <option selected>Select</option>
+                                    <select id="billingEdit-batch{{$item->id}}" name="billingEdit-batch[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchExpiryEdit(this.value,{{$item->id}})" required>
+                                        <option value="">Select</option>
                                     </select>
                                 </td>
                                 <td>
                                     <div class=" position-relative">
-                                        <input id="billingEdit-expiry0" name="billingEdit-expiry[]" class="form-control radius-8 bg-base"  type="text" value="" value="{{$item->expiry}}" readonly>
-                                    
+                                        <input id="billingEdit-expiry{{$item->id}}" name="billingEdit-expiry[]" class="form-control radius-8 bg-base"  type="text" value="" value="{{$item->expiry}}" readonly>
                                     </div>
                                 </td>
                                 <td>
-                                    <input id="billingEdit-qty0" name="billingEdit-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" {{$item->qty}} oninput="getBillingAmountEdit(0)" required>
+                                    <input id="billingEdit-qty{{$item->id}}" name="billingEdit-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" {{$item->qty}} oninput="getBillingAmountEdit({{$item->id}})" required>
                                 </td>
                                 <td>
-                                    <input id="billingEdit-avlQty0" name="billingEdit-avlQty[]" type="number" class="form-control form-control-sm" value="" placeholder="Avilable Qty" readonly>
+                                    <input id="billingEdit-avlQty{{$item->id}}" name="billingEdit-avlQty[]" type="number" class="form-control form-control-sm" value="" placeholder="Avilable Qty" readonly>
                                 </td>
                                 <td>
-                                    <input id="billingEdit-salesPrice0" name="billingEdit-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" {{$item->sales_price}} readonly>
+                                    <input id="billingEdit-salesPrice{{$item->id}}" name="billingEdit-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" {{$item->sales_price}} readonly>
                                 </td>
                                 <td>
-                                    <input id="billingEdit-tax0" name="billingEdit-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" {{$item->tax_per}} readonly>
+                                    <input id="billingEdit-tax{{$item->id}}" name="billingEdit-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" {{$item->tax_per}} readonly>
                                 </td>
 
                                 <td style="display: none;">
-                                    <input id="billingEdit-taxAmount0" name="billingEdit-taxAmount[]" class="form-control form-control-sm" type="number" value="">
+                                    <input id="billingEdit-taxAmount{{$item->id}}" name="billingEdit-taxAmount[]" class="form-control form-control-sm" type="number" value="">
                                 </td>
                                 <td>
-                                    <input id="billingEdit-amount0" name="billingEdit-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" {{$item->amount}} readonly>
+                                    <input id="billingEdit-amount{{$item->id}}" name="billingEdit-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" {{$item->amount}} readonly>
                                 </td>
                             </tr>
                           @endforeach
@@ -145,47 +144,47 @@ Billing-edit
                           <select id="billingEdit-resDoctor" class="form-select form-select-sm select2-cls  w-100">
                               <option value="" selected>Select</option>
                             @foreach ($doctors as $doctor)
-                                <option value="{{$doctor->id}}">{{$doctor->firstname}} {{$doctor->lastname}}</option>
+                                <option value="{{$doctor->id}}"{{$doctor->id == $doctors[0]->id ? 'selected':''}}>{{$doctor->firstname}} {{$doctor->lastname}}</option>
                             @endforeach
                           </select>
                         </div>
                         <div class="col-md-6 mb-3">
                           <label class="form-label fw-medium">Out Doctor Name</label>
-                          <input id="billingEdit-outDoctor" type="text" class="form-control form-control-sm" value="{{$billings[0]->out_doctor_name}}">
+                          <input id="billingEdit-outDoctor" type="text" class="form-control form-control-sm" value="{{$billings[0]->out_doctor_name ?? ''}} ">
                         </div>
                     </div>
                     <label class="form-label fw-medium">Note</label>
-                    <textarea id="billingEdit-note" class="form-control " rows="4" cols="50" placeholder="Note">{{$billings[0]->naration}}</textarea>
+                    <textarea id="billingEdit-note" class="form-control " rows="4" cols="50" placeholder="Note">{{$billings[0]->naration ?? ''}}</textarea>
                 </div>
                 <div class="col-md-4 offset-2">
                     <table class="table table-sm">
                       <tr>
                         <td class="border-0" colspan="2">Total</td>
-                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalAmount">0</span></td>
+                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalAmount">{{$billings[0]->total_amount}}</span></td>
                       </tr>
                       <tr>
                         <td class="border-0 align-middle">Discount (₹)</td>
-                        <td class="border-0"><div class="d-flex align-items-center"><input id="billingEdit-discountPer" class="form-control form-control-sm discount-value-field" type="text" placeholder="Discount" value="" oninput="getBillingAmountEdit()"><span class="ms-1">%</span></div></td>
-                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-discountAmount">0</span></td>
+                        <td class="border-0"><div class="d-flex align-items-center"><input id="billingEdit-discountPer" class="form-control form-control-sm discount-value-field" type="text" placeholder="Discount" value="{{$billings[0]->discount_per}}" oninput="getBillingAmountEdit()"><span class="ms-1">%</span></div></td>
+                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-discountAmount">{{$billings[0]->discount_amount}}</span></td>
                       </tr>
                       <tr>
                         <td class="border-0" colspan="2">Taxes (₹)</td>
-                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalTax">0</span></td>
+                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalTax">{{$billings[0]->taxes}}</span></td>
                       </tr>
                       <tr>
                         <td class="border-0" colspan="2">Net Amount (₹)</td>
-                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalNetAmount">0</span></td>
+                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalNetAmount">{{$billings[0]->net_amount}}</span></td>
                       </tr>
                       <tr>
                         <td colspan="2" class="border-0">
                           <select id="billingEdit-paymentMode" class="form-select form-select-sm select2-cls">
                             <option value="">Select Payment Mode</option>
                           @foreach ($paymentmodes as $paymentmode)
-                              <option value="{{$paymentmode->id}}">{{$paymentmode->name}}</option>
+                              <option value="{{$paymentmode->id}}" {{$paymentmode->id == $billings[0]->payment_mode ? 'selected':''}}>{{$paymentmode->name}}</option>
                           @endforeach
                         </select></td>
                         <td class="border-0">
-                          <input id="billingEdit-payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount">
+                          <input id="billingEdit-payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount" value="{{$billings[0]->paid_amount}}">
                         </td>
                       </tr>
                     </table>
@@ -205,7 +204,11 @@ Billing-edit
 @endsection
 @section('extra-js')
 <script>
-    const getPurchaseNamesSelectEdit = "{{route('purchase.getPurchaseNamesSelectEdit')}}";
+     const getBillingNamesSelectEdit = "{{route('billing-edit.getBillingNamesSelectEdit')}}";
+     const getBatchExpiryDateEdit = "{{route('billing-add.getBatchExpiryDate')}}";
+     const getBillingCategoryDataEdit = "{{route('purchase.getCategoryDatas')}}"; //also used somewhere
+     const getBillingMedicineNameEdit = "{{route('billing.getMedicineNames')}}"; //also used in billing-add.js
+     const getBatchNumberEdit =  "{{route('billing-add.getBatchNumbers')}}"; //also used in billing-add.js
 
 // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
@@ -215,16 +218,15 @@ Billing-edit
     }
     getDatePicker('#billingAdd-patientDOB'); 
 
-window.onload = function() {
-    document.querySelectorAll('[id^="billingEdit_category"]').forEach(function(selectElement) {
-        var selectedValue = selectElement.value;
-        var billingItemId = selectElement.id.replace("billingEdit_category", "");
-        
-        if (selectedValue) {
-            getBillingMedicineSelectedEdit(selectedValue,billingItemId);
-        }
-    });
-};
+    window.onload = function() {
+        document.querySelectorAll('[id^="billingEdit-category"]').forEach(function(selectElement) {
+            var categoryvalue = selectElement.value;
+            var categoryId = selectElement.id.replace("billingEdit-category", "");
+            if (categoryvalue) {
+                getBillingMedicineSelectedEdit(categoryvalue,categoryId);
+            }
+        });
+    };
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/pharmacy/billing-edit.js')}}"></script>
 @endsection

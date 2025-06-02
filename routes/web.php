@@ -156,6 +156,9 @@ Route::get('/billing-add-batch',[BillingController::class,'getBatchNumbers'])->n
 Route::get('/billing-add-batch-expity',[BillingController::class,'getBatchExpiryDate'])->name('billing-add.getBatchExpiryDate');
 Route::post('/billing-add-data',[BillingController::class,'billingAddDatas'])->name('billing-add.billingAddDatas');
 Route::get('/billing-edit-page/{id}',[BillingController::class,'billingEditPage']);
+Route::get('/billing-edit-name-details',[BillingController::class,'getBillingNamesSelectEdit'])->name('billing-edit.getBillingNamesSelectEdit');
+// Route::get('/billing-edit-batch',[BillingController::class,'getBatchNumbersEdit'])->name('billing-edit.getBatchNumbersEdit');
+
 });
 
 

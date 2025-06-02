@@ -182,4 +182,11 @@ class BillingController extends Controller
         $paymentmodes = PaymentMode::where('status',1)->get();
         return view('backend.admin.modules.pharmacy.billing-edit',compact('billings','billingItems','categories','doctors','patients','bloodtypes','paymentmodes'));
     }
+    public function getBillingNamesSelectEdit(Request $request){
+        $getMedicineData = Medicine::where('category_id',$request->catValue)->get();
+        $getNameData = BillingItem::where('id',$request->billingID)->get(['name_id','batch_no']);
+        $batch_no = PurchaseItem::where('name_id',$getNameData[0]->name_id)->get();
+        $data = ['medicines'=>$getMedicineData,'itemsData'=>$getNameData,'batchDetails'=>$batch_no];
+        return response()->json(['success'=>'Medicine data found','data'=>$data],200);
+    }
 }

@@ -1,4 +1,5 @@
 function addNewRowBillingEdit() {
+    $('.expity-select-status').html(1);
     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
       $.ajax({
         url:getBillingCategoryDataEdit,
@@ -8,7 +9,7 @@ function addNewRowBillingEdit() {
             let newRowDataBillingEdit = `<tr class="fieldGroup">
                               <td>
                                   <select id="billingEdit-category${rand}" name="billingEdit-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicineEdit(this.value,${rand})">
-                                        <option value="" selected disabled>Select</option>`;
+                                        <option value="">Select</option>`;
                     getCategoryDataEdit.forEach(element =>{
                         newRowDataBillingEdit += ` <option value="${element.id}">${element.name}</option>`;
                         });
@@ -16,12 +17,12 @@ function addNewRowBillingEdit() {
                               </td>
                               <td>
                                   <select id="billingEdit-name${rand}" name="billingEdit-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetailsEdit(this.value,${rand})">
-                                      <option value="" selected disabled>Select</option>
+                                      <option value="" >Select</option>
                                   </select>
                               </td>
                               <td>
                                   <select id="billingEdit-batch${rand}" name="billingEdit-batch[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchExpiryEdit(this.value,${rand})">
-                                      <option value="" selected>Select</option>
+                                      <option value="">Select</option>
                                   </select>
                               </td>
                               <td>
@@ -75,12 +76,12 @@ function getBillingMedicineEdit(id,randN){
         },
         data:{id:id},
         success:function(response){
-            // console.log(response);
+        //     console.log(response);
         let getData = response.data;
         let billingEditName = $("#billingEdit-name" + randN); // Use the randNum to target the specific dropdown
         billingEditName.find("option:not(:first)").remove(); // empity dropdown except first one
         getData.forEach(element => {
-            console.log(element);
+          //  console.log(element);
            billingEditName.append(`<option value="${element.id}">${element.name}</option>`);
         });
         billingEditName.trigger("change"); // Refresh Select2 dropdown
@@ -89,6 +90,7 @@ function getBillingMedicineEdit(id,randN){
 }
 
 function getBatchDetailsEdit(id,randB){
+    let expiry_select_status = $('.expity-select-status').html();
     let medID = id;
     if(medID == null || medID == ''){
         medID = 0;}
@@ -100,35 +102,42 @@ function getBatchDetailsEdit(id,randB){
             },
             data:{id:medID},
             success:function(response){
+               // console.log(response);
             let getData = response.data;
+             let getBillingData = response.billingData[0];
             let batchDropdown2 = $("#billingEdit-batch" + randB); // Use the randNum to target the specific dropdown
             batchDropdown2.find("option:not(:first)").remove(); // empity dropdown except first one
             getData.forEach(element => {
-                batchDropdown2.append(`<option value="${element.id}">${element.batch_no}</option>`);
+                if(expiry_select_status == 1){
+                    batchDropdown2.append(`<option value="${element.id}">${element.batch_no}</option>`);
+                }else{
+                    batchDropdown2.append(`<option value="${element.id}" ${element.id == getBillingData.batch_no ? 'selected':''}>${element.batch_no}</option>`);
+                }
             });
             batchDropdown2.trigger("change"); // Refresh Select2 dropdown
             }
     });
+   // $('.expity-select-status').html(0)
 }
 
-function getBatchExpiryEdit(id,randE){
-    $.ajax({
-        url:getBatchExpiryDateEdit,
-        type:"GET",
-        headers:{
-            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-        },
-        data:{id:id},
-        success:function(response){
-        let getData = response.data[0];
-        let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
-        $("#billingEdit-expiry" + randE).val(getData.expiry); 
-        $("#billingEdit-avlQty" + randE).val(avlQty); 
-        $("#billingEdit-salesPrice" + randE).val(getData.sales_price); 
-        $("#billingEdit-tax" + randE).val(getData.tax); 
-        }
-    });
-}
+// function getBatchExpiryEdit(id,randE){
+//     $.ajax({
+//         url:getBatchExpiryDateEdit,
+//         type:"GET",
+//         headers:{
+//             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+//         },
+//         data:{id:id},
+//         success:function(response){
+//         let getData = response.data[0];
+//         let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
+//         $("#billingEdit-expiry" + randE).val(getData.expiry); 
+//         $("#billingEdit-avlQty" + randE).val(avlQty); 
+//         $("#billingEdit-salesPrice" + randE).val(getData.sales_price); 
+//         $("#billingEdit-tax" + randE).val(getData.tax); 
+//         }
+//     });
+// }
  function getBillingMedicineSelectedEdit(catValue,randNum) {
         let billingID = $('#billingEdit_id' + randNum).val();
       //  console.log('catId--'+catId);
@@ -172,7 +181,7 @@ function getBatchExpiryEdit(id,randE){
             data:{id:batchValue},
             success:function(response){
                 let getData = response.data[0];
-                console.log(getData);
+               // console.log(getData);
                 let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
                 $("#billingEdit-expiry" + randNum).val(getData.expiry); 
                 $("#billingEdit-qty" + randNum).val(getData.qty); 
@@ -235,13 +244,69 @@ function updateTotalBillingEdit() {
         $('.billingEdit-discountAmount').html('0.00');
     }
 }
-// function resetAddPatientEdit(){
-//     $('#billingAdd-patientForm')[0].reset();
-//     $('.billingAdd-patientName_errorCls').addClass('d-none');
-//     $('.billingAdd-guardianName_errorCls').addClass('d-none');
-//     $('.billingAdd-patientBloodType_errorCls').addClass('d-none');
-//     $('.billingAdd-patientDOB_errorCls').addClass('d-none');
-//     $('.billingAdd-patientMStatus_errorCls').addClass('d-none');
-//     $('.billingAdd-patientMobile_errorCls').addClass('d-none');
-//     $('.billingAdd-patientAddess_errorCls').addClass('d-none');
-// }
+
+$('#billingEdit-Form').on('submit',function(e){
+  e.preventDefault();
+ 
+  let patientIDCheck  = validateField('billingEdit-patient', 'select');
+  if(patientIDCheck == false){
+    return;
+  }
+  let billing_id = $('#billingEdit_billing_id').val();
+  let editID = $('input[name="billingEdit_id[]"]').map(function(){return $(this).val();}).get();
+  let category = $('select[name="billingEdit-category[]"]').map(function(){return $(this).val();}).get();
+  let name = $('select[name="billingEdit-name[]"]').map(function(){return $(this).val();}).get();
+  let batchNo = $('select[name="billingEdit-batch[]"]').map(function(){return $(this).val();}).get();
+  let expiry = $('input[name="billingEdit-expiry[]"]').map(function(){return $(this).val();}).get();
+  let qty = $('input[name="billingEdit-qty[]"]').map(function(){return $(this).val();}).get();
+  let salesPrice = $('input[name="billingEdit-salesPrice[]"]').map(function(){return $(this).val();}).get();
+  let taxPer = $('input[name="billingEdit-tax[]"]').map(function(){return $(this).val();}).get();
+  let taxAmount = $('input[name="billingEdit-taxAmount[]"]').map(function(){return $(this).val();}).get();
+  let amount = $('input[name="billingEdit-amount[]"]').map(function(){return $(this).val();}).get();
+
+  let billNo = $('.billingEdit-billNo').html();
+  let patientID = $('#billingEdit-patient').val();
+  let resDoctor = $('#billingEdit-resDoctor').val();
+  let outDoctor = $('#billingEdit-outDoctor').val();
+  let notes = $('#billingEdit-note').val();
+  let totalAmount = parseFloat($('.billingEdit-totalAmount').html());
+  let discountPer = $('#billingEdit-discountPer').val();
+  let totalDiscountAmount = parseFloat($('.billingEdit-discountAmount').html());
+  let totalTaxAmount = parseFloat($('.billingEdit-totalTax').html());
+  let totalNetAmount = parseFloat($('.billingEdit-totalNetAmount').html());
+  let paymentMode = $('#billingEdit-paymentMode').val();
+  let payAmount = $('#billingEdit-payAmount').val();
+  let dueAmount = totalNetAmount - payAmount;
+  dueAmount = dueAmount.toFixed(2);
+  $.ajax({
+    url:billingEditDatas,
+    type:"POST",
+    headers:{
+        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+    },
+    data:{
+        billing_id:billing_id,editID:editID,category:category,name:name,batchNo:batchNo,expiry:expiry,qty:qty,salesPrice:salesPrice,taxPer:taxPer,taxAmount:taxAmount,amount:amount,billNo:billNo,patientID:patientID,resDoctor:resDoctor,outDoctor:outDoctor,notes:notes,totalAmount:totalAmount,discountPer:discountPer,totalDiscountAmount:totalDiscountAmount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
+    },
+    success:function(response){
+        if(response.success){
+             toastSuccessAlert('Medicine Billing updated successfully');
+        }else{
+             toastErrorAlert('something error found');
+        }
+    }
+  });
+});
+
+function checkBillingPayAmount(payAmount){
+ let dueAmount = $('.billingEdit-totalPaidAmount').html();
+ dueAmount = parseFloat(dueAmount);
+if (payAmount > dueAmount) {
+    $('.billingEdit-payAmount-error').removeClass('d-none').html('Pay Amount Exceeded Due Amount').addClass('text-danger');
+    $('#billingEdit-payAmount').val(dueAmount); // Reset to max possible value
+    return;
+} else {
+    $('.billingEdit-payAmount-error').addClass('d-none');
+}
+}
+
+

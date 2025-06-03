@@ -13,14 +13,10 @@ Billing-edit
     <div class="pharmacy-purchase-wrapper card">
       <div class="card-header pb-4 border-bottom-0">
         <div class=" bg-neutral-100 d-flex align-items-center justify-content-between px-11">
+             <input type="hidden" id="billingEdit_billing_id" value="{{$billings[0]->id}}">
           <div class="d-flex align-items-center">
-            @php
-              $randomNumber = time().rand(10,99);
-              date_default_timezone_set('Asia/Kolkata');
-              $time = date('m/d/Y');
-            @endphp
-            <p class="mt-3 fw-medium">Bill No : <span class="fw-normal billingEdit-billNo">{{$randomNumber}}</span></p>
-            <p class="mt-3 fw-medium mx-5">Date : <span class="fw-normal">{{ $time}}</span></p>
+            <p class="mt-3 fw-medium">Bill No : <span class="fw-normal billingEdit-billNo">{{$billings[0]->bill_no}}</span></p>
+            <p class="mt-3 fw-medium mx-5">Date : <span class="fw-normal">{{$billings[0]->created_at}}</span></p>
           </div>
           <div class="d-flex align-items-center">
               <div class="mx-1">
@@ -28,7 +24,7 @@ Billing-edit
                <select id="billingEdit-patient" class="form-select form-select-sm select2-cls" oninput="validateField(this.id,'select')">
                 <option value="">Select Patient</option>
                 @foreach ($patients as $patient)
-                <option value="{{$patient->id}}">{{$patient->name}} ({{$patient->patient_id}})</option>
+                <option value="{{$patient->id}}"{{$patient->id == $billings[0]->patient_id ? 'selected':''}}>{{$patient->name}} ({{$patient->patient_id}})</option>
                 @endforeach
               </select>
               <div class="billingAdd-patient_errorCls d-none"></div>
@@ -39,6 +35,7 @@ Billing-edit
           </div>
         </div>
       </div>
+      <div class="expity-select-status" style="display:none;"></div>
       <form action="" id="billingEdit-Form">
         <div class="card-body pharmacy-purchase-content pt-1">
             <div class="row mb-3">
@@ -81,14 +78,14 @@ Billing-edit
                             <td>
                                 <input type="hidden" id="billingEdit_id{{$item->id}}" name="billingEdit_id[]" value="{{$item->id}}">
                                     <select id="billingEdit-category{{$item->id}}" name="billingEdit-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicineEdit(this.value,{{$item->id}})" required>
-                                        <option value="" selected>Select</option>
+                                        <option value="">Select</option>
                                         @foreach ($categories as $category)
                                         <option value="{{$category->id}}"{{$item->category_id == $category->id ? 'selected':''}}>{{$category->name}}</option>
                                         @endforeach
                                     </select>
                                 </td>
                                 <td>
-                                    <select id="billingEdit-name{{$item->id}}" name="billingEdit-name[]" class="form-select form-select-sm select2-cls w-100"  required>
+                                    <select id="billingEdit-name{{$item->id}}" name="billingEdit-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetailsEdit(this.value,{{$item->id}})"  required>
                                         <option value="">Select</option>
                                     </select>
                                 </td>
@@ -175,25 +172,30 @@ Billing-edit
                         <td class="border-0" colspan="2">Net Amount (₹)</td>
                         <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalNetAmount">{{$billings[0]->net_amount}}</span></td>
                       </tr>
+                        <tr>
+                        <td class="border-0" colspan="2">Paid Amount (₹)</td>
+                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalPaidAmount">{{$billings[0]->due_amount}}</span></td>
+                      </tr>
                       <tr>
                         <td colspan="2" class="border-0">
                           <select id="billingEdit-paymentMode" class="form-select form-select-sm select2-cls">
                             <option value="">Select Payment Mode</option>
                           @foreach ($paymentmodes as $paymentmode)
-                              <option value="{{$paymentmode->id}}" {{$paymentmode->id == $billings[0]->payment_mode ? 'selected':''}}>{{$paymentmode->name}}</option>
+                              <option value="{{$paymentmode->id}}">{{$paymentmode->name}}</option>
                           @endforeach
                         </select></td>
                         <td class="border-0">
-                          <input id="billingEdit-payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount" value="{{$billings[0]->paid_amount}}">
+                          <input id="billingEdit-payAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkBillingPayAmount(this.value)">
                         </td>
-                      </tr>
-                    </table>
+                    </tr>
+                </table>
+                <div class="billingEdit-payAmount-error d-none"></div>
                 </div>
             </div>
         </div>
         <div class=" pharmacy-footer card-footer border-top">
           <div class="text-end">
-                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i>Submit</button>
+                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Update</button>
             </div>
         </div>
      </form>
@@ -209,6 +211,7 @@ Billing-edit
      const getBillingCategoryDataEdit = "{{route('purchase.getCategoryDatas')}}"; //also used somewhere
      const getBillingMedicineNameEdit = "{{route('billing.getMedicineNames')}}"; //also used in billing-add.js
      const getBatchNumberEdit =  "{{route('billing-add.getBatchNumbers')}}"; //also used in billing-add.js
+     const billingEditDatas =  "{{route('billing-Edit.billingEditDatas')}}"; //also used in billing-add.js
 
 // Flat pickr or date picker js 
     function getDatePicker (receiveID) {

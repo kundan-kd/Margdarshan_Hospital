@@ -1,5 +1,5 @@
  function patientDetailsUsingToken(token){
- console.log(token);
+ console.log('toltoken');
 }
 
 let patientDetail = '';

@@ -78,8 +78,8 @@ Route::post('/patient-delete',[PatientController::class,'deletePatientData'])->n
 
 Route::get('/opd-out',[OpdoutController::class,'index'])->name('opd-out.index');
 Route::post('/opd-out-details',[OpdoutController::class,'viewOpdOut'])->name('opd-out.viewOpdOut');
-Route::post('/opd-out-doctor-getpatinet',[OpdoutController::class,'getPatientUsingDoctor'])->name('opd-out.getPatientUsingDoctor');
-Route::get('/opd-out-patient-details',[OpdoutController::class,'patientDetails'])->name('opd-out.patientDetails');
+// Route::post('/opd-out-doctor-getpatinet',[OpdoutController::class,'getPatientUsingDoctor'])->name('opd-out.getPatientUsingDoctor');
+// Route::get('/opd-out-patient-details',[OpdoutController::class,'patientDetails'])->name('opd-out.patientDetails');
 
 Route::get('/medicine',[MedicineController::class,'index'])->name('medicine.index');
 Route::get('/medicine-details',[MedicineController::class,'medicineView'])->name('medicine.medicineView');
@@ -159,6 +159,8 @@ Route::get('/billing-edit-page/{id}',[BillingController::class,'billingEditPage'
 Route::get('/billing-edit-name-details',[BillingController::class,'getBillingNamesSelectEdit'])->name('billing-edit.getBillingNamesSelectEdit');
 Route::post('/billing-update',[BillingController::class,'billingUpdateDatas'])->name('billing-Edit.billingEditDatas');
 // Route::get('/billing-edit-batch',[BillingController::class,'getBatchNumbersEdit'])->name('billing-edit.getBatchNumbersEdit');
+Route::get('/opd-out-detail',[OpdoutController::class,'opdOutDetail'])->name('opd-out.detail');
+
 
 });
 

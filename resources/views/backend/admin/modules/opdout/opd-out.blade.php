@@ -49,15 +49,15 @@
               <th scope="col" class="fw-medium">Token no.</th>
               <th scope="col" class="fw-medium">Doctor</th>
               <th scope="col" class="fw-medium">Appointment Date</th>
-              {{-- <th scope="col" class="fw-medium">Phone</th>
-              <th scope="col" class="fw-medium">Sex</th>
+              <th scope="col" class="fw-medium">Phone</th>
+              <th scope="col" class="fw-medium">Gender</th>
               <th scope="col" class="fw-medium">Status</th>
-              <th scope="col" class="fw-medium">Action</th> --}}
+              <th scope="col" class="fw-medium">Action</th>
             </tr>
           </thead>
           <tbody>
            <tr>
-              <td><a href="{{route('opd-out.detail')}}" class="text-primary-600">OPD_123</a></td>
+              <td><a href="#" class="text-primary-600">OPD_123</a></td>
               <td>Arun Kumar</td>
               <td>07-05-2025 03:28 PM</td>
               {{-- <td>+91 1234 567 890</td>

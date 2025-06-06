@@ -14,8 +14,21 @@ let table = $('#opd-out-list-table').DataTable({
         }
     },
     columns: [
-        { data: 'patient_name', name: 'patient_name' },
         { data: 'token', name: 'token' },
-        { data: 'department_id', name: 'department_id' }
+        { data: 'doctor', name: 'doctor' },
+        { data: 'appointment_date', name: 'appointment_date' },
+        { data: 'mobile', name: 'mobile' },
+        { data: 'gender', name: 'gender' },
+        { data: 'status', name: 'status' },
+        { data: 'action', name: 'action' }
     ]
 });
+
+function getListFilter(){
+    $('#opd-out-list-table').ajax.reload();
+}
+
+function patientDetailsUsingToken(id){
+     window.open('opd-out-details/' + id, '_blank');
+}
+

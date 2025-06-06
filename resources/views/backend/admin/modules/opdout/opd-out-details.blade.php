@@ -46,33 +46,36 @@
                 <div class="tab-pane fade show active" id="pills-Overview" role="tabpanel" aria-labelledby="Overview-tab" tabindex="0">
                     <div class="row">
                         <div class="col-md-5 p-3 border-end">
-                          <h6 class="text-md fw-medium border-bottom pb-8">NIRAJ KUMAR</h6>
+                          <h6 class="text-md fw-medium border-bottom pb-8">{{$patients[0]->name}}</h6>
                             <div class=" pb-8">
                                  <table class="cutomer-details w-75 table-sm">
                                   <tr>
-                                    <td class="fw-medium">Sex :</td>
-                                    <td> M</td>
+                                    <td class="fw-medium">Gender :</td>
+                                    <td>{{$patients[0]->gender}}</td>
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">DOB :</td>
-                                    <td> 24/08/1992 (32)</td>
+                                    <td> {{$patients[0]->dob}}</td>
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">Guardian Name :</td>
-                                    <td> Abhimanuo Jindal</td>
+                                    <td> {{$patients[0]->guardian_name}}</td>
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">phone :</td>
-                                    <td> +91 1122 334 455</td>
+                                    <td>{{$patients[0]->mobile}}</td>
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">Bar Code :</td>
-                                    <td> <img src="./barcode.jpg" style="width: 100px;"></td>
+                                    <td> <img src="{{asset('backend/uploads/images/barcode.jpg')}}" style="width: 100px;"></td>
                                   </tr>
                                  </table>
                             </div>
+                            @php
+                              $doctors =  \App\Models\User::where('id',$appointments[0]->doctor_id)->get();
+                            @endphp
                             <h6 class="text-md fw-medium mt-11 border-bottom pb-8">CONSULTANT DOCTOR</h6>
-                            <p class="mb-1">Mohan Kumar Gupta</p>
+                            <p class="mb-1">{{$doctors[0]->firstname}} {{$doctors[0]->lastname}}</p>
                             <div class="d-flex align-items-center">
                               <p class="mb-0 mx-1">Finding :</p> 
                               <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#add-finding">
@@ -1250,20 +1253,22 @@
         <h6 class="modal-title fw-normal text-md text-white" id="opd-new-checkupLabel">Patient Details</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <form action="" id="opdOutVisit-modelForm">
       <div class="modal-body">
-          <div class="row">
+        <div class="row">
         <div class="col-md-6 pt-3">
           <div class="row gy-3">
              <div class="col-md-12">
                 <table class="table table-borderless pharmacy-bill-detail-table w-75 ">
                      <tbody>
+                      <input type="hidden" id="opdOutVisit-patientId" value="{{$patients[0]->id}}">
                       <tr>
                        <th class="fw-medium">Patient Name</th>
-                       <td class="text-neutral-700">Arun Kumar (1234)</td>
+                       <td class="text-neutral-700">{{$patients[0]->name}}</td>
                      </tr>
                      <tr>
                        <th class="fw-medium">Gender</th>
-                       <td class="text-neutral-700">Male</td>
+                       <td class="text-neutral-700">{{$patients[0]->gender}}</td>
                      </tr>
                      <tr>
                       <th class="fw-medium">Symptoms</th>
@@ -1273,28 +1278,29 @@
              </div>
              <div class="col-md-6">
                <label class="form-label fw-medium">Symptoms Type</label>
-               <select class="form-select form-select-sm select2" >
+               <select class="form-select form-select-sm select2" id="opdOutVisit-symptomType">
                  <option selected>Select</option>
                  <option value="1">Cough</option>
+                 <option value="2">Cold</option>
+                 <option value="3">Fever</option>
+                 <option value="4">Pain</option>
               </select>
              </div>
              <div class="col-md-6">
                <label class="form-label fw-medium">Symptoms Title</label>
-               <select class="form-select form-select-sm  " >
-                 <option selected>Select</option>
-              </select>
+                <input type="text" id="opdOutVisit-symptomTitle" class="form-control form-control-sm" placeholder="Symptoms Title">
              </div>
              <div class="col-md-6">
                <label class="form-label fw-medium">Symptoms Description</label>
-               <textarea  class="form-control " rows="1" placeholder="Symptoms Description"></textarea>
+               <textarea id="opdOutVisit-symptomDesc" class="form-control " rows="1" placeholder="Symptoms Description"></textarea>
              </div>
              <div class="col-md-6">
                <label class="form-label fw-medium">Previous Medical Issue</label>
-               <textarea  class="form-control " rows="1" placeholder="Previous Medical Issue"></textarea>
+               <textarea id="opdOutVisit-previousMedIssue" class="form-control " rows="1" placeholder="Previous Medical Issue"></textarea>
              </div>
              <div class="col-md-12">
                <label class="form-label fw-medium">Note</label>
-               <textarea  class="form-control " rows="2" placeholder="Note"></textarea>
+               <textarea  id="opdOutVisit-note" class="form-control " rows="2" placeholder="Note"></textarea>
              </div>
           </div>
         </div>
@@ -1303,26 +1309,27 @@
             <div class="col-md-6">
               <label class="form-label fw-medium">Admission Date <sup class="text-danger">*</sup></label>
               <div class=" position-relative">
-                    <input class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="text" placeholder="12/2024" readonly="readonly">
+                    <input id="opdOutVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="text" placeholder="12/2024" readonly="readonly">
                     <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
                 </div>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium">Case</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Case">
+              <input type="text" id="opdOutVisit-case" class="form-control form-control-sm" placeholder="Case">
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium">Casualty</label>
-              <select class="form-select form-select-sm select2" >
+              <select id="opdOutVisit-casuality" class="form-select form-select-sm select2" >
                  <option selected>No</option>
                  <option value="1">Yes</option>
               </select>
             </div>
             <div class="col-md-6">
                <label class="form-label fw-medium">Old Patient</label>
-              <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
+              <select id="opdOutVisit-oldPatient" class="form-select form-select-sm select2" >
+                 <option value="">Select</option>
                  <option value="1">Yes</option>
+                 <option value="0">No</option>
               </select>
             </div>
             <!-- <div class="col-md-6">
@@ -1331,10 +1338,10 @@
             </div> -->
             <div class="col-md-6">
               <label class="form-label fw-medium">Reference</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Reference">
+              <input id="opdOutVisit-reference" type="text" class="form-control form-control-sm" placeholder="Reference">
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium"> Consultant Doctor <sup class="text-danger">*</sup></label>
+              <label id="opdOutVisit-consultDoctor" class="form-label fw-medium"> Consultant Doctor <sup class="text-danger">*</sup></label>
                <select class="form-select form-select-sm select2" >
                  <option selected>Select</option>
                  <option value="1">Sunil Kumar (1234)</option>
@@ -1345,42 +1352,37 @@
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium"> Charge Category <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
+               <select id="opdOutVisit-chargeCategory" class="form-select form-select-sm select2" >
+                 <option value="">Select</option>
                  <option value="1">OPD Consultation Fees</option>
-                 <option value="1">OPD Service</option>
-                 <option value="1">OPD Insurance</option>
-                 <option value="1">Blood pressure check</option>
-                 <option value="1">Eye check</option>
-                 <option value="1">Cholesterol level check</option>
-                 <option value="1">Other Charges</option>
+                 <option value="2">OPD Service</option>
+                 <option value="3">OPD Insurance</option>
+                 <option value="4">Blood pressure check</option>
+                 <option value="5">Eye check</option>
+                 <option value="6">Cholesterol level check</option>
+                 <option value="7">Other Charges</option>
               </select>
             </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium"> Charge <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-              </select>
-            </div>
+           
             <div class="col-md-6">
               <label class="form-label fw-medium"> Applied Charge (₹) <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Applied Charge">
+               <input id="opdOutVisit-charge" type="number" class="form-control form-control-sm" placeholder="Applied Charge">
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium"> Discount %<sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Discount ">
+               <input id="opdOutVisit-discount" type="number" class="form-control form-control-sm" placeholder="Discount ">
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium"> Tax %<sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Discount ">
+               <input id="opdOutVisit-tax" type="number" class="form-control form-control-sm" placeholder="Discount ">
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium"> Amount (₹) <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Amount ">
+               <input id="opdOutVisit-amount" type="number" class="form-control form-control-sm" placeholder="Amount ">
             </div>
             <div class="col-md-6">
              <label class="form-label fw-medium"> Payment Mode</label>
-               <select class="form-select form-select-sm" id="payment-method">
+               <select id="opdOutVisit-paymentMode" class="form-select form-select-sm">
                 <option value="cash">Cash</option>
                 <option value="upi">UPI</option>
                 <option value="card">Card</option>
@@ -1388,32 +1390,13 @@
                 <option value="other">Other</option>
               </select>
             </div>
-            <div class="col-md-6" style="display: none;" id="upi">
-              <label class="form-label fw-medium ">UPI</label>
-              <select class="form-select form-select-sm" id="upi-number">
-                <option selected="">Select</option>
-                <option value="upi-reference-number">Google Pay</option>
-                <option value="upi-reference-number">Phone Pay</option>
-                <option value="upi-reference-number">Airtel Pay</option>
-              </select> 
-            </div>
-            
-            <div class="col-md-6" style="display: none;" id="card">
-              <label class="form-label fw-medium ">Card Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder="Enter Card Number">
-            </div>
-            <div class="col-md-6 cheque" style="display: none;">
-              <label class="form-label fw-medium ">Cheque Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder="Enter Cheque Number">
-            </div>
-            
-            <div class="col-md-6 mb-3" style="display: none;" id="upi-reference-no">
+            <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
               <label class="form-label fw-medium ">Reference Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder=" Enter reference number">
+              <input id="opdOutVisit-refNum" type="number" class="form-control form-control-sm" placeholder=" Enter payment reference number">
             </div>
             <div class="col-md-6 mb-3">
              <label class="form-label fw-medium">Paid Amount <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Paid Amount ">
+               <input id="opdOutVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount ">
             </div>
             <!-- <div class="col-md-6 mb-3">
               <label class="form-label fw-medium"> Live Consultation</label>
@@ -1427,9 +1410,11 @@
        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
+         <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"><i class="ri-checkbox-circle-line"></i> Submit</button>
       </div>
     </div>
+  </form>
   </div>
 </div>
 <!-- opd new checkup end -->
@@ -1976,4 +1961,17 @@
     </div>
   </div>
 </div>
+@endsection
+@section('extra-js')
+<script>
+  const opdOutVisitSubmit = "{{route('opd-out.opdOutVisitSubmit')}}"
+</script>
+    <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details.js')}}"></script>
+ {{-----------external js files added for page functions------------}}
+<script>
+$(document).ready(function() {
+    $('.select2-class').select2({
+    });
+});
+</script>
 @endsection

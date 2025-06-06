@@ -76,11 +76,6 @@ Route::get('/patient',[PatientController::class,'index'])->name('patient.index')
 Route::post('/patient-details',[PatientController::class,'viewPatients'])->name('patient.viewPatients');
 Route::post('/patient-delete',[PatientController::class,'deletePatientData'])->name('patient.deletePatientData');
 
-Route::get('/opd-out',[OpdoutController::class,'index'])->name('opd-out.index');
-Route::post('/opd-out-details',[OpdoutController::class,'viewOpdOut'])->name('opd-out.viewOpdOut');
-// Route::post('/opd-out-doctor-getpatinet',[OpdoutController::class,'getPatientUsingDoctor'])->name('opd-out.getPatientUsingDoctor');
-// Route::get('/opd-out-patient-details',[OpdoutController::class,'patientDetails'])->name('opd-out.patientDetails');
-
 Route::get('/medicine',[MedicineController::class,'index'])->name('medicine.index');
 Route::get('/medicine-details',[MedicineController::class,'medicineView'])->name('medicine.medicineView');
 Route::post('/medicine-add',[MedicineController::class,'medicineAdd'])->name('medicine.medicineAdd');
@@ -158,8 +153,11 @@ Route::post('/billing-add-data',[BillingController::class,'billingAddDatas'])->n
 Route::get('/billing-edit-page/{id}',[BillingController::class,'billingEditPage']);
 Route::get('/billing-edit-name-details',[BillingController::class,'getBillingNamesSelectEdit'])->name('billing-edit.getBillingNamesSelectEdit');
 Route::post('/billing-update',[BillingController::class,'billingUpdateDatas'])->name('billing-Edit.billingEditDatas');
-// Route::get('/billing-edit-batch',[BillingController::class,'getBatchNumbersEdit'])->name('billing-edit.getBatchNumbersEdit');
-Route::get('/opd-out-detail',[OpdoutController::class,'opdOutDetail'])->name('opd-out.detail');
+
+Route::get('/opd-out',[OpdoutController::class,'index'])->name('opd-out.index');
+Route::post('/opd-out-view',[OpdoutController::class,'viewOpdOut'])->name('opd-out.viewOpdOut');
+Route::get('/opd-out-details/{id}',[OpdoutController::class,'opdOutDetails']);
+Route::post('/opd-out-visit-add',[OpdoutController::class,'opdOutVisitSubmit'])->name('opd-out.opdOutVisitSubmit');
 
 
 });

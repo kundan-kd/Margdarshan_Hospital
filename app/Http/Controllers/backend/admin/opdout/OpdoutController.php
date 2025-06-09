@@ -4,6 +4,7 @@ namespace App\Http\Controllers\backend\admin\opdout;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\MedicineCategory;
 use App\Models\OpdoutVisit;
 use App\Models\Patient;
 use App\Models\User;
@@ -74,19 +75,20 @@ class OpdoutController extends Controller
 function opdOutDetails($id){
     $patients = Patient::where('id',$id)->get();
     $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
-    return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments'));
+    $medicineCategory = MedicineCategory::where('status',1)->get();
+    return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory'));
 }
 function opdOutVisitSubmit(Request $request){
    $validator = Validator::make($request->all(),[
             'patientId' => 'required',
-            'symptomType' => 'nullable',
-            'symptomTitle' => 'nullable',
-            'symptomDesc' => 'nullable',
+            // 'symptomType' => 'nullable',
+            'symptoms' => 'nullable',
+            // 'symptomDesc' => 'nullable',
             'previousMedIssue' => 'nullable',
             'note' => 'nullable',
             'admissionDate' => 'nullable',
-            'cases' => 'nullable',
-            'casuality' => 'nullable',
+            // 'cases' => 'nullable',
+            // 'casuality' => 'nullable',
             'oldPatient' => 'nullable',
             'reference' => 'nullable',
             'consultDoctor' => 'nullable',
@@ -105,14 +107,14 @@ function opdOutVisitSubmit(Request $request){
 
         $optoutVisit = new OpdoutVisit();
         $optoutVisit->patient_id = $request->patientId;
-        $optoutVisit->symptomType = $request->symptomType;
-        $optoutVisit->symptomTitle = $request->symptomTitle;
-        $optoutVisit->symptomDesc = $request->symptomDesc;
+        // $optoutVisit->symptomType = $request->symptomType;
+        $optoutVisit->symptoms = $request->symptoms;
+        // $optoutVisit->symptomDesc = $request->symptomDesc;
         $optoutVisit->previousMedIssue = $request->previousMedIssue;
         $optoutVisit->note = $request->note;
         $optoutVisit->admissionDate = $request->admissionDate;
-        $optoutVisit->cases = $request->cases;
-        $optoutVisit->casuality = $request->casuality;
+        // $optoutVisit->cases = $request->cases;
+        // $optoutVisit->casuality = $request->casuality;
         $optoutVisit->oldPatient = $request->oldPatient;
         $optoutVisit->consultDoctor = $request->consultDoctor;
         $optoutVisit->reference = $request->reference;

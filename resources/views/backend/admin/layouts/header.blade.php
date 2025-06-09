@@ -12,7 +12,7 @@
   <!-- BootStrap css -->
   <link rel="stylesheet" href="{{asset('backend/assets/css/lib/bootstrap.min.css')}}">
   <!-- Apex Chart css -->
-  <link rel="stylesheet" href="{{asset('backend/assets/css/lib/apexcharts.css')}}">
+  {{-- <link rel="stylesheet" href="{{asset('backend/assets/css/lib/apexcharts.css')}}"> --}}
   <!-- Data Table css -->
   <link rel="stylesheet" href="{{asset('backend/assets/css/lib/dataTables.min.css')}}">
   <!-- Text Editor css -->
@@ -99,7 +99,7 @@
             <a href="{{route('medicine.index')}}"><i class="ri-capsule-fill"></i>Medicine</a>
           </li>
           <li>
-            <a href="{{route('purchase.index')}}"><i class="ri-user-2-line"></i>Purchase</a>
+            <a href="{{route('purchase.index')}}"><i class="ri-shopping-bag-4-line"></i>Purchase</a>
           </li>
         </ul>
       </li>

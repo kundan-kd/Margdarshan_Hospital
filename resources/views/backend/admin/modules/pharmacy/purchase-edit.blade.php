@@ -203,7 +203,7 @@ purchase-edit
       </div>
       <div class=" pharmacy-footer card-footer border-top">
         <div class="text-end">
-              <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"><i class="ri-checkbox-circle-line"></i>Update</button>
+              <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"><i class="ri-checkbox-circle-line"></i> Update</button>
           </div>
       </div>
       <form>

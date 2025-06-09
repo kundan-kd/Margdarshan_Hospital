@@ -28,7 +28,7 @@ class BillingController extends Controller
             $purchase = Billing::get();
             return DataTables::of($purchase)
             ->addColumn('patient',function($row){
-                return $row->patientData->name;
+                return $row->patientData->name??'';
             })
             ->addColumn('created_at',function($row){
                 return $row->created_at;
@@ -83,7 +83,8 @@ class BillingController extends Controller
     public function getMedicineNames(Request $request){
         // dd($request->all());
         $getData = Medicine::where('category_id',$request->id)->get();
-        return response()->json(['success'=>'Medicine data found','data'=>$getData],200);
+        $billingItemData = BillingItem::where('id',$request->billingItemID)->get();
+        return response()->json(['success'=>'Medicine data found','data'=>$getData,'billingItem'=>$billingItemData],200);
     }
     public function getBatchNumbers(Request $request){
         $getPurchaseData = PurchaseItem::where('name_id',$request->id)->get();
@@ -189,6 +190,25 @@ class BillingController extends Controller
         $paymentmodes = PaymentMode::where('status',1)->get();
         return view('backend.admin.modules.pharmacy.billing-edit',compact('billings','billingItems','categories','doctors','patients','bloodtypes','paymentmodes'));
     }
+    // public function billingEditAutoLoadData(Request $request){
+    //     $billings = Billing::where('id',$request->id)->get();
+    //     $billingItems = BillingItem::where('billing_id',$request->id)->get();
+    //     $categories = MedicineCategory::where('status',1)->get();
+    //     $doctors = User::where('usertype_id',2)->where('status',1)->get();
+    //     $patients = Patient::where('status',1)->get(['id','patient_id','name']);
+    //     $bloodtypes = BloodType::where('status',1)->get();
+    //     $paymentmodes = PaymentMode::where('status',1)->get();
+    //     $data = [
+    //         'billings'=>$billings,
+    //         'billingItems'=>$billingItems,
+    //         'categories'=>$categories,
+    //         'doctors'=>$doctors,
+    //         'patients'=>$patients,
+    //         'bloodtypes'=>$bloodtypes,
+    //         'paymentmodes'=>$paymentmodes,
+    //     ];
+    //     return response()->json(['success'=>'Billing edit data found','getData'=>$data],200);
+    // }
     public function getBillingNamesSelectEdit(Request $request){
         $getMedicineData = Medicine::where('category_id',$request->catValue)->get();
         $getNameData = BillingItem::where('id',$request->billingID)->get(['name_id','batch_no']);
@@ -196,10 +216,12 @@ class BillingController extends Controller
         $data = ['medicines'=>$getMedicineData,'itemsData'=>$getNameData,'batchDetails'=>$batch_no];
         return response()->json(['success'=>'Medicine data found','data'=>$data],200);
     }
+
+
+
     public function billingUpdateDatas(Request $request)
-    {
-        // dd($request->all());
-        
+{
+
     try {
         $billing_id = $request->billing_id;
 
@@ -207,8 +229,11 @@ class BillingController extends Controller
         BillingItem::where('billing_id', $billing_id)->update(['status' => 0]);
 
         // Update or insert billing items
+        $item_idd = [];
         foreach ($request->editID as $key => $item_id) {
-            if (is_null($item_id)) {
+            array_push($item_idd, $item_id);
+
+            if (empty($item_id)) {  
                 // Insert new record
                 $billingItem = new BillingItem();
                 $billingItem->billing_id = $billing_id;
@@ -219,11 +244,11 @@ class BillingController extends Controller
                 $billingItem->qty = $request->qty[$key];
                 $billingItem->sales_price = $request->salesPrice[$key];
                 $billingItem->tax_per = $request->taxPer[$key];
-                $billingItem->tax_amount = $request->taxAmount[$key];
+                $billingItem->tax_amount = $request->taxAmount[$key] ?? null;
                 $billingItem->amount = $request->amount[$key];
                 $billingItem->status = 1; // Active record
                 $billingItem->save();
-            } else {
+            } else {  
                 // Update existing record
                 BillingItem::where('id', $item_id)
                     ->where('billing_id', $billing_id)
@@ -258,13 +283,17 @@ class BillingController extends Controller
             'paid_amount' => $request->payAmount,
             'due_amount' => $request->dueAmount
         ]);
+
+        // Insert payment details
         $billingPayments = new BillingPayment();
-            $billingPayments->billing_id = $billing_id;
-            $billingPayments->payment_mode_id = $request->paymentMode;
-            $billingPayments->amount = $request->payAmount;
-            if (!$billingPayments->save()) {
-                    throw new \Exception("Failed to insert billing payment record");
-                }
+        $billingPayments->billing_id = $billing_id;
+        $billingPayments->payment_mode_id = $request->paymentMode;
+        $billingPayments->amount = $request->payAmount;
+
+        if (!$billingPayments->save()) {
+            throw new \Exception("Failed to insert billing payment record");
+        }
+
         // Remove inactive records
         BillingItem::where('billing_id', $billing_id)->where('status', 0)->delete();
 
@@ -273,5 +302,84 @@ class BillingController extends Controller
         return response()->json(['success' => false, 'message' => 'Something went wrong', 'error' => $e->getMessage()]);
     }
 }
+//     public function billingUpdateDatas(Request $request)
+//     {
+//         // dd($request->all());
+        
+//     try {
+//         $billing_id = $request->billing_id;
+
+//         // Set old billing items to inactive
+//         BillingItem::where('billing_id', $billing_id)->update(['status' => 0]);
+
+//         // Update or insert billing items
+//         $item_idd = [];
+//         foreach ($request->editID as $key => $item_id) {
+//             array_push($item_idd,$item_id);
+//           if (!isset($item_id)) { 
+//                 // Insert new record
+//                 $billingItem = new BillingItem();
+//                 $billingItem->billing_id = $billing_id;
+//                 $billingItem->category_id = $request->category[$key];
+//                 $billingItem->name_id = $request->name[$key];
+//                 $billingItem->batch_no = $request->batchNo[$key];
+//                 $billingItem->expiry = $request->expiry[$key];
+//                 $billingItem->qty = $request->qty[$key];
+//                 $billingItem->sales_price = $request->salesPrice[$key];
+//                 $billingItem->tax_per = $request->taxPer[$key];
+//                 $billingItem->tax_amount = $request->taxAmount[$key] ?? null;
+//                 $billingItem->amount = $request->amount[$key];
+//                 $billingItem->status = 1; // Active record
+//                 $billingItem->save();
+//             } else {
+//                 // Update existing record
+//                 BillingItem::where('id', $item_id)
+//                     ->where('billing_id', $billing_id)
+//                     ->update([
+//                         'category_id' => $request->category[$key],
+//                         'name_id' => $request->name[$key],
+//                         'batch_no' => $request->batchNo[$key],
+//                         'expiry' => $request->expiry[$key],
+//                         'qty' => $request->qty[$key],
+//                         'sales_price' => $request->salesPrice[$key],
+//                         'tax_per' => $request->taxPer[$key],
+//                         'tax_amount' => $request->taxAmount[$key],
+//                         'amount' => $request->amount[$key],
+//                         'status' => 1
+//                     ]);
+//             }
+//         }
+// // dd($item_idd);
+//         // Update Billing Information
+//         Billing::where('id', $billing_id)->update([
+//             'bill_no' => $request->billNo,
+//             'patient_id' => $request->patientID,
+//             'res_doctor_id' => $request->resDoctor,
+//             'out_doctor_name' => $request->outDoctor,
+//             'naration' => $request->notes,
+//             'total_amount' => $request->totalAmount,
+//             'discount_per' => $request->discountPer,
+//             'discount_amount' => $request->totalDiscountAmount,
+//             'taxes' => $request->totalTaxAmount,
+//             'net_amount' => $request->totalNetAmount,
+//             'payment_mode' => $request->paymentMode,
+//             'paid_amount' => $request->payAmount,
+//             'due_amount' => $request->dueAmount
+//         ]);
+//         $billingPayments = new BillingPayment();
+//             $billingPayments->billing_id = $billing_id;
+//             $billingPayments->payment_mode_id = $request->paymentMode;
+//             $billingPayments->amount = $request->payAmount;
+//             if (!$billingPayments->save()) {
+//                     throw new \Exception("Failed to insert billing payment record");
+//                 }
+//         // Remove inactive records
+//         BillingItem::where('billing_id', $billing_id)->where('status', 0)->delete();
+
+//         return response()->json(['success' => true, 'message' => 'Billing updated successfully']);
+//     } catch (\Exception $e) {
+//         return response()->json(['success' => false, 'message' => 'Something went wrong', 'error' => $e->getMessage()]);
+//     }
+// }
 
     }

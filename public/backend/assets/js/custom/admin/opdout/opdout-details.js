@@ -1,14 +1,14 @@
 $('#opdOutVisit-modelForm').on('submit',function(e){
  e.preventDefault();
  let patientId = $('#opdOutVisit-patientId').val();
- let symptomType = $('#opdOutVisit-symptomType').val();
- let symptomTitle = $('#opdOutVisit-symptomTitle').val();
- let symptomDesc = $('#opdOutVisit-symptomDesc').val();
+//  let symptomType = $('#opdOutVisit-symptomType').val();
+ let symptoms = $('#opdOutVisit-symptomTitle').val();
+//  let symptomDesc = $('#opdOutVisit-symptomDesc').val();
  let previousMedIssue = $('#opdOutVisit-previousMedIssue').val();
  let note = $('#opdOutVisit-note').val();
  let admissionDate = $('#opdOutVisit-admissionDate').val();
- let cases = $('#opdOutVisit-case').val();
- let casuality = $('#opdOutVisit-casuality').val();
+//  let cases = $('#opdOutVisit-case').val();
+//  let casuality = $('#opdOutVisit-casuality').val();
  let oldPatient = $('#opdOutVisit-oldPatient').val();
  let reference = $('#opdOutVisit-reference').val();
  let consultDoctor = $('#opdOutVisit-consultDoctor').val();
@@ -24,7 +24,7 @@ $('#opdOutVisit-modelForm').on('submit',function(e){
     url:opdOutVisitSubmit,
     type:"POST",
     data:{
-        patientId:patientId,symptomType:symptomType,symptomTitle:symptomTitle,symptomDesc:symptomDesc,previousMedIssue:previousMedIssue,note:note,admissionDate:admissionDate,cases:cases,casuality:casuality,oldPatient:oldPatient,reference:reference,consultDoctor:consultDoctor,chargeCategory:chargeCategory,charge:charge,discount:discount,taxPer:taxPer,amount:amount,paymentMode:paymentMode,refNum:refNum,paidAmount:paidAmount
+        patientId:patientId,symptoms:symptoms,previousMedIssue:previousMedIssue,note:note,admissionDate:admissionDate,oldPatient:oldPatient,reference:reference,consultDoctor:consultDoctor,chargeCategory:chargeCategory,charge:charge,discount:discount,taxPer:taxPer,amount:amount,paymentMode:paymentMode,refNum:refNum,paidAmount:paidAmount
     },
     headers:{
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

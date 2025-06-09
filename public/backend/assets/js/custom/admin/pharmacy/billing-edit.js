@@ -1,3 +1,78 @@
+//  $('.select2-cls').select2();
+// function auto_load_data(id){
+// $.ajax({
+//     url:billingEditAutoLoadData,
+//     type:"POST",
+//     headers:{
+//         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+//     },
+//     data:{id:id},
+//     success:function(response){
+//     //    console.log('response');
+//         let billingItems = response.getData.billingItems;
+//     //    console.log(billingItems);
+//         let categoriesData = response.getData.categories;
+//         let billingMedData = '';
+//             billingItems.forEach(function(element){
+//             billingMedData +=`  <tr class="fieldGroup">
+//                             <td>
+//                                 <input type="hidden" id="billingEdit_id${element.id}" name="billingEdit_id[]" value="${element.id}">
+//                                      <select id="billingEdit-category${element.id}" name="billingEdit-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicineEdit(this.value,${element.id})" required>
+//                                         <option value="">Select</option>`;
+//                                         categoriesData.forEach(function(catData){
+//                                             billingMedData +=`<option value="${catData.id}" ${element.category_id == catData.id ?'selected':''}>${catData.name}</option>`;
+//                                         });
+//                                    billingMedData +=` </select>
+//                                 </td>
+//                                 <td>
+//                                     <select id="billingEdit-name${element.id}" name="billingEdit-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetailsEdit(this.value,${element.id})"  required>
+//                                         <option value="">Select</option>
+//                                     </select>
+//                                 </td>
+//                                 <td>
+//                                     <select id="billingEdit-batch${element.id}" name="billingEdit-batch[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchExpiryEdit(this.value,${element.id})"  required>
+//                                         <option value="">Select</option>
+//                                     </select>
+//                                 </td>
+//                                 <td>
+//                                     <div class=" position-relative">
+//                                         <input id="billingEdit-expiry${element.id}" name="billingEdit-expiry[]" class="form-control radius-8 bg-base"  type="text" value="" readonly>
+//                                     </div>
+//                                 </td>
+//                                 <td>
+//                                     <input id="billingEdit-qty${element.id}" name="billingEdit-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" oninput="getBillingAmountEdit(${element.id})" required>
+//                                 </td>
+//                                 <td>
+//                                     <input id="billingEdit-avlQty${element.id}" name="billingEdit-avlQty[]" type="number" class="form-control form-control-sm" value="" placeholder="Avilable Qty" readonly>
+//                                 </td>
+//                                 <td>
+//                                     <input id="billingEdit-salesPrice${element.id}" name="billingEdit-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" readonly> 
+//                                 </td>
+//                                 <td>
+//                                     <input id="billingEdit-tax${element.id}" name="billingEdit-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" readonly>
+//                                 </td>
+
+//                                 <td style="display: none;">
+//                                     <input id="billingEdit-taxAmount${element.id}" name="billingEdit-taxAmount[]" class="form-control form-control-sm" type="number" value="">
+//                                 </td>1
+//                                 <td>
+//                                     <input id="billingEdit-amount${element.id}" name="billingEdit-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
+//                                 </td>
+//                             </tr>`;
+//                              // **Invoke getBillingMedicineEdit() after appending the new row**
+//                                 setTimeout(() => {
+//                                     getBillingMedicineEdit(element.category_id, element.id);
+//                                 }, 500);
+
+//                         });
+//                         $('.billingEditMedicineData').html(billingMedData);
+//                         $('.select2-cls').select2();
+//     }
+// });
+// }
+
+
+
 function addNewRowBillingEdit() {
     $('.expity-select-status').html(1);
     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
@@ -8,6 +83,7 @@ function addNewRowBillingEdit() {
             let getCategoryDataEdit = response.data;
             let newRowDataBillingEdit = `<tr class="fieldGroup">
                               <td>
+                              <input type="hidden" id="billingEdit_id${rand}" name="billingEdit_id[]" value="">
                                   <select id="billingEdit-category${rand}" name="billingEdit-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicineEdit(this.value,${rand})">
                                         <option value="">Select</option>`;
                     getCategoryDataEdit.forEach(element =>{
@@ -74,22 +150,30 @@ function getBillingMedicineEdit(id,randN){
         headers:{
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
         },
-        data:{id:id},
+        data:{id:id,billingItemID:randN},
         success:function(response){
-        //     console.log(response);
         let getData = response.data;
         let billingEditName = $("#billingEdit-name" + randN); // Use the randNum to target the specific dropdown
-        billingEditName.find("option:not(:first)").remove(); // empity dropdown except first one
-        getData.forEach(element => {
-          //  console.log(element);
-           billingEditName.append(`<option value="${element.id}">${element.name}</option>`);
-        });
+        if(response.billingItem != ''){
+            let billingItem = response.billingItem[0];
+            billingEditName.find("option:not(:first)").remove(); // empity dropdown except first one
+            getData.forEach(element => {
+            billingEditName.append(`<option value="${element.id}" ${element.id == billingItem.name_id ? 'selected':''}>${element.name}</option>`);
+            });
+        }else{
+            billingEditName.find("option:not(:first)").remove(); // empity dropdown except first one
+            getData.forEach(element => {
+            billingEditName.append(`<option value="${element.id}">${element.name}</option>`);
+            });
+        }
         billingEditName.trigger("change"); // Refresh Select2 dropdown
         }
     });
 }
 
 function getBatchDetailsEdit(id,randB){
+    // console.log(id);
+    // console.log(randB);
     let expiry_select_status = $('.expity-select-status').html();
     let medID = id;
     if(medID == null || medID == ''){
@@ -140,8 +224,6 @@ function getBatchDetailsEdit(id,randB){
 // }
  function getBillingMedicineSelectedEdit(catValue,randNum) {
         let billingID = $('#billingEdit_id' + randNum).val();
-      //  console.log('catId--'+catId);
-       // console.log('billingid--'+billingID);
         $.ajax({
             url: getBillingNamesSelectEdit,
             type: "GET",
@@ -172,6 +254,7 @@ function getBatchDetailsEdit(id,randB){
     }
 
     function getBatchExpiryEdit(batchValue,randNum){
+
         $.ajax({
             url:getBatchExpiryDateEdit,
             type:"GET",
@@ -180,15 +263,17 @@ function getBatchDetailsEdit(id,randB){
             },
             data:{id:batchValue},
             success:function(response){
-                let getData = response.data[0];
-               // console.log(getData);
-                let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
-                $("#billingEdit-expiry" + randNum).val(getData.expiry); 
-                $("#billingEdit-qty" + randNum).val(getData.qty); 
-                $("#billingEdit-avlQty" + randNum).val(avlQty); 
-                $("#billingEdit-salesPrice" + randNum).val(getData.sales_price); 
-                $("#billingEdit-tax" + randNum).val(getData.tax); 
-                $("#billingEdit-amount" + randNum).val(getData.amount); 
+              //  console.log(response);
+                if(response.data != ''){
+                    let  getData = response.data[0];
+                    let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
+                    $("#billingEdit-expiry" + randNum).val(getData.expiry); 
+                    $("#billingEdit-qty" + randNum).val(getData.qty); 
+                    $("#billingEdit-avlQty" + randNum).val(avlQty); 
+                    $("#billingEdit-salesPrice" + randNum).val(getData.sales_price); 
+                    $("#billingEdit-tax" + randNum).val(getData.tax); 
+                    $("#billingEdit-amount" + randNum).val(getData.amount); 
+                    }
                 }
             });
     }

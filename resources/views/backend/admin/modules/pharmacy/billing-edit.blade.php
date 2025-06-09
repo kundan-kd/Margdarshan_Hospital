@@ -73,6 +73,7 @@ Billing-edit
                             </tr>
                         </thead>
                         <tbody>
+                            <div class="billingEditMedicineData"></div>
                           @foreach ($billingItems as $item)
                             <tr class="fieldGroup">
                             <td>
@@ -206,6 +207,7 @@ Billing-edit
 @endsection
 @section('extra-js')
 <script>
+     const billingEditAutoLoadData = "{{route('billing-edit.billingEditAutoLoadData')}}";
      const getBillingNamesSelectEdit = "{{route('billing-edit.getBillingNamesSelectEdit')}}";
      const getBatchExpiryDateEdit = "{{route('billing-add.getBatchExpiryDate')}}";
      const getBillingCategoryDataEdit = "{{route('purchase.getCategoryDatas')}}"; //also used somewhere
@@ -221,7 +223,11 @@ Billing-edit
     }
     getDatePicker('#billingAdd-patientDOB'); 
 
-    window.onload = function() {
+   
+</script>
+<script src="{{asset('backend/assets/js/custom/admin/pharmacy/billing-edit.js')}}"></script>
+<script>
+     window.onload = function() {
         document.querySelectorAll('[id^="billingEdit-category"]').forEach(function(selectElement) {
             var categoryvalue = selectElement.value;
             var categoryId = selectElement.id.replace("billingEdit-category", "");
@@ -230,6 +236,9 @@ Billing-edit
             }
         });
     };
+//     auto_load_data(document.getElementById('billingEdit_billing_id').value);
+//     $(document).ready(function() {
+    
+// });
 </script>
-<script src="{{asset('backend/assets/js/custom/admin/pharmacy/billing-edit.js')}}"></script>
 @endsection

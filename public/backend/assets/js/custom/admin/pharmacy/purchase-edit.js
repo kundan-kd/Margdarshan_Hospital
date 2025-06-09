@@ -193,7 +193,6 @@ function deleteRowEdit(x){
         });
     }
     function getPurchaseMedicineSelectedEdit(id,randNum) {
-        console.log('onload');
          let purchaseID = $('#purchaseEdit_id' + randNum).val();
         $.ajax({
             url: getPurchaseNamesSelectEdit,
@@ -203,11 +202,9 @@ function deleteRowEdit(x){
             },
             data: { id: id, purchaseID: purchaseID },
             success: function (response) {
-                console.log(response);
                 let getData = response.data.nameData[0];
                 let getNameID = getData.name_id;
                 let getMedicineData = response.data.medicines;
-                // console.log(getNameID);
                  let medicineDropdown = $("#purchaseEdit_name" + randNum);
                 medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
                 getMedicineData.forEach(element => {

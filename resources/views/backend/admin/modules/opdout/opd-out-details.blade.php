@@ -1183,7 +1183,7 @@
       </div>
       <div class="modal-body">
          <div class="row gy-3">
-           <div class="col-md-6">
+           {{-- <div class="col-md-6">
                 <label class="form-label fw-medium">Date <sup class="text-danger">*</sup></label>
                 <div class=" position-relative">
                     <input class="form-control radius-8 bg-base medication-date"  type="text" placeholder="12/2024">
@@ -1193,22 +1193,14 @@
             <div class="col-md-6">
                 <label class="form-label fw-medium">Time <sup class="text-danger">*</sup></label>
                 <input type="time" class="form-control form-control-sm" placeholder=" Test Name">
-            </div>
+            </div> --}}
             <div class="col-md-6">
                 <label class="form-label fw-medium">Medicine Category <sup class="text-danger">*</sup></label>
-                  <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option>Syrup</option>
-                      <option>Capsule</option>
-                      <option>Injection</option>
-                      <option>Ointment</option>
-                      <option>Cream</option>
-                      <option>Surgical</option>
-                      <option>Drops</option>
-                      <option>Inhalers</option>
-                      <option>Implants / Patches</option>
-                      <option>Liquid</option>
-                      <option>Preparations</option>
+                  <select class="form-select form-select-sm select2-cls" style="width: 100%">
+                      <option value="">Select</option>
+                      @foreach ($medicineCategory as $medCategory)
+                      <option value="{{$medCategory->id}}">{{$medCategory->name}}</option>
+                      @endforeach
                   </select>
             </div>
             <div class="col-md-6">
@@ -1270,13 +1262,13 @@
                        <th class="fw-medium">Gender</th>
                        <td class="text-neutral-700">{{$patients[0]->gender}}</td>
                      </tr>
-                     <tr>
+                     {{-- <tr>
                       <th class="fw-medium">Symptoms</th>
                       <td class="text-neutral-700"> Cold</td>
-                     </tr>
+                     </tr> --}}
                   </tbody></table>
              </div>
-             <div class="col-md-6">
+             {{-- <div class="col-md-6">
                <label class="form-label fw-medium">Symptoms Type</label>
                <select class="form-select form-select-sm select2" id="opdOutVisit-symptomType">
                  <option selected>Select</option>
@@ -1285,15 +1277,15 @@
                  <option value="3">Fever</option>
                  <option value="4">Pain</option>
               </select>
-             </div>
+             </div> --}}
              <div class="col-md-6">
-               <label class="form-label fw-medium">Symptoms Title</label>
-                <input type="text" id="opdOutVisit-symptomTitle" class="form-control form-control-sm" placeholder="Symptoms Title">
+               <label class="form-label fw-medium">Symptoms</label>
+                <input type="text" id="opdOutVisit-symptoms" class="form-control form-control-sm" placeholder="Symptoms Title">
              </div>
-             <div class="col-md-6">
+             {{-- <div class="col-md-6">
                <label class="form-label fw-medium">Symptoms Description</label>
                <textarea id="opdOutVisit-symptomDesc" class="form-control " rows="1" placeholder="Symptoms Description"></textarea>
-             </div>
+             </div> --}}
              <div class="col-md-6">
                <label class="form-label fw-medium">Previous Medical Issue</label>
                <textarea id="opdOutVisit-previousMedIssue" class="form-control " rows="1" placeholder="Previous Medical Issue"></textarea>
@@ -1313,7 +1305,7 @@
                     <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
                 </div>
             </div>
-            <div class="col-md-6">
+            {{-- <div class="col-md-6">
               <label class="form-label fw-medium">Case</label>
               <input type="text" id="opdOutVisit-case" class="form-control form-control-sm" placeholder="Case">
             </div>
@@ -1323,7 +1315,7 @@
                  <option selected>No</option>
                  <option value="1">Yes</option>
               </select>
-            </div>
+            </div> --}}
             <div class="col-md-6">
                <label class="form-label fw-medium">Old Patient</label>
               <select id="opdOutVisit-oldPatient" class="form-select form-select-sm select2" >
@@ -1969,9 +1961,11 @@
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details.js')}}"></script>
  {{-----------external js files added for page functions------------}}
 <script>
-$(document).ready(function() {
-    $('.select2-class').select2({
-    });
+  //  -- select2 js library included for dropdown search and select box.. other method for implenting used due to boostrap conflicts--
+ window.addEventListener('load', () => {
+    $('.select2-cls').select2({
+    dropdownParent: $('#opd-add-medication-dose')
+  });
 });
 </script>
 @endsection

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('opdout_visits', function (Blueprint $table) {
             $table->id();
             $table->integer('patient_id')->nullable();
-            $table->string('symptomType',50)->nullable();
-            $table->string('symptomTitle',100)->nullable();
-            $table->text('symptomDesc')->nullable();
+            // $table->string('symptomType',50)->nullable();
+            $table->string('symptoms',100)->nullable();
+            // $table->text('symptomDesc')->nullable();
             $table->text('previousMedIssue')->nullable();
             $table->text('note')->nullable();
             $table->string('admissionDate',40)->nullable();

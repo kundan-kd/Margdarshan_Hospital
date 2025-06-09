@@ -15,7 +15,7 @@
     <!-- Bootstrap js -->
     <script src="{{asset('backend/assets/js/lib/bootstrap.bundle.min.js')}}"></script>
     <!-- Apex Chart js -->
-    <script src="{{asset('backend/assets/js/lib/apexcharts.min.js')}}"></script>
+    {{-- <script src="{{asset('backend/assets/js/lib/apexcharts.min.js')}}"></script> --}}
     <!-- Data Table js -->
     <script src="{{asset('backend/assets/js/lib/dataTables.min.js')}}"></script>
     <!-- Iconify Font js -->
@@ -37,7 +37,7 @@
     <script src="{{asset('backend/assets/js/lib/audioplayer.js')}}"></script>
     <!-- main js -->
     <script src="{{asset('backend/assets/js/app.js')}}"></script>
-    <script src="{{asset('backend/assets/js/homeOneChart.js')}}"></script>
+    {{-- <script src="{{asset('backend/assets/js/homeOneChart.js')}}"></script> --}}
     <script src="{{asset('backend/assets/js/flatpickr.js')}}"></script>
     
     {{-- sweetalert cdn --}}

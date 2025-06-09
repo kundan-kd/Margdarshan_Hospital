@@ -137,7 +137,7 @@ medicines
       <div class="modal-footer pt-2 pb-3 border-top-0">
         <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
         <button type="submit" class="btn btn-primary-600  btn-sm fw-normal medicineAddBtn">Save</button>
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal medicineUpdateBtn d-none" onclick="medicineUpdate(document.getElementById('createMed_id').value)">Update</button>
+        <button type="button" class="btn btn-primary-600  btn-sm fw-normal medicineUpdateBtn d-none" onclick="medicineUpdate(document.getElementById('createMed_id').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
          </form>
       </div>
     </div>

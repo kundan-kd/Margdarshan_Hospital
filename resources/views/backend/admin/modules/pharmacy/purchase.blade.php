@@ -8,7 +8,7 @@ purchase
       <h6 class="fw-normal mb-0">Purchase</h6>
       <div class="btns">
           <a href="{{route('purchase.purchaseAdd')}}" class="btn btn-primary-600  btn-sm fw-normal" ><i class="ri-add-line"></i>Add Purchase</a>
-          <button class="btn btn-warning-600  btn-sm fw-normal"><i class="ri-file-pdf-2-line"></i> Export</button>
+          {{-- <button class="btn btn-warning-600  btn-sm fw-normal"><i class="ri-file-pdf-2-line"></i> Export</button> --}}
       </div>
     </div>
     <!-- <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">

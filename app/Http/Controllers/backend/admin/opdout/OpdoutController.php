@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backend\admin\opdout;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\MedicineCategory;
+use App\Models\OpdoutMedicinedose;
 use App\Models\OpdoutVisit;
 use App\Models\Patient;
 use App\Models\User;
@@ -87,7 +88,6 @@ class OpdoutController extends Controller
                 'note' => 'nullable',
                 'admissionDate' => 'nullable',
                 'oldPatient' => 'nullable',
-                'reference' => 'nullable',
                 'consultDoctor' => 'nullable',
                 'charge' => 'required',
                 'discount' => 'nullable',
@@ -106,10 +106,9 @@ class OpdoutController extends Controller
             $optoutVisit->symptoms = $request->symptoms;
             $optoutVisit->previousMedIssue = $request->previousMedIssue;
             $optoutVisit->note = $request->note;
-            $optoutVisit->admissionDate = $request->admissionDate;
+            $optoutVisit->appointment_date = $request->appointment_date;
             $optoutVisit->oldPatient = $request->oldPatient;
             $optoutVisit->consultDoctor = $request->consultDoctor;
-            $optoutVisit->reference = $request->reference;
             $optoutVisit->charge = $request->charge;
             $optoutVisit->discount = $request->discount;
             $optoutVisit->taxPer = $request->taxPer;
@@ -129,40 +128,93 @@ class OpdoutController extends Controller
     if($request->ajax()){
             $opdoutVisit = OpdoutVisit::get();
             return DataTables::of($opdoutVisit)
-            ->addColumn('opd_id',function($row){
-                return $row->id;
-            })
             ->addColumn('appointment_date',function($row){
-                return $row->admissionDate;
+                return $row->appointment_date; //fetched through modal relationship
             })
             ->addColumn('doctor',function($row){
-                return $row->consultDoctor; //fetched through modal relationship
-            })
-            ->addColumn('reference',function($row){
-                return $row->reference;
+                return 'Dr. '.$row->doctorData->firstname.' '.$row->doctorData->lastname;
             })
             ->addColumn('symptons',function($row){
-                return $row->symptons;
+                return $row->symptoms;
+            })
+            ->addColumn('status',function($row){
+                return $row->status;
+
             })
             ->addColumn('action',function($row){
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#opd-out-visit-view" onclick="opdOutVisitViewData('.$row->id.')">
                         <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
                         </a>
                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                        <iconify-icon icon="lucide:edit" onclick="appointmentEdit('.$row->id.')"></iconify-icon>
+                        <iconify-icon icon="lucide:edit" onclick="opdOutVisitEdit('.$row->id.')"></iconify-icon>
                         </a>
                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                        <iconify-icon icon="mingcute:delete-2-line" onclick="appointmenttDelete('.$row->id.')"></iconify-icon>
+                        <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutVisitDelete('.$row->id.')"></iconify-icon>
                         </a>';
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action'])       
             ->make(true);
         }
     }
     public function getOpdOutVisitData(Request $request){
-        $getData = OpdoutVisit::where('id',$request->id)->get();
+        $getVisitDetails = OpdoutVisit::where('id',$request->id)->get();
+        $patientDetails = Patient::where('id',$getVisitDetails[0]->patient_id)->get();
+        $getData = [
+            'outVisitData' => $getVisitDetails,
+            'outVisitPatientData' => $patientDetails
+        ];
         return response()->json(['success'=>'opdout visit data fetched','data'=>$getData],200);
     }
+    public function opdOutVisitDataUpdate(Request $request){
+        $update = OpdoutVisit::where('id',$request->id)->update([
+            'symptoms' => $request->symptoms,
+            'previousMedIssue' => $request->previousMedIssue,
+            'note' => $request->note,
+            'appointment_date' => $request->appointment_date,
+            'oldPatient'=> $request->oldPatient,
+            'consultDoctor' => $request->consultDoctor,
+            'charge' => $request->charge,
+            'discount' => $request->discount,
+            'taxPer' => $request->taxPer,
+            'amount' => $request->amount,
+            'paymentMode' => $request->paymentMode,
+            'refNum' => $request->refNum,
+            'paidAmount' => $request->paidAmount
+        ]);
+        if($update){
+            return response()->json(['success'=>'Visit data updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Visit data not updated']);
+
+        }
+    }
+    public function opdOutVisitDataDelete(Request $request){
+        OpdoutVisit::where('id',$request->id)->delete();
+        return response()->json(['success'=>'Visit data deleted successfully'],200);
+    }
+    public function opdOutMedDataAdd(Request $request){
+        $validator = Validator::make($request->all(),[
+            'medCategory' => 'required',
+            'medName' => 'required',
+            'dose' => 'required',
+            'remerks' => 'nullable',
+        ]);
+        if($validator->fails()){
+            return response()->json(['error_validation'=>$validator->errors()->all()],200);
+        }
+        $medicineDose = new OpdoutMedicinedose();
+        $medicineDose->medicine_category_id = $request->medCategory;
+        $medicineDose->medicine_name_id = $request->medName;
+        $medicineDose->dose = $request->dose;
+        $medicineDose->remarks = $request->remerks; // Note: Fixed spelling from 'remerks' to 'remarks'
+        if ($medicineDose->save()) {
+            return response()->json(['success' => 'Medicine dose added successfully'], 200);
+        } else {
+            return response()->json(['error_success' => 'Failed to add medicine dose'], 500);
+        }
+
+    }
+   
    
 }
 

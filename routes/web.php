@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\backend\admin\appointment\AppointmentController;
 use App\Http\Controllers\backend\admin\appointment\PatientController;
+use App\Http\Controllers\backend\admin\CommonController;
 use App\Http\Controllers\backend\admin\home\ProfileController;
 use App\Http\Controllers\backend\admin\master\BloodtypeController;
 use App\Http\Controllers\backend\admin\master\CompanyController;
@@ -165,6 +166,14 @@ Route::get('/opd-out-details/{id}',[OpdoutController::class,'opdOutDetails']);
 Route::post('/opd-out-visit-add',[OpdoutController::class,'opdOutVisitSubmit'])->name('opd-out-visit.opdOutVisitSubmit');
 Route::post('/opd-out-visit-view',[OpdoutController::class,'viewOptOutVisit'])->name('opd-out-visit.viewOptOutVisit');
 Route::post('/opd-out-visit-data',[OpdoutController::class,'getOpdOutVisitData'])->name('opd-out-visit.getOpdOutVisitData');
+Route::post('/opd-out-visit-update',[OpdoutController::class,'opdOutVisitDataUpdate'])->name('opd-out-visit.opdOutVisitDataUpdate');
+Route::post('/opd-out-visit-delete',[OpdoutController::class,'opdOutVisitDataDelete'])->name('opd-out-visit.opdOutVisitDataDelete');
+
+Route::post('/opd-out-medicine-dose-add',[OpdoutController::class,'opdOutMedDataAdd'])->name('opd-out-med.opdOutMedDataAdd');
+
+
+Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
+
 
 
 });

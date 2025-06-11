@@ -14,12 +14,10 @@ return new class extends Migration
         Schema::create('opdout_visits', function (Blueprint $table) {
             $table->id();
             $table->integer('patient_id')->nullable();
-            // $table->string('symptomType',50)->nullable();
             $table->string('symptoms',100)->nullable();
-            // $table->text('symptomDesc')->nullable();
             $table->text('previousMedIssue')->nullable();
             $table->text('note')->nullable();
-            $table->string('admissionDate',40)->nullable();
+            $table->string('appointment_date',30)->nullable();
             $table->text('cases')->nullable();
             $table->string('casuality',11)->nullable();
             $table->string('oldPatient',11)->nullable();
@@ -33,6 +31,7 @@ return new class extends Migration
             $table->string('paymentMode',20)->nullable();
             $table->string('refNum',50)->nullable();
             $table->double('paidAmount')->nullable();
+            $table->string('status',10)->default('Pending');
             $table->timestamps();
             $table->softDeletes();
         });

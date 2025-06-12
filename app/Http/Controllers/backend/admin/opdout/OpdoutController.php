@@ -4,6 +4,8 @@ namespace App\Http\Controllers\backend\admin\opdout;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\LabInvestigation;
+use App\Models\Medication;
 use App\Models\MedicineCategory;
 use App\Models\OpdoutLabtest;
 use App\Models\OpdoutMedicinedose;
@@ -12,6 +14,8 @@ use App\Models\Patient;
 use App\Models\TestName;
 use App\Models\TestType;
 use App\Models\User;
+use App\Models\Visit;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -106,21 +110,22 @@ class OpdoutController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
-        $optoutVisit = new OpdoutVisit();
+        $optoutVisit = new Visit();
+        $optoutVisit->type = "OPD";
         $optoutVisit->patient_id = $request->patientId;
         $optoutVisit->symptoms = $request->symptoms;
-        $optoutVisit->previousMedIssue = $request->previousMedIssue;
+        $optoutVisit->previous_med_issue = $request->previousMedIssue;
         $optoutVisit->note = $request->note;
         $optoutVisit->appointment_date = $request->appointment_date;
-        $optoutVisit->oldPatient = $request->oldPatient;
-        $optoutVisit->consultDoctor = $request->consultDoctor;
+        $optoutVisit->old_patient = $request->oldPatient;
+        $optoutVisit->consult_octor = $request->consultDoctor;
         $optoutVisit->charge = $request->charge;
         $optoutVisit->discount = $request->discount;
-        $optoutVisit->taxPer = $request->taxPer;
+        $optoutVisit->tax_per = $request->taxPer;
         $optoutVisit->amount = $request->amount;
-        $optoutVisit->paymentMode = $request->paymentMode;
-        $optoutVisit->refNum = $request->refNum;
-        $optoutVisit->paidAmount = $request->paidAmount;
+        $optoutVisit->payment_mode = $request->paymentMode;
+        $optoutVisit->ref_num = $request->refNum;
+        $optoutVisit->paid_amount = $request->paidAmount;
 
         if($optoutVisit->save()){
             return response()->json(['success'=>'Patient Visit added successfully'],200);
@@ -131,7 +136,7 @@ class OpdoutController extends Controller
     }
     public function viewOptOutVisit(Request $request){
     if($request->ajax()){
-            $opdoutVisit = OpdoutVisit::get();
+            $opdoutVisit = Visit::where('type','OPD')->get();
             return DataTables::of($opdoutVisit)
             ->addColumn('visit_id',function($row){
                 return 'MDVI0'.$row->id; //fetched through modal relationship
@@ -165,7 +170,7 @@ class OpdoutController extends Controller
         }
     }
     public function getOpdOutVisitData(Request $request){
-        $getVisitDetails = OpdoutVisit::where('id',$request->id)->get();
+        $getVisitDetails = Visit::where('id',$request->id)->get();
         $patientDetails = Patient::where('id',$getVisitDetails[0]->patient_id)->get();
         $getData = [
             'outVisitData' => $getVisitDetails,
@@ -174,20 +179,20 @@ class OpdoutController extends Controller
         return response()->json(['success'=>'opdout visit data fetched','data'=>$getData],200);
     }
     public function opdOutVisitDataUpdate(Request $request){
-        $update = OpdoutVisit::where('id',$request->id)->update([
+        $update = Visit::where('id',$request->id)->update([
             'symptoms' => $request->symptoms,
-            'previousMedIssue' => $request->previousMedIssue,
+            'previous_med_issue' => $request->previousMedIssue,
             'note' => $request->note,
             'appointment_date' => $request->appointment_date,
             'oldPatient'=> $request->oldPatient,
-            'consultDoctor' => $request->consultDoctor,
+            'consult_doctor' => $request->consultDoctor,
             'charge' => $request->charge,
             'discount' => $request->discount,
-            'taxPer' => $request->taxPer,
+            'tax_per' => $request->taxPer,
             'amount' => $request->amount,
-            'paymentMode' => $request->paymentMode,
-            'refNum' => $request->refNum,
-            'paidAmount' => $request->paidAmount
+            'payment_mode' => $request->paymentMode,
+            'ref_num' => $request->refNum,
+            'paid_amount' => $request->paidAmount
         ]);
         if($update){
             return response()->json(['success'=>'Visit data updated successufuly'],200);
@@ -196,7 +201,7 @@ class OpdoutController extends Controller
         }
     }
     public function opdOutVisitDataDelete(Request $request){
-        OpdoutVisit::where('id',$request->id)->delete();
+        Visit::where('id',$request->id)->delete();
         return response()->json(['success'=>'Visit data deleted successfully'],200);
     }
     public function opdOutMedDataAdd(Request $request){
@@ -210,7 +215,8 @@ class OpdoutController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
-        $medicineDose = new OpdoutMedicinedose();
+        $medicineDose = new Medication();
+        $medicineDose->type = "OPD";
         $medicineDose->visit_id = $request->visitid;
         $medicineDose->medicine_category_id = $request->medCategory;
         $medicineDose->medicine_name_id = $request->medName;
@@ -225,7 +231,7 @@ class OpdoutController extends Controller
     }
     public function viewOptOutMedDose(Request $request){
           if($request->ajax()){
-            $opdoutMedDose = OpdoutMedicinedose::get();
+            $opdoutMedDose = Medication::where('type','OPD')->get();
             return DataTables::of($opdoutMedDose)
             ->addColumn('visit_id',function($row){
                 return 'MDVI0'.$row->visit_id; //fetched through modal relationship
@@ -258,11 +264,11 @@ class OpdoutController extends Controller
         }
     }
     public function getOpdOutMedDoseDetails(Request $request){
-        $getData = OpdoutMedicinedose::where('id',$request->id)->get();
+        $getData = Medication::where('id',$request->id)->get();
         return response()->json(['success'=>'opdout medication dose data fetched','data'=>$getData],200);
     }
     public function opdOutMedDataUpdate(Request $request){
-        $update = OpdoutMedicinedose::where('id',$request->id)->update([
+        $update = Medication::where('id',$request->id)->update([
             'visit_id' => $request->visitid,
             'medicine_category_id' => $request->medCategory,
             'medicine_name_id' => $request->medName,
@@ -276,7 +282,7 @@ class OpdoutController extends Controller
         }
     }
     public function opdOutMedDoseDataDelete(Request $request){
-        OpdoutMedicinedose::where('id',$request->id)->delete();
+        Medication::where('id',$request->id)->delete();
         return response()->json(['success'=>'Medicine dose deleted successfully'],200);
     }
     public function opdOutLabSubmit(Request $request){
@@ -293,18 +299,51 @@ class OpdoutController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
-        $optoutLab = new OpdoutLabtest();
+        $optoutLab = new LabInvestigation();
+            $optoutLab->type = "OPD";
             $optoutLab->patient_id = $request->patientId;
             $optoutLab->test_type_id = $request->testType;
             $optoutLab->method = $request->method;
-            $optoutLab->reportDays = $request->reportDays;
-            $optoutLab->testParameter = $request->testParameter;
-            $optoutLab->testRefRange = $request->testRefRange;
-            $optoutLab->testUnit = $request->testUnit;
+            $optoutLab->report_days = $request->reportDays;
+            $optoutLab->test_parameter = $request->testParameter;
+            $optoutLab->test_ref_range = $request->testRefRange;
+            $optoutLab->test_unit = $request->testUnit;
         if($optoutLab->save()){
             return response()->json(['success'=>'Lab Test added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Lab Test not added']);
+        }
+    }
+    public function viewOpdOutLabDetails(Request $request){
+        if($request->ajax()){
+            $labTestDetails = LabInvestigation::where('type','OPD')->get();
+            return DataTables::of($labTestDetails)
+            ->addColumn('created_at',function($row){
+                return $row->created_at;
+            })
+            ->addColumn('test_type',function($row){
+                return $row->testTypeData->name;
+            })
+            ->addColumn('test_name',function($row){
+                return $row->testNameData->name;
+            })
+            ->addColumn('report_date',function($row){
+                $report_dt = Carbon::parse($row->created_at)->addDays($row->reportDays);
+                return $report_dt;
+            })
+            ->addColumn('action',function($row){
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
+                    </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="lucide:edit" onclick="appointmentEdit('.$row->id.')"></iconify-icon>
+                    </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="mingcute:delete-2-line" onclick="appointmenttDelete('.$row->id.')"></iconify-icon>
+                    </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
         }
     }
    

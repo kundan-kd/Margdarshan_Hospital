@@ -84,6 +84,7 @@ class AppointmentController extends Controller
         $month = date('m'); // Gets the current month (e.g., "05")
         $year = date('y'); // Gets the current year (e.g., "25")
         $patient = new Patient();
+        $patient->type = "opd";
         $patient->name = $request->name;
         $patient->guardian_name = $request->guardian_name;
         $patient->gender = $request->gender;

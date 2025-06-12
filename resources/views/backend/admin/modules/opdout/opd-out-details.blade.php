@@ -281,23 +281,19 @@
                             <table class="table bordered-table mb-0 w-100" id="opd-lab-reports-list" data-page-length='10'>
                                   <thead>
                                     <tr >
-                                      <th scope="col" class="fw-medium">Tast Name</th>
-                                      <th scope="col" class="fw-medium">Lab</th>
-                                      <th scope="col" class="fw-medium">Date</th>
-                                      <th scope="col" class="fw-medium">Sample Collection</th>
-                                      <th scope="col" class="fw-medium">Expected Date</th>
-                                      <th scope="col" class="fw-medium">Approved By</th>
+                                      <th scope="col" class="fw-medium">Sample Date</th>
+                                      <th scope="col" class="fw-medium">Tast Type</th>
+                                      <th scope="col" class="fw-medium">Test Name</th>
+                                      <th scope="col" class="fw-medium">Repost Date</th>
                                       <th scope="col" class="fw-medium">Action</th>
                                     </tr>
                                   </thead>
                                   <tbody>
                                       <tr>
+                                        <td>18/05/2025</td>
                                           <td ><span class="text-nowrap">Abodoman X-ray <br> (AX)</span> </td>
                                           <td>Pathology</td>
-                                          <td>18/05/2025</td>
-                                          <td>Sunil Kumar (9876) <br> <span class="text-nowrap">Pathology Center : In-House Pathology Lab</span><br> 19/05/2025</td>
                                           <td>22/05/2025</td>
-                                          <td>Rakesh Kumar <br> 22/05/2025</td>
                                           <td class="text-nowrap">
                                             <button class="mx-1 bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#opd-lab-test-veiw">
                                               <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
@@ -1515,6 +1511,7 @@
   const opdOutMedDoseDataDelete = "{{route('opd-out-med.opdOutMedDoseDataDelete')}}";
 
   const opdOutLabSubmit = "{{route('opd-out-lab.opdOutLabSubmit')}}";
+  const viewOpdOutLabDetails = "{{route('opd-out-lab.viewOpdOutLabDetails')}}";
 
   //  -- select2 js library included for dropdown search and select box.. other method for implenting used due to boostrap conflicts--
   window.addEventListener('load', () => {

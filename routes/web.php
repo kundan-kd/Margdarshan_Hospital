@@ -176,6 +176,7 @@ Route::post('/opd-out-medicine-dose-data',[OpdoutController::class,'getOpdOutMed
 Route::post('/opd-out-medicine-dose-update',[OpdoutController::class,'opdOutMedDataUpdate'])->name('opd-out-med.opdOutMedDataUpdate');
 Route::post('/opd-out-medicine-dose-delete',[OpdoutController::class,'opdOutMedDoseDataDelete'])->name('opd-out-med.opdOutMedDoseDataDelete');
 Route::post('/opd-out-lab-test-add',[OpdoutController::class,'opdOutLabSubmit'])->name('opd-out-lab.opdOutLabSubmit');
+Route::post('/opd-out-lab-test-details',[OpdoutController::class,'viewOpdOutLabDetails'])->name('opd-out-lab.viewOpdOutLabDetails');
 
 Route::get('/ipd-in',[IpdinController::class,'index'])->name('ipd-in.index');
 Route::get('/ipd-in-patient-add',[IpdinController::class,'ipdInPatientAdd'])->name('ipd-in.ipdInPatientAdd');

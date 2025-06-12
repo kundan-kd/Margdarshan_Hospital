@@ -23,6 +23,45 @@
 //                     </tr>`;
 //                     $('.appendMoreTestName').parent().append(labTestNameAdd);
 // }
+let table_lab = $('#opd-lab-reports-list').DataTable({
+    processing:true,
+    serverSide:true,
+    ajax:{
+        url:viewOpdOutLabDetails,
+        type:"POST",
+        headers:{
+           'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        error:function(xhr,thrown){
+            console.log(xhr.responseText);
+            alert('Error: '+thrown);
+        }
+    },
+    columns:[
+        {
+            data:'created_at',
+            name:'created_at'
+        },
+        {
+            data:'test_type',
+            name:'test_type'
+        },
+        {
+            data:'test_name',
+            name:'test_name'
+        },
+        {
+            data:'report_date',
+            name:'report_date'
+        },
+        {
+            data:'action',
+            name:'action',
+            orderable:false,
+            searchable:false
+        },
+    ]
+});
 $('#opdOutLab-form').on('submit',function(e){
     e.preventDefault();
     let testType_check = validateField('opdOutLab-testType', 'select');

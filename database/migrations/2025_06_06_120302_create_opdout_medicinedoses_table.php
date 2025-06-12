@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('opdout_medicinedoses', function (Blueprint $table) {
             $table->id();
             $table->integer('patient_id')->nullable();
-            $table->string('date',20)->nullable();
-            $table->string('time',20)->nullable();
+            $table->integer('visit_id')->nullable();
             $table->integer('medicine_category_id')->nullable();
             $table->integer('medicine_name_id')->nullable();
             $table->string('dose',100)->nullable();

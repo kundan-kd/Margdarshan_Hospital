@@ -1,6 +1,6 @@
 @extends('backend.admin.layouts.main')
 @section('title')
-    OPD - Out Details
+    OPD detalils
 @endsection
 @section('extra-css')
 <style>
@@ -8,6 +8,7 @@
 @endsection
 @section('main-container')
 <div class="dashboard-main-body">
+  <input type="hidden" id="patient_Id" value="{{$patients[0]->id}}">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">OPD - Out Patient Details</h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
@@ -209,6 +210,7 @@
                             <table class="table bordered-table mb-0 w-100" id="opd-out-visit-list" data-page-length='10'>
                           <thead>
                              <tr>
+                              <th class="fw-medium ">Visit ID</th>
                               <th class="fw-medium ">Appointment Date</th>
                               <th class="fw-medium ">Consultant</th>
                               <th class="fw-medium ">Symptoms</th>
@@ -233,17 +235,25 @@
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="table-responsive">
-                        <table class="table striped-table mb-0 table-sm" id="opdOutVisit-medicineDoseList">
+                        <table class="table striped-table mb-0 w-100" id="opdOutMed-medicineDoseList">
                           <thead>
-                             <tr>
-                              <th class="fw-medium w-25">Date</th>
-                              <th class="fw-medium w-25">Medician Name</th>
-                              <th class="fw-medium w-25">Dose</th>
-                             </tr>
+                            <tr>
+                              <th class="fw-medium">Visit ID</th>
+                              <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Medician Category</th>
+                              <th class="fw-medium">Medician Name</th>
+                              <th class="fw-medium">Dose</th>
+                              <th class="fw-medium">Remarks</th>
+                              <th class="fw-medium">Action</th>
+                            </tr>
                           </thead>
                           <tbody>
-                             <tr>
+                             {{-- <tr>
                               <td>04/02/2025 (Tue) <br> Created by : Super Admin (9001)</td>
+                              <td>Alprovit</td>
+                              <td>Alprovit</td>
+                              <td>Alprovit</td>
+                              <td>Alprovit</td>
                               <td>Alprovit</td>
                               <td>
                                 <div class="d-flex align-items-center">
@@ -253,7 +263,7 @@
                                   </button>
                                 </div>
                               </td>
-                             </tr>
+                             </tr> --}}
                           </tbody>
                         </table>
                       </div>
@@ -833,7 +843,6 @@
   </div>
 </div>
 <!-- edit charges History end -->
-
 <!-- Add add-lab Start -->
 <div class="modal fade" id="opd-add-lab" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-add-labLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -842,118 +851,86 @@
         <h6 class="modal-title fw-normal text-md text-white" id="opd-add-labLabel">Add Test Details</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <form id="opdOutLab-form">
+        <div class="modal-body">
          <div class="row gy-3">
-          <div class="col-md-3">
-              <label class="form-label fw-medium">Test Name <sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control form-control-sm" placeholder=" Test Name">
+          <div class="col-md-4">
+            <input type="hidden" id="opOutLabID">
+              <label class="form-label fw-medium" for="opdOutLab-testType">Test Type</label> <sup class="text-danger">*</sup>
+                 <select id="opdOutLab-testType" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                       <option value="">Select</option>
+                      @foreach ($testtypes as $testtype)
+                       <option value="{{$testtype->id}}">{{$testtype->name}}</option>
+                      @endforeach
+                    </select>
+                    <div class="opdOutLab-testType_errorCls d-none"></div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
+              <label class="form-label fw-medium" for="opdOutLab-testName">Test Name</label> <sup class="text-danger">*</sup>
+                 <select id="opdOutLab-testName" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                        <option value="">Select</option>
+                      @foreach ($testnames as $testname)
+                        <option value="{{$testname->id}}">{{$testname->name}}</option>
+                      @endforeach
+                    </select>
+                    <div class="opdOutLab-testName_errorCls d-none"></div>
+            </div>
+            <div class="col-md-4">
               <label class="form-label fw-medium">Short Name <sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control form-control-sm" placeholder=" Short Name">
+                <input id="opdOutLab-shortName" type="text" class="form-control form-control-sm" placeholder=" Short Name" readonly>
             </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Test Type</label>
-                <input type="text" class="form-control form-control-sm" placeholder=" Test Type">
+            <div class="col-md-4">
+              <label class="form-label fw-medium">Amount</label>
+                <input id="opdOutLab-amount" type="number" class="form-control form-control-sm" placeholder=" Test Amount" readonly>
             </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Category Name <sup class="text-danger">*</sup></label>
-                 <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option value="1">Clinical Microbiology</option>
-                      <option value="2">Clinical Chemistry</option>
-                      <option value="3">Hematology</option>
-                      <option value="4">Molecular Diagnostics</option>
-                      <option value="5">Reproductive Biology</option>
-                      <option value="5">Electromagnetic Waves</option>
-                  </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Sub Category</label>
-                <input type="text" class="form-control form-control-sm" placeholder="Sub Category">
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <label class="form-label fw-medium">Method</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Method">
+                <input id="opdOutLab-method" type="text" class="form-control form-control-sm" placeholder=" Test Method">
             </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Report Days <sup class="text-danger">*</sup></label>
-                <input type="numbr" class="form-control form-control-sm" placeholder="Report Days">
-            </div>
-            
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Charge Category <sup class="text-danger">*</sup></label>
-                <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option value="1">Surgical pathology</option>
-                      <option value="2">Histopathology </option>
-                      <option value="3">Cytopathology</option>
-                      <option value="4">Forensic pathology</option>
-                      <option value="5">Dermatopathology</option>
-                  </select>
+            <div class="col-md-4">
+              <label class="form-label fw-medium">Report Days</label>
+                <input id="opdOutLab-reportDays" type="number" class="form-control form-control-sm" placeholder=" Test Report Days">
             </div>
             <div class="col-md-12 mt-3">
                  <table class="pharmacy-purchase-bill-table table table-hover mb-11 add-test-feilds add-lab-table">
                    <thead>
                           <tr class="border-bottom">
-                            <th class="text-nowrap text-neutral-700">Test Parameter Name <sup class="text-danger">*</sup></th>
-                            <th class="text-nowrap text-neutral-700">Reference Range <sup class="text-danger">*</sup></th>
-                            <th class="text-nowrap text-neutral-700">Unit <sup class="text-danger">*</sup></th>
+                            <th class="text-nowrap text-neutral-700">Test Parameter Name</th>
+                            <th class="text-nowrap text-neutral-700">Reference Range</th>
+                            <th class="text-nowrap text-neutral-700">Unit</th>
                           </tr>
                   </thead>
                   <tbody>
                     <tr class="add-lab-fieldGroup">
                       <td>
-                        <select class="form-select form-select-sm select2  ">
-                          <option selected disabled>Select</option>
-                          <option value="1">RBC</option>
-                          <option value="2">Liver function test</option>
-                          <option value="3">TSH (Thyroid Stimulating Hormone)</option>
-                        </select>
+                        <input id="opdOutLab-testParameter" type="text" class="form-control form-control-sm" >
                       </td>
                       <td>
-                        <input type="text" class="form-control form-control-sm" >
+                        <input id="opdOutLab-testRefRange" type="text" class="form-control form-control-sm" >
                       </td>
                       <td>
-                        <input type="text" class="form-control form-control-sm" >
+                        <input id="opdOutLab-testUnit" type="text" class="form-control form-control-sm" >
                       </td>
-                      <td>
+                      {{-- <td>
                         <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center add-lab-remove">
                             <i class="ri-close-line"></i>
                         </button>
-                      </td>
+                      </td> --}}
                     </tr>
-                    <tr class="add-lab-fieldGroupCopy" style="display: none;">
-                      <td>
-                        <select class="form-select form-select-sm select2  ">
-                          <option selected disabled>Select</option>
-                          <option value="1">RBC</option>
-                          <option value="2">Liver function test</option>
-                          <option value="3">TSH (Thyroid Stimulating Hormone)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center add-lab-remove">
-                            <i class="ri-close-line"></i>
-                        </button>
-                      </td>
-                    </tr>
+                    {{-- <tr class="appendMoreTestName">
+                    </tr> --}}
                   </tbody>
                  </table>
-                 <button class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center add-lab-addMore">
+                 {{-- <button class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center add-lab-addMore" onclick="addMoreTestName()">
                       <i class="ri-add-line"></i> Add
-                  </button>
+                  </button> --}}
             </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          </div>
+      </form>
       </div>
     </div>
   </div>
@@ -1032,132 +1009,6 @@
 </div>
 <!-- lab-test-veiw end -->
 
-<!-- Edit lab-detail Start -->
- <div class="modal fade" id="opd-edit-lab" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-edit-labLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-    <div class="modal-content">
-      <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="opd-edit-labLabel">Edit Test Details</h6>
-        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-         <div class="row gy-3">
-          <div class="col-md-3">
-              <label class="form-label fw-medium">Test Name <sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control form-control-sm" placeholder=" Test Name">
-            </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Short Name <sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control form-control-sm" placeholder=" Short Name">
-            </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Test Type</label>
-                <input type="text" class="form-control form-control-sm" placeholder=" Test Type">
-            </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Category Name <sup class="text-danger">*</sup></label>
-                 <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option value="1">Clinical Microbiology</option>
-                      <option value="2">Clinical Chemistry</option>
-                      <option value="3">Hematology</option>
-                      <option value="4">Molecular Diagnostics</option>
-                      <option value="5">Reproductive Biology</option>
-                      <option value="5">Electromagnetic Waves</option>
-                  </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Sub Category</label>
-                <input type="text" class="form-control form-control-sm" placeholder="Sub Category">
-            </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Method</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Method">
-            </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Report Days <sup class="text-danger">*</sup></label>
-                <input type="numbr" class="form-control form-control-sm" placeholder="Report Days">
-            </div>
-            
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Charge Category <sup class="text-danger">*</sup></label>
-                <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option value="1">Surgical pathology</option>
-                      <option value="2">Histopathology </option>
-                      <option value="3">Cytopathology</option>
-                      <option value="4">Forensic pathology</option>
-                      <option value="5">Dermatopathology</option>
-                  </select>
-            </div>
-            <div class="col-md-12 mt-3">
-                 <table class="pharmacy-purchase-bill-table table table-hover mb-11 add-test-feilds edit-lab-table">
-                   <thead>
-                          <tr class="border-bottom">
-                            <th class="text-nowrap text-neutral-700">Test Parameter Name <sup class="text-danger">*</sup></th>
-                            <th class="text-nowrap text-neutral-700">Reference Range <sup class="text-danger">*</sup></th>
-                            <th class="text-nowrap text-neutral-700">Unit <sup class="text-danger">*</sup></th>
-                          </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="edit-lab-fieldGroup">
-                      <td>
-                        <select class="form-select form-select-sm select2  ">
-                          <option selected disabled>Select</option>
-                          <option value="1">RBC</option>
-                          <option value="2">Liver function test</option>
-                          <option value="3">TSH (Thyroid Stimulating Hormone)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center edit-lab-remove">
-                            <i class="ri-close-line"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr class="edit-lab-fieldGroupCopy" style="display: none;">
-                      <td>
-                        <select class="form-select form-select-sm select2  ">
-                          <option selected disabled>Select</option>
-                          <option value="1">RBC</option>
-                          <option value="2">Liver function test</option>
-                          <option value="3">TSH (Thyroid Stimulating Hormone)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center edit-lab-remove">
-                            <i class="ri-close-line"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                 </table>
-                 <button class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center edit-lab-addMore">
-                      <i class="ri-add-line"></i> Add
-                  </button>
-            </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Edit lab-detail end -->
-
 <!--  Add medication Start -->
  <div class="modal fade" id="opd-add-medication-dose" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-add-medication-doseLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -1169,6 +1020,17 @@
       <form action="" id="opdOutMed-form">
         <div class="modal-body">
           <div class="row gy-3">
+             <div class="col-md-6">
+              <input type="hidden" id="opdOutMedDoseId">
+                  <label class="form-label fw-medium" for="opdOutMed-visitid">Visit ID</label> <sup class="text-danger">*</sup>
+                    <select id="opdOutMed-visitid" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                        <option value="">Select</option>
+                        @foreach ($visitsData as $visit)
+                        <option value="{{$visit->id}}">MDVI0{{$visit->id}}</option>
+                        @endforeach
+                    </select>
+                    <div class="opdOutMed-visitid_errorCls d-none"></div>
+              </div>
               <div class="col-md-6">
                   <label class="form-label fw-medium" for="opdOutMed-medCategory">Medicine Category</label> <sup class="text-danger">*</sup>
                     <select id="opdOutMed-medCategory" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" onchange="medicinelist(this.value)">
@@ -1199,7 +1061,9 @@
         
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutMedDoseSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutMedDoseUpdate d-none" onclick="opdOutMedDoseUpdate(document.getElementById('opdOutMedDoseId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
         </div>
       </form>
     </div>
@@ -1547,197 +1411,6 @@
   </div>
 </div>
 <!-- opd visit view end -->
-
-<!--  opd new checkup Start -->
- {{-- <div class="modal fade" id="opd-new-checkup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-new-checkupLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-    <div class="modal-content">
-      <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="opd-new-checkupLabel">Patient Details</h6>
-        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          <div class="row">
-        <div class="col-md-6 pt-3">
-          <div class="row">
-             <table class="table table-borderless pharmacy-bill-detail-table w-75 mb-5">
-                     <tbody>
-                      <tr>
-                       <th class="fw-medium">Patient Name</th>
-                       <td class="text-neutral-700">Arun Kumar (1234)</td>
-                     </tr>
-                     <tr>
-                       <th class="fw-medium">Gender</th>
-                       <td class="text-neutral-700">Male</td>
-                     </tr>
-                     <tr>
-                      <th class="fw-medium">Symptoms</th>
-                      <td class="text-neutral-700"> Cold</td>
-                     </tr>
-                  </tbody></table>
-             <div class="col-md-6 mb-3">
-               <label class="form-label fw-medium">Symptoms Type</label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-                 <option value="1">Cough</option>
-              </select>
-             </div>
-             <div class="col-md-6 mb-3">
-               <label class="form-label fw-medium">Symptoms Title</label>
-               <select class="form-select form-select-sm  " >
-                 <option selected>Select</option>
-              </select>
-             </div>
-             <div class="col-md-6 mb-3">
-               <label class="form-label fw-medium">Symptoms Description</label>
-               <textarea  class="form-control " rows="1" placeholder="Symptoms Description"></textarea>
-             </div>
-             <div class="col-md-6 mb-3">
-               <label class="form-label fw-medium">Previous Medical Issue</label>
-               <textarea  class="form-control " rows="1" placeholder="Previous Medical Issue"></textarea>
-             </div>
-             <div class="col-md-12 mb-3">
-               <label class="form-label fw-medium">Note</label>
-               <textarea  class="form-control " rows="2" placeholder="Note"></textarea>
-             </div>
-          </div>
-        </div>
-        <div class="col-md-6 bg-info-50 pt-3">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Admission Date <sup class="text-danger">*</sup></label>
-              <div class=" position-relative">
-                    <input class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="text" placeholder="12/2024" readonly="readonly">
-                    <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                </div>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Case</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Case">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Casualty</label>
-              <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
-                 <option value="1">Yes</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-3">
-               <label class="form-label fw-medium">Old Patient</label>
-              <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
-                 <option value="1">Yes</option>
-              </select>
-            </div>
-            <!-- <div class="col-md-6 mb-3">
-             <label class="form-label fw-medium"> Credit Limit (₹) <sup class="text-danger">*</sup></label>
-              <input type="number" class="form-control form-control-sm" placeholder="200000">
-            </div> -->
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Reference</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Reference">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Consultant Doctor <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-                 <option value="1">Sunil Kumar (1234)</option>
-                 <option value="1">Manoj Gupta (2224)</option>
-                 <option value="1">Arjun Kumar (2234)</option>
-                 <option value="1">Suraj Kumar (9234)</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Charge Category <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-                 <option value="1">OPD Consultation Fees</option>
-                 <option value="1">OPD Service</option>
-                 <option value="1">OPD Insurance</option>
-                 <option value="1">Blood pressure check</option>
-                 <option value="1">Eye check</option>
-                 <option value="1">Cholesterol level check</option>
-                 <option value="1">Other Charges</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Charge <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Applied Charge (₹) <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Applied Charge">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Discount %<sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Discount ">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Tax %<sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Discount ">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Amount (₹) <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Amount ">
-            </div>
-            <div class="col-md-6 mb-3">
-             <label class="form-label fw-medium"> Payment Mode</label>
-               <select class="form-select form-select-sm" id="payment-method">
-                <option value="cash">Cash</option>
-                <option value="upi">UPI</option>
-                <option value="card">Card</option>
-                <option value="cheque">Cheque</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-3" style="display: none;" id="upi">
-              <label class="form-label fw-medium ">UPI</label>
-              <select class="form-select form-select-sm" id="upi-number">
-                <option selected="">Select</option>
-                <option value="upi-reference-number">Google Pay</option>
-                <option value="upi-reference-number">Phone Pay</option>
-                <option value="upi-reference-number">Airtel Pay</option>
-              </select> 
-            </div>
-            
-            <div class="col-md-6 mb-3" style="display: none;" id="card">
-              <label class="form-label fw-medium ">Card Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder="Enter Card Number">
-            </div>
-            <div class="col-md-6 mb-3 cheque" style="display: none;">
-              <label class="form-label fw-medium ">Cheque Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder="Enter Cheque Number">
-            </div>
-            
-            <div class="col-md-6 mb-3" style="display: none;" id="upi-reference-no">
-              <label class="form-label fw-medium ">Reference Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder=" Enter reference number">
-            </div>
-            <div class="col-md-6 mb-3">
-             <label class="form-label fw-medium">Paid Amount <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Paid Amount ">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Live Consultation</label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
-                 <option value="1">Yes</option>
-              </select>
-            </div>
-          </div>
-        </div>
-       </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
-    </div>
-  </div>
-</div> --}}
-<!-- opd new checkup end -->
-
 <!-- add timeline start -->
 <div class="modal fade" id="add-timeline" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-timelineLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md">
@@ -1836,14 +1509,25 @@
   const opdOutVisitDataDelete = "{{route('opd-out-visit.opdOutVisitDataDelete')}}";
 
   const opdOutMedDataAdd = "{{route('opd-out-med.opdOutMedDataAdd')}}";
+  const viewOptOutMedDose = "{{route('opd-out-med.viewOptOutMedDose')}}";
+  const getOpdOutMedDoseDetails = "{{route('opd-out-med.getOpdOutMedDoseDetails')}}";
+  const opdOutMedDataUpdate = "{{route('opd-out-med.opdOutMedDataUpdate')}}";
+  const opdOutMedDoseDataDelete = "{{route('opd-out-med.opdOutMedDoseDataDelete')}}";
+
+  const opdOutLabSubmit = "{{route('opd-out-lab.opdOutLabSubmit')}}";
+
   //  -- select2 js library included for dropdown search and select box.. other method for implenting used due to boostrap conflicts--
   window.addEventListener('load', () => {
     $('.select2-cls').select2({
     dropdownParent: $('#opd-add-medication-dose')
+    });
+    $('.select2-cls').select2({
+    dropdownParent: $('#opd-add-lab')
     });
   });
 </script>
  {{-----------external js files added for page functions------------}}
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-visit.js')}}"></script>
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-medication.js')}}"></script>
+    <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-lab.js')}}"></script>
 @endsection

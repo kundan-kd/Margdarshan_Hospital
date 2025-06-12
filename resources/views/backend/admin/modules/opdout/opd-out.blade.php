@@ -1,6 +1,6 @@
 @extends('backend.admin.layouts.main')
 @section('title')
-    OPD - Out Patient
+    OPD
 @endsection
 @section('extra-css')
 <style>

@@ -25,7 +25,7 @@ function validateField(id,inputType) {
     error.removeClass('d-none');
     let label = document.querySelector(`label[for="${id}"]`);
     let field_txt = label ? label.textContent : ""; // Handle label presence
-    if (fieldValue === "") {
+    if (fieldValue == "") {
         if (error.length) {
             error.html(field_txt + " is required").addClass("is_invalid");
         }
@@ -40,7 +40,7 @@ function validateField(id,inputType) {
             return true;
         }
     } else if (inputType == "select") { // Validate dropdown
-      if (fieldValue !== "") {
+      if (fieldValue != "") {
           error.html("");
           return true;
       } else {
@@ -66,8 +66,8 @@ function validateField(id,inputType) {
                 error.html("");
                 return true;
             }
-        } else if (inputType === "amount") {
-            if (fieldValue !== undefined && fieldValue !== null) {
+        } else if (inputType == "amount") {
+            if (fieldValue != undefined && fieldValue != null) {
                 let valueLength = fieldValue.length;
                 if (valueLength < 1) {
                     error.text("Input Minimum 1 digit").addClass("is_invalid");
@@ -81,7 +81,7 @@ function validateField(id,inputType) {
                 }
             }
         } else {
-            if (fieldValue !== undefined && fieldValue !== null) {
+            if (fieldValue != undefined && fieldValue != null) {
                 let valueLength = fieldValue.length;
                 if (valueLength < 3) {
                     error.text("Input Minimum 3 characters").addClass("is_invalid");

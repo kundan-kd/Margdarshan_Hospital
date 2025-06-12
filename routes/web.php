@@ -3,7 +3,9 @@
 use App\Http\Controllers\backend\admin\appointment\AppointmentController;
 use App\Http\Controllers\backend\admin\appointment\PatientController;
 use App\Http\Controllers\backend\admin\CommonController;
+use App\Http\Controllers\backend\admin\emergency\EmergencyController;
 use App\Http\Controllers\backend\admin\home\ProfileController;
+use App\Http\Controllers\backend\admin\ipdin\IpdinController;
 use App\Http\Controllers\backend\admin\master\BloodtypeController;
 use App\Http\Controllers\backend\admin\master\CompanyController;
 use App\Http\Controllers\backend\admin\master\DepartmentController;
@@ -168,8 +170,19 @@ Route::post('/opd-out-visit-view',[OpdoutController::class,'viewOptOutVisit'])->
 Route::post('/opd-out-visit-data',[OpdoutController::class,'getOpdOutVisitData'])->name('opd-out-visit.getOpdOutVisitData');
 Route::post('/opd-out-visit-update',[OpdoutController::class,'opdOutVisitDataUpdate'])->name('opd-out-visit.opdOutVisitDataUpdate');
 Route::post('/opd-out-visit-delete',[OpdoutController::class,'opdOutVisitDataDelete'])->name('opd-out-visit.opdOutVisitDataDelete');
-
 Route::post('/opd-out-medicine-dose-add',[OpdoutController::class,'opdOutMedDataAdd'])->name('opd-out-med.opdOutMedDataAdd');
+Route::post('/opd-out-medicine-dose-view',[OpdoutController::class,'viewOptOutMedDose'])->name('opd-out-med.viewOptOutMedDose');
+Route::post('/opd-out-medicine-dose-data',[OpdoutController::class,'getOpdOutMedDoseDetails'])->name('opd-out-med.getOpdOutMedDoseDetails');
+Route::post('/opd-out-medicine-dose-update',[OpdoutController::class,'opdOutMedDataUpdate'])->name('opd-out-med.opdOutMedDataUpdate');
+Route::post('/opd-out-medicine-dose-delete',[OpdoutController::class,'opdOutMedDoseDataDelete'])->name('opd-out-med.opdOutMedDoseDataDelete');
+Route::post('/opd-out-lab-test-add',[OpdoutController::class,'opdOutLabSubmit'])->name('opd-out-lab.opdOutLabSubmit');
+
+Route::get('/ipd-in',[IpdinController::class,'index'])->name('ipd-in.index');
+Route::get('/ipd-in-patient-add',[IpdinController::class,'ipdInPatientAdd'])->name('ipd-in.ipdInPatientAdd');
+Route::get('/ipd-in-details',[IpdinController::class,'ipdInDetails'])->name('ipd-in.ipdInDetails');
+
+Route::get('/emergency',[EmergencyController::class,'index'])->name('emergency.index');
+Route::get('/emergency-details',[EmergencyController::class,'emergencyDetails'])->name('emergency.emergencyDetails');
 
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');

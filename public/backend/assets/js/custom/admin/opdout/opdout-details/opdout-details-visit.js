@@ -19,7 +19,7 @@ $('#opdOutVisit-modelForm').on('submit',function(e){
     let paymentMode_check = validateField('opdOutVisit-paymentMode', 'select');
     let paidAmount_check = validateField('opdOutVisit-paidAmount', 'amount');
     if(symptoms_check === true && previousMedIssue_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true  && amount_check === true && paymentMode_check === true && paidAmount_check === true){ 
-        let patientId = $('#opdOutVisit-patientId').val();
+        let patientId = $('#patient_Id').val();
         let symptoms = $('#opdOutVisit-symptoms').val();
         let previousMedIssue = $('#opdOutVisit-previousMedIssue').val();
         let note = $('#opdOutVisit-note').val();
@@ -82,6 +82,12 @@ let table_visit = $('#opd-out-visit-list').DataTable({
     },
     columns:[
         {
+            data:'visit_id',
+            name:'visit_id',
+            orderable: false,
+            searchable: true
+        },
+        {
             data:'appointment_date',
             name:'appointment_date',
             orderable: false,
@@ -134,49 +140,51 @@ function opdOutVisitViewData(id){
                                 <tr>
                                     <th class="fw-medium">Patient ID</th>
                                     <td>${patientData.patient_id}</td>
-                                    <th class="fw-medium">Appointment Date</th>
-                                    <td>${visitData.appointment_date}</td>
+                                     <th class="fw-medium">Visit ID</th>
+                                    <td>MDVI0${visitData.id}</td>
                                 </tr>
                                 <tr>
                                     <th class="fw-medium">Patient Name</th>
                                     <td>${patientData.name}</td>
-                                    <th class="fw-medium">Symptons</th>
-                                    <td>${visitData.symptoms}</td>
+                                    <th class="fw-medium">Appointment Date</th>
+                                    <td>${visitData.appointment_date}</td>
                                 </tr>
                                 <tr>
                                 <th class="fw-medium">Guardian Name</th>
                                     <td>${patientData.guardian_name}</td>
-                                    <th class="fw-medium">Previous Health Issue</th>
-                                    <td>${visitData.previousMedIssue}</td>
+                                    <th class="fw-medium">Symptons</th>
+                                    <td>${visitData.symptoms}</td>
                                 </tr>
                                 <tr>
                                 <th class="fw-medium">Gender</th>
                                     <td>${patientData.gender}</td>
-                                    <th class="fw-medium">Old Patient</th>
-                                    <td>${visitData.oldPatient}</td>
+                                    <th class="fw-medium">Previous Health Issue</th>
+                                    <td>${visitData.previousMedIssue}</td>
                                 </tr>
                                 <tr>           
                                 <th class="fw-medium">DOB</th>
                                     <td>${patientData.dob}</td>
-                                    <th class="fw-medium">Consult Doctor</th>
-                                    <td>${visitData.consultDoctor}</td>
+                                    <th class="fw-medium">Old Patient</th>
+                                    <td>${visitData.oldPatient}</td>
                                 </tr>
                                 <tr>     
                                     <th class="fw-medium">Phone</th>
                                     <td>${patientData.mobile}</td>
-                                    <th class="fw-medium">Known Allergies</th>
-                                    <td>${visitData.known_allergies}</td>  
+                                     <th class="fw-medium">Consult Doctor</th>
+                                    <td>${visitData.consultDoctor}</td>
                                 </tr>
                                 
                                 <tr>    
                                     <th class="fw-medium">Blood Type</th>
                                     <td>${patientData.bloodtype}</td>   
-                                    <th class="fw-medium">Notes</th>
-                                    <td>${visitData.note}</td>   
+                                     <th class="fw-medium">Known Allergies</th>
+                                    <td>${visitData.known_allergies}</td>  
                                 </tr>
                                 <tr>         
                                     <th class="fw-medium">Marital Status</th>
-                                    <td>${patientData.marital_status}</td>  
+                                    <td>${patientData.marital_status}</td> 
+                                    <th class="fw-medium">Notes</th>
+                                    <td>${visitData.note}</td>    
                                 </tr>
                             </tbody>
                             </table>

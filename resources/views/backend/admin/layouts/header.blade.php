@@ -109,6 +109,18 @@
           <span>OPD-Out</span>
         </a>
       </li>
+      <li>
+        <a href="{{route('ipd-in.index')}}">
+          <i class="ri-stethoscope-line"></i>
+          <span>IPD-In Patients</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{route('emergency.index')}}">
+          <i class="ri-hospital-line"></i>
+          <span>Emergency</span>
+        </a>
+      </li>
       <li class="dropdown">
         <a href="javascript:void(0)">
          <i class="ri-settings-3-line"></i>

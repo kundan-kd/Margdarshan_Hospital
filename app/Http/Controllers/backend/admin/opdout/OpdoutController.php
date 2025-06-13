@@ -4,6 +4,7 @@ namespace App\Http\Controllers\backend\admin\opdout;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\Charge;
 use App\Models\LabInvestigation;
 use App\Models\Medication;
 use App\Models\MedicineCategory;
@@ -13,8 +14,10 @@ use App\Models\OpdoutVisit;
 use App\Models\Patient;
 use App\Models\TestName;
 use App\Models\TestType;
+use App\Models\Timeline;
 use App\Models\User;
 use App\Models\Visit;
+use App\Models\Vital;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -85,10 +88,12 @@ class OpdoutController extends Controller
         $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
         $doctorData = User::where('status',1)->get(['id','firstname','lastname','department_id']);
-        $visitsData = OpdoutVisit::where('patient_id',$patients[0]->id)->get();
+        $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
+        $medicationData = Medication::where('patient_id',$patients[0]->id)->get();
         $testtypes = TestType::where('status',1)->get();
         $testnames = TestName::where('status',1)->get();
-        return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','testtypes','testnames'));
+        $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
+        return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData'));
     }
     function opdOutVisitSubmit(Request $request){
         $validator = Validator::make($request->all(),[
@@ -118,7 +123,7 @@ class OpdoutController extends Controller
         $optoutVisit->note = $request->note;
         $optoutVisit->appointment_date = $request->appointment_date;
         $optoutVisit->old_patient = $request->oldPatient;
-        $optoutVisit->consult_octor = $request->consultDoctor;
+        $optoutVisit->consult_doctor = $request->consultDoctor;
         $optoutVisit->charge = $request->charge;
         $optoutVisit->discount = $request->discount;
         $optoutVisit->tax_per = $request->taxPer;
@@ -128,6 +133,7 @@ class OpdoutController extends Controller
         $optoutVisit->paid_amount = $request->paidAmount;
 
         if($optoutVisit->save()){
+            // $timelines = new Timeline();
             return response()->json(['success'=>'Patient Visit added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Patient visit not added']);
@@ -136,7 +142,7 @@ class OpdoutController extends Controller
     }
     public function viewOptOutVisit(Request $request){
     if($request->ajax()){
-            $opdoutVisit = Visit::where('type','OPD')->get();
+            $opdoutVisit = Visit::where('patient_id',$request->patient_id)->get();
             return DataTables::of($opdoutVisit)
             ->addColumn('visit_id',function($row){
                 return 'MDVI0'.$row->id; //fetched through modal relationship
@@ -217,6 +223,7 @@ class OpdoutController extends Controller
         }
         $medicineDose = new Medication();
         $medicineDose->type = "OPD";
+        $medicineDose->patient_id = $request->patientId;
         $medicineDose->visit_id = $request->visitid;
         $medicineDose->medicine_category_id = $request->medCategory;
         $medicineDose->medicine_name_id = $request->medName;
@@ -231,7 +238,7 @@ class OpdoutController extends Controller
     }
     public function viewOptOutMedDose(Request $request){
           if($request->ajax()){
-            $opdoutMedDose = Medication::where('type','OPD')->get();
+            $opdoutMedDose = Medication::where('patient_id',$request->patient_id)->get();
             return DataTables::of($opdoutMedDose)
             ->addColumn('visit_id',function($row){
                 return 'MDVI0'.$row->visit_id; //fetched through modal relationship
@@ -303,6 +310,7 @@ class OpdoutController extends Controller
             $optoutLab->type = "OPD";
             $optoutLab->patient_id = $request->patientId;
             $optoutLab->test_type_id = $request->testType;
+            $optoutLab->test_name_id = $request->testName;
             $optoutLab->method = $request->method;
             $optoutLab->report_days = $request->reportDays;
             $optoutLab->test_parameter = $request->testParameter;
@@ -316,7 +324,7 @@ class OpdoutController extends Controller
     }
     public function viewOpdOutLabDetails(Request $request){
         if($request->ajax()){
-            $labTestDetails = LabInvestigation::where('type','OPD')->get();
+            $labTestDetails = LabInvestigation::where('patient_id',$request->patient_id)->get();
             return DataTables::of($labTestDetails)
             ->addColumn('created_at',function($row){
                 return $row->created_at;
@@ -332,21 +340,186 @@ class OpdoutController extends Controller
                 return $report_dt;
             })
             ->addColumn('action',function($row){
-                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#opd-lab-test-veiw" onclick="opdOutLabView('.$row->id.')">
                       <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
                     </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="lucide:edit" onclick="appointmentEdit('.$row->id.')"></iconify-icon>
+                      <iconify-icon icon="lucide:edit" onclick="opdOutLabEdit('.$row->id.')"></iconify-icon>
                     </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="mingcute:delete-2-line" onclick="appointmenttDelete('.$row->id.')"></iconify-icon>
+                      <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutLabDelete('.$row->id.')"></iconify-icon>
                     </a>';
             })
             ->rawColumns(['action'])
             ->make(true);
         }
     }
-   
+    public function getOpdOutLabData(Request $request){
+        $getLabData = LabInvestigation::where('id',$request->id)->get();
+        $patientData = Patient::where('id',$getLabData[0]->patient_id)->get();
+        $testType = TestType::where('id',$getLabData[0]->test_type_id)->get();
+        $testName = TestName::where('id',$getLabData[0]->test_name_id)->get();
+        $data = [
+               'labData' =>$getLabData, 
+               'patientData' =>$patientData, 
+               'testType' =>$testType, 
+               'testName' =>$testName, 
+        ];
+        return response()->json(['success'=>'opdout lab data fetched','data'=>$data],200);
+    }
+    public function getOpdOutLabDetails(Request $request){
+         $getData = LabInvestigation::where('id',$request->id)->get();
+        return response()->json(['success'=>'opdout lab data fetched','data'=>$getData],200);
+    }
+    public function opdOutLabUpdateData(Request $request){
+        $update = LabInvestigation::where('id',$request->id)->update([
+            'test_type_id' => $request->testType,
+            'test_name_id' => $request->testName,
+            'method' => $request->method,
+            'report_days' => $request->reportDays,
+            'test_parameter'=> $request->testParameter,
+            'test_ref_range' => $request->testRefRange,
+            'test_unit' => $request->testUnit
+        ]);
+        if($update){
+            return response()->json(['success'=>'Lab data updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Lab data not updated']);
+        }
+    }
+    public function opdOutLabDataDelete(Request $request){
+        LabInvestigation::where('id',$request->id)->delete();
+        return response()->json(['success'=>'Lab test deleted successfully'],200);
+    }
+    public function opdOutChargeSubmit(Request $request){
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'amount' => 'required'
+        ]);
+        if($validator->fails()){
+            return response()->json(['error_validation'=>$validator->errors()->all()],200);
+        }
+        $optoutCharge = new Charge();
+            $optoutCharge->type = "OPD";
+            $optoutCharge->patient_id = $request->patientId;
+            $optoutCharge->name = $request->name;
+            $optoutCharge->amount = $request->amount;
+        if($optoutCharge->save()){
+            return response()->json(['success'=>'Charge added successfully'],200);
+        }else{
+            return response()->json(['error_success'=>'Charge not added']);
+        }
+    }
+    public function viewOpdOutCharge(Request $request){
+        if($request->ajax()){
+            $labTestDetails = Charge::where('patient_id',$request->patient_id)->get();
+            return DataTables::of($labTestDetails)
+            ->addColumn('created_at',function($row){
+                return $row->created_at;
+            })
+            ->addColumn('name',function($row){
+                return $row->name;
+            })
+            ->addColumn('amount',function($row){
+                return $row->amount;
+            })
+            ->addColumn('action',function($row){
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
+                      <iconify-icon icon="lucide:edit" onclick="opdOutChargeEdit('.$row->id.')"></iconify-icon>
+                    </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutChargeDelete('.$row->id.')"></iconify-icon>
+                    </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+    }
+    public function getOpdOutChargeData(Request $request){
+        $getData = Charge::where('id',$request->id)->get();
+        return response()->json(['success'=>'Charge data fetched','data'=>$getData],200);
+    }
+    public function opdOutChargeDataUpdate(Request $request){
+         $update = Charge::where('id',$request->id)->update([
+            'name' => $request->name,
+            'amount' => $request->amount
+        ]);
+        if($update){
+            return response()->json(['success'=>'Charge updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Charge data not updated']);
+        }
+    }
+    public function opdOutChargeDataDelete(Request $request){
+        Charge::where('id',$request->id)->delete();
+        return response()->json(['success'=>'Charge deleted successfully'],200);
+    }
+    public function opdOutVItalSubmit(Request $request){
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'value' => 'required',
+            'date' => 'nullable'
+        ]);
+        if($validator->fails()){
+            return response()->json(['error_validation'=>$validator->errors()->all()],200);
+        }
+        $optoutCharge = new Vital();
+            $optoutCharge->type = "OPD";
+            $optoutCharge->patient_id = $request->patientId;
+            $optoutCharge->name = $request->name;
+            $optoutCharge->value = $request->value;
+            $optoutCharge->date = $request->date;
+        if($optoutCharge->save()){
+            return response()->json(['success'=>'VItal added successfully'],200);
+        }else{
+            return response()->json(['error_success'=>'VItal not added']);
+        }
+    }
+    public function viewOpdOutVital(Request $request){
+          if($request->ajax()){
+            $labTestDetails = Vital::where('patient_id',$request->patient_id)->get();
+            return DataTables::of($labTestDetails)
+            ->addColumn('date',function($row){
+                return $row->date;
+            })
+            ->addColumn('name',function($row){
+                return $row->name;
+            })
+            ->addColumn('value',function($row){
+                return $row->value;
+            })
+            ->addColumn('action',function($row){
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
+                      <iconify-icon icon="lucide:edit" onclick="opdOutVitalEdit('.$row->id.')"></iconify-icon>
+                    </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutVitalDelete('.$row->id.')"></iconify-icon>
+                    </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+    }
+   public function getOpdOutVitalData(Request $request){
+        $getData = Vital::where('id',$request->id)->get();
+        return response()->json(['success'=>'Vital data fetched','data'=>$getData],200);
+   }
+   public function opdOutVItalDataUpdate(Request $request){
+         $update = Vital::where('id',$request->id)->update([
+            'name' => $request->name,
+            'value' => $request->value,
+            'date' => $request->date
+        ]);
+        if($update){
+            return response()->json(['success'=>'Vital updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Vital data not updated']);
+        }
+   }
+    public function opdOutVitalDataDelete(Request $request){
+        Vital::where('id',$request->id)->delete();
+        return response()->json(['success'=>'Vital deleted successfully'],200);
+    }
    
 }
 

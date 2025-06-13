@@ -13,6 +13,6 @@ class Visit extends Model
         return $this->belongsTo(Patient::class,'patient_id');
     }
     public function doctorData(){
-        return $this->belongsTo(User::class,'consultDoctor');
+        return $this->belongsTo(User::class,'consult_doctor');
     }
 }

@@ -177,6 +177,23 @@ Route::post('/opd-out-medicine-dose-update',[OpdoutController::class,'opdOutMedD
 Route::post('/opd-out-medicine-dose-delete',[OpdoutController::class,'opdOutMedDoseDataDelete'])->name('opd-out-med.opdOutMedDoseDataDelete');
 Route::post('/opd-out-lab-test-add',[OpdoutController::class,'opdOutLabSubmit'])->name('opd-out-lab.opdOutLabSubmit');
 Route::post('/opd-out-lab-test-details',[OpdoutController::class,'viewOpdOutLabDetails'])->name('opd-out-lab.viewOpdOutLabDetails');
+Route::post('/opd-out-lab-test-data',[OpdoutController::class,'getOpdOutLabData'])->name('opd-out-lab.getOpdOutLabData');
+Route::post('/opd-out-lab-test-edit',[OpdoutController::class,'getOpdOutLabDetails'])->name('opd-out-lab.getOpdOutLabDetails');
+Route::post('/opd-out-lab-test-update',[OpdoutController::class,'opdOutLabUpdateData'])->name('opd-out-lab.opdOutLabUpdateData');
+Route::post('/opd-out-lab-test-delete',[OpdoutController::class,'opdOutLabDataDelete'])->name('opd-out-lab.opdOutLabDataDelete');
+
+Route::post('/opd-out-charge-add',[OpdoutController::class,'opdOutChargeSubmit'])->name('opd-out-charge.opdOutChargeSubmit');
+Route::post('/opd-out-charge-view',[OpdoutController::class,'viewOpdOutCharge'])->name('opd-out-charge.viewOpdOutCharge');
+Route::post('/opd-out-charge-edit',[OpdoutController::class,'getOpdOutChargeData'])->name('opd-out-charge.getOpdOutChargeData');
+Route::post('/opd-out-charge-update',[OpdoutController::class,'opdOutChargeDataUpdate'])->name('opd-out-charge.opdOutChargeDataUpdate');
+Route::post('/opd-out-charge-delete',[OpdoutController::class,'opdOutChargeDataDelete'])->name('opd-out-charge.opdOutChargeDataDelete');
+
+Route::post('/opd-out-vital-add',[OpdoutController::class,'opdOutVItalSubmit'])->name('opd-out-vital.opdOutVItalSubmit');
+Route::post('/opd-out-vital-view',[OpdoutController::class,'viewOpdOutVital'])->name('opd-out-vital.viewOpdOutVital');
+Route::post('/opd-out-vital-data',[OpdoutController::class,'getOpdOutVitalData'])->name('opd-out-vital.getOpdOutVitalData');
+Route::post('/opd-out-vital-update',[OpdoutController::class,'opdOutVItalDataUpdate'])->name('opd-out-vital.opdOutVItalDataUpdate');
+Route::post('/opd-out-vital-delete',[OpdoutController::class,'opdOutVitalDataDelete'])->name('opd-out-vital.opdOutVitalDataDelete');
+
 
 Route::get('/ipd-in',[IpdinController::class,'index'])->name('ipd-in.index');
 Route::get('/ipd-in-patient-add',[IpdinController::class,'ipdInPatientAdd'])->name('ipd-in.ipdInPatientAdd');

@@ -54,6 +54,10 @@
                             <div class=" pb-8">
                                  <table class="cutomer-details w-75 table-sm">
                                   <tr>
+                                    <td class="fw-medium">Patient ID :</td>
+                                    <td>{{$patients[0]->patient_id}}</td>
+                                  </tr>
+                                  <tr>
                                     <td class="fw-medium">Gender :</td>
                                     <td>{{$patients[0]->gender}}</td>
                                   </tr>
@@ -101,22 +105,15 @@
                                        </tr>
                                     </thead>
                                     <tbody>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Niraj Kumar</td>
+                                      @foreach ($visitsData as $visit)
+                                      @php
+                                        $doctor_name = app\Models\User::where('id',$visit->consult_doctor)->get(['firstname','lastname']);
+                                      @endphp
+                                        <tr>
+                                        <td>{{$visit->appointment_date}}</td>
+                                        <td>{{$doctor_name[0]->firstname}} {{$doctor_name[0]->lastname}}</td>
                                        </tr>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Niraj Kumar</td>
-                                       </tr>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Niraj Kumar</td>
-                                       </tr>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Niraj Kumar</td>
-                                       </tr>
+                                      @endforeach
                                     </tbody>
                                   </table>
                                 </div>
@@ -130,32 +127,22 @@
                                         <th scope="col" class="fw-medium">Date</th>
                                         <th scope="col" class="fw-medium">Medician Name</th>
                                         <th scope="col" class="fw-medium">Dose</th>
-                                        <th scope="col" class="fw-medium">Time</th>
                                         <th scope="col" class="fw-medium">Remark</th>
                                        </tr>
                                     </thead>
                                     <tbody>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Alprovit</td>
-                                        <td>1 CT</td>
-                                        <td>02:00 PM</td>
-                                        <td>Non</td>
-                                       </tr>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Alprovit</td>
-                                        <td>1 CT</td>
-                                        <td>02:00 PM</td>
-                                        <td>Non</td>
-                                       </tr>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Alprovit</td>
-                                        <td>1 CT</td>
-                                        <td>02:00 PM</td>
-                                        <td>Non</td>
-                                       </tr>
+                                      @foreach ($medicationData as $medication)
+                                      {{-- @php
+                                        $medicine_name = app\Models\Medicine::where('id',$medication->medicine_name_id)->get(['name']);
+                                      @endphp --}}
+                                        <tr>
+                                          <td>{{$medication->created_at}}</td>
+                                          {{-- <td>{{$medicine_name[0]->name}}</td> --}}
+                                          <td>{{$medication->dose}}</td>
+                                          <td>{{$medication->dose}}</td>
+                                          <td>{{$medication->remarks}}</td>
+                                        </tr>
+                                      @endforeach
                                     </tbody>
                                   </table>
                                 </div>
@@ -166,31 +153,26 @@
                                   <table class="table striped-table border-0 mb-0 table-sm">
                                     <thead>
                                        <tr>
-                                        <th scope="col" class="fw-medium">Test</th>
-                                        <th scope="col" class="fw-medium">Labs</th>
-                                        <th scope="col" class="fw-medium">Sample coll</th>
+                                        <th scope="col" class="fw-medium">Test Type</th>
+                                        <th scope="col" class="fw-medium">Test Name</th>
+                                        <th scope="col" class="fw-medium">Sample collect</th>
                                         <th scope="col" class="fw-medium">Expected Date</th>
                                        </tr>
                                     </thead>
                                     <tbody>
-                                       <tr>
-                                        <td>CBC</td>
-                                        <td>Lal Path</td>
-                                        <td>Done</td>
-                                        <td>05/02/2025 (Wed)</td>
-                                       </tr>
-                                       <tr>
-                                        <td>CBC</td>
-                                        <td>Lal Path</td>
-                                        <td>Done</td>
-                                        <td>05/02/2025 (Wed)</td>
-                                       </tr>
-                                       <tr>
-                                        <td>CBC</td>
-                                        <td>Lal Path</td>
-                                        <td>Done</td>
-                                        <td>05/02/2025 (Wed)</td>
-                                       </tr>
+                                     @foreach ($labInvestigationData as $labInv)
+                                        @php
+                                            $report_date = Carbon\Carbon::parse($labInv->created_at)->addDays($labInv->report_days);
+                                            $labTestType = app\Models\TestType::where('id',$labInv->test_type_id)->get(['name']);
+                                            $labTestName = app\Models\TestName::where('id',$labInv->test_name_id)->get(['name']);
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $labTestType[0]->name }}</td>
+                                            <td>{{ $labTestName[0]->name }}</td>
+                                            <td>{{ $labInv->created_at->toDateString() }}</td>
+                                            <td>{{ $report_date->toDateString() }}</td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                   </table>
                                 </div>
@@ -203,7 +185,7 @@
                     <div class="col-md-12 px-3">
                        <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Checkups</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-new-checkup"> <i class="ri-add-line"></i> New Checkup</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-new-checkup" onclick="resetVisit()"> <i class="ri-add-line"></i> New Checkup</button>
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="card basic-data-table">
@@ -231,7 +213,7 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Medication</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-medication-dose"> <i class="ri-add-line"></i> Add Medication Dose</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-medication-dose" onclick="resetMedication()"> <i class="ri-add-line"></i> Add Medication Dose</button>
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="table-responsive">
@@ -275,7 +257,7 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Lab Investigations</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-lab"> <i class="ri-add-line"></i> Add Lab</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-lab" onclick="resetLabTest()"> <i class="ri-add-line"></i> Add Lab</button>
                       </div>
                       <div class="card basic-data-table">
                             <table class="table bordered-table mb-0 w-100" id="opd-lab-reports-list" data-page-length='10'>
@@ -317,16 +299,15 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Charges</h6>
-                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-charges"> <i class="ri-add-line"></i> Add Charges</button>
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-charges" onclick="resetCharge()"> <i class="ri-add-line"></i> Add Charges</button>
                         </div>
                       <div class="table-responsive">
-                        <table class="table  striped-table mb-0 table-sm">
+                        <table class="table  striped-table w-100" id="opd-out-charges-list">
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
-                              <th class="fw-medium">Charge Type</th>
-                              <th class="fw-medium">Charge Category</th>
-                              <th class="fw-medium">Applied Charge</th>
+                              <th class="fw-medium">Name</th>
+                              <th class="fw-medium">Amount</th>
                               <th class="fw-medium">Action</th>
                              </tr>
                           </thead>
@@ -334,7 +315,6 @@
                             <tr>
                               <td>05/04/2023</td>
                               <td>OPD</td>
-                              <td>Intensive Care Units</td>
                               <td>5545.00</td>
                               <td>
                                   <!-- <button class="mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -424,18 +404,15 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Vital History</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-vital-history"> <i class="ri-add-line"></i> Add Vital History</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-vital-history" onclick="resetVital()"> <i class="ri-add-line"></i> Add Vital History</button>
                       </div>
                       <div class="table-responsive">
-                        <table class="table striped-table mb-0 table-sm">
+                        <table class="table striped-table w-100" id="opdOutVital-list">
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
-                              <th class="fw-medium"> Height <br>(1 - 200 Centimeters)</th>
-                             <th class="fw-medium">Weight <br>(0 - 150 Kilograms)</th>
-                              <th class="fw-medium">Pluse <br>(70 - 100 Beats per)</th>
-                              <th class="fw-medium">	Temperature <br>(95.8 - 99.3 Fahrenheit )</th>
-                              <th class="fw-medium">BP <br>(90/60 - 140/90 mmHg)</th>
+                              <th class="fw-medium">Name</th>
+                              <th class="fw-medium">Value</th>
                               <th class="fw-medium">Action</th>
                              </tr>
                           </thead>
@@ -444,9 +421,6 @@
                               <td>04/02/2025</td>
                               <td>150 ( 03:00 PM)</td>
                               <td>80kg ( 12:55 PM) </td>
-                              <td>55-60</td>
-                              <td>24 Cel</td>
-                              <td> 120/80 mm Hg</td>
                               <td>
                                 <button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#opd-edit-vital-history">
                                   <iconify-icon icon="lucide:edit"></iconify-icon>
@@ -474,6 +448,7 @@
         <h6 class="modal-title fw-normal text-md text-white" id="opd-add-vital-historyLabel"> Add Vital</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <form id="opdOutVital-form">
       <div class="modal-body">
         <table class="pharmacy-purchase-bill-table table table-hover mb-11 add-test-feilds add-vital-table">
                    <thead>
@@ -485,195 +460,30 @@
                   </thead>
                   <tbody>
                     <tr class="add-vital-fieldGroup">
+                      <input type="hidden" id="opdOutVitalId">
                       <td>
-                        <select class="form-control form-control-sm" >
-                              <option value="">Select</option>
-                              <option value="3">Pulse  (70 -   100  Beats per)</option>
-                              <option value="4">Temperature (95.8  -  99.3 Fahrenheit )</option>
-                              <option value="5">BP (90/60  -  140/90 mmHg)</option>
-                          </select>
+                        <input type="text" id="opdOutVital-name" class="form-control form-control-sm" required>
                       </td>
                       <td>
-                        <input type="text" class="form-control form-control-sm" >
+                        <input type="text" id="opdOutVital-value" class="form-control form-control-sm" required>
                       </td>
                       <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center add-vital-remove">
-                            <i class="ri-close-line"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr class="add-vital-fieldGroupCopy" style="display: none;">
-                      <td>
-                        <select class="form-control form-control-sm" >
-                              <option value="">Select</option>
-                              <option value="3">Pulse  (70 -   100  Beats per)</option>
-                              <option value="4">Temperature (95.8  -  99.3 Fahrenheit )</option>
-                              <option value="5">BP (90/60  -  140/90 mmHg)</option>
-                          </select>
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center add-vital-remove">
-                            <i class="ri-close-line"></i>
-                        </button>
+                        <input type="date" id="opdOutVital-date" class="form-control form-control-sm" placeholder="DD-MM-YYYY" required>
                       </td>
                     </tr>
                   </tbody>
                  </table>
-                 <button class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center add-vital-addMore">
-                      <i class="ri-add-line"></i> Add
-                  </button>
       </div>
        <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
+        <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOurVItalSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOurVItalUpdate d-none" onclick="opdOurVItalUpdate(document.getElementById('opdOutVitalId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
       </div>
+    </form>
     </div>
   </div>
 </div>
 <!-- Add vital History end -->
-
-<!-- edit vital History Start -->
-<div class="modal fade" id="opd-edit-vital-history" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-edit-vital-historyLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="opd-edit-vital-historyLabel"> Edit Vital</h6>
-        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <table class="table table-borderless">
-                   <thead>
-                          <tr class="border-bottom">
-                            <th class="text-nowrap text-neutral-700">Vital Name <sup class="text-danger">*</sup></th>
-                            <th class="text-nowrap text-neutral-700">	Vital Value <sup class="text-danger">*</sup></th>
-                            <th class="text-nowrap text-neutral-700">Date <sup class="text-danger">*</sup></th>
-                          </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                         <select class="form-select form-select-sm" disabled>
-                            <option value="1">Select</option>
-                            <option value="2" selected>Height (1 - 200 Centimeters)</option>
-                            <option value="3" >Weight (1 - 100 Kg)</option>
-                            <option value="4" >Pulse (70 - 100 Beats per)</option>
-                            <option value="5">Temperature (95.8  -  99.3 Fahrenheit )</option>
-                            <option value="6">BP (90/60  -  140/90 mmHg)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="number" class="form-control form-control-sm" placeholder="160">
-                      </td>
-                      <td>
-                         <div class=" position-relative">
-                              <input class="form-control radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="05/22/2025 03:55 PM" readonly="readonly">
-                              <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                          </div>
-                      </td>
-                    </tr>
-                     <tr>
-                      <td>
-                         <select class="form-select form-select-sm" disabled>
-                            <option value="1">Select</option>
-                            <option value="2" >Height (1 - 200 Centimeters)</option>
-                            <option value="3" selected>Weight (1 - 100 Kg)</option>
-                            <option value="4" >Pulse (70 - 100 Beats per)</option>
-                            <option value="5">Temperature (95.8  -  99.3 Fahrenheit )</option>
-                            <option value="6">BP (90/60  -  140/90 mmHg)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="number" class="form-control form-control-sm" placeholder="60">
-                      </td>
-                      <td>
-                         <div class=" position-relative">
-                              <input class="form-control radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="04/22/2025 03:55 PM" readonly="readonly">
-                              <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                          </div>
-                      </td>
-                    </tr>
-                     <tr>
-                      <td>
-                         <select class="form-select form-select-sm" disabled>
-                            <option value="1">Select</option>
-                            <option value="2" >Height (1 - 200 Centimeters)</option>
-                            <option value="3" >Weight (1 - 100 Kg)</option>
-                            <option value="4" selected>Pulse (70 - 100 Beats per)</option>
-                            <option value="5">Temperature (95.8  -  99.3 Fahrenheit )</option>
-                            <option value="6">BP (90/60  -  140/90 mmHg)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="number" class="form-control form-control-sm" placeholder="80">
-                      </td>
-                      <td>
-                         <div class=" position-relative">
-                              <input class="form-control radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="04/22/2025 03:55 PM" readonly="readonly">
-                              <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                          </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                         <select class="form-select form-select-sm" disabled>
-                            <option value="1">Select</option>
-                            <option value="2" >Height (1 - 200 Centimeters)</option>
-                            <option value="3" >Weight (1 - 100 Kg)</option>
-                            <option value="4" >Pulse (70 - 100 Beats per)</option>
-                            <option value="5" selected>Temperature (95.8  -  99.3 Fahrenheit )</option>
-                            <option value="6">BP (90/60  -  140/90 mmHg)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="number" class="form-control form-control-sm" placeholder="96">
-                      </td>
-                      <td>
-                         <div class=" position-relative">
-                              <input class="form-control radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="04/22/2025 03:55 PM" readonly="readonly">
-                              <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                          </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                         <select class="form-select form-select-sm" disabled>
-                            <option value="1">Select</option>
-                            <option value="2" >Height (1 - 200 Centimeters)</option>
-                            <option value="3" >Weight (1 - 100 Kg)</option>
-                            <option value="4" >Pulse (70 - 100 Beats per)</option>
-                            <option value="5" >Temperature (95.8  -  99.3 Fahrenheit )</option>
-                            <option value="6" selected>BP (90/60  -  140/90 mmHg)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="number" class="form-control form-control-sm" placeholder="120/20">
-                      </td>
-                      <td>
-                         <div class=" position-relative">
-                              <input class="form-control radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="04/22/2025 03:55 PM" readonly="readonly">
-                              <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                          </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                 </table>
-        </div>
-       <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- edit vital History end -->
-
 <!-- Add charges Start -->
 <div class="modal fade" id="opd-add-charges" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-add-chargesLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -682,163 +492,32 @@
         <h6 class="modal-title fw-normal text-md text-white" id="opd-add-chargesLabel"> Add Charges</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-          <div class="row gy-3">
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charges Type<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>OPD</option>
-                      <option>Procedures</option>
-                      <option>Supplier</option>
-                      <option>Operations</option>
-                      <option>Other</option>
-                  </select>
+      <form id="opdOutCharge-form">
+        <div class="modal-body">
+          <div class="row">
+              <div class="col-md-6">
+                <input type="hidden" id="opdOutChargeId">
+                <label class="form-label fw-medium" for="opdOutCharge-name">Name</label> <sup class="text-danger">*</sup>
+                  <input id="opdOutCharge-name" type="text" class="form-control form-control-sm" placeholder="Charge Name" oninput="validateField(this.id,'input')">
+                  <div class="opdOutCharge-name_errorCls d-none"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium" for="opdOutCharge-amount">Amount</label> <sup class="text-danger">*</sup>
+                  <input id="opdOutCharge-amount" type="number" class="form-control form-control-sm" placeholder="Charge Amount" oninput="validateField(this.id,'amount')">
+                  <div class="opdOutCharge-amount_errorCls d-none"></div>
+              </div>
             </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charge Category<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>Operation  Service</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charge Name<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>	Intensive Care</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Quantity<sup class="text-danger">*</sup></label>
-                <input type="number" class="form-control form-control-sm" placeholder="1">
-            </div>
-          </div>
-          <div class="row border-top gy-3 mt-2">
-            <div class="col-md-5 my-3">
-                  <table class="table table-sm">
-                    <tbody><tr>
-                      <td class="border-0" colspan="2">Total (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0 align-middle">Discount (₹)</td>
-                      <td class="border-0"><div class="d-flex align-items-center"><input class="form-control form-control-sm discount-value-field" type="text" placeholder="Discount"><span class="ms-1">%</span></div></td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0" colspan="2">Taxes (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0" colspan="2">Net Amount (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                  </tbody></table>
-             </div>
-             <div class="col-md-4 my-3">
-               <label class="form-label fw-medium">Charges Note<sup class="text-danger">*</sup></label>
-                <textarea type="text" class="form-control " placeholder="Charges Note" rows="3"></textarea>
-             </div>
-             <div class="col-md-3 my-3">
-               <label class="form-label fw-medium">Date<sup class="text-danger">*</sup></label>
-                 <div class=" position-relative">
-                    <input class="form-control radius-8 bg-base expiry-date flatpickr-input active" type="text" placeholder="12/2024" readonly="readonly">
-                    <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                </div>
-             </div>
-          </div>
-      </div>
-       <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutChargeSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutChargeUpdate d-none" onclick="opdOutChargeUpdate(document.getElementById('opdOutChargeId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+        </div>
+    </form>
     </div>
   </div>
 </div>
 <!-- Add charges History end -->
-
-<!-- edit charges Start -->
-<div class="modal fade" id="opd-edit-charges" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-edit-chargesLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-    <div class="modal-content">
-      <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="opd-edit-chargesLabel"> Edit Charges</h6>
-        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          <div class="row gy-3">
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charges Type<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>OPD</option>
-                      <option>Procedures</option>
-                      <option>Supplier</option>
-                      <option>Operations</option>
-                      <option>Other</option>
-                  </select>
-            </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charge Category<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>Operation  Service</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charge Name<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>	Intensive Care</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Quantity<sup class="text-danger">*</sup></label>
-                <input type="number" class="form-control form-control-sm" placeholder="1">
-            </div>
-          </div>
-          <div class="row border-top gy-3 mt-2">
-            <div class="col-md-5 my-3">
-                  <table class="table table-sm">
-                    <tbody><tr>
-                      <td class="border-0" colspan="2">Total (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0 align-middle">Discount (₹)</td>
-                      <td class="border-0"><div class="d-flex align-items-center"><input class="form-control form-control-sm discount-value-field" type="text" placeholder="Discount"><span class="ms-1">%</span></div></td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0" colspan="2">Taxes (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0" colspan="2">Net Amount (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                  </tbody></table>
-             </div>
-             <div class="col-md-4 my-3">
-               <label class="form-label fw-medium">Charges Note<sup class="text-danger">*</sup></label>
-                <textarea type="text" class="form-control " placeholder="Charges Note" rows="3"></textarea>
-             </div>
-             <div class="col-md-3 my-3">
-               <label class="form-label fw-medium">Date<sup class="text-danger">*</sup></label>
-                 <div class=" position-relative">
-                    <input class="form-control radius-8 bg-base expiry-date flatpickr-input active" type="text" placeholder="12/2024" readonly="readonly">
-                    <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                </div>
-             </div>
-          </div>
-      </div>
-       <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- edit charges History end -->
 <!-- Add add-lab Start -->
 <div class="modal fade" id="opd-add-lab" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-add-labLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -864,6 +543,7 @@
             <div class="col-md-4">
               <label class="form-label fw-medium" for="opdOutLab-testName">Test Name</label> <sup class="text-danger">*</sup>
                  <select id="opdOutLab-testName" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                 
                         <option value="">Select</option>
                       @foreach ($testnames as $testname)
                         <option value="{{$testname->id}}">{{$testname->name}}</option>
@@ -924,7 +604,8 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutLabSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutLabUpdate d-none" onclick="opdOutLabUpdate(document.getElementById('opOutLabID').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
           </div>
       </form>
       </div>
@@ -938,67 +619,11 @@
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="opd-lab-test-veiwLabel">Abodoman X-ray (AX)</h6>
+        <h6 class="modal-title fw-normal text-md text-white" id="opd-lab-test-veiwLabel">Lab Details</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-md-12">
-            <table class="table  table-borderless table-sm payment-pharmacy-table">
-                  <tbody>
-                <tr>
-                    <th class="fw-medium">Bill No</th>
-                    <td>	PATH65497</td>
-                    <th class="fw-medium">Patient</th>
-                    <td>Aman Kumar (1234)</td>
-                </tr>
-                <tr>
-                   <th class="fw-medium">Approve Date</th>
-                    <td>22/05/2025</td>
-                    <th class="fw-medium">Report Collection Date</th>
-                    <td>05/12/2025</td>
-                </tr>
-                <tr>     
-                    <th class="fw-medium">Test Name</th>
-                    <td>Abodoman X-ray (AX)</td>
-                    <th class="fw-medium">Expected Date</th>
-                    <td>22/05/2025</td>
-                </tr>
-                <tr>           
-                   <th class="fw-medium">Collection By</th>
-                    <td>Sunil Kumar (9876)</td>
-                    <th class="fw-medium">Pathology Center</th>
-                    <td>In-House Pathology Lab</td>
-                </tr>
-                <tr>    
-                     <th class="fw-medium">Case ID</th>
-                    <td>7144</td>    
-                    <th class="fw-medium">Approved By</th>
-                    <td>Rakesh Kumar</td>  
-                </tr>
-            </tbody>
-        </table>
-          </div>
-        </div>
-        <h6 class="fw-medium text-md text-center mt-5" >Abodoman X-ray  (AX)</h6>
-        <table class="table  table-borderless table-sm payment-pharmacy-table">
-               <thead>
-                 <tr>
-                   <th>#</th>
-                   <th class="fw-medium">Test Parameter Name</th>
-                   <th class="fw-medium text-nowrap">Report Value</th>
-                   <th class="fw-medium">Report Reference</th>
-                 </tr>
-               </thead>
-               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Liver Function Test <br><span class="text-xs">Description: Liver function tests (LFTs or LFs), also referred to as a hepatic panel, are groups of blood tests ... ranges are given, these will vary depending on age, gender and his/her health, ethnicity, method of analysis, and units of measurement.</span> </td>
-                  <td>25 (U/L)</td>
-                  <td class="text-nowrap">7 to 55 units per liter (U/L)</td>
-                </tr>
-               </tbody>
-        </table>
+       <div class="opdOutLabDataAppend"></div>
       </div>
     </div>
   </div>
@@ -1199,199 +824,6 @@
   </div>
 </div>
 <!-- opd new checkup end -->
-
-<!--  opd edit checkup Start -->
- <div class="modal fade" id="opd-edit-checkup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-edit-checkupLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-    <div class="modal-content">
-      <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="opd-edit-checkupLabel">Edit Patient Details</h6>
-        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          <div class="row">
-        <div class="col-md-6 pt-3">
-          <div class="row gy-3">
-             <div class="col-md-12">
-                <table class="table table-borderless pharmacy-bill-detail-table w-75 ">
-                     <tbody>
-                      <tr>
-                       <th class="fw-medium">Patient Name</th>
-                       <td class="text-neutral-700">Arun Kumar (1234)</td>
-                     </tr>
-                     <tr>
-                       <th class="fw-medium">Gender</th>
-                       <td class="text-neutral-700">Male</td>
-                     </tr>
-                     <tr>
-                      <th class="fw-medium">Symptoms</th>
-                      <td class="text-neutral-700"> Cold</td>
-                     </tr>
-                  </tbody></table>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium">Symptoms Type</label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-                 <option value="1">Cough</option>
-              </select>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium">Symptoms Title</label>
-               <select class="form-select form-select-sm  " >
-                 <option selected>Select</option>
-              </select>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium">Symptoms Description</label>
-               <textarea  class="form-control " rows="1" placeholder="Symptoms Description"></textarea>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium">Previous Medical Issue</label>
-               <textarea  class="form-control " rows="1" placeholder="Previous Medical Issue"></textarea>
-             </div>
-             <div class="col-md-12">
-               <label class="form-label fw-medium">Note</label>
-               <textarea  class="form-control " rows="2" placeholder="Note"></textarea>
-             </div>
-          </div>
-        </div>
-        <div class="col-md-6 bg-info-50 pt-3">
-          <div class="row gy-3">
-            <div class="col-md-6">
-              <label class="form-label fw-medium">Appointment Date<sup class="text-danger">*</sup></label>
-              <div class=" position-relative">
-                    <input class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="text" placeholder="12/2024" readonly="readonly">
-                    <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium">Case</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Case">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium">Casualty</label>
-              <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
-                 <option value="1">Yes</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-               <label class="form-label fw-medium">Old Patient</label>
-              <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
-                 <option value="1">Yes</option>
-              </select>
-            </div>
-            <!-- <div class="col-md-6">
-             <label class="form-label fw-medium"> Credit Limit (₹) <sup class="text-danger">*</sup></label>
-              <input type="number" class="form-control form-control-sm" placeholder="200000">
-            </div> -->
-            <div class="col-md-6">
-              <label class="form-label fw-medium">Reference</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Reference">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium"> Consultant Doctor <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-                 <option value="1">Sunil Kumar (1234)</option>
-                 <option value="1">Manoj Gupta (2224)</option>
-                 <option value="1">Arjun Kumar (2234)</option>
-                 <option value="1">Suraj Kumar (9234)</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium"> Charge Category <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-                 <option value="1">OPD Consultation Fees</option>
-                 <option value="1">OPD Service</option>
-                 <option value="1">OPD Insurance</option>
-                 <option value="1">Blood pressure check</option>
-                 <option value="1">Eye check</option>
-                 <option value="1">Cholesterol level check</option>
-                 <option value="1">Other Charges</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium"> Charge <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium"> Applied Charge (₹) <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Applied Charge">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium"> Discount %<sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Discount ">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium"> Tax %<sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Discount ">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium"> Amount (₹) <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Amount ">
-            </div>
-            <div class="col-md-6">
-             <label class="form-label fw-medium"> Payment Mode</label>
-               <select class="form-select form-select-sm" id="payment-method">
-                <option value="cash">Cash</option>
-                <option value="upi">UPI</option>
-                <option value="card">Card</option>
-                <option value="cheque">Cheque</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div class="col-md-6" style="display: none;" id="upi">
-              <label class="form-label fw-medium ">UPI</label>
-              <select class="form-select form-select-sm" id="upi-number">
-                <option selected="">Select</option>
-                <option value="upi-reference-number">Google Pay</option>
-                <option value="upi-reference-number">Phone Pay</option>
-                <option value="upi-reference-number">Airtel Pay</option>
-              </select> 
-            </div>
-            
-            <div class="col-md-6" style="display: none;" id="card">
-              <label class="form-label fw-medium ">Card Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder="Enter Card Number">
-            </div>
-            <div class="col-md-6 cheque" style="display: none;">
-              <label class="form-label fw-medium ">Cheque Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder="Enter Cheque Number">
-            </div>
-            
-            <div class="col-md-6 mb-3" style="display: none;" id="upi-reference-no">
-              <label class="form-label fw-medium ">Reference Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder=" Enter reference number">
-            </div>
-            <div class="col-md-6 mb-3">
-             <label class="form-label fw-medium">Paid Amount <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Paid Amount ">
-            </div>
-            <!-- <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Live Consultation</label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
-                 <option value="1">Yes</option>
-              </select>
-            </div> -->
-          </div>
-        </div>
-       </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- opd edit checkup end -->
-
 <!--  opd-visit-view Start -->
  <div class="modal fade" id="opd-out-visit-view" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-visit-viewLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -1495,6 +927,26 @@
 @section('extra-js')
 
   <script>
+// Flat pickr or date picker js 
+    function getDatePicker (receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "d-m-Y",
+        });
+    }
+    getDatePicker('#opdOutVital-date'); 
+    // Flat pickr or date picker js 
+
+$('#opd-add-medication-dose').on('shown.bs.modal', function () {
+    $('.select2-cls').select2({
+        dropdownParent: $('#opd-add-medication-dose')
+    });
+});
+
+$('#opd-add-lab').on('shown.bs.modal', function () {
+    $('.select2-cls').select2({
+        dropdownParent: $('#opd-add-lab')
+    });
+});
   const opdOutVisitMedicineName = "{{route('common.getMedicineName')}}";
 
   const opdOutVisitSubmit = "{{route('opd-out-visit.opdOutVisitSubmit')}}";
@@ -1512,19 +964,28 @@
 
   const opdOutLabSubmit = "{{route('opd-out-lab.opdOutLabSubmit')}}";
   const viewOpdOutLabDetails = "{{route('opd-out-lab.viewOpdOutLabDetails')}}";
+  const getOpdOutLabData = "{{route('opd-out-lab.getOpdOutLabData')}}";
+  const getOpdOutLabDetails = "{{route('opd-out-lab.getOpdOutLabDetails')}}";
+  const opdOutLabUpdateData = "{{route('opd-out-lab.opdOutLabUpdateData')}}";
+  const opdOutLabDataDelete = "{{route('opd-out-lab.opdOutLabDataDelete')}}";
 
-  //  -- select2 js library included for dropdown search and select box.. other method for implenting used due to boostrap conflicts--
-  window.addEventListener('load', () => {
-    $('.select2-cls').select2({
-    dropdownParent: $('#opd-add-medication-dose')
-    });
-    $('.select2-cls').select2({
-    dropdownParent: $('#opd-add-lab')
-    });
-  });
+  const opdOutChargeSubmit = "{{route('opd-out-charge.opdOutChargeSubmit')}}";
+  const viewOpdOutCharge = "{{route('opd-out-charge.viewOpdOutCharge')}}";
+  const getOpdOutChargeData = "{{route('opd-out-charge.getOpdOutChargeData')}}";
+  const opdOutChargeDataUpdate = "{{route('opd-out-charge.opdOutChargeDataUpdate')}}";
+  const opdOutChargeDataDelete = "{{route('opd-out-charge.opdOutChargeDataDelete')}}";
+
+  const opdOutVItalSubmit = "{{route('opd-out-vital.opdOutVItalSubmit')}}";
+  const viewOpdOutVital = "{{route('opd-out-vital.viewOpdOutVital')}}";
+  const getOpdOutVitalData = "{{route('opd-out-vital.getOpdOutVitalData')}}";
+  const opdOutVItalDataUpdate = "{{route('opd-out-vital.opdOutVItalDataUpdate')}}";
+  const opdOutVitalDataDelete = "{{route('opd-out-vital.opdOutVitalDataDelete')}}";
+
 </script>
  {{-----------external js files added for page functions------------}}
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-visit.js')}}"></script>
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-medication.js')}}"></script>
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-lab.js')}}"></script>
+    <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-charge.js')}}"></script>
+    <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-vital.js')}}"></script>
 @endsection

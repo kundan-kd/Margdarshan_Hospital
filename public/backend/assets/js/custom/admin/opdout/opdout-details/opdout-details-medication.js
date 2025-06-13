@@ -1,3 +1,13 @@
+function resetMedication(){
+    $('#opdOutMedDoseId').val('');
+    $('#opdOutMed-visitid').val('');
+    $('#opdOutMed-medCategory').val('');
+    $('#opdOutMed-medName').val('');
+    $('#opdOutMed-dose').val('');
+    $('#opdOutMed-remerks').val('');
+    $('.opdOutMedDoseSubmit').removeClass('d-none');
+    $('.opdOutMedDoseUpdate').addClass('d-none');
+}
 let table_med_dose = $('#opdOutMed-medicineDoseList').DataTable({
      processing: true,
     serverSide:true,
@@ -6,6 +16,9 @@ let table_med_dose = $('#opdOutMed-medicineDoseList').DataTable({
         type:"POST",
         headers:{
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data: function(d){
+            d.patient_id = patient_id;
         },
         error:function(xhr, thrown){
             console.log(xhr.responseText);
@@ -76,6 +89,7 @@ $('#opdOutMed-form').on('submit',function(e){
     let medName_check  = validateField('opdOutMed-medName', 'select');
     let dose_check  = validateField('opdOutMed-dose', 'select');
     if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true){
+        let patientId = $('#patient_Id').val();
         let visitid = $('#opdOutMed-visitid').val();
         let medCategory = $('#opdOutMed-medCategory').val();
         let medName = $('#opdOutMed-medName').val();
@@ -87,7 +101,7 @@ $('#opdOutMed-form').on('submit',function(e){
             headers:{
              'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
             },
-            data:{visitid:visitid,medCategory:medCategory,medName:medName,dose:dose,remerks:remerks},
+            data:{patientId:patientId,visitid:visitid,medCategory:medCategory,medName:medName,dose:dose,remerks:remerks},
             success:function(response){
                 if(response.success){
                     $('#opd-add-medication-dose').modal('hide');
@@ -133,7 +147,7 @@ function opdOutMedDoseEdit(id){
     });
 }
 function opdOutMedDoseUpdate(id){
-     let visitid_check  = validateField('opdOutMed-visitid', 'select');
+    let visitid_check  = validateField('opdOutMed-visitid', 'select');
     let medCategory_check  = validateField('opdOutMed-medCategory', 'select');
     let medName_check  = validateField('opdOutMed-medName', 'select');
     let dose_check  = validateField('opdOutMed-dose', 'select');

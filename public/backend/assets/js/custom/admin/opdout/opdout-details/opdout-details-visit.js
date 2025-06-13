@@ -1,3 +1,21 @@
+function resetVisit(){
+    $('#opdOutVisitId').val('');
+    $('#opdOutVisit-symptoms').val('');
+    $('#opdOutVisit-previousMedIssue').val('');
+    $('#opdOutVisit-note').val('');
+    $('#opdOutVisit-admissionDate').val('');
+    $('#opdOutVisit-oldPatient').val('');
+    $('#opdOutVisit-consultDoctor').val('');
+    $('#opdOutVisit-charge').val('');
+    $('#opdOutVisit-discount').val('');
+    $('#opdOutVisit-tax').val('');
+    $('#opdOutVisit-amount').val('');
+    $('#opdOutVisit-paymentMode').val('');
+    $('#opdOutVisit-refNum').val('');
+    $('#opdOutVisit-paidAmount').val('');
+    $('.opdOutVisitSubmit').removeClass('d-none');
+    $('.opdOutVisitUpdate').addClass('d-none');
+}
 function calculateAmount(){
     let charge = $('#opdOutVisit-charge').val() || 0;
     let discount = $('#opdOutVisit-discount').val() || 0;
@@ -66,6 +84,7 @@ $('#opdOutVisit-modelForm').on('submit',function(e){
     }    
 });
 
+let patient_id = $('#patient_Id').val();
 let table_visit = $('#opd-out-visit-list').DataTable({
     processing: true,
     serverSide:true,
@@ -74,6 +93,9 @@ let table_visit = $('#opd-out-visit-list').DataTable({
         type:"POST",
         headers:{
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data: function(d){
+            d.patient_id = patient_id;
         },
         error:function(xhr, thrown){
             console.log(xhr.responseText);
@@ -199,7 +221,7 @@ function opdOutVisitViewData(id){
             console.log(xhr.respnseText);
             alert('Error: '+thrown );
         }
-    })
+    });
    
 }
 

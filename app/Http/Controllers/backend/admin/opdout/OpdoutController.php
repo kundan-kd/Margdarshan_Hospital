@@ -101,7 +101,7 @@ class OpdoutController extends Controller
                 'symptoms' => 'nullable',
                 'previousMedIssue' => 'nullable',
                 'note' => 'nullable',
-                'admissionDate' => 'nullable',
+                'appointment_date' => 'nullable',
                 'oldPatient' => 'nullable',
                 'consultDoctor' => 'nullable',
                 'charge' => 'required',
@@ -110,7 +110,7 @@ class OpdoutController extends Controller
                 'amount' => 'required',
                 'paymentMode' => 'nullable',
                 'refNum' => 'nullable',
-                'paidAmount' => 'nullable',
+                'paidAmount' => 'nullable'
         ]);
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
@@ -133,7 +133,13 @@ class OpdoutController extends Controller
         $optoutVisit->paid_amount = $request->paidAmount;
 
         if($optoutVisit->save()){
-            // $timelines = new Timeline();
+             $timelines = new Timeline();
+             $timelines->type = "OPD";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "New Visit";
+             $timelines->desc = "Appointment booked for opd on ".$request->appointment_date;
+             $timelines->created_by = "Admin";
+             $timelines->save();
             return response()->json(['success'=>'Patient Visit added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Patient visit not added']);
@@ -230,6 +236,13 @@ class OpdoutController extends Controller
         $medicineDose->dose = $request->dose;
         $medicineDose->remarks = $request->remerks; // Note: Fixed spelling from 'remerks' to 'remarks'
         if ($medicineDose->save()) {
+             $timelines = new Timeline();
+             $timelines->type = "OPD";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "Medicine Dose";
+             $timelines->desc = "Medicine dose adviced";
+             $timelines->created_by = "Admin";
+             $timelines->save();
             return response()->json(['success' => 'Medicine dose added successfully'], 200);
         } else {
             return response()->json(['error_success' => 'Failed to add medicine dose'], 500);
@@ -317,6 +330,13 @@ class OpdoutController extends Controller
             $optoutLab->test_ref_range = $request->testRefRange;
             $optoutLab->test_unit = $request->testUnit;
         if($optoutLab->save()){
+            $timelines = new Timeline();
+             $timelines->type = "OPD";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "Lab Test";
+             $timelines->desc = "Lab Test Created";
+             $timelines->created_by = "Admin";
+             $timelines->save();
             return response()->json(['success'=>'Lab Test added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Lab Test not added']);
@@ -405,6 +425,13 @@ class OpdoutController extends Controller
             $optoutCharge->name = $request->name;
             $optoutCharge->amount = $request->amount;
         if($optoutCharge->save()){
+            $timelines = new Timeline();
+             $timelines->type = "OPD";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "Charges";
+             $timelines->desc = "Charges added for treatment or test";
+             $timelines->created_by = "Admin";
+             $timelines->save();
             return response()->json(['success'=>'Charge added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Charge not added']);
@@ -470,6 +497,13 @@ class OpdoutController extends Controller
             $optoutCharge->value = $request->value;
             $optoutCharge->date = $request->date;
         if($optoutCharge->save()){
+            $timelines = new Timeline();
+             $timelines->type = "OPD";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "Vital";
+             $timelines->desc = "Vital added of patient";
+             $timelines->created_by = "Admin";
+             $timelines->save();
             return response()->json(['success'=>'VItal added successfully'],200);
         }else{
             return response()->json(['error_success'=>'VItal not added']);

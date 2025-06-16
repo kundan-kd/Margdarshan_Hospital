@@ -196,8 +196,20 @@ Route::post('/opd-out-vital-delete',[OpdoutController::class,'opdOutVitalDataDel
 
 
 Route::get('/ipd-in',[IpdinController::class,'index'])->name('ipd-in.index');
-Route::get('/ipd-in-patient-add',[IpdinController::class,'ipdInPatientAdd'])->name('ipd-in.ipdInPatientAdd');
-Route::get('/ipd-in-details',[IpdinController::class,'ipdInDetails'])->name('ipd-in.ipdInDetails');
+Route::post('/ipd-in-patient-add',[IpdinController::class,'ipdInPatientAdd'])->name('ipd-in.ipdInPatientAdd');
+Route::get('/ipd-in-details/{id}',[IpdinController::class,'ipdInDetails']);
+Route::post('/ipd-in-patient-add',[IpdinController::class,'addNewPatientIpd'])->name('ipd-addPatient');
+Route::post('/ipd-in-patient-view',[IpdinController::class,'viewPatients'])->name('ipd-viewPatients');
+Route::post('/ipd-in-visit-add',[IpdinController::class,'ipdVisitSubmit'])->name('ipd-visit.ipdVisitSubmit');
+Route::post('/ipd-in-visit-view',[IpdinController::class,'viewIpdVisit'])->name('ipd-visit.viewIpdVisit');
+Route::post('/ipd-in-visit-data',[IpdinController::class,'getIpdVisitData'])->name('ipd-visit.getIpdVisitData');
+Route::post('/ipd-in-visit-update',[IpdinController::class,'ipdVisitDataUpdate'])->name('ipd-visit.ipdVisitDataUpdate');
+Route::post('/ipd-in-visit-delete',[IpdinController::class,'ipdVisitDataDelete'])->name('ipd-visit.ipdVisitDataDelete');
+Route::post('/ipd-in-medicine-dose-add',[IpdinController::class,'ipdMedDataAdd'])->name('ipd-med.ipdMedDataAdd');
+Route::post('/ipd-in-medicine-dose-view',[IpdinController::class,'viewIpdMedDose'])->name('ipd-med.viewIpdMedDose');
+Route::post('/ipd-in-medicine-dose-data',[IpdinController::class,'getIpdMedDoseDetails'])->name('ipd-med.getIpdMedDoseDetails');
+Route::post('/ipd-in-medicine-dose-update',[IpdinController::class,'ipdMedDataUpdate'])->name('ipd-med.ipdMedDataUpdate');
+Route::post('/ipd-in-medicine-dose-delete',[IpdinController::class,'ipdMedDoseDataDelete'])->name('ipd-med.ipdMedDoseDataDelete');
 
 Route::get('/emergency',[EmergencyController::class,'index'])->name('emergency.index');
 Route::get('/emergency-details',[EmergencyController::class,'emergencyDetails'])->name('emergency.emergencyDetails');

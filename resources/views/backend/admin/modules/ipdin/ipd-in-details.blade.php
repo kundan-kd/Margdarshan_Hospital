@@ -11,6 +11,7 @@
 @endsection
 @section('main-container')
   <div class="dashboard-main-body">
+     <input type="hidden" id="patient_Id" value="{{$patients[0]->id}}">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">IPD - In Patient Details</h6>
          <div class="d-flex flex-wrap align-items-center gap-2">
@@ -24,6 +25,9 @@
           <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button>
       </div> -->
     </div>
+      @php
+      $curr_date = date('d/m/Y');
+    @endphp
     <div class="card">
         <div class="card-body p-24">
             <ul class="nav border-gradient-tab nav-pills mb-20 d-inline-flex w-100 " id="pills-tab" role="tablist">
@@ -199,81 +203,72 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="pills-Visits" role="tabpanel" aria-labelledby="pills-Visits-tab" tabindex="0">
+                 <div class="tab-pane fade" id="pills-Visits" role="tabpanel" aria-labelledby="pills-Visits-tab" tabindex="0">
                   <div class="row">
                     <div class="col-md-12 px-3">
                        <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Checkups</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-new-checkup"> <i class="ri-add-line"></i> New Checkup</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-new-checkup" onclick="resetVisit()"> <i class="ri-add-line"></i> New Checkup</button>
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="card basic-data-table">
-                            <table class="table bordered-table mb-0 w-100" id="opd-doctor-visit-list" data-page-length='10'>
+                            <table class="table bordered-table mb-0 w-100" id="ipd-in-visit-list" data-page-length='10'>
                           <thead>
                              <tr>
-                              <th class="fw-medium ">IPD Checkup Id</th>
+                              <th class="fw-medium ">Visit ID</th>
                               <th class="fw-medium ">Appointment Date</th>
                               <th class="fw-medium ">Consultant</th>
-                              <th class="fw-medium ">Reference</th>
                               <th class="fw-medium ">Symptoms</th>
+                              <th class="fw-medium ">Status</th>
                               <th class="fw-medium ">Action</th>
                              </tr>
                           </thead>
                           <tbody>
-                             <tr>
-                              <td>IPD4789CK</td>
-                              <td>05/23/2025 12:53 PM</td>
-                              <td>Dr. Niraj Kumar</td>
-                              <td>Sunil Kumar</td>
-                              <td>Cold</td>
-                              <td>
-                                  <button class="mx-1 bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#ipd-visit-view">
-                                    <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                                  </button>
-                                  <button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle"  data-bs-toggle="modal" data-bs-target="#ipd-edit-checkup">
-                                    <iconify-icon icon="lucide:edit"></iconify-icon>
-                                  </button>
-                                  <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
-                                  </button>
-                                </td>
-                             </tr>
+                            {{-- data appended here using datatable from ipd-details-visit.js --}}
                           </tbody>
                         </table>
                       </div>
                     </div>
                   </div>
                 </div>
+                <!--  opd-visit-view Start -->
+              <div class="modal fade" id="ipd-in-visit-view" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-visit-viewLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header p-11 bg-primary-500">
+                      <h6 class="modal-title fw-normal text-md text-white" id="opd-visit-viewLabel">Patient Details</h6>
+                      <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="ipdVisitViewDataAppend"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- opd visit view end -->
                 <div class="tab-pane fade" id="pills-Medication" role="tabpanel" aria-labelledby="pills-Medication-tab" tabindex="0">
                   <div class="row">
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Medication</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#ipd-add-medication-dose"> <i class="ri-add-line"></i> Add Medication Dose</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#ipd-add-medication-dose" onclick="resetMedication()"> <i class="ri-add-line"></i> Add Medication Dose</button>
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="table-responsive">
-                        <table class="table striped-table mb-0 table-sm">
+                        <table class="table striped-table mb-0 w-100" id="ipd-Med-medicineDoseList">
                           <thead>
-                             <tr>
-                              <th class="fw-medium w-25">Date</th>
-                              <th class="fw-medium w-25">Medician Name</th>
-                              <th class="fw-medium w-25">Dose</th>
-                             </tr>
+                            <tr>
+                              <th class="fw-medium">Visit ID</th>
+                              <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Medician Category</th>
+                              <th class="fw-medium">Medician Name</th>
+                              <th class="fw-medium">Dose</th>
+                              <th class="fw-medium">Remarks</th>
+                              <th class="fw-medium">Action</th>
+                            </tr>
                           </thead>
                           <tbody>
-                             <tr>
-                              <td>04/02/2025 (Tue) <br> Created by : Super Admin (9001)</td>
-                              <td>Alprovit</td>
-                              <td>
-                                <div class="d-flex align-items-center">
-                                  <span class="mx-11">1 CT </span>
-                                  <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#ipd-add-medication-dose">
-                                    <i class="ri-add-line"></i>
-                                  </button>
-                                </div>
-                              </td>
-                             </tr>
+                            {{-- data appended using datatable --}}
                           </tbody>
                         </table>
                       </div>
@@ -1008,68 +1003,58 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="ipd-add-medication-doseLabel">Add Medication Dose</h6>
+        <h6 class="modal-title fw-normal text-md text-white" id="opd-add-medication-doseLabel">Add Medication Dose</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-         <div class="row gy-3">
-           <div class="col-md-6">
-                <label class="form-label fw-medium">Date <sup class="text-danger">*</sup></label>
-                <div class=" position-relative">
-                    <input class="form-control radius-8 bg-base medication-date"  type="text" placeholder="12/2024">
-                    <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-medium">Time <sup class="text-danger">*</sup></label>
-                <input type="time" class="form-control form-control-sm" placeholder=" Test Name">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-medium">Medicine Category <sup class="text-danger">*</sup></label>
-                  <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option>Syrup</option>
-                      <option>Capsule</option>
-                      <option>Injection</option>
-                      <option>Ointment</option>
-                      <option>Cream</option>
-                      <option>Surgical</option>
-                      <option>Drops</option>
-                      <option>Inhalers</option>
-                      <option>Implants / Patches</option>
-                      <option>Liquid</option>
-                      <option>Preparations</option>
+      <form action="" id="ipdMed-form">
+        <div class="modal-body">
+          <div class="row gy-3">
+             <div class="col-md-6">
+              <input type="hidden" id="ipdMedDoseId">
+                  <label class="form-label fw-medium" for="ipdMed-visitid">Visit ID</label> <sup class="text-danger">*</sup>
+                    <select id="ipdMed-visitid" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                        <option value="">Select</option>
+                        @foreach ($visitsData as $visit)
+                        <option value="{{$visit->id}}">MDVI0{{$visit->id}}</option>
+                        @endforeach
+                    </select>
+                    <div class="ipdMed-visitid_errorCls d-none"></div>
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label fw-medium" for="ipdMed-medCategory">Medicine Category</label> <sup class="text-danger">*</sup>
+                    <select id="ipdMed-medCategory" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" onchange="medicinelist(this.value)">
+                        <option value="">Select</option>
+                        @foreach ($medicineCategory as $medCategory)
+                        <option value="{{$medCategory->id}}">{{$medCategory->name}}</option>
+                        @endforeach
+                    </select>
+                    <div class="ipdMed-medCategory_errorCls d-none"></div>
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label fw-medium" for="ipdMed-medName">Medicine Name</label> <sup class="text-danger">*</sup>
+                  <select id="ipdMed-medName" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                        <option value="">Select</option>
                   </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-medium">Medicine Name <sup class="text-danger">*</sup></label>
-                <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option>Torex</option>
-                      <option>Sumo</option>
-                      <option>Amoxicillin</option>
-                      <option>Ibuprofen</option>
-                      <option>Metoprolol</option>
-                  </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-medium">Dosage <sup class="text-danger">*</sup></label>
-                <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option>20Mg</option>
-                      <option>50Mg</option>
-                      <option>100Mg</option>
-                  </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-medium">Remarks<sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control form-control-sm" placeholder=" Remarks">
-            </div>
-         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
+                  <div class="ipdMed-medName_errorCls d-none"></div>
+              </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-medium" for="ipdMed-dose">Dose</label> <sup class="text-danger">*</sup>
+                  <input id="ipdMed-dose" type="text" class="form-control form-control-sm" placeholder=" Add Medicine Doses" oninput="validateField(this.id,'select')">
+                  <div class="ipdMed-dose_errorCls d-none"></div>
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label fw-medium">Remarks</label>
+                  <input id="ipdMed-remerks" type="text" class="form-control form-control-sm" placeholder=" Remarks">
+              </div>
+          </div>
+        
+        </div>
+        <div class="modal-footer">
+           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdMedDoseSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdMedDoseUpdate d-none" onclick="ipdMedDoseUpdate(document.getElementById('ipdMedDoseId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -1524,170 +1509,108 @@
         <h6 class="modal-title fw-normal text-md text-white" id="ipd-new-checkupLabel">Patient Details</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <form action="" id="ipdVisit-modelForm">
       <div class="modal-body">
-          <div class="row">
+        <div class="row">
         <div class="col-md-6 pt-3">
           <div class="row gy-3">
              <div class="col-md-12">
+              <input type="hidden" id="ipdVisitId">
                 <table class="table table-borderless pharmacy-bill-detail-table w-75 ">
                      <tbody>
+                      <input type="hidden" id="ipdVisit-patientId" value="{{$patients[0]->id}}">
                       <tr>
                        <th class="fw-medium">Patient Name</th>
-                       <td class="text-neutral-700">Arun Kumar (1234)</td>
+                       <td class="text-neutral-700">{{$patients[0]->name}}</td>
                      </tr>
                      <tr>
                        <th class="fw-medium">Gender</th>
-                       <td class="text-neutral-700">Male</td>
-                     </tr>
-                     <tr>
-                      <th class="fw-medium">Symptoms</th>
-                      <td class="text-neutral-700"> Cold</td>
+                       <td class="text-neutral-700">{{$patients[0]->gender}}</td>
                      </tr>
                   </tbody></table>
              </div>
              <div class="col-md-6">
-               <label class="form-label fw-medium">Symptoms Type</label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-                 <option value="1">Cough</option>
-              </select>
+               <label class="form-label fw-medium" for="ipdVisit-symptoms">Symptoms</label>
+                <input type="text" id="ipdVisit-symptoms" class="form-control form-control-sm" placeholder="Symptoms" value="" oninput="validateField(this.id,'input')">
+                <div class="ipdVisit-symptoms_errorCls d-none"></div>
              </div>
              <div class="col-md-6">
-               <label class="form-label fw-medium">Symptoms Title</label>
-               <select class="form-select form-select-sm  " >
-                 <option selected>Select</option>
-              </select>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium">Symptoms Description</label>
-               <textarea  class="form-control " rows="1" placeholder="Symptoms Description"></textarea>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium">Previous Medical Issue</label>
-               <textarea  class="form-control " rows="1" placeholder="Previous Medical Issue"></textarea>
+               <label class="form-label fw-medium" for="ipdVisit-previousMedIssue">Previous Medical Issue</label>
+               <textarea id="ipdVisit-previousMedIssue" class="form-control " rows="1" placeholder="Previous Medical Issue" oninput="validateField(this.id,'input')" value=""></textarea>
+                <div class="ipdVisit-previousMedIssue_errorCls d-none"></div>
              </div>
              <div class="col-md-12">
                <label class="form-label fw-medium">Note</label>
-               <textarea  class="form-control " rows="2" placeholder="Note"></textarea>
+               <textarea  id="ipdVisit-note" class="form-control " rows="2" placeholder="Note" value=""></textarea>
              </div>
           </div>
         </div>
         <div class="col-md-6 bg-info-50 pt-3">
           <div class="row gy-3">
             <div class="col-md-6">
-              <label class="form-label fw-medium">Admission Date <sup class="text-danger">*</sup></label>
+              <label class="form-label fw-medium" for="ipdVisit-admissionDate">Appointment Date</label>
               <div class=" position-relative">
-                    <input class="form-control form-control-sm radius-8 bg-base opd-add-admission-date flatpickr-input active" type="text" placeholder="12/2024" readonly="readonly">
-                    <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
+                    <input id="ipdVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="text" value="{{ $curr_date}}" readonly="readonly">
                 </div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium">Case</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Case">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium">Casualty</label>
-              <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
+               <label class="form-label fw-medium" for="ipdVisit-oldPatient">Old Patient</label>
+              <select id="ipdVisit-oldPatient" class="form-select form-select-sm select2" oninput="validateField(this.id,'select')">
+                 <option value="">Select</option>
                  <option value="1">Yes</option>
+                 <option value="0">No</option>
               </select>
+               <div class="ipdVisit-oldPatient_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-               <label class="form-label fw-medium">Old Patient</label>
-              <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
-                 <option value="1">Yes</option>
+              <label class="form-label fw-medium" for="ipdVisit-consultDoctor"> Consultant Doctor</label> <sup class="text-danger">*</sup>
+               <select id="ipdVisit-consultDoctor" class="form-select form-select-sm select2" oninput="validateField(this.id,'select')">
+                      <option value="">Select</option>
+                      @foreach ($doctorData as $doctorName)
+                      <option value="{{$doctorName->id}}">{{$doctorName->firstname}} {{$doctorName->lastname}}</option>
+                      @endforeach
               </select>
-            </div>
-            <!-- <div class="col-md-6">
-             <label class="form-label fw-medium"> Credit Limit (₹) <sup class="text-danger">*</sup></label>
-              <input type="number" class="form-control form-control-sm" placeholder="200000">
-            </div> -->
-            <div class="col-md-6">
-              <label class="form-label fw-medium">Reference</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Reference">
+               <div class="ipdVisit-consultDoctor_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium"> Consultant Doctor <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-                 <option value="1">Sunil Kumar (1234)</option>
-                 <option value="1">Manoj Gupta (2224)</option>
-                 <option value="1">Arjun Kumar (2234)</option>
-                 <option value="1">Suraj Kumar (9234)</option>
-              </select>
+              <label class="form-label fw-medium" for="ipdVisit-charge"> Applied Charge</label>(₹) <sup class="text-danger">*</sup>
+               <input id="ipdVisit-charge" type="number" class="form-control form-control-sm" placeholder="Applied Charge" value="" oninput="validateField(this.id,'amount');calculateAmount()">
+                <div class="ipdVisit-charge_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium"> Charge Category <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-                 <option value="1">OPD Consultation Fees</option>
-                 <option value="1">OPD Service</option>
-                 <option value="1">OPD Insurance</option>
-                 <option value="1">Blood pressure check</option>
-                 <option value="1">Eye check</option>
-                 <option value="1">Cholesterol level check</option>
-                 <option value="1">Other Charges</option>
-              </select>
+              <label class="form-label fw-medium" for="ipdVisit-discount"> Discount</label>% <sup class="text-danger">*</sup>
+               <input id="ipdVisit-discount" type="number" class="form-control form-control-sm" placeholder="Discount" value="" oninput="calculateAmount()">
+                <div class="ipdVisit-discount_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium"> Charge <sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>Select</option>
-              </select>
+              <label class="form-label fw-medium" for="ipdVisit-tax"> Tax</label>% <sup class="text-danger">*</sup>
+               <input id="ipdVisit-tax" type="number" class="form-control form-control-sm" placeholder="Discount" value=""  oninput="calculateAmount()">
+                <div class="ipdVisit-tax_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium"> Applied Charge (₹) <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Applied Charge">
+              <label class="form-label fw-medium" for="ipdVisit-amount"> Amount</label>(₹) <sup class="text-danger">*</sup>
+               <input id="ipdVisit-amount" type="number" class="form-control form-control-sm" placeholder="Amount" value="" readonly>
+                <div class="ipdVisit-amount_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium"> Discount %<sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Discount ">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium"> Tax %<sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Discount ">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium"> Amount (₹) <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Amount ">
-            </div>
-            <div class="col-md-6">
-             <label class="form-label fw-medium"> Payment Mode</label>
-               <select class="form-select form-select-sm" id="payment-method">
+             <label class="form-label fw-medium" for="ipdVisit-paymentMode"> Payment Mode</label> <sup class="text-danger">*</sup>
+               <select id="ipdVisit-paymentMode" class="form-select form-select-sm" oninput="validateField(this.id,'select')">
                 <option value="cash">Cash</option>
                 <option value="upi">UPI</option>
                 <option value="card">Card</option>
                 <option value="cheque">Cheque</option>
                 <option value="other">Other</option>
               </select>
+               <div class="ipdVisit-paymentMode_errorCls d-none"></div>
             </div>
-            <div class="col-md-6" style="display: none;" id="upi">
-              <label class="form-label fw-medium ">UPI</label>
-              <select class="form-select form-select-sm" id="upi-number">
-                <option selected="">Select</option>
-                <option value="upi-reference-number">Google Pay</option>
-                <option value="upi-reference-number">Phone Pay</option>
-                <option value="upi-reference-number">Airtel Pay</option>
-              </select> 
-            </div>
-            
-            <div class="col-md-6" style="display: none;" id="card">
-              <label class="form-label fw-medium ">Card Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder="Enter Card Number">
-            </div>
-            <div class="col-md-6 cheque" style="display: none;">
-              <label class="form-label fw-medium ">Cheque Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder="Enter Cheque Number">
-            </div>
-            
-            <div class="col-md-6 mb-3" style="display: none;" id="upi-reference-no">
+            <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
               <label class="form-label fw-medium ">Reference Number</label>
-              <input type="number" class="form-control form-control-sm" placeholder=" Enter reference number">
+              <input id="ipdVisit-refNum" type="number" class="form-control form-control-sm" placeholder=" Enter payment reference number">
             </div>
             <div class="col-md-6 mb-3">
-             <label class="form-label fw-medium">Paid Amount <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Paid Amount ">
+             <label class="form-label fw-medium" for="ipdVisit-paidAmount">Pay Amount</label> <sup class="text-danger">*</sup>
+               <input id="ipdVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount" oninput="validateField(this.id,'amount')">
+                <div class="ipdVisit-paidAmount_errorCls d-none"></div>
             </div>
             <!-- <div class="col-md-6 mb-3">
               <label class="form-label fw-medium"> Live Consultation</label>
@@ -1701,9 +1624,12 @@
        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
+         <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVisitSubmit"><i class="ri-checkbox-circle-line"></i> Submit</button>
+        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVisitUpdate d-none" onclick="ipdVisitUpdate(document.getElementById('ipdVisitId').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
       </div>
     </div>
+  </form>
   </div>
 </div>
 <!-- opd new checkup end -->
@@ -1979,5 +1905,34 @@
 @endsection
 @section('extra-js')
 <script>
+  // Flat pickr or date picker js 
+    function getDatePicker (receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "d-m-Y",
+        });
+    }
+    getDatePicker('#ipdVital-date'); 
+    // Flat pickr or date picker js 
+    $('#ipd-add-medication-dose').on('shown.bs.modal', function () {
+    $('.select2-cls').select2({
+        dropdownParent: $('#ipd-add-medication-dose')
+    });
+});
+  const ipdVisitMedicineName = "{{route('common.getMedicineName')}}";
+
+  const ipdVisitSubmit = "{{route('ipd-visit.ipdVisitSubmit')}}";
+  const viewIpdVisit = "{{route('ipd-visit.viewIpdVisit')}}";
+  const getIpdVisitData = "{{route('ipd-visit.getIpdVisitData')}}";
+  const getIpdVisitDetails = "{{route('ipd-visit.getIpdVisitData')}}";
+  const ipdVisitDataUpdate = "{{route('ipd-visit.ipdVisitDataUpdate')}}";
+  const ipdVisitDataDelete = "{{route('ipd-visit.ipdVisitDataDelete')}}";
+
+  const ipdMedDataAdd = "{{route('ipd-med.ipdMedDataAdd')}}";
+  const viewIpdMedDose = "{{route('ipd-med.viewIpdMedDose')}}";
+  const getIpdMedDoseDetails = "{{route('ipd-med.getIpdMedDoseDetails')}}";
+  const ipdMedDataUpdate = "{{route('ipd-med.ipdMedDataUpdate')}}";
+  const ipdMedDoseDataDelete = "{{route('ipd-med.ipdMedDoseDataDelete')}}";
 </script>
+<script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-visit.js')}}"></script>
+<script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-medication.js')}}"></script>
 @endsection

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('patient_id')->nullable();
             $table->string('title',100)->nullable();
             $table->text('desc')->nullable();
+            $table->string('created_by',50)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

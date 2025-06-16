@@ -17,7 +17,7 @@
          <div class="d-flex flex-wrap align-items-center gap-2">
           <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#in-patient-icu"> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
           <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#in-patient-discharge"> <i class="ri-thumb-up-line"></i> Discharge</button>
-          <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button>
+          {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
         <!-- <div class="btns">
           <button class="btn btn-danger-600  btn-sm fw-medium"  data-bs-toggle="modal" data-bs-target="#in-patient-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button>
@@ -58,24 +58,28 @@
                 <div class="tab-pane fade show active" id="pills-Overview" role="tabpanel" aria-labelledby="Overview-tab" tabindex="0">
                     <div class="row">
                         <div class="col-md-5 p-3 border-end">
-                          <h6 class="text-md fw-medium border-bottom pb-8">ASHUTOSH KUMAR</h6>
+                          <h6 class="text-md fw-medium border-bottom pb-8">{{$patients[0]->name}}</h6>
                             <div class=" pb-8">
                                  <table class="cutomer-details w-75 table-sm">
                                   <tr>
-                                    <td class="fw-medium">Sex :</td>
-                                    <td> M</td>
+                                    <td class="fw-medium">Patient ID :</td>
+                                    <td>{{$patients[0]->patient_id}}</td>
+                                  </tr>
+                                  <tr>
+                                    <td class="fw-medium">Gender :</td>
+                                    <td>{{$patients[0]->gender}}</td>
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">DOB :</td>
-                                    <td> 27/08/1995 (29)</td>
+                                    <td> {{$patients[0]->dob}}</td>
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">Guardian Name :</td>
-                                    <td> 	Subham Kumar</td>
+                                    <td> {{$patients[0]->guardian_name}}</td>
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">phone :</td>
-                                    <td> +91 1122 334 455</td>
+                                    <td>{{$patients[0]->mobile}}</td>
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">Bar Code :</td>
@@ -83,8 +87,11 @@
                                   </tr>
                                  </table>
                             </div>
+                             @php
+                              $doctors =  \App\Models\User::where('id',$appointments[0]->doctor_id)->get();
+                            @endphp
                             <h6 class="text-md fw-medium mt-11 border-bottom pb-8">CONSULTANT DOCTOR</h6>
-                            <p class="mb-1">Niraj Kumar</p>
+                            <p class="mb-1">{{$doctors[0]->firstname}} {{$doctors[0]->lastname}}</p>
                             <div class="d-flex align-items-center">
                               <p class="mb-0 mx-1">Finding :</p> 
                               <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#ipd-add-finding">
@@ -106,22 +113,15 @@
                                        </tr>
                                     </thead>
                                     <tbody>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Niraj Kumar</td>
+                                      @foreach ($visitsData as $visit)
+                                      @php
+                                        $doctor_name = app\Models\User::where('id',$visit->consult_doctor)->get(['firstname','lastname']);
+                                      @endphp
+                                        <tr>
+                                        <td>{{$visit->appointment_date}}</td>
+                                        <td>{{$doctor_name[0]->firstname}} {{$doctor_name[0]->lastname}}</td>
                                        </tr>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Niraj Kumar</td>
-                                       </tr>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Niraj Kumar</td>
-                                       </tr>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Niraj Kumar</td>
-                                       </tr>
+                                      @endforeach
                                     </tbody>
                                   </table>
                                 </div>
@@ -135,32 +135,22 @@
                                         <th scope="col" class="fw-medium">Date</th>
                                         <th scope="col" class="fw-medium">Medician Name</th>
                                         <th scope="col" class="fw-medium">Dose</th>
-                                        <th scope="col" class="fw-medium">Time</th>
                                         <th scope="col" class="fw-medium">Remark</th>
                                        </tr>
                                     </thead>
                                     <tbody>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Alprovit</td>
-                                        <td>1 CT</td>
-                                        <td>02:00 PM</td>
-                                        <td>Non</td>
-                                       </tr>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Alprovit</td>
-                                        <td>1 CT</td>
-                                        <td>02:00 PM</td>
-                                        <td>Non</td>
-                                       </tr>
-                                       <tr>
-                                        <td>04/02/2025</td>
-                                        <td>Alprovit</td>
-                                        <td>1 CT</td>
-                                        <td>02:00 PM</td>
-                                        <td>Non</td>
-                                       </tr>
+                                      @foreach ($medicationData as $medication)
+                                      {{-- @php
+                                        $medicine_name = app\Models\Medicine::where('id',$medication->medicine_name_id)->get(['name']);
+                                      @endphp --}}
+                                        <tr>
+                                          <td>{{$medication->created_at}}</td>
+                                          {{-- <td>{{$medicine_name[0]->name}}</td> --}}
+                                          <td>{{$medication->dose}}</td>
+                                          <td>{{$medication->dose}}</td>
+                                          <td>{{$medication->remarks}}</td>
+                                        </tr>
+                                      @endforeach
                                     </tbody>
                                   </table>
                                 </div>
@@ -174,28 +164,20 @@
                                         <th scope="col" class="fw-medium">Test</th>
                                         <th scope="col" class="fw-medium">Labs</th>
                                         <th scope="col" class="fw-medium">Sample coll</th>
-                                        <th scope="col" class="fw-medium">Expected Date</th>
                                        </tr>
                                     </thead>
                                     <tbody>
-                                       <tr>
-                                        <td>CBC</td>
-                                        <td>Lal Path</td>
-                                        <td>Done</td>
-                                        <td>05/02/2025 (Wed)</td>
-                                       </tr>
-                                       <tr>
-                                        <td>CBC</td>
-                                        <td>Lal Path</td>
-                                        <td>Done</td>
-                                        <td>05/02/2025 (Wed)</td>
-                                       </tr>
-                                       <tr>
-                                        <td>CBC</td>
-                                        <td>Lal Path</td>
-                                        <td>Done</td>
-                                        <td>05/02/2025 (Wed)</td>
-                                       </tr>
+                                     @foreach ($labInvestigationData as $labInv)
+                                        @php
+                                            $labTestType = app\Models\TestType::where('id',$labInv->test_type_id)->get(['name']);
+                                            $labTestName = app\Models\TestName::where('id',$labInv->test_name_id)->get(['name']);
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $labTestType[0]->name }}</td>
+                                            <td>{{ $labTestName[0]->name }}</td>
+                                            <td>{{ $labInv->created_at->toDateString() }}</td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                   </table>
                                 </div>
@@ -275,46 +257,42 @@
                     </div>
                   </div>
                 </div>
-                <div class="tab-pane fade" id="pills-lab" role="tabpanel" aria-labelledby="pills-lab-tab" tabindex="0">
+              <div class="tab-pane fade" id="pills-lab" role="tabpanel" aria-labelledby="pills-lab-tab" tabindex="0">
                   <div class="row">
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Lab Investigations</h6>
-                        <button class="btn btn-primary-600  btn-sm fw-normal" data-bs-toggle="modal" data-bs-target="#ipd-add-lab"><i class="ri-add-line"></i> Add Lab</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#ipd-add-lab" onclick="resetLabTest()"> <i class="ri-add-line"></i> Add Lab</button>
                       </div>
-                        <div class="card basic-data-table">
-                            <table class="table bordered-table mb-0 w-100" id="lab-reports-list" data-page-length='10'>
+                      <div class="card basic-data-table">
+                            <table class="table bordered-table mb-0 w-100" id="ipd-lab-reports-list" data-page-length='10'>
                                   <thead>
                                     <tr >
-                                      <th scope="col" class="fw-medium">Tast Name</th>
-                                      <th scope="col" class="fw-medium">Lab</th>
-                                      <th scope="col" class="fw-medium">Date</th>
-                                      <th scope="col" class="fw-medium">Sample Collection</th>
-                                      <th scope="col" class="fw-medium">Expected Date</th>
-                                      <th scope="col" class="fw-medium">Approved By</th>
+                                      <th scope="col" class="fw-medium">Sample Date</th>
+                                      <th scope="col" class="fw-medium">Tast Type</th>
+                                      <th scope="col" class="fw-medium">Test Name</th>
+                                      <th scope="col" class="fw-medium">Repost Date</th>
                                       <th scope="col" class="fw-medium">Action</th>
                                     </tr>
                                   </thead>
                                   <tbody>
-                                      <tr>
+                                      {{-- <tr>
+                                        <td>18/05/2025</td>
                                           <td ><span class="text-nowrap">Abodoman X-ray <br> (AX)</span> </td>
                                           <td>Pathology</td>
-                                          <td>18/05/2025</td>
-                                          <td>Sunil Kumar (9876) <br> <span class="text-nowrap">Pathology Center : In-House Pathology Lab</span><br> 19/05/2025</td>
                                           <td>22/05/2025</td>
-                                          <td>Rakesh Kumar <br> 22/05/2025</td>
                                           <td class="text-nowrap">
-                                            <button class="mx-1 bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#ipd-lab-test-veiw">
+                                            <button class="mx-1 bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#opd-lab-test-veiw">
                                               <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
                                             </button>
-                                            <button  class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#ipd-edit-lab" >
+                                            <button  class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#opd-edit-lab" >
                                               <iconify-icon icon="lucide:edit"></iconify-icon>
                                             </button>
                                             <button  class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
                                               <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
                                             </button>
                                           </td>
-                                      </tr>
+                                      </tr> --}}
                                     </tbody>
                               </table>
                         </div>
@@ -324,35 +302,30 @@
                 <div class="tab-pane fade" id="pills-charges" role="tabpanel" aria-labelledby="pills-charges-tab" tabindex="0">
                   <div class="row">
                     <div class="col-md-12 px-3">
-                      <div class="mb-2 mb-11">
-                        <h6 class="text-md fw-medium mb-0"></h6>
-                      </div>
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Charges</h6>
-                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-add-charges"> <i class="ri-add-line"></i> Add Charges</button>
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-add-charges" onclick="resetCharge()"> <i class="ri-add-line"></i> Add Charges</button>
                         </div>
                       <div class="table-responsive">
-                        <table class="table  striped-table mb-0 table-sm">
+                        <table class="table  striped-table w-100" id="ipd-charges-list">
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
-                              <th class="fw-medium">Charge Type</th>
-                              <th class="fw-medium">Charge Category</th>
-                              <th class="fw-medium">Applied Charge (₹)</th>
+                              <th class="fw-medium">Name</th>
+                              <th class="fw-medium">Amount</th>
                               <th class="fw-medium">Action</th>
                              </tr>
                           </thead>
                           <tbody>
-                             <tr>
+                            <tr>
                               <td>05/04/2023</td>
-                              <td>IPD</td>
-                              <td>Intensive Care Units</td>
+                              <td>OPD</td>
                               <td>5545.00</td>
                               <td>
                                   <!-- <button class="mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
                                     <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
                                   </button> -->
-                                  <button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#ipd-edit-charges">
+                                  <button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#opd-edit-charges">
                                     <iconify-icon icon="lucide:edit"></iconify-icon>
                                   </button>
                                   <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
@@ -371,116 +344,59 @@
                       <div class="col-md-12 px-3">
                         <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Nurse Note</h6>
-                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-nurse-note"> <i class="ri-add-line"></i> Add Nurse Note</button>
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-nurse-note" onclick="resetNurse()"> <i class="ri-add-line"></i> Add Nurse Note</button>
                           <!-- <button class="btn btn-primary-600  btn-sm fw-medium" ><i class="ri-add-line"></i> Add Nurse Note</button> -->
                         </div>
                       </div>
-                      <div class="col-md-12 px-3 mt-3">
-                        <div class="timeline-container">
-                              <!-- Timeline Section 1 -->
-                              <div class="timeline-section">
-                                <div class="timeline-date blue-marker">
-                                  <span class="bg-neutral-100 rounded text-nowrap fw-medium">05/28/2025 03:28 PM</span>
-                                </div>
-                                <div class="gap-4 pb-3">
-                                  <div class="card bg-neutral-100">
-                                    <div class="card-body">
-                                      <div class="border-bottom d-flex align-items-center justify-content-between">
-                                        <h6 class="fw-normal mb-0 pb-11 text-lg">Anita Singh (5698)</h6>
-                                        <div class=""><i class="ri-edit-2-line mx-3 cursor-pointer" data-bs-toggle="modal" data-bs-target="#ipd-edit-nurse"></i> <i class="ri-delete-bin-6-line cursor-pointer"></i></div>
-                                      </div>
-                                      <h6 class="mb-0 mt-11 fw-medium text-sm">Note</h6>
-                                      <p class=" mb-0 fw-medium">Take medicine after meal everyday .</p>
-                                      <h6 class="mb-0 mt-11 fw-medium text-sm">Comment</h6>
-                                      <p class="mb-0 fw-medium">Take medicine after meal everyday .</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <!-- Timeline Section 2 -->
-                              <div class="timeline-section">
-                                <div class="timeline-date blue-marker">
-                                  <span  class="bg-neutral-100  rounded text-nowrap fw-medium ">05/28/2025 03:28 PM</span>
-                                </div>
-                                <div class=" gap-4 pb-3">
-                                  <div class="card bg-neutral-100">
-                                    <div class="card-body">
-                                      <div class="border-bottom d-flex align-items-center justify-content-between">
-                                        <h6 class="fw-normal mb-0 pb-11 text-lg">Malti Kumari (2547)</h6>
-                                        <div class=""><i class="ri-edit-2-line mx-3 cursor-pointer" data-bs-toggle="modal" data-bs-target="#ipd-edit-nurse"></i> <i class="ri-delete-bin-6-line cursor-pointer"></i></div>
-                                      </div>
-                                      <h6 class="mb-0 mt-11 fw-medium text-sm">Note</h6>
-                                      <p class=" mb-0 fw-medium">Take medicine after meal everyday .</p>
-                                      <h6 class="mb-0 mt-11 fw-medium text-sm">Comment</h6>
-                                      <p class="mb-0 fw-medium">Take medicine after meal everyday .</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <!-- Timeline Section 3 -->
-                              <div class="timeline-section">
-                                <div class="timeline-date blue-marker">
-                                  <span  class="bg-neutral-100  rounded text-nowrap fw-medium"> 05/28/2025 03:28 PM</span>
-                                </div>
-                                <div class="gap-4 pb-3">
-                                  <div class="card bg-neutral-100">
-                                    <div class="card-body">
-                                      <div class="border-bottom d-flex align-items-center justify-content-between">
-                                        <h6 class="fw-normal mb-0 pb-11 text-lg">Sujata Gupta (2547)</h6>
-                                        <div class=""><i class="ri-edit-2-line mx-3 cursor-pointer" data-bs-toggle="modal" data-bs-target="#ipd-edit-nurse"></i> <i class="ri-delete-bin-6-line cursor-pointer"></i></div>
-                                      </div>
-                                      <h6 class="mb-0 mt-11 fw-medium text-sm">Note</h6>
-                                      <p class=" mb-0 fw-medium">Take medicine after meal everyday .</p>
-                                      <h6 class="mb-0 mt-11 fw-medium text-sm">Comment</h6>
-                                      <p class="mb-0 fw-medium">Take medicine after meal everyday .</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                      </div>
-                  </div>
-              </div>
-                <div class="tab-pane fade" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab" tabindex="0">
-                  <div class="row">
-                    <div class="col-md-12 px-3">
-                      <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
-                        <h6 class="text-md fw-normal mb-0">Vital History</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-add-vital-history"> <i class="ri-add-line"></i> Add Vital History</button>
-                        <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#vital-history"><i class="ri-add-line"></i> Add Vital History</button> -->
-                      </div>
                       <div class="table-responsive">
-                        <table class="table striped-table mb-0 table-sm">
+                        <table class="table striped-table w-100" id="ipdNurse-noteList">
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
-                              <th class="fw-medium"> Height <br>(1 - 200 Centimeters)</th>
-                             <th class="fw-medium">Weight <br>(0 - 150 Kilograms)</th>
-                              <th class="fw-medium">Pluse <br>(70 - 100 Beats per)</th>
-                              <th class="fw-medium">	Temperature <br>(95.8 - 99.3 Fahrenheit )</th>
-                              <th class="fw-medium">BP <br>(90/60 - 140/90 mmHg)</th>
+                              <th class="fw-medium">Nurse</th>
+                              <th class="fw-medium">Note</th>
+                              <th class="fw-medium">Comment</th>
                               <th class="fw-medium">Action</th>
                              </tr>
                           </thead>
                           <tbody>
+
+                          </tbody>
+                        </table>
+                      </div>
+                  </div>
+              </div>
+             <div class="tab-pane fade" id="pills-history" role="tabpanel" aria-labelledby="pills-history-tab" tabindex="0">
+                  <div class="row">
+                    <div class="col-md-12 px-3">
+                      <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
+                        <h6 class="text-md fw-normal mb-0">Vital History</h6>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-add-vital-history" onclick="resetVital()"> <i class="ri-add-line"></i> Add Vital History</button>
+                      </div>
+                      <div class="table-responsive">
+                        <table class="table striped-table w-100" id="ipdVital-list">
+                          <thead>
                              <tr>
+                              <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Name</th>
+                              <th class="fw-medium">Value</th>
+                              <th class="fw-medium">Action</th>
+                             </tr>
+                          </thead>
+                          <tbody>
+                             {{-- <tr>
                               <td>04/02/2025</td>
                               <td>150 ( 03:00 PM)</td>
                               <td>80kg ( 12:55 PM) </td>
-                              <td>55-60</td>
-                              <td>24 Cel</td>
-                              <td> 120/80 mm Hg</td>
                               <td>
-                                <button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#ipd-edit-vital-history">
+                                <button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#opd-edit-vital-history">
                                   <iconify-icon icon="lucide:edit"></iconify-icon>
                                 </button>
                                 <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
                                   <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
                                 </button>
                               </td>
-                             </tr>
+                             </tr> --}}
                           </tbody>
                         </table>
                       </div>
@@ -560,118 +476,88 @@
         <h6 class="modal-title fw-normal text-md text-white" id="ipd-add-labLabel">Add Test Details</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <form id="ipdLab-form">
+        <div class="modal-body">
          <div class="row gy-3">
-          <div class="col-md-3">
-              <label class="form-label fw-medium">Test Name <sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control form-control-sm" placeholder=" Test Name">
+          <div class="col-md-4">
+            <input type="hidden" id="ipdLabID">
+              <label class="form-label fw-medium" for="ipdLab-testType">Test Type</label> <sup class="text-danger">*</sup>
+                 <select id="ipdLab-testType" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                       <option value="">Select</option>
+                      @foreach ($testtypes as $testtype)
+                       <option value="{{$testtype->id}}">{{$testtype->name}}</option>
+                      @endforeach
+                    </select>
+                    <div class="ipdLab-testType_errorCls d-none"></div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
+              <label class="form-label fw-medium" for="ipdLab-testName">Test Name</label> <sup class="text-danger">*</sup>
+                 <select id="ipdLab-testName" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                 
+                        <option value="">Select</option>
+                      @foreach ($testnames as $testname)
+                        <option value="{{$testname->id}}">{{$testname->name}}</option>
+                      @endforeach
+                    </select>
+                    <div class="ipdLab-testName_errorCls d-none"></div>
+            </div>
+            <div class="col-md-4">
               <label class="form-label fw-medium">Short Name <sup class="text-danger">*</sup></label>
-                <input type="text" class="form-control form-control-sm" placeholder=" Short Name">
+                <input id="ipdLab-shortName" type="text" class="form-control form-control-sm" placeholder=" Short Name" readonly>
             </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Test Type</label>
-                <input type="text" class="form-control form-control-sm" placeholder=" Test Type">
+            <div class="col-md-4">
+              <label class="form-label fw-medium">Amount</label>
+                <input id="ipdLab-amount" type="number" class="form-control form-control-sm" placeholder=" Test Amount" readonly>
             </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Category Name <sup class="text-danger">*</sup></label>
-                 <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option value="1">Clinical Microbiology</option>
-                      <option value="2">Clinical Chemistry</option>
-                      <option value="3">Hematology</option>
-                      <option value="4">Molecular Diagnostics</option>
-                      <option value="5">Reproductive Biology</option>
-                      <option value="5">Electromagnetic Waves</option>
-                  </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Sub Category</label>
-                <input type="text" class="form-control form-control-sm" placeholder="Sub Category">
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <label class="form-label fw-medium">Method</label>
-              <input type="text" class="form-control form-control-sm" placeholder="Method">
+                <input id="ipdLab-method" type="text" class="form-control form-control-sm" placeholder=" Test Method">
             </div>
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Report Days <sup class="text-danger">*</sup></label>
-                <input type="numbr" class="form-control form-control-sm" placeholder="Report Days">
-            </div>
-            
-            <div class="col-md-3">
-              <label class="form-label fw-medium">Charge Category <sup class="text-danger">*</sup></label>
-                <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option value="1">Surgical pathology</option>
-                      <option value="2">Histopathology </option>
-                      <option value="3">Cytopathology</option>
-                      <option value="4">Forensic pathology</option>
-                      <option value="5">Dermatopathology</option>
-                  </select>
+            <div class="col-md-4">
+              <label class="form-label fw-medium">Report Days</label>
+                <input id="ipdLab-reportDays" type="number" class="form-control form-control-sm" placeholder=" Test Report Days">
             </div>
             <div class="col-md-12 mt-3">
                  <table class="pharmacy-purchase-bill-table table table-hover mb-11 add-test-feilds add-lab-table">
                    <thead>
                           <tr class="border-bottom">
-                            <th class="text-nowrap text-neutral-700">Test Parameter Name <sup class="text-danger">*</sup></th>
-                            <th class="text-nowrap text-neutral-700">Reference Range <sup class="text-danger">*</sup></th>
-                            <th class="text-nowrap text-neutral-700">Unit <sup class="text-danger">*</sup></th>
+                            <th class="text-nowrap text-neutral-700">Test Parameter Name</th>
+                            <th class="text-nowrap text-neutral-700">Reference Range</th>
+                            <th class="text-nowrap text-neutral-700">Unit</th>
                           </tr>
                   </thead>
                   <tbody>
                     <tr class="add-lab-fieldGroup">
                       <td>
-                        <select class="form-select form-select-sm select2  ">
-                          <option selected disabled>Select</option>
-                          <option value="1">RBC</option>
-                          <option value="2">Liver function test</option>
-                          <option value="3">TSH (Thyroid Stimulating Hormone)</option>
-                        </select>
+                        <input id="ipdLab-testParameter" type="text" class="form-control form-control-sm" >
                       </td>
                       <td>
-                        <input type="text" class="form-control form-control-sm" >
+                        <input id="ipdLab-testRefRange" type="text" class="form-control form-control-sm" >
                       </td>
                       <td>
-                        <input type="text" class="form-control form-control-sm" >
+                        <input id="ipdLab-testUnit" type="text" class="form-control form-control-sm" >
                       </td>
-                      <td>
+                      {{-- <td>
                         <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center add-lab-remove">
                             <i class="ri-close-line"></i>
                         </button>
-                      </td>
+                      </td> --}}
                     </tr>
-                    <tr class="add-lab-fieldGroupCopy" style="display: none;">
-                      <td>
-                        <select class="form-select form-select-sm select2  ">
-                          <option selected disabled>Select</option>
-                          <option value="1">RBC</option>
-                          <option value="2">Liver function test</option>
-                          <option value="3">TSH (Thyroid Stimulating Hormone)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center add-lab-remove">
-                            <i class="ri-close-line"></i>
-                        </button>
-                      </td>
-                    </tr>
+                    {{-- <tr class="appendMoreTestName">
+                    </tr> --}}
                   </tbody>
                  </table>
-                 <button class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center add-lab-addMore">
+                 {{-- <button class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center add-lab-addMore" onclick="addMoreTestName()">
                       <i class="ri-add-line"></i> Add
-                  </button>
+                  </button> --}}
             </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdLabSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdLabUpdate d-none" onclick="ipdLabUpdate(document.getElementById('ipdLabID').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          </div>
+      </form>
       </div>
     </div>
   </div>
@@ -708,36 +594,37 @@
         <h6 class="modal-title fw-normal text-md text-white" id="ipd-nurse-noteLabel"> Add Nurse Note</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <div class="row gy-3">
-          <div class="col-md-6">
-            <label class="form-label fw-medium">Date<sup class="text-danger">*</sup></label>
-            <div class=" position-relative">
-                <input class="form-control form-control-sm radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="05/22/2025 03:55 PM" >
-                <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
+      <form id="ipdNurseNote-form">
+        <div class="modal-body">
+          <div class="row gy-3">
+            <div class="col-md-12">
+              <input type="hidden" id="ipdNurseNoteId">
+                <label class="form-label fw-medium" for="ipdNurse-name">Nurse<sup class="text-danger">*</sup></label>
+                    <select id="ipdNurse-name" class="form-select form-select-sm select2-cls" style="width: 100%;" oninput="validateField(this.id,'select')">
+                        <option value="">Select</option>
+                        @foreach ($doctorData as $dData)
+                        <option value="{{$dData->id}}">{{$dData->firstname}}</option>
+                        @endforeach
+                    </select>
+                    <div class="ipdNurse-name_errorCls d-none"></div>
+            </div>
+            <div class="col-md-12">
+                <label class="form-label fw-medium" for="ipdNurse-note">Note</label> <sup class="text-danger">*</sup>
+                <input id="ipdNurse-note"  class="form-control" rows="1" placeholder="Note" oninput="validateField(this.id,'input')">
+                <div class="ipdNurse-note_errorCls d-none"></div>
+            </div>
+            <div class="col-md-12">
+                <label class="form-label fw-medium" for="ipdNurse-comment">Comment</label> <sup class="text-danger">*</sup>
+                <textarea id="ipdNurse-comment"  class="form-control" rows="2" placeholder="Comment"></textarea>
             </div>
           </div>
-           <div class="col-md-6">
-              <label class="form-label fw-medium">Nurse<sup class="text-danger">*</sup></label>
-                  <select class="form-select form-select-sm select2  ">
-                      <option selected disabled>Select</option>
-                      <option>April Clinton (9020)</option>
-                      <option>Natasha  Romanoff (9010)</option>
-                  </select>
-           </div>
-           <div class="col-md-12">
-               <label class="form-label fw-medium">Note<sup class="text-danger">*</sup></label>
-              <textarea name="note"  class="form-control" rows="1" placeholder="Note"></textarea>
-           </div>
-           <div class="col-md-12">
-               <label class="form-label fw-medium">Comment<sup class="text-danger">*</sup></label>
-              <textarea name="note"  class="form-control" rows="2" placeholder="Comment"></textarea>
-           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
+        <div class="modal-footer">
+           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdNurseNoteSubmit"> <i class="ri-checkbox-circle-line" oninput="validateField(this.id,'input')"></i> Save</button>
+           <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdNurseNoteUpdate d-none" onclick="ipdNurseNoteUpdate(document.getElementById('ipdNurseNoteId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -805,67 +692,11 @@
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="ipd-lab-test-veiwLabel">Abodoman X-ray (AX)</h6>
+        <h6 class="modal-title fw-normal text-md text-white" id="opd-lab-test-veiwLabel">Lab Details</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-md-12">
-            <table class="table  table-borderless table-sm payment-pharmacy-table">
-                  <tbody>
-                <tr>
-                    <th class="fw-medium">Bill No</th>
-                    <td>	PATH65497</td>
-                    <th class="fw-medium">Patient</th>
-                    <td>Aman Kumar (1234)</td>
-                </tr>
-                <tr>
-                   <th class="fw-medium">Approve Date</th>
-                    <td>22/05/2025</td>
-                    <th class="fw-medium">Report Collection Date</th>
-                    <td>05/12/2025</td>
-                </tr>
-                <tr>     
-                    <th class="fw-medium">Test Name</th>
-                    <td>Abodoman X-ray (AX)</td>
-                    <th class="fw-medium">Expected Date</th>
-                    <td>22/05/2025</td>
-                </tr>
-                <tr>           
-                   <th class="fw-medium">Collection By</th>
-                    <td>Sunil Kumar (9876)</td>
-                    <th class="fw-medium">Pathology Center</th>
-                    <td>In-House Pathology Lab</td>
-                </tr>
-                <tr>    
-                     <th class="fw-medium">Case ID</th>
-                    <td>7144</td>    
-                    <th class="fw-medium">Approved By</th>
-                    <td>Rakesh Kumar</td>  
-                </tr>
-            </tbody>
-        </table>
-          </div>
-        </div>
-        <h6 class="fw-medium text-md text-center mt-5" >Abodoman X-ray  (AX)</h6>
-        <table class="table  table-borderless table-sm payment-pharmacy-table">
-               <thead>
-                 <tr>
-                   <th>#</th>
-                   <th class="fw-medium">Test Parameter Name</th>
-                   <th class="fw-medium text-nowrap">Report Value</th>
-                   <th class="fw-medium">Report Reference</th>
-                 </tr>
-               </thead>
-               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Liver Function Test <br><span class="text-xs">Description: Liver function tests (LFTs or LFs), also referred to as a hepatic panel, are groups of blood tests ... ranges are given, these will vary depending on age, gender and his/her health, ethnicity, method of analysis, and units of measurement.</span> </td>
-                  <td>25 (U/L)</td>
-                  <td class="text-nowrap">7 to 55 units per liter (U/L)</td>
-                </tr>
-               </tbody>
-        </table>
+       <div class="ipdLabDataAppend"></div>
       </div>
     </div>
   </div>
@@ -1059,7 +890,6 @@
   </div>
 </div>
 <!-- Add medication end -->
-
 <!-- Add vital History Start -->
 <div class="modal fade" id="ipd-add-vital-history" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-add-vital-historyLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -1068,6 +898,7 @@
         <h6 class="modal-title fw-normal text-md text-white" id="ipd-add-vital-historyLabel"> Add Vital</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <form id="ipdVital-form">
       <div class="modal-body">
         <table class="pharmacy-purchase-bill-table table table-hover mb-11 add-test-feilds add-vital-table">
                    <thead>
@@ -1079,61 +910,30 @@
                   </thead>
                   <tbody>
                     <tr class="add-vital-fieldGroup">
+                      <input type="hidden" id="ipdVitalId">
                       <td>
-                        <select class="form-control form-control-sm" >
-                              <option value="">Select</option>
-                              <option value="3">Pulse  (70 -   100  Beats per)</option>
-                              <option value="4">Temperature (95.8  -  99.3 Fahrenheit )</option>
-                              <option value="5">BP (90/60  -  140/90 mmHg)</option>
-                          </select>
+                        <input type="text" id="ipdVital-name" class="form-control form-control-sm" required>
                       </td>
                       <td>
-                        <input type="text" class="form-control form-control-sm" >
+                        <input type="text" id="ipdVital-value" class="form-control form-control-sm" required>
                       </td>
                       <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center add-vital-remove">
-                            <i class="ri-close-line"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr class="add-vital-fieldGroupCopy" style="display: none;">
-                      <td>
-                        <select class="form-control form-control-sm" >
-                              <option value="">Select</option>
-                              <option value="3">Pulse  (70 -   100  Beats per)</option>
-                              <option value="4">Temperature (95.8  -  99.3 Fahrenheit )</option>
-                              <option value="5">BP (90/60  -  140/90 mmHg)</option>
-                          </select>
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" >
-                      </td>
-                      <td>
-                        <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center add-vital-remove">
-                            <i class="ri-close-line"></i>
-                        </button>
+                        <input type="date" id="ipdVital-date" class="form-control form-control-sm" placeholder="DD-MM-YYYY" required>
                       </td>
                     </tr>
                   </tbody>
                  </table>
-                 <button class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center add-vital-addMore">
-                      <i class="ri-add-line"></i> Add
-                  </button>
       </div>
        <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
+        <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVItalSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVItalUpdate d-none" onclick="ipdVItalUpdate(document.getElementById('ipdVitalId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
       </div>
+    </form>
     </div>
   </div>
 </div>
 <!-- Add vital History end -->
-
 <!-- edit vital History Start -->
 <div class="modal fade" id="ipd-edit-vital-history" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-edit-vital-historyLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -1343,163 +1143,32 @@
         <h6 class="modal-title fw-normal text-md text-white" id="ipd-add-chargesLabel"> Add Charges</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-          <div class="row gy-3">
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charges Type<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>IPD</option>
-                      <option>Procedures</option>
-                      <option>Supplier</option>
-                      <option>Operations</option>
-                      <option>Other</option>
-                  </select>
+      <form id="ipdCharge-form">
+        <div class="modal-body">
+          <div class="row">
+              <div class="col-md-6">
+                <input type="hidden" id="ipdChargeId">
+                <label class="form-label fw-medium" for="ipdCharge-name">Name</label> <sup class="text-danger">*</sup>
+                  <input id="ipdCharge-name" type="text" class="form-control form-control-sm" placeholder="Charge Name" oninput="validateField(this.id,'input')">
+                  <div class="ipdCharge-name_errorCls d-none"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium" for="ipdCharge-amount">Amount</label> <sup class="text-danger">*</sup>
+                  <input id="ipdCharge-amount" type="number" class="form-control form-control-sm" placeholder="Charge Amount" oninput="validateField(this.id,'amount')">
+                  <div class="ipdCharge-amount_errorCls d-none"></div>
+              </div>
             </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charge Category<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>Operation  Service</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charge Name<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>	Intensive Care</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Quantity<sup class="text-danger">*</sup></label>
-                <input type="number" class="form-control form-control-sm" placeholder="1">
-            </div>
-          </div>
-          <div class="row border-top gy-3 mt-2">
-            <div class="col-md-5 my-3">
-                  <table class="table table-sm">
-                    <tbody><tr>
-                      <td class="border-0" colspan="2">Total (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0 align-middle">Discount (₹)</td>
-                      <td class="border-0"><div class="d-flex align-items-center"><input class="form-control form-control-sm discount-value-field" type="text" placeholder="Discount"><span class="ms-1">%</span></div></td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0" colspan="2">Taxes (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0" colspan="2">Net Amount (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                  </tbody></table>
-             </div>
-             <div class="col-md-4 my-3">
-               <label class="form-label fw-medium">Charges Note<sup class="text-danger">*</sup></label>
-                <textarea type="text" class="form-control " placeholder="Charges Note" rows="3"></textarea>
-             </div>
-             <div class="col-md-3 my-3">
-               <label class="form-label fw-medium">Date<sup class="text-danger">*</sup></label>
-                 <div class=" position-relative">
-                    <input class="form-control form-control-sm radius-8 bg-base expiry-date flatpickr-input active" type="text" placeholder="12/2024" readonly="readonly">
-                    <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                </div>
-             </div>
-          </div>
-      </div>
-       <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdChargeSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdChargeUpdate d-none" onclick="ipdChargeUpdate(document.getElementById('ipdChargeId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+        </div>
+    </form>
     </div>
   </div>
 </div>
 <!-- Add charges History end -->
-
-<!-- eDIT charges Start -->
-<div class="modal fade" id="ipd-edit-charges" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-edit-chargesLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-    <div class="modal-content">
-      <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="ipd-edit-chargesLabel"> Edit Charges</h6>
-        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          <div class="row gy-3">
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charges Type<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>IPD</option>
-                      <option>Procedures</option>
-                      <option>Supplier</option>
-                      <option>Operations</option>
-                      <option>Other</option>
-                  </select>
-            </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charge Category<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>Operation  Service</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Charge Name<sup class="text-danger">*</sup></label>
-               <select class="form-select form-select-sm select2  ">
-                      <option selected>Select</option>
-                      <option>	Intensive Care</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3">
-               <label class="form-label fw-medium">Quantity<sup class="text-danger">*</sup></label>
-                <input type="number" class="form-control form-control-sm" placeholder="1">
-            </div>
-          </div>
-          <div class="row border-top gy-3 mt-2">
-            <div class="col-md-5 my-3">
-                  <table class="table table-sm">
-                    <tbody><tr>
-                      <td class="border-0" colspan="2">Total (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0 align-middle">Discount (₹)</td>
-                      <td class="border-0"><div class="d-flex align-items-center"><input class="form-control form-control-sm discount-value-field" type="text" placeholder="Discount"><span class="ms-1">%</span></div></td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0" colspan="2">Taxes (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                    <tr>
-                      <td class="border-0" colspan="2">Net Amount (₹)</td>
-                      <td class="border-0 text-end fs-6">0</td>
-                    </tr>
-                  </tbody></table>
-             </div>
-             <div class="col-md-4 my-3">
-               <label class="form-label fw-medium">Charges Note<sup class="text-danger">*</sup></label>
-                <textarea type="text" class="form-control " placeholder="Charges Note" rows="3"></textarea>
-             </div>
-             <div class="col-md-3 my-3">
-               <label class="form-label fw-medium">Date<sup class="text-danger">*</sup></label>
-                 <div class=" position-relative">
-                    <input class="form-control form-control-sm radius-8 bg-base expiry-date flatpickr-input active" type="text" placeholder="12/2024" readonly="readonly">
-                    <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                </div>
-             </div>
-          </div>
-      </div>
-       <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- EDIT charges end -->
 
 <!--  opd new checkup Start -->
  <div class="modal fade" id="ipd-new-checkup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-new-checkupLabel" aria-hidden="true">
@@ -1912,12 +1581,23 @@
         });
     }
     getDatePicker('#ipdVital-date'); 
+     getDatePicker('#ipdVisit-admissionDate'); 
     // Flat pickr or date picker js 
     $('#ipd-add-medication-dose').on('shown.bs.modal', function () {
-    $('.select2-cls').select2({
-        dropdownParent: $('#ipd-add-medication-dose')
+      $('.select2-cls').select2({
+          dropdownParent: $('#ipd-add-medication-dose')
+      });
     });
-});
+    $('#ipd-add-lab').on('shown.bs.modal', function () {
+      $('.select2-cls').select2({
+          dropdownParent: $('#ipd-add-lab')
+      });
+    });
+    $('#ipd-nurse-note').on('shown.bs.modal', function () {
+      $('.select2-cls').select2({
+          dropdownParent: $('#ipd-nurse-note')
+      });
+    });
   const ipdVisitMedicineName = "{{route('common.getMedicineName')}}";
 
   const ipdVisitSubmit = "{{route('ipd-visit.ipdVisitSubmit')}}";
@@ -1932,7 +1612,36 @@
   const getIpdMedDoseDetails = "{{route('ipd-med.getIpdMedDoseDetails')}}";
   const ipdMedDataUpdate = "{{route('ipd-med.ipdMedDataUpdate')}}";
   const ipdMedDoseDataDelete = "{{route('ipd-med.ipdMedDoseDataDelete')}}";
+
+  const ipdLabSubmit = "{{route('ipd-lab.ipdLabSubmit')}}";
+  const viewIpdLabDetails = "{{route('ipd-lab.viewIpdLabDetails')}}";
+  const getIpdLabData = "{{route('ipd-lab.getIpdLabData')}}";
+  const getIpdLabDetails = "{{route('ipd-lab.getIpdLabDetails')}}";
+  const ipdLabUpdateData = "{{route('ipd-lab.ipdLabUpdateData')}}";
+  const ipdLabDataDelete = "{{route('ipd-lab.ipdLabDataDelete')}}";
+
+  const ipdChargeSubmit = "{{route('ipd-charge.ipdChargeSubmit')}}";
+  const viewIpdCharge = "{{route('ipd-charge.viewIpdCharge')}}";
+  const getIpdChargeData = "{{route('ipd-charge.getIpdChargeData')}}";
+  const ipdChargeDataUpdate = "{{route('ipd-charge.ipdChargeDataUpdate')}}";
+  const ipdChargeDataDelete = "{{route('ipd-charge.ipdChargeDataDelete')}}";
+
+  const ipdVItalSubmit = "{{route('ipd-vital.ipdVItalSubmit')}}";
+  const viewIpdVital = "{{route('ipd-vital.viewIpdVital')}}";
+  const getIpdVitalData = "{{route('ipd-vital.getIpdVitalData')}}";
+  const ipdVItalDataUpdate = "{{route('ipd-vital.ipdVItalDataUpdate')}}";
+  const ipdVitalDataDelete = "{{route('ipd-vital.ipdVitalDataDelete')}}";
+
+  const ipdNurseNoteSubmit = "{{route('ipd-nurse.ipdNurseNoteSubmit')}}";
+  const viewIpdNurseNote = "{{route('ipd-nurse.viewIpdNurseNote')}}";
+  const getIpdNurseNoteData = "{{route('ipd-nurse.getIpdNurseNoteData')}}";
+  const ipdNurseNoteDataUpdate = "{{route('ipd-nurse.ipdNurseNoteDataUpdate')}}";
+  const ipdNurseDataDelete = "{{route('ipd-nurse.ipdNurseDataDelete')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-visit.js')}}"></script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-medication.js')}}"></script>
+<script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-lab.js')}}"></script>
+<script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-charge.js')}}"></script>
+<script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-vital.js')}}"></script>
+<script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-nurse.js')}}"></script>
 @endsection

@@ -15,10 +15,6 @@ let table = $('#purchase-list-table').DataTable({
     },
     columns:[
         {
-            data:'vendor',
-            name:'vendor'
-        },
-        {
             data:'created_at',
             name:'created_at'
         },

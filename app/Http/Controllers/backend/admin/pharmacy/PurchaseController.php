@@ -29,9 +29,6 @@ class PurchaseController extends Controller
         if($request->ajax()){
             $purchase = Purchase::get();
             return DataTables::of($purchase)
-            ->addColumn('vendor',function($row){
-                return $row->vendor_id;
-            })
             ->addColumn('created_at',function($row){
                 return $row->created_at;
             })

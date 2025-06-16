@@ -4,15 +4,19 @@ namespace App\Http\Controllers\backend\admin\ipdin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\Charge;
 use App\Models\LabInvestigation;
 use App\Models\Medication;
 use App\Models\MedicineCategory;
+use App\Models\NurseNote;
 use App\Models\Patient;
 use App\Models\TestName;
 use App\Models\TestType;
 use App\Models\Timeline;
 use App\Models\User;
 use App\Models\Visit;
+use App\Models\Vital;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -161,7 +165,7 @@ class IpdinController extends Controller
              $timelines->type = "IPD";
              $timelines->patient_id = $request->patientId;
              $timelines->title = "New Visit";
-             $timelines->desc = "Appointment booked for opd on ".$request->appointment_date;
+             $timelines->desc = "Appointment booked for ipd on ".$request->appointment_date;
              $timelines->created_by = "Admin";
              $timelines->save();
             return response()->json(['success'=>'Patient Visit added successfully'],200);
@@ -212,7 +216,7 @@ class IpdinController extends Controller
             'ipdVisitData' => $getVisitDetails,
             'ipdVisitPatientData' => $patientDetails
         ];
-        return response()->json(['success'=>'opdout visit data fetched','data'=>$getData],200);
+        return response()->json(['success'=>'ipd visit data fetched','data'=>$getData],200);
     }
     public function ipdVisitDataUpdate(Request $request){
         $update = Visit::where('id',$request->id)->update([
@@ -309,7 +313,7 @@ class IpdinController extends Controller
     }
     public function getIpdMedDoseDetails(Request $request){
         $getData = Medication::where('id',$request->id)->get();
-        return response()->json(['success'=>'opdout medication dose data fetched','data'=>$getData],200);
+        return response()->json(['success'=>'ipd medication dose data fetched','data'=>$getData],200);
     }
     public function ipdMedDataUpdate(Request $request){
         $update = Medication::where('id',$request->id)->update([
@@ -329,4 +333,330 @@ class IpdinController extends Controller
         Medication::where('id',$request->id)->delete();
         return response()->json(['success'=>'Medicine dose deleted successfully'],200);
     }
+     public function ipdLabSubmit(Request $request){
+        $validator = Validator::make($request->all(),[
+            'testType' => 'required',
+            'testName' => 'required',
+            'method' => 'nullable',
+            'reportDays' => 'nullable',
+            'testParameter' => 'nullable',
+            'testRefRange' => 'nullable',
+            'testUnit' => 'nullable',
+
+        ]);
+        if($validator->fails()){
+            return response()->json(['error_validation'=>$validator->errors()->all()],200);
+        }
+        $ipdLab = new LabInvestigation();
+            $ipdLab->type = "IPD";
+            $ipdLab->patient_id = $request->patientId;
+            $ipdLab->test_type_id = $request->testType;
+            $ipdLab->test_name_id = $request->testName;
+            $ipdLab->method = $request->method;
+            $ipdLab->report_days = $request->reportDays;
+            $ipdLab->test_parameter = $request->testParameter;
+            $ipdLab->test_ref_range = $request->testRefRange;
+            $ipdLab->test_unit = $request->testUnit;
+        if($ipdLab->save()){
+            $timelines = new Timeline();
+             $timelines->type = "IPD";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "Lab Test";
+             $timelines->desc = "Lab Test Created";
+             $timelines->created_by = "Admin";
+             $timelines->save();
+            return response()->json(['success'=>'Lab Test added successfully'],200);
+        }else{
+            return response()->json(['error_success'=>'Lab Test not added']);
+        }
+    }
+    public function viewIpdLabDetails(Request $request){
+        if($request->ajax()){
+            $labTestDetails = LabInvestigation::where('patient_id',$request->patient_id)->get();
+            return DataTables::of($labTestDetails)
+            ->addColumn('created_at',function($row){
+                return $row->created_at;
+            })
+            ->addColumn('test_type',function($row){
+                return $row->testTypeData->name;
+            })
+            ->addColumn('test_name',function($row){
+                return $row->testNameData->name;
+            })
+            ->addColumn('report_date',function($row){
+                $report_dt = Carbon::parse($row->created_at)->addDays($row->reportDays);
+                return $report_dt;
+            })
+            ->addColumn('action',function($row){
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#ipd-lab-test-veiw" onclick="ipdLabView('.$row->id.')">
+                      <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
+                    </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="lucide:edit" onclick="ipdLabEdit('.$row->id.')"></iconify-icon>
+                    </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="mingcute:delete-2-line" onclick="ipdLabDelete('.$row->id.')"></iconify-icon>
+                    </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+    }
+    public function getIpdLabData(Request $request){
+        $getLabData = LabInvestigation::where('id',$request->id)->get();
+        $patientData = Patient::where('id',$getLabData[0]->patient_id)->get();
+        $testType = TestType::where('id',$getLabData[0]->test_type_id)->get();
+        $testName = TestName::where('id',$getLabData[0]->test_name_id)->get();
+        $data = [
+               'labData' =>$getLabData, 
+               'patientData' =>$patientData, 
+               'testType' =>$testType, 
+               'testName' =>$testName, 
+        ];
+        return response()->json(['success'=>'ipd lab data fetched','data'=>$data],200);
+    }
+    public function getIpdLabDetails(Request $request){
+         $getData = LabInvestigation::where('id',$request->id)->get();
+        return response()->json(['success'=>'ipd lab data fetched','data'=>$getData],200);
+    }
+    public function ipdLabUpdateData(Request $request){
+        $update = LabInvestigation::where('id',$request->id)->update([
+            'test_type_id' => $request->testType,
+            'test_name_id' => $request->testName,
+            'method' => $request->method,
+            'report_days' => $request->reportDays,
+            'test_parameter'=> $request->testParameter,
+            'test_ref_range' => $request->testRefRange,
+            'test_unit' => $request->testUnit
+        ]);
+        if($update){
+            return response()->json(['success'=>'Lab data updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Lab data not updated']);
+        }
+    }
+    public function ipdLabDataDelete(Request $request){
+        LabInvestigation::where('id',$request->id)->delete();
+        return response()->json(['success'=>'Lab test deleted successfully'],200);
+    }
+     public function ipdChargeSubmit(Request $request){
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'amount' => 'required'
+        ]);
+        if($validator->fails()){
+            return response()->json(['error_validation'=>$validator->errors()->all()],200);
+        }
+        $ipdCharge = new Charge();
+            $ipdCharge->type = "IPD";
+            $ipdCharge->patient_id = $request->patientId;
+            $ipdCharge->name = $request->name;
+            $ipdCharge->amount = $request->amount;
+        if($ipdCharge->save()){
+            $timelines = new Timeline();
+             $timelines->type = "IPD";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "Charges";
+             $timelines->desc = "Charges added for treatment or test";
+             $timelines->created_by = "Admin";
+             $timelines->save();
+            return response()->json(['success'=>'Charge added successfully'],200);
+        }else{
+            return response()->json(['error_success'=>'Charge not added']);
+        }
+    }
+    public function viewIpdCharge(Request $request){
+        if($request->ajax()){
+            $ipdCharges = Charge::where('patient_id',$request->patient_id)->get();
+            return DataTables::of($ipdCharges)
+            ->addColumn('created_at',function($row){
+                return $row->created_at;
+            })
+            ->addColumn('name',function($row){
+                return $row->name;
+            })
+            ->addColumn('amount',function($row){
+                return $row->amount;
+            })
+            ->addColumn('action',function($row){
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
+                      <iconify-icon icon="lucide:edit" onclick="ipdChargeEdit('.$row->id.')"></iconify-icon>
+                    </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="mingcute:delete-2-line" onclick="ipdChargeDelete('.$row->id.')"></iconify-icon>
+                    </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+    }
+    public function getIpdChargeData(Request $request){
+        $getData = Charge::where('id',$request->id)->get();
+        return response()->json(['success'=>'Charge data fetched','data'=>$getData],200);
+    }
+    public function ipdChargeDataUpdate(Request $request){
+         $update = Charge::where('id',$request->id)->update([
+            'name' => $request->name,
+            'amount' => $request->amount
+        ]);
+        if($update){
+            return response()->json(['success'=>'Charge updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Charge data not updated']);
+        }
+    }
+    public function ipdChargeDataDelete(Request $request){
+        Charge::where('id',$request->id)->delete();
+        return response()->json(['success'=>'Charge deleted successfully'],200);
+    }
+     public function ipdVItalSubmit(Request $request){
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'value' => 'required',
+            'date' => 'nullable'
+        ]);
+        if($validator->fails()){
+            return response()->json(['error_validation'=>$validator->errors()->all()],200);
+        }
+        $ipdVItals = new Vital();
+            $ipdVItals->type = "IPD";
+            $ipdVItals->patient_id = $request->patientId;
+            $ipdVItals->name = $request->name;
+            $ipdVItals->value = $request->value;
+            $ipdVItals->date = $request->date;
+        if($ipdVItals->save()){
+            $timelines = new Timeline();
+             $timelines->type = "IPD";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "Vital";
+             $timelines->desc = "Vital added of patient";
+             $timelines->created_by = "Admin";
+             $timelines->save();
+            return response()->json(['success'=>'VItal added successfully'],200);
+        }else{
+            return response()->json(['error_success'=>'VItal not added']);
+        }
+    }
+    public function viewIpdVital(Request $request){
+          if($request->ajax()){
+            $ipdVital = Vital::where('patient_id',$request->patient_id)->get();
+            return DataTables::of($ipdVital)
+            ->addColumn('date',function($row){
+                return $row->date;
+            })
+            ->addColumn('name',function($row){
+                return $row->name;
+            })
+            ->addColumn('value',function($row){
+                return $row->value;
+            })
+            ->addColumn('action',function($row){
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
+                      <iconify-icon icon="lucide:edit" onclick="ipdVitalEdit('.$row->id.')"></iconify-icon>
+                    </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="mingcute:delete-2-line" onclick="ipdVitalDelete('.$row->id.')"></iconify-icon>
+                    </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+    }
+   public function getIpdVitalData(Request $request){
+        $getData = Vital::where('id',$request->id)->get();
+        return response()->json(['success'=>'Vital data fetched','data'=>$getData],200);
+   }
+   public function ipdVItalDataUpdate(Request $request){
+         $update = Vital::where('id',$request->id)->update([
+            'name' => $request->name,
+            'value' => $request->value,
+            'date' => $request->date
+        ]);
+        if($update){
+            return response()->json(['success'=>'Vital updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Vital data not updated']);
+        }
+   }
+    public function ipdVitalDataDelete(Request $request){
+        Vital::where('id',$request->id)->delete();
+        return response()->json(['success'=>'Vital deleted successfully'],200);
+    }
+        public function ipdNurseNoteSubmit(Request $request){
+        $validator = Validator::make($request->all(),[
+            'nurseId' => 'required',
+            'note' => 'required',
+            'comment' => 'nullable'
+        ]);
+        if($validator->fails()){
+            return response()->json(['error_validation'=>$validator->errors()->all()],200);
+        }
+        $ipdNurse = new NurseNote();
+            $ipdNurse->type = "IPD";
+            $ipdNurse->patient_id = $request->patientId;
+            $ipdNurse->nurse_id = $request->nurseId;
+            $ipdNurse->note = $request->note;
+            $ipdNurse->comment = $request->comment;
+        if($ipdNurse->save()){
+            $timelines = new Timeline();
+             $timelines->type = "IPD";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "Nurse Note";
+             $timelines->desc = "Nurse Note added of patient";
+             $timelines->created_by = "Admin";
+             $timelines->save();
+            return response()->json(['success'=>'Nurse note added successfully'],200);
+        }else{
+            return response()->json(['error_success'=>'Nurse note not added']);
+        }
+    }
+    public function viewIpdNurseNote(Request $request){
+          if($request->ajax()){
+            $nurseNote = NurseNote::where('patient_id',$request->patient_id)->get();
+            return DataTables::of($nurseNote)
+            ->addColumn('date',function($row){
+                return $row->created_at;
+            })
+            ->addColumn('name',function($row){
+                return $row->nurseData->firstname;
+            })
+            ->addColumn('note',function($row){
+                return $row->note;
+            })
+            ->addColumn('comment',function($row){
+                return $row->comment;
+            })
+            ->addColumn('action',function($row){
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
+                      <iconify-icon icon="lucide:edit" onclick="ipdNurseNoteEdit('.$row->id.')"></iconify-icon>
+                    </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="mingcute:delete-2-line" onclick="ipdNurseNoteDelete('.$row->id.')"></iconify-icon>
+                    </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+    }
+   public function getIpdNurseNoteData(Request $request){
+        $getData = NurseNote::where('id',$request->id)->get();
+        return response()->json(['success'=>'Nurse note data fetched','data'=>$getData],200);
+   }
+   public function ipdNurseNoteDataUpdate(Request $request){
+         $update = NurseNote::where('id',$request->id)->update([
+            'nurse_id' => $request->nameId,
+            'note' => $request->note,
+            'comment' => $request->comment
+        ]);
+        if($update){
+            return response()->json(['success'=>'Nurse note updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Nurse note data not updated']);
+        }
+   }
+    public function ipdNurseDataDelete(Request $request){
+        NurseNote::where('id',$request->id)->delete();
+        return response()->json(['success'=>'Nurse note deleted successfully'],200);
+    }
+   
 }

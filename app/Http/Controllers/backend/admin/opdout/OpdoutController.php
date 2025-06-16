@@ -47,7 +47,7 @@ class OpdoutController extends Controller
         return DataTables::of($appointment)
           
            ->addColumn('token',function($row){
-                return '<a target="_blank" style="color: #859bff;" onclick="patientDetailsUsingToken('.$row->id.')">'.$row->token.'</a>';
+                return '<a target="_blank" style="color: #0d6efd;" onclick="patientDetailsUsingToken('.$row->id.')">'.$row->token.'</a>';
             })
             ->addColumn('doctor',function($row){
                 return "Dr. ".$row->user_data->firstname." ".$row->user_data->lastname;

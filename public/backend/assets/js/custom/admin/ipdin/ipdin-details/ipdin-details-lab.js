@@ -1,46 +1,21 @@
-// function addMoreTestName(){
-//     let labTestNameAdd = '';
-//     labTestNameAdd += `<tr class="add-lab-fieldGroup">
-//                       <td>
-//                         <select class="form-select form-select-sm select2  ">
-//                           <option selected disabled>Select</option>
-//                           <option value="1">RBC</option>
-//                           <option value="2">Liver function test</option>
-//                           <option value="3">TSH (Thyroid Stimulating Hormone)</option>
-//                         </select>
-//                       </td>
-//                       <td>
-//                         <input type="text" class="form-control form-control-sm" >
-//                       </td>
-//                       <td>
-//                         <input type="text" class="form-control form-control-sm" >
-//                       </td>
-//                       <td>
-//                         <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center add-lab-remove">
-//                             <i class="ri-close-line"></i>
-//                         </button>
-//                       </td>
-//                     </tr>`;
-//                     $('.appendMoreTestName').parent().append(labTestNameAdd);
-// }
-// let patient_id = $('#patient_Id').val();
+
 function resetLabTest(){
-    $('#opdOutLabID').val('');
-    $('#opdOutLab-testName').val('');
-    $('#opdOutLab-testType').val('');
-    $('#opdOutLab-method').val('');
-    $('#opdOutLab-reportDays').val('');
-    $('#opdOutLab-testParameter').val('');
-    $('#opdOutLab-testRefRange').val('');
-    $('#opdOutLab-testUnit').val('');
-    $('.opdOutLabSubmit').removeClass('d-none');
-    $('.opdOutLabUpdate').addClass('d-none');
+    $('#ipdLabID').val('');
+    $('#ipdLab-testName').val('');
+    $('#ipdLab-testType').val('');
+    $('#ipdLab-method').val('');
+    $('#ipdLab-reportDays').val('');
+    $('#ipdLab-testParameter').val('');
+    $('#ipdLab-testRefRange').val('');
+    $('#ipdLab-testUnit').val('');
+    $('.ipdLabSubmit').removeClass('d-none');
+    $('.ipdLabUpdate').addClass('d-none');
 }
-let table_lab = $('#opd-lab-reports-list').DataTable({
+let table_lab = $('#ipd-lab-reports-list').DataTable({
     processing:true,
     serverSide:true,
     ajax:{
-        url:viewOpdOutLabDetails,
+        url:viewIpdLabDetails,
         type:"POST",
         headers:{
            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
@@ -78,21 +53,21 @@ let table_lab = $('#opd-lab-reports-list').DataTable({
         },
     ]
 });
-$('#opdOutLab-form').on('submit',function(e){
+$('#ipdLab-form').on('submit',function(e){
     e.preventDefault();
-    let testType_check = validateField('opdOutLab-testType', 'select');
-    let testName_check = validateField('opdOutLab-testName', 'select');
+    let testType_check = validateField('ipdLab-testType', 'select');
+    let testName_check = validateField('ipdLab-testName', 'select');
     if(testType_check === true && testName_check === true){
         let patientId = $('#patient_Id').val();
-       let testType = $('#opdOutLab-testType').val();
-       let testName = $('#opdOutLab-testName').val();
-       let method = $('#opdOutLab-method').val();
-       let reportDays = $('#opdOutLab-reportDays').val();
-       let testParameter = $('#opdOutLab-testParameter').val();
-       let testRefRange = $('#opdOutLab-testRefRange').val();
-       let testUnit = $('#opdOutLab-testUnit').val();
+       let testType = $('#ipdLab-testType').val();
+       let testName = $('#ipdLab-testName').val();
+       let method = $('#ipdLab-method').val();
+       let reportDays = $('#ipdLab-reportDays').val();
+       let testParameter = $('#ipdLab-testParameter').val();
+       let testRefRange = $('#ipdLab-testRefRange').val();
+       let testUnit = $('#ipdLab-testUnit').val();
         $.ajax({
-            url:opdOutLabSubmit,
+            url:ipdLabSubmit,
             type:"POST",
             data:{
                 patientId:patientId,testType:testType,testName:testName,method:method,reportDays:reportDays,testParameter:testParameter,testRefRange:testRefRange,testUnit:testUnit
@@ -102,9 +77,9 @@ $('#opdOutLab-form').on('submit',function(e){
             },
             success:function(response){
                 if(response.success){
-                    $('#opd-add-lab').modal('hide');
-                    $('#opdOutLab-form')[0].reset();
-                     $('#opd-lab-reports-list').DataTable().ajax.reload();
+                    $('#ipd-add-lab').modal('hide');
+                    $('#ipdLab-form')[0].reset();
+                     $('#ipd-lab-reports-list').DataTable().ajax.reload();
                     toastSuccessAlert(response.success);
                 }else if(response.error_validation){
                     console.log(response.error_validation);
@@ -123,15 +98,16 @@ $('#opdOutLab-form').on('submit',function(e){
         console.log("Please fill all required fields");
     }   
 })
-function opdOutLabView(id){
+function ipdLabView(id){
     $.ajax({
-        url:getOpdOutLabData,
+        url:getIpdLabData,
         type:"POST",
         headers:{
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
         },
         data:{id:id},
         success:function(response){
+            console.log(response);
             if(response.success){
                 let getLabData = response.data.labData[0];
                 let getpatientData = response.data.patientData[0];
@@ -192,7 +168,7 @@ function opdOutLabView(id){
                 </tr>
                </tbody>
         </table>`;   
-                        $('.opdOutLabDataAppend').html(visit_lab_data);
+                        $('.ipdLabDataAppend').html(visit_lab_data);
             }else{
                 alert('error');
             }
@@ -203,9 +179,9 @@ function opdOutLabView(id){
         }
     });
 }
-function opdOutLabEdit(id){
+function ipdLabEdit(id){
 $.ajax({
-        url: getOpdOutLabDetails,
+        url: getIpdLabDetails,
         type:"POST",
         headers:{
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -214,35 +190,35 @@ $.ajax({
         success:function(response){
             if(response.success){
                let getData = response.data[0];
-                $('.opdOutLabSubmit').addClass('d-none');
-                $('.opdOutLabUpdate').removeClass('d-none');
-                $('#opd-add-lab').modal('show');
-                $('#opOutLabID').val(id);
-                $('#opdOutLab-testType').val(getData.test_type_id).change();
-                $('#opdOutLab-testName').val(getData.test_name_id).change();
-                $('#opdOutLab-method').val(getData.method).change();
-                $('#opdOutLab-reportDays').val(getData.report_days);
-                $('#opdOutLab-testParameter').val(getData.test_parameter);
-                $('#opdOutLab-testRefRange').val(getData.test_ref_range);
-                $('#opdOutLab-testUnit').val(getData.test_unit);
+                $('.ipdLabSubmit').addClass('d-none');
+                $('.ipdLabUpdate').removeClass('d-none');
+                $('#ipd-add-lab').modal('show');
+                $('#ipdLabID').val(id);
+                $('#ipdLab-testType').val(getData.test_type_id).change();
+                $('#ipdLab-testName').val(getData.test_name_id).change();
+                $('#ipdLab-method').val(getData.method).change();
+                $('#ipdLab-reportDays').val(getData.report_days);
+                $('#ipdLab-testParameter').val(getData.test_parameter);
+                $('#ipdLab-testRefRange').val(getData.test_ref_range);
+                $('#ipdLab-testUnit').val(getData.test_unit);
             }
         }
     });
 }
 
-function opdOutLabUpdate(id){
-    let testType_check = validateField('opdOutLab-testType', 'select');
-    let testName_check = validateField('opdOutLab-testName', 'select');
+function ipdLabUpdate(id){
+    let testType_check = validateField('ipdLab-testType', 'select');
+    let testName_check = validateField('ipdLab-testName', 'select');
     if(testType_check === true && testName_check === true){
-       let testType = $('#opdOutLab-testType').val();
-       let testName = $('#opdOutLab-testName').val();
-       let method = $('#opdOutLab-method').val();
-       let reportDays = $('#opdOutLab-reportDays').val();
-       let testParameter = $('#opdOutLab-testParameter').val();
-       let testRefRange = $('#opdOutLab-testRefRange').val();
-       let testUnit = $('#opdOutLab-testUnit').val();
+       let testType = $('#ipdLab-testType').val();
+       let testName = $('#ipdLab-testName').val();
+       let method = $('#ipdLab-method').val();
+       let reportDays = $('#ipdLab-reportDays').val();
+       let testParameter = $('#ipdLab-testParameter').val();
+       let testRefRange = $('#ipdLab-testRefRange').val();
+       let testUnit = $('#ipdLab-testUnit').val();
         $.ajax({
-            url:opdOutLabUpdateData,
+            url:ipdLabUpdateData,
             type:"POST",
             data:{
                 id:id,testType:testType,testName:testName,method:method,reportDays:reportDays,testParameter:testParameter,testRefRange:testRefRange,testUnit:testUnit
@@ -252,9 +228,9 @@ function opdOutLabUpdate(id){
             },
             success:function(response){
                 if(response.success){
-                    $('#opd-add-lab').modal('hide');
-                    $('#opdOutLab-form')[0].reset();
-                     $('#opd-lab-reports-list').DataTable().ajax.reload();
+                    $('#ipd-add-lab').modal('hide');
+                    $('#ipdLab-form')[0].reset();
+                     $('#ipd-lab-reports-list').DataTable().ajax.reload();
                     toastSuccessAlert(response.success);
                 }else if(response.error_validation){
                     console.log(response.error_validation);
@@ -273,7 +249,7 @@ function opdOutLabUpdate(id){
         console.log("Please fill all required fields");
     }   
 }
-function opdOutLabDelete(id){
+function ipdLabDelete(id){
            Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -288,7 +264,7 @@ function opdOutLabDelete(id){
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url:opdOutLabDataDelete,
+                url:ipdLabDataDelete,
                 type:"POST",
                 headers:{
                     'X-CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
@@ -297,7 +273,7 @@ function opdOutLabDelete(id){
                 success:function(response){
                     if (response.success) {
                         Swal.fire("Deleted!", response.success, "success");
-                        $('#opd-lab-reports-list').DataTable().ajax.reload();
+                        $('#ipd-lab-reports-list').DataTable().ajax.reload();
                     } else {
                         Swal.fire("Error!", "Error", "error");
                     }

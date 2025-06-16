@@ -19,15 +19,15 @@
         <div class="col-md-4">
             <div class="d-flex justify-content-between ">
             <select id="opdoutDoctorId" class="select2-class form-select" onchange="getListFilter()">
-                <option value="">👨‍⚕️ Select Doctor</option>
+                <option value=""> Select Doctor</option>
                 @foreach ($users as $user)
-                <option value="{{$user->id}}">👤Dr.  {{$user->firstname}} {{$user->lastname}}</option>
+                <option value="{{$user->id}}">Dr.  {{$user->firstname}} {{$user->lastname}}</option>
                 @endforeach
             </select>
             <select id="opdoutRoomNum" class="select2-class form-select" onchange="getListFilter()">
-                <option value="">🏥 Select Room</option>
+                <option value=""> Select Room</option>
                 @foreach ($users as $user)
-                <option value="{{$user->room_number}}">🚪 Room {{$user->room_number}}</option>
+                <option value="{{$user->room_number}}"> Room {{$user->room_number}}</option>
                 @endforeach
             </select>
         </div>

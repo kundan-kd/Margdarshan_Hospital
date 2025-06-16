@@ -211,8 +211,38 @@ Route::post('/ipd-in-medicine-dose-data',[IpdinController::class,'getIpdMedDoseD
 Route::post('/ipd-in-medicine-dose-update',[IpdinController::class,'ipdMedDataUpdate'])->name('ipd-med.ipdMedDataUpdate');
 Route::post('/ipd-in-medicine-dose-delete',[IpdinController::class,'ipdMedDoseDataDelete'])->name('ipd-med.ipdMedDoseDataDelete');
 
+Route::post('/ipd-lab-test-add',[IpdinController::class,'ipdLabSubmit'])->name('ipd-lab.ipdLabSubmit');
+Route::post('/ipd-lab-test-details',[IpdinController::class,'viewIpdLabDetails'])->name('ipd-lab.viewIpdLabDetails');
+Route::post('/ipd-lab-test-data',[IpdinController::class,'getIpdLabData'])->name('ipd-lab.getIpdLabData');
+Route::post('/ipd-lab-test-edit',[IpdinController::class,'getIpdLabDetails'])->name('ipd-lab.getIpdLabDetails');
+Route::post('/ipd-lab-test-update',[IpdinController::class,'ipdLabUpdateData'])->name('ipd-lab.ipdLabUpdateData');
+Route::post('/ipd-lab-test-delete',[IpdinController::class,'ipdLabDataDelete'])->name('ipd-lab.ipdLabDataDelete');
+
+Route::post('/ipd-charge-add',[IpdinController::class,'ipdChargeSubmit'])->name('ipd-charge.ipdChargeSubmit');
+Route::post('/ipd-charge-view',[IpdinController::class,'viewIpdCharge'])->name('ipd-charge.viewIpdCharge');
+Route::post('/ipd-charge-edit',[IpdinController::class,'getIpdChargeData'])->name('ipd-charge.getIpdChargeData');
+Route::post('/ipd-charge-update',[IpdinController::class,'ipdChargeDataUpdate'])->name('ipd-charge.ipdChargeDataUpdate');
+Route::post('/ipd-charge-delete',[IpdinController::class,'ipdChargeDataDelete'])->name('ipd-charge.ipdChargeDataDelete');
+
+Route::post('/ipd-vital-add',[IpdinController::class,'ipdVItalSubmit'])->name('ipd-vital.ipdVItalSubmit');
+Route::post('/ipd-vital-view',[IpdinController::class,'viewIpdVital'])->name('ipd-vital.viewIpdVital');
+Route::post('/ipd-vital-data',[IpdinController::class,'getIpdVitalData'])->name('ipd-vital.getIpdVitalData');
+Route::post('/ipd-vital-update',[IpdinController::class,'ipdVItalDataUpdate'])->name('ipd-vital.ipdVItalDataUpdate');
+Route::post('/ipd-vital-delete',[IpdinController::class,'ipdVitalDataDelete'])->name('ipd-vital.ipdVitalDataDelete');
+
+Route::post('/ipd-nurse-note-add',[IpdinController::class,'ipdNurseNoteSubmit'])->name('ipd-nurse.ipdNurseNoteSubmit');
+Route::post('/ipd-nurse-note-view',[IpdinController::class,'viewIpdNurseNote'])->name('ipd-nurse.viewIpdNurseNote');
+Route::post('/ipd-nurse-note-data',[IpdinController::class,'getIpdNurseNoteData'])->name('ipd-nurse.getIpdNurseNoteData');
+Route::post('/ipd-nurse-note-update',[IpdinController::class,'ipdNurseNoteDataUpdate'])->name('ipd-nurse.ipdNurseNoteDataUpdate');
+Route::post('/ipd-nurse-note-delete',[IpdinController::class,'ipdNurseDataDelete'])->name('ipd-nurse.ipdNurseDataDelete');
+
 Route::get('/emergency',[EmergencyController::class,'index'])->name('emergency.index');
-Route::get('/emergency-details',[EmergencyController::class,'emergencyDetails'])->name('emergency.emergencyDetails');
+Route::get('/emergency-details/{id}',[EmergencyController::class,'emergencyDetails']);
+Route::post('/emergency-patient-add',[EmergencyController::class,'addPatient'])->name('emergency-addPatient');
+Route::post('/emergency-patient-view',[EmergencyController::class,'viewPatients'])->name('emergency-viewPatients');
+Route::post('/emergency-patient-data',[EmergencyController::class,'getEmergencyPatientData'])->name('emergency-getEmergencyPatientData');
+Route::post('/emergency-patient-update',[EmergencyController::class,'emergencyPatientDataUpdate'])->name('emergency-emergencyPatientDataUpdate');
+Route::post('/emergency-patient-delete',[EmergencyController::class,'emergencyPatientDataDelete'])->name('emergency-emergencyPatientDataDelete');
 
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');

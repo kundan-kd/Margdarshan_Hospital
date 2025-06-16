@@ -39,9 +39,9 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link px-16 py-10 " id="pills-charges-tab" data-bs-toggle="pill" data-bs-target="#pills-charges" type="button" role="tab" aria-controls="pills-charges" aria-selected="false">Charges</button>
                   </li>
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link px-16 py-10 " id="pills-timeline-tab" data-bs-toggle="pill" data-bs-target="#pills-timeline" type="button" role="tab" aria-controls="pills-timeline" aria-selected="false">Timeline</button>
-                  </li>
+                  <!--<li class="nav-item" role="presentation">-->
+                  <!--  <button class="nav-link px-16 py-10 " id="pills-timeline-tab" data-bs-toggle="pill" data-bs-target="#pills-timeline" type="button" role="tab" aria-controls="pills-timeline" aria-selected="false">Timeline</button>-->
+                  <!--</li>-->
                   <li class="nav-item" role="presentation">
                     <button class="nav-link px-16 py-10 " id="pills-history-tab" data-bs-toggle="pill" data-bs-target="#pills-history" type="button" role="tab" aria-controls="pills-history" aria-selected="false">Vital History</button>
                   </li>
@@ -156,13 +156,11 @@
                                         <th scope="col" class="fw-medium">Test Type</th>
                                         <th scope="col" class="fw-medium">Test Name</th>
                                         <th scope="col" class="fw-medium">Sample collect</th>
-                                        <th scope="col" class="fw-medium">Expected Date</th>
                                        </tr>
                                     </thead>
                                     <tbody>
                                      @foreach ($labInvestigationData as $labInv)
                                         @php
-                                            $report_date = Carbon\Carbon::parse($labInv->created_at)->addDays($labInv->report_days);
                                             $labTestType = app\Models\TestType::where('id',$labInv->test_type_id)->get(['name']);
                                             $labTestName = app\Models\TestName::where('id',$labInv->test_name_id)->get(['name']);
                                         @endphp
@@ -170,7 +168,6 @@
                                             <td>{{ $labTestType[0]->name }}</td>
                                             <td>{{ $labTestName[0]->name }}</td>
                                             <td>{{ $labInv->created_at->toDateString() }}</td>
-                                            <td>{{ $report_date->toDateString() }}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>
@@ -188,7 +185,7 @@
                         <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-new-checkup" onclick="resetVisit()"> <i class="ri-add-line"></i> New Checkup</button>
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
-                      <div class="card basic-data-table">
+                      <div class="basic-data-table">
                             <table class="table bordered-table mb-0 w-100" id="opd-out-visit-list" data-page-length='10'>
                           <thead>
                              <tr>
@@ -934,6 +931,7 @@
         });
     }
     getDatePicker('#opdOutVital-date'); 
+    getDatePicker('#opdOutVisit-admissionDate'); 
     // Flat pickr or date picker js 
 
 $('#opd-add-medication-dose').on('shown.bs.modal', function () {

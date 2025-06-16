@@ -15,7 +15,7 @@
           <h6 class="fw-normal mb-0">IPD - In Patient</h6>
           <div class="d-flex flex-wrap align-items-center gap-2">
               <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-add-patient"> <i class="ri-add-line"></i> Add Patient</a>
-              <button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button>
+              <!--<button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button>-->
           </div>
      </div>
     <div class="card basic-data-table">

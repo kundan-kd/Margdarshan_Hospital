@@ -32,7 +32,6 @@ purchase
         <table class="table bordered-table mb-0" id="purchase-list-table" data-page-length='10'>
           <thead>
             <tr>
-              <th scope="col" class="fw-medium">Vendor Name</th>
               <th scope="col" class="fw-medium">Billing Date & Time</th>
               <th scope="col" class="fw-medium">Bill No.</th>
               <th scope="col" class="fw-medium">Net Amount</th>

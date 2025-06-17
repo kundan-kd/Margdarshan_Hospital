@@ -183,6 +183,7 @@ function emergencyPatientUpdate(id){
                     if(response.success){
                         toastSuccessAlert(response.success);
                         $('#emergency-add-patient').modal('hide');
+                         $('#emergency-patient-list').DataTable().ajax.reload();
                     }else{
                        toastErrorAlert(response.error_success);
                     }
@@ -230,5 +231,5 @@ function emergencyPatientDelete(id){
     });
 }
 function emergencyPatientUsingId(id){
-    window.open('emergency-in-details/' + id, '_blank');
+    window.open('emergency-details/' + id, '_blank');
 }

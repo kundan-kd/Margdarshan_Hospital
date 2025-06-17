@@ -7,6 +7,9 @@
     .form-select.form-select-sm{
         width:auto !important;
     }
+    .cursor-pointer {
+        cursor: pointer;
+    }
 </style>
 @endsection
 @section('main-container')
@@ -52,34 +55,10 @@
               <th scope="col" class="fw-medium">Phone</th>
               <th scope="col" class="fw-medium">Gender</th>
               <th scope="col" class="fw-medium">Status</th>
-              <th scope="col" class="fw-medium">Action</th>
             </tr>
           </thead>
           <tbody>
-           <tr>
-              <td><a href="#" class="text-primary-600">OPD_123</a></td>
-              <td>Arun Kumar</td>
-              <td>07-05-2025 03:28 PM</td>
-              {{-- <td>+91 1234 567 890</td>
-              <td>Male</td>
-              <td><span class="bg-success-focus text-success-main px-16 py-4 radius-4 fw-medium text-sm">Paid</span></td>
-              <td>
-                <button class="mx-1 bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#opd-visit-view">
-                  <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                </button>
-                <a href="opd-edit-visit-detail.html"><button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                  <iconify-icon icon="lucide:edit"></iconify-icon>
-                </button>
-                </a>
-                <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                  <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
-                </button>
-                 <a href="opd-invoice.html" target="_blank"><button class="mx-1 bg-warning-200 bg-hover-warning-300 text-warning-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                  <i class="ri-printer-line"></i>
-                </button>
-                </a>
-              </td> --}}
-           </tr>
+           
           </tbody>
         </table>
       </div>

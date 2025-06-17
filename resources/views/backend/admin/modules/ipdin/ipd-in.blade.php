@@ -7,6 +7,9 @@
     .form-select.form-select-sm{
         width:auto !important;
     }
+    .cursor-pointer {
+        cursor: pointer;
+    }
 </style>
 @endsection
 @section('main-container')
@@ -157,6 +160,7 @@
         <div class="modal-body">
             <div class="row gy-3">
           <div class="col-6">
+            <input type="hidden" id="ipdPatientId">
             <label class="form-label fw-normal" for="ipd-patientName">Patient Name</label>
             <input type="text" id="ipd-patientName" name="#0" class="form-control form-control-sm" placeholder="Patient Name" oninput="validateField(this.id,'input')">
             <div class="ipd-patientName_errorCls d-none"></div>
@@ -234,8 +238,8 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal" onclick="reopenAppointment()">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal">Submit</button>
-           <!-- <button type="button" class="btn btn-warning-600  btn-sm fw-normal">Save & Book Appointment</button>  -->
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal ipdPatientSubmit">Submit</button>
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal ipdPatientUpdate d-none" onclick="ipdPatientUpdate(document.getElementById('ipdPatientId').value)">Update</button>
         </div>
       </form>
     </div>
@@ -247,6 +251,9 @@
 <script>
   const addNewPatientIpd = "{{route('ipd-addPatient')}}"; 
   const viewPatientsIpd = "{{route('ipd-viewPatients')}}"; 
+  const getIpdPatientData = "{{route('ipd-getIpdPatientData')}}"; 
+  const ipdPatientDataUpdate = "{{route('ipd-ipdPatientDataUpdate')}}"; 
+  const ipdPatientDataDelete = "{{route('ipd-ipdPatientDataDelete')}}"; 
   
 </script>
   <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin.js')}}"></script>

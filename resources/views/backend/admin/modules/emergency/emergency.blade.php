@@ -7,6 +7,9 @@
     .form-select.form-select-sm{
         width:auto !important;
     }
+    .cursor-pointer {
+        cursor: pointer;
+    }
 </style>
 @endsection
 @section('main-container')
@@ -16,7 +19,7 @@
   <h6 class="fw-normal mb-0">Emergency</h6>
   <div class="d-flex flex-wrap align-items-center gap-2">
           <a href="add-emergency-patient.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-patient" onclick= "resetPatient()"> <i class="ri-add-line"></i> Add Patient</a>
-          <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button>
+          {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
   <!-- <div class="btns">
     <a class="btn btn-primary-600  btn-sm fw-normal mx-2" href="./emergency-detail.html"><i class="ri-add-line"></i> Create New</a>
@@ -28,20 +31,20 @@
       <div class="card-body">
         <table class="table bordered-table mb-0 w-100" id="emergency-patient-list" data-page-length='10'>
           <thead>
-            <tr >
-              <th scope="col" class="fw-medium">Patient Name</th>
-              <th scope="col" class="fw-medium">Admission Date & Time</th>
-              <th scope="col" class="fw-medium">Emergancy No.</th>
-              <th scope="col" class="fw-medium">Sex</th>
-              <th scope="col" class="fw-medium">Doctor</th>
-              <th scope="col" class="fw-medium">Bed No.</th>
-              <th scope="col" class="fw-medium">RMO</th>
+            <tr>
+              <th scope="col" class="fw-medium">Patient ID</th>
+              <th scope="col" class="fw-medium">Name</th>
+              <th scope="col" class="fw-medium">Gender</th>
+              <th scope="col" class="fw-medium">Blood Type</th>
+              <th scope="col" class="fw-medium">DOB</th>
+              <th scope="col" class="fw-medium">Phone</th>
+              <th scope="col" class="fw-medium">Allergies</th>
               <th scope="col" class="fw-medium">Status</th>
               <th scope="col" class="fw-medium">Action</th>
             </tr>
           </thead>
           <tbody>
-           <tr>
+           {{-- <tr>
               <td><a href="#" class="text-primary-600">Arun Kumar</a></td>
               <td>07-05-2025 03:28 PM</td>
               <td>+911234567890</td>
@@ -66,7 +69,7 @@
                 </button>
                 </a>
               </td>
-           </tr>
+           </tr> --}}
           </tbody>
         </table>
       </div>

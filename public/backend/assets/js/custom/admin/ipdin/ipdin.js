@@ -101,6 +101,7 @@ $('#ipd-addPatientForm').on('submit',function(e){
                     if(response.success){
                         toastSuccessAlert('New IPD Patient added successfully');
                         $('#ipd-add-patient').modal('hide');
+                        $('#ipd-in-patient-list').DataTable().ajax.reload();
                     }else{
                         console.log('error found');
                     }
@@ -114,6 +115,117 @@ $('#ipd-addPatientForm').on('submit',function(e){
             console.log("Please fill all required fields");
         }    
 });
+function ipdPatientEdit(id){
+ $.ajax({
+        url: getIpdPatientData,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:id},
+        success:function(response){
+            console.log(response);
+            if(response.success){
+               let getData = response.data[0];
+                $('#ipd-add-patientLabel').html('Edit Nurse Note');
+                $('.ipdPatientSubmit').addClass('d-none');
+                $('.ipdPatientUpdate').removeClass('d-none');
+                $('#ipd-add-patient').modal('show');
+                $('#ipdPatientId').val(id);
+                $('#ipd-patientName').val(getData.name);
+                $('#ipd-guardianName').val(getData.guardian_name);
+                $('#ipd-patientBloodType').val(getData.bloodtype);
+                $('#ipd-patientDOB').val(getData.dob);
+                $('#ipd-patientMStatus').val(getData.marital_status);
+                $('#ipd-patientMobile').val(getData.mobile);
+                $('#ipd-patientAddess').val(getData.address);
+                $('#ipd-patientAltMobile').val(getData.alt_mobile);
+                $('#ipd-patientAllergy').val(getData.known_allergies);
+            }
+        }
+    });
+}
+function ipdPatientUpdate(id){
+     let patientName  = validateField('ipd-patientName', 'input');
+    let guardianName = validateField('ipd-guardianName', 'input');
+    // let patientGender = validateField('patientGender', 'radio');
+    let patientBloodType = validateField('ipd-patientBloodType', 'select');
+    let patientDOB = validateField('ipd-patientDOB', 'select');
+    let patientMStatus = validateField('ipd-patientMStatus', 'select');     
+    let patientMobile = validateField('ipd-patientMobile', 'mobile');
+    let patientAddess = validateField('ipd-patientAddess', 'input');
+        if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
+           
+            let name = $('#ipd-patientName').val();
+            let guardian_name = $('#ipd-guardianName').val();
+            let gender = $('input[name="ipd-patientGender"]:checked').val(); // Corrected na
+            let bloodtype = $('#ipd-patientBloodType').val();
+            let dob = $('#ipd-patientDOB').val();
+            let mstatus = $('#ipd-patientMStatus').val();
+            let mobile = $('#ipd-patientMobile').val();
+            let address = $('#ipd-patientAddess').val();
+            let alt_mobile = $('#ipd-patientAltMobile').val();
+            let allergy = $('#ipd-patientAllergy').val();
+            $.ajax({
+                url: ipdPatientDataUpdate,
+                type:"POST",
+                headers:{
+                    'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+                },
+                data:{
+                id:id,name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
+                },
+                success:function(response){
+                    if(response.success){
+                        toastSuccessAlert(response.success);
+                        $('#ipd-add-patient').modal('hide');
+                        $('#ipd-in-patient-list').DataTable().ajax.reload();
+                    }else{
+                       toastErrorAlert(response.error_success);
+                    }
+                },
+                error:function(xhr, status, error){
+                    console.log(xhr.respnseText);
+                    alert('An error occurred: '+error);
+                }
+            });
+        }else{
+            console.log("Please fill all required fields");
+        }    
+}
+function ipdpatientDelete(id){
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+        customClass: {
+            title: 'swal-title-custom'
+          }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url:ipdPatientDataDelete,
+                type:"POST",
+                headers:{
+                    'X-CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
+                },
+                data:{id:id},
+                success:function(response){
+                    if (response.success) {
+                        Swal.fire("Deleted!", response.success, "success");
+                        $('#ipd-patient-list').DataTable().ajax.reload();
+                    } else {
+                        Swal.fire("Error!", "Error", "error");
+                    }
+                }
+            });
+        }
+    });
+}
 function ipdPatientUsingId(id){
     window.open('ipd-in-details/' + id, '_blank');
 }

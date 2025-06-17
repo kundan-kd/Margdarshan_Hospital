@@ -47,7 +47,7 @@ class IpdinController extends Controller
         $patients = Patient::get();
         return DataTables::of($patients)
         ->addColumn('patient_id',function($row){
-             return '<a target="_blank" style="color: #859bff;" onclick="ipdPatientUsingId('.$row->id.')">'.$row->patient_id.'</a>';
+             return '<a target="_blank" class="text-primary cursor-pointer" onclick="ipdPatientUsingId('.$row->id.')">'.$row->patient_id.'</a>';
         })
         ->addColumn('gender',function($row){
             return $row->gender; //fetched through modal relationship
@@ -62,23 +62,24 @@ class IpdinController extends Controller
             return $row->mobile;
         })
         ->addColumn('allergies',function($row){
-            return $row->allergies;
+            return $row->known_allergies;
         })
         ->addColumn('status',function($row){
-              $ischecked = $row->status == 1 ? 'checked':'';
-                return '<div class="form-switch switch-primary">
-                                <input class="form-check-input" type="checkbox" role="switch" onclick="statusSwitch('.$row->id.')"'.$ischecked.'>
-                            </div>';
+            //   $ischecked = $row->status == 1 ? 'checked':'';
+            //     return '<div class="form-switch switch-primary">
+            //                     <input class="form-check-input" type="checkbox" role="switch" onclick="statusSwitch('.$row->id.')"'.$ischecked.'>
+            //                 </div>';
+             return 'Paid';    
         })
         ->addColumn('action',function($row){
             return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                    </a> 
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="lucide:edit" onclick="appointmentEdit('.$row->id.')"></iconify-icon>
-                    </a>-->
+                    </a> -->
+                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="lucide:edit" onclick="ipdPatientEdit('.$row->id.')"></iconify-icon>
+                    </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="mingcute:delete-2-line" onclick="patientDelete('.$row->id.')"></iconify-icon>
+                      <iconify-icon icon="mingcute:delete-2-line" onclick="ipdpatientDelete('.$row->id.')"></iconify-icon>
                     </a>';
         })
         ->rawColumns(['patient_id','status','action'])
@@ -122,6 +123,33 @@ class IpdinController extends Controller
         }else{
             return response()->json(['error_success'=>'IPD Patient not added'],500);
         }
+    }
+      public function getIpdPatientData(Request $request){
+       $getData = Patient::where('id',$request->id)->get();
+        return response()->json(['success'=>'Emergency patient data fetched','data'=>$getData],200);
+    }
+    public function ipdPatientDataUpdate(Request $request){
+       $update = Patient::where('id',$request->id)->update([
+            'name' => $request->name,
+            'guardian_name' => $request->guardian_name,
+            'gender' => $request->gender,
+            'bloodtype' => $request->bloodtype,
+            'dob'=> $request->dob,
+            'marital_status'=> $request->mstatus,
+            'mobile'=> $request->mobile,
+            'alt_mobile'=> $request->alt_mobile,
+            'known_allergies'=> $request->allergy,
+            'address'=> $request->address
+        ]);
+        if($update){
+            return response()->json(['success'=>'Emergency patient updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Patient not updated']);
+        }
+    }
+    public function ipdPatientDataDelete(Request $request){
+       Patient::where('id',$request->id)->delete();
+        return response()->json(['success'=>'Patient data deleted successfully'],200);
     }
       function ipdVisitSubmit(Request $request){
         $validator = Validator::make($request->all(),[

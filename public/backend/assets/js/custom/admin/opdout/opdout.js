@@ -11,6 +11,10 @@ let table = $('#opd-out-list-table').DataTable({
         error: function(xhr,error,thrown){
             console.log(xhr.responseText);
             alert('Error: ' + thrown);
+        },
+        data: function (d) {
+            d.doctor_id = $('#opdoutDoctorId').val();  
+            d.roomNum = $('#opdoutRoomNum').val();  
         }
     },
     columns: [
@@ -19,13 +23,14 @@ let table = $('#opd-out-list-table').DataTable({
         { data: 'appointment_date', name: 'appointment_date' },
         { data: 'mobile', name: 'mobile' },
         { data: 'gender', name: 'gender' },
-        { data: 'status', name: 'status' },
-        { data: 'action', name: 'action' }
+        { data: 'status', name: 'status' }
+        // { data: 'action', name: 'action' }
     ]
 });
 
 function getListFilter(){
-    $('#opd-out-list-table').ajax.reload();
+    $('#opd-out-list-table').DataTable().ajax.reload();
+    console.log('hello');
 }
 
 function patientDetailsUsingToken(id){

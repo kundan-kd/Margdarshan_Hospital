@@ -87,7 +87,7 @@
                                   </tr>
                                  </table>
                             </div>
-                             @php
+                            @php
                               $doctors =  \App\Models\User::where('id',$appointments[0]->doctor_id)->get();
                             @endphp
                             <h6 class="text-md fw-medium mt-11 border-bottom pb-8">CONSULTANT DOCTOR</h6>

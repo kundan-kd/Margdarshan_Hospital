@@ -47,7 +47,7 @@ class OpdoutController extends Controller
         return DataTables::of($appointment)
           
            ->addColumn('token',function($row){
-                return '<a target="_blank" style="color: #0d6efd;" onclick="patientDetailsUsingToken('.$row->id.')">'.$row->token.'</a>';
+                return '<a target="_blank" class="text-primary cursor-pointer" onclick="patientDetailsUsingToken('.$row->id.')">'.$row->token.'</a>';
             })
             ->addColumn('doctor',function($row){
                 return "Dr. ".$row->user_data->firstname." ".$row->user_data->lastname;
@@ -67,17 +67,17 @@ class OpdoutController extends Controller
             ->addColumn('status',function($row){
                 return $row->status;
             })
-            ->addColumn('action',function($row){
-               return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                        <iconify-icon icon="iconamoon:eye-light" onclick="medicineDetails('.$row->id.')"></iconify-icon>
-                        </a>
-                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                         <iconify-icon icon="lucide:edit" onclick="medicineEdit('.$row->id.')"></iconify-icon>
-                         </a>
-                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                         <iconify-icon icon="mingcute:delete-2-line" onclick="medicineDelete('.$row->id.')"></iconify-icon>
-                         </a>';
-            })
+            // ->addColumn('action',function($row){
+            //    return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+            //             <iconify-icon icon="iconamoon:eye-light" onclick="medicineDetails('.$row->id.')"></iconify-icon>
+            //             </a>
+            //             <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+            //              <iconify-icon icon="lucide:edit" onclick="medicineEdit('.$row->id.')"></iconify-icon>
+            //              </a>
+            //              <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+            //              <iconify-icon icon="mingcute:delete-2-line" onclick="medicineDelete('.$row->id.')"></iconify-icon>
+            //              </a>';
+            // })
             ->rawColumns(['token','action'])
             ->make(true);
     }
@@ -167,12 +167,12 @@ class OpdoutController extends Controller
 
             })
             ->addColumn('action',function($row){
-                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#opd-out-visit-view" onclick="opdOutVisitViewData('.$row->id.')">
+                return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#opd-out-visit-view" onclick="opdOutVisitViewData('.$row->id.')">
                         <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                        </a>
+                        </a> 
                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="lucide:edit" onclick="opdOutVisitEdit('.$row->id.')"></iconify-icon>
-                        </a>
+                        </a>-->
                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutVisitDelete('.$row->id.')"></iconify-icon>
                         </a>';

@@ -254,6 +254,7 @@
   const getIpdPatientData = "{{route('ipd-getIpdPatientData')}}"; 
   const ipdPatientDataUpdate = "{{route('ipd-ipdPatientDataUpdate')}}"; 
   const ipdPatientDataDelete = "{{route('ipd-ipdPatientDataDelete')}}"; 
+
   
 </script>
   <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin.js')}}"></script>

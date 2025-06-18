@@ -13,10 +13,10 @@
   <div class="dashboard-main-body">
      <input type="hidden" id="patient_Id" value="{{$patients[0]->id}}">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-normal mb-0">IPD - In Patient Details</h6>
+        <h6 class="fw-normal mb-0">IPD - In Patient Details<span class="{{$patients[0]->current_status == 'Admitted'?'badge text-sm fw-normal bg-danger-600 mx-1 text-white':'badge text-sm fw-normal bg-success-600 mx-1 text-white'}}">{{$patients[0]->current_status}}</span></h6>
          <div class="d-flex flex-wrap align-items-center gap-2">
-          <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#in-patient-icu"> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
-          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#in-patient-discharge"> <i class="ri-thumb-up-line"></i> Discharge</button>
+          <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="moveToEmergency({{$patients[0]->id}})"> <i class="ri-hotel-bed-line"></i> Move to Emergency</button>
+          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
         <!-- <div class="btns">
@@ -87,11 +87,11 @@
                                   </tr>
                                  </table>
                             </div>
-                            @php
+                            {{-- @php
                               $doctors =  \App\Models\User::where('id',$appointments[0]->doctor_id)->get();
-                            @endphp
+                            @endphp --}}
                             <h6 class="text-md fw-medium mt-11 border-bottom pb-8">CONSULTANT DOCTOR</h6>
-                            <p class="mb-1">{{$doctors[0]->firstname}} {{$doctors[0]->lastname}}</p>
+                            {{-- <p class="mb-1">{{$doctors[0]->firstname}} {{$doctors[0]->lastname}}</p> --}}
                             <div class="d-flex align-items-center">
                               <p class="mb-0 mx-1">Finding :</p> 
                               <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#ipd-add-finding">
@@ -1599,7 +1599,8 @@
       });
     });
   const ipdVisitMedicineName = "{{route('common.getMedicineName')}}";
-
+  // const patientDischargeStatus = "{{route('ipd.patientDischargeStatus')}}";
+  // const moveToEmergencyStatus = "{{route('ipd.moveToEmergencyStatus')}}";
   const ipdVisitSubmit = "{{route('ipd-visit.ipdVisitSubmit')}}";
   const viewIpdVisit = "{{route('ipd-visit.viewIpdVisit')}}";
   const getIpdVisitData = "{{route('ipd-visit.getIpdVisitData')}}";
@@ -1638,6 +1639,7 @@
   const ipdNurseNoteDataUpdate = "{{route('ipd-nurse.ipdNurseNoteDataUpdate')}}";
   const ipdNurseDataDelete = "{{route('ipd-nurse.ipdNurseDataDelete')}}";
 </script>
+<script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details.js')}}"></script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-visit.js')}}"></script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-medication.js')}}"></script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-lab.js')}}"></script>

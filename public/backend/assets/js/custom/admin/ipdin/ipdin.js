@@ -70,7 +70,6 @@ $('#ipd-addPatientForm').on('submit',function(e){
      e.preventDefault();
     let patientName  = validateField('ipd-patientName', 'input');
     let guardianName = validateField('ipd-guardianName', 'input');
-    // let patientGender = validateField('patientGender', 'radio');
     let patientBloodType = validateField('ipd-patientBloodType', 'select');
     let patientDOB = validateField('ipd-patientDOB', 'select');
     let patientMStatus = validateField('ipd-patientMStatus', 'select');     

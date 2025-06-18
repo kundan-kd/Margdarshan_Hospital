@@ -154,6 +154,9 @@
            <li>
             <a href="{{route('vendor.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Vendor</a>
           </li>
+           <li>
+            <a href="{{route('bedtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Type</a>
+          </li>
         </ul>
       </li>
       

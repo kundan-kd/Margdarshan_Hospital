@@ -50,6 +50,7 @@
           <thead>
             <tr >
               <th scope="col" class="fw-medium">Token no.</th>
+              <th scope="col" class="fw-medium">Patient Name</th>
               <th scope="col" class="fw-medium">Doctor</th>
               <th scope="col" class="fw-medium">Appointment Date</th>
               <th scope="col" class="fw-medium">Phone</th>
@@ -146,9 +147,11 @@
 @endsection
 @section('extra-js')
 <script>
-    let viewOpdOut = "{{route('opd-out.viewOpdOut')}}";
+  const viewOpdOut = "{{route('opd-out.viewOpdOut')}}";
+  const moveToIpdStatus = "{{route('opd-out.moveToIpdStatus')}}";
 </script>
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout.js')}}"></script>
+
  {{-----------external js files added for page functions------------}}
 <script>
 $(document).ready(function() {

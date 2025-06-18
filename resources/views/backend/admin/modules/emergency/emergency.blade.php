@@ -182,6 +182,7 @@
   const getEmergencyPatientData = "{{route('emergency-getEmergencyPatientData')}}"; 
   const emergencyPatientDataUpdate = "{{route('emergency-emergencyPatientDataUpdate')}}"; 
   const emergencyPatientDataDelete = "{{route('emergency-emergencyPatientDataDelete')}}"; 
+
   
 </script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency.js')}}"></script>

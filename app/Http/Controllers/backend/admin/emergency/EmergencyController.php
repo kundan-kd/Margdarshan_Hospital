@@ -29,7 +29,7 @@ class EmergencyController extends Controller
     }
      function emergencyDetails($id){
        $patients = Patient::where('id',$id)->get();
-        $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
+        // $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
         $doctorData = User::where('status',1)->get(['id','firstname','lastname','department_id']);
         $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
@@ -37,7 +37,7 @@ class EmergencyController extends Controller
         $testtypes = TestType::where('status',1)->get();
         $testnames = TestName::where('status',1)->get();
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
-            return view('backend.admin.modules.emergency.emergency-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData'));
+            return view('backend.admin.modules.emergency.emergency-details',compact('patients','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData'));
     }
        public function viewPatients(Request $request){
         if($request->ajax()){
@@ -113,6 +113,7 @@ class EmergencyController extends Controller
         $patient->alt_mobile = $request->alt_mobile;
         $patient->known_allergies = $request->allergy;
         $patient->address = $request->address;
+        $patient->current_status = "Admitted";
         if($patient->save()){
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
@@ -145,8 +146,40 @@ class EmergencyController extends Controller
         }
     }
     public function emergencyPatientDataDelete(Request $request){
-       Patient::where('id',$request->id)->delete();
+        Patient::where('id',$request->id)->delete();
         return response()->json(['success'=>'Patient data deleted successfully'],200);
+    }
+    function moveToIpdStatus(Request $request){
+        $curr_status = Patient::where('id',$request->id)->get(['type']);
+        $update = Patient::where('id',$request->id)->update([
+            'type' =>'IPD',
+            'previous_type'=>$curr_status[0]->type
+        ]);
+        if($update){
+            $timelines = new Timeline();
+            $timelines->type = "EMERGENCY";
+            $timelines->patient_id = $request->id;
+            $timelines->title = "Moved to IPD";
+            $timelines->desc = "Moved to IPD from Emergency";
+            $timelines->created_by = "Admin";
+            $timelines->save();
+            return response()->json(['success'=>'Successfully moved to IPD'],200);
+        }
+    }
+    public function patientDischargeStatusE(Request $request){
+        $update = Patient::where('id',$request->id)->update([
+            'current_status' =>'Discharged'
+        ]);
+        if($update){
+            $timelines = new Timeline();
+            $timelines->type = "EMERGENCY";
+            $timelines->patient_id = $request->id;
+            $timelines->title = "Discharged";
+            $timelines->desc = "Patient Discharged from Emergency";
+            $timelines->created_by = "Admin";
+            $timelines->save();
+            return response()->json(['success'=>'Successfully discharged from Emergency'],200);
+        }
     }
     public function emergencyVisitSubmit(Request $request){
             $validator = Validator::make($request->all(),[

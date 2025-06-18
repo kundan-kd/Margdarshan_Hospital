@@ -43,11 +43,12 @@ class OpdoutController extends Controller
         } else {
             $appointment = Appointment::get(); // **Load all records when no filters are applied**
         }
-
         return DataTables::of($appointment)
-          
            ->addColumn('token',function($row){
-                return '<a target="_blank" class="text-primary cursor-pointer" onclick="patientDetailsUsingToken('.$row->id.')">'.$row->token.'</a>';
+                return '<a target="_blank" class="text-primary cursor-pointer" onclick="patientDetailsUsingToken('.$row->patient_id.')">'.$row->token.'</a>';
+            })
+             ->addColumn('patient_name',function($row){
+                return $row->patient_data->name;
             })
             ->addColumn('doctor',function($row){
                 return "Dr. ".$row->user_data->firstname." ".$row->user_data->lastname;
@@ -95,6 +96,23 @@ class OpdoutController extends Controller
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
         return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData'));
     }
+    function moveToIpdStatus(Request $request){
+        $curr_status = Patient::where('id',$request->id)->get(['type']);
+        $update = Patient::where('id',$request->id)->update([
+            'type' =>'IPD',
+            'previous_type'=>$curr_status[0]->type
+        ]);
+        if($update){
+            $timelines = new Timeline();
+            $timelines->type = "OPD";
+            $timelines->patient_id = $request->id;
+            $timelines->title = "Moved to IPD";
+            $timelines->desc = "Moved to IPD from OPD";
+            $timelines->created_by = "Admin";
+            $timelines->save();
+            return response()->json(['success'=>'Successfully moved to IPD'],200);
+        }
+    }
     function opdOutVisitSubmit(Request $request){
         $validator = Validator::make($request->all(),[
                 'patientId' => 'required',
@@ -131,15 +149,14 @@ class OpdoutController extends Controller
         $optoutVisit->payment_mode = $request->paymentMode;
         $optoutVisit->ref_num = $request->refNum;
         $optoutVisit->paid_amount = $request->paidAmount;
-
         if($optoutVisit->save()){
-             $timelines = new Timeline();
-             $timelines->type = "OPD";
-             $timelines->patient_id = $request->patientId;
-             $timelines->title = "New Visit";
-             $timelines->desc = "Appointment booked for opd on ".$request->appointment_date;
-             $timelines->created_by = "Admin";
-             $timelines->save();
+            $timelines = new Timeline();
+            $timelines->type = "OPD";
+            $timelines->patient_id = $request->patientId;
+            $timelines->title = "New Visit";
+            $timelines->desc = "Appointment booked for opd on ".$request->appointment_date;
+            $timelines->created_by = "Admin";
+            $timelines->save();
             return response()->json(['success'=>'Patient Visit added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Patient visit not added']);

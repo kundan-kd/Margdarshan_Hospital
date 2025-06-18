@@ -13,11 +13,11 @@
   <div class="dashboard-main-body">
        <input type="hidden" id="patient_Id" value="{{$patients[0]->id}}">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-normal mb-0">Emergency Details</h6>
+        <h6 class="fw-normal mb-0">Emergency Details<span class="{{$patients[0]->current_status == 'Admitted'?'badge text-sm fw-normal bg-danger-600 mx-1 text-white':'badge text-sm fw-normal bg-success-600 mx-1 text-white'}}">{{$patients[0]->current_status}}</span></h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
-          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#emergency-emergency"> <i class="ri-stethoscope-line"></i> Move to IPD</button>
-          <button class="btn btn-danger-600  btn-sm fw-normal d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#emergency-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button>
-          <button class="btn btn-success-600  btn-sm fw-normal d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#emergency-discharge"><i class="ri-thumb-up-line"></i> Discharge</button>
+          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="moveToIpd({{$patients[0]->id}})"> <i class="ri-stethoscope-line"></i> Move to IPD</button>
+          {{-- <button class="btn btn-danger-600  btn-sm fw-normal d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#emergency-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button> --}}
+          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
         <!-- <div class="btns">
@@ -1182,6 +1182,8 @@
       });
     });
       const emergencyMedicineName = "{{route('common.getMedicineName')}}";
+        const moveToIpdStatus = "{{route('emergency.moveToIpdStatus')}}";
+        const patientDischargeStatusE = "{{route('emergency.patientDischargeStatusE')}}";
 
     const emergencyVisitSubmit = "{{route('emergency-visit.emergencyVisitSubmit')}}";
     const viewEmergencyVisit = "{{route('emergency-visit.viewEmergencyVisit')}}";
@@ -1221,6 +1223,7 @@
      const emergencyVitalDataUpdate = "{{route('emergency-vital.emergencyVitalDataUpdate')}}";
      const emergencyVitalDataDelete = "{{route('emergency-vital.emergencyVitalDataDelete')}}";
 </script>
+  <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details.js')}}"></script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details-visit.js')}}"></script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details-medication.js')}}"></script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details-lab.js')}}"></script>

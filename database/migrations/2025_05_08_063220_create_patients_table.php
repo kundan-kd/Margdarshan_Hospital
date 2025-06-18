@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
             $table->string('type',30)->nullable();
+            $table->string('previous_type',20)->nullable();
             $table->string('patient_id',50)->nullable();
             $table->string('name',150)->nullable();
             $table->string('guardian_name',150)->nullable();
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->string('known_allergies',200)->nullable();
             $table->text('address')->nullable();
             $table->integer('status')->default(1);
+            $table->string('current_status',20)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

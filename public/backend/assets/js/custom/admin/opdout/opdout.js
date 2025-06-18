@@ -1,5 +1,5 @@
 
-let table = $('#opd-out-list-table').DataTable({
+let table_opd_patients = $('#opd-out-list-table').DataTable({
     processing: true,
     serverSide: true,
     ajax: {
@@ -19,6 +19,7 @@ let table = $('#opd-out-list-table').DataTable({
     },
     columns: [
         { data: 'token', name: 'token' },
+        { data: 'patient_name', name: 'patient_name' },
         { data: 'doctor', name: 'doctor' },
         { data: 'appointment_date', name: 'appointment_date' },
         { data: 'mobile', name: 'mobile' },

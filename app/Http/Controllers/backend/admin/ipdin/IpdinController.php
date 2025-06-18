@@ -32,7 +32,7 @@ class IpdinController extends Controller
     }
     public function ipdInDetails($id){
         $patients = Patient::where('id',$id)->get();
-        $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
+        // $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
         $doctorData = User::where('status',1)->get(['id','firstname','lastname','department_id']);
         $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
@@ -40,11 +40,11 @@ class IpdinController extends Controller
         $testtypes = TestType::where('status',1)->get();
         $testnames = TestName::where('status',1)->get();
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
-            return view('backend.admin.modules.ipdin.ipd-in-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData'));
+            return view('backend.admin.modules.ipdin.ipd-in-details',compact('patients','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData'));
     }
     public function viewPatients(Request $request){
         if($request->ajax()){
-        $patients = Patient::get();
+        $patients = Patient::where('type','IPD')->get();
         return DataTables::of($patients)
         ->addColumn('patient_id',function($row){
              return '<a target="_blank" class="text-primary cursor-pointer" onclick="ipdPatientUsingId('.$row->id.')">'.$row->patient_id.'</a>';
@@ -116,6 +116,7 @@ class IpdinController extends Controller
         $patient->alt_mobile = $request->alt_mobile;
         $patient->known_allergies = $request->allergy;
         $patient->address = $request->address;
+        $patient->current_status = "Admitted";
         if($patient->save()){
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
@@ -126,7 +127,7 @@ class IpdinController extends Controller
     }
       public function getIpdPatientData(Request $request){
        $getData = Patient::where('id',$request->id)->get();
-        return response()->json(['success'=>'Emergency patient data fetched','data'=>$getData],200);
+        return response()->json(['success'=>'IPD patient data fetched','data'=>$getData],200);
     }
     public function ipdPatientDataUpdate(Request $request){
        $update = Patient::where('id',$request->id)->update([
@@ -142,7 +143,7 @@ class IpdinController extends Controller
             'address'=> $request->address
         ]);
         if($update){
-            return response()->json(['success'=>'Emergency patient updated successufuly'],200);
+            return response()->json(['success'=>'IPD patient updated successufuly'],200);
         }else{
             return response()->json(['error_success'=>'Patient not updated']);
         }
@@ -150,6 +151,38 @@ class IpdinController extends Controller
     public function ipdPatientDataDelete(Request $request){
        Patient::where('id',$request->id)->delete();
         return response()->json(['success'=>'Patient data deleted successfully'],200);
+    }
+     function moveToEmergencyStatus(Request $request){
+        $curr_status = Patient::where('id',$request->id)->get(['type']);
+        $update = Patient::where('id',$request->id)->update([
+            'type' =>'EMERGENCY',
+            'previous_type'=>$curr_status[0]->type
+        ]);
+        if($update){
+            $timelines = new Timeline();
+            $timelines->type = "IPD";
+            $timelines->patient_id = $request->id;
+            $timelines->title = "Moved to Emergency";
+            $timelines->desc = "Moved to Emergency from IPD";
+            $timelines->created_by = "Admin";
+            $timelines->save();
+            return response()->json(['success'=>'Successfully moved to Emergency'],200);
+        }
+    }
+    public function patientDischargeStatus(Request $request){
+        $update = Patient::where('id',$request->id)->update([
+            'current_status' =>'Discharged'
+        ]);
+        if($update){
+            $timelines = new Timeline();
+            $timelines->type = "IPD";
+            $timelines->patient_id = $request->id;
+            $timelines->title = "Discharged";
+            $timelines->desc = "Patient Discharged from IPD";
+            $timelines->created_by = "Admin";
+            $timelines->save();
+            return response()->json(['success'=>'Successfully discharged from IPD'],200);
+        }
     }
       function ipdVisitSubmit(Request $request){
         $validator = Validator::make($request->all(),[

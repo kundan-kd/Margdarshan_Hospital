@@ -7,15 +7,16 @@
 </style>
 @endsection
 @section('main-container')
+
 <div class="dashboard-main-body">
   <input type="hidden" id="patient_Id" value="{{$patients[0]->id}}">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">OPD - Out Patient Details</h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
-          <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#out-patient-ipd"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
+          <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" onclick="moveToIpd({{$patients[0]->id}})"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
-          <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#out-patient-ipd"><i class="ri-stethoscope-line"></i> Move to IPD</button>
-          <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button> -->
+          {{-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#out-patient-ipd"><i class="ri-stethoscope-line"></i> Move to IPD</button> --}}
+          {{-- <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button> --}}
       </div>
     </div>
     @php
@@ -79,11 +80,11 @@
                                   </tr>
                                  </table>
                             </div>
-                            @php
+                            {{-- @php
                               $doctors =  \App\Models\User::where('id',$appointments[0]->doctor_id)->get();
-                            @endphp
+                            @endphp --}}
                             <h6 class="text-md fw-medium mt-11 border-bottom pb-8">CONSULTANT DOCTOR</h6>
-                            <p class="mb-1">{{$doctors[0]->firstname}} {{$doctors[0]->lastname}}</p>
+                            {{-- <p class="mb-1">{{$doctors[0]->firstname}} {{$doctors[0]->lastname}}</p> --}}
                             <div class="d-flex align-items-center">
                               <p class="mb-0 mx-1">Finding :</p> 
                               <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#add-finding">
@@ -945,6 +946,8 @@ $('#opd-add-lab').on('shown.bs.modal', function () {
         dropdownParent: $('#opd-add-lab')
     });
 });
+
+  // const moveToIpdStatus = "{{route('opd-out.moveToIpdStatus')}}";
   const opdOutVisitMedicineName = "{{route('common.getMedicineName')}}";
 
   const opdOutVisitSubmit = "{{route('opd-out-visit.opdOutVisitSubmit')}}";
@@ -981,6 +984,7 @@ $('#opd-add-lab').on('shown.bs.modal', function () {
 
 </script>
  {{-----------external js files added for page functions------------}}
+    <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details.js')}}"></script>
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-visit.js')}}"></script>
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-medication.js')}}"></script>
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout-details/opdout-details-lab.js')}}"></script>

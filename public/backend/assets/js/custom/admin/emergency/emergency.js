@@ -106,6 +106,7 @@ $('#emergency-addPatientForm').on('submit',function(e){
                     if(response.success){
                         toastSuccessAlert('New emergency Patient added successfully');
                         $('#emergency-add-patient').modal('hide');
+                        $('#emergency-patient-list').DataTable().ajax.reload();
                     }else{
                         console.log('error found');
                     }

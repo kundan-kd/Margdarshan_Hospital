@@ -6,6 +6,7 @@ use App\Http\Controllers\backend\admin\CommonController;
 use App\Http\Controllers\backend\admin\emergency\EmergencyController;
 use App\Http\Controllers\backend\admin\home\ProfileController;
 use App\Http\Controllers\backend\admin\ipdin\IpdinController;
+use App\Http\Controllers\backend\admin\master\BedtypeController;
 use App\Http\Controllers\backend\admin\master\BloodtypeController;
 use App\Http\Controllers\backend\admin\master\CompanyController;
 use App\Http\Controllers\backend\admin\master\DepartmentController;
@@ -77,6 +78,9 @@ Route::post('/appointment-booking-delete',[AppointmentController::class,'deleteA
 
 Route::get('/patient',[PatientController::class,'index'])->name('patient.index');
 Route::post('/patient-details',[PatientController::class,'viewPatients'])->name('patient.viewPatients');
+Route::post('/patient-add-new',[PatientController::class,'patientAddNewPatient'])->name('patient.patientAddNewPatient');
+Route::post('/patient-data',[PatientController::class,'newPatientData'])->name('patient.newPatientData');
+Route::post('/patient-update',[PatientController::class,'patientAddNewPatientDataUpdate'])->name('patient.patientAddNewPatientDataUpdate');
 Route::post('/patient-delete',[PatientController::class,'deletePatientData'])->name('patient.deletePatientData');
 
 Route::get('/medicine',[MedicineController::class,'index'])->name('medicine.index');
@@ -146,6 +150,14 @@ Route::post('/vendor-update',[VendorController::class,'updateVendorData'])->name
 Route::post('/vendor-status-update',[VendorController::class,'statusUpdate'])->name('vendor.statusUpdate');
 Route::post('/vendor-delete',[VendorController::class,'deleteVendor'])->name('vendor.deleteVendor');
 
+Route::get('/bedtype',[BedtypeController::class,'index'])->name('bedtype.index');
+Route::post('/bedtype-details',[BedtypeController::class,'viewBedTypes'])->name('bedtype.viewBedTypes');
+Route::post('/bedtype-add',[BedtypeController::class,'addBedType'])->name('bedtype.addBedType');
+Route::post('/bedtype-getdetails',[BedtypeController::class,'getBedTypeData'])->name('bedtype.getBedTypeData');
+Route::post('/bedtype-update',[BedtypeController::class,'updateBedTypeData'])->name('bedtype.updateBedTypeData');
+Route::post('/bedtype-status-update',[BedtypeController::class,'statusUpdate'])->name('bedtype.statusUpdate');
+Route::post('/bedtype-delete',[BedtypeController::class,'deleteBedTypeData'])->name('bedtype.deleteBedTypeData');
+
 Route::get('/billing',[BillingController::class,'index'])->name('billing.index');
 Route::get('/billing-view',[BillingController::class,'billingView'])->name('billing.billingView');
 Route::get('/billing-add',[BillingController::class,'billingAdd'])->name('billing.billingAdd');
@@ -165,6 +177,7 @@ Route::post('/billing-update',[BillingController::class,'billingUpdateDatas'])->
 Route::get('/opd-out',[OpdoutController::class,'index'])->name('opd-out.index');
 Route::post('/opd-out-view',[OpdoutController::class,'viewOpdOut'])->name('opd-out.viewOpdOut');
 Route::get('/opd-out-details/{id}',[OpdoutController::class,'opdOutDetails']);
+Route::post('/opd-out-movetoipd',[OpdoutController::class,'moveToIpdStatus'])->name('opd-out.moveToIpdStatus');
 Route::post('/opd-out-visit-add',[OpdoutController::class,'opdOutVisitSubmit'])->name('opd-out-visit.opdOutVisitSubmit');
 Route::post('/opd-out-visit-view',[OpdoutController::class,'viewOptOutVisit'])->name('opd-out-visit.viewOptOutVisit');
 Route::post('/opd-out-visit-data',[OpdoutController::class,'getOpdOutVisitData'])->name('opd-out-visit.getOpdOutVisitData');
@@ -198,6 +211,8 @@ Route::post('/opd-out-vital-delete',[OpdoutController::class,'opdOutVitalDataDel
 Route::get('/ipd-in',[IpdinController::class,'index'])->name('ipd-in.index');
 Route::post('/ipd-in-patient-add',[IpdinController::class,'ipdInPatientAdd'])->name('ipd-in.ipdInPatientAdd');
 Route::get('/ipd-in-details/{id}',[IpdinController::class,'ipdInDetails']);
+Route::post('/ipd-in-patient-movetoemergency',[IpdinController::class,'moveToEmergencyStatus'])->name('ipd.moveToEmergencyStatus');
+Route::post('/ipd-in-patient-discharge',[IpdinController::class,'patientDischargeStatus'])->name('ipd.patientDischargeStatus');
 Route::post('/ipd-in-patient-add',[IpdinController::class,'addNewPatientIpd'])->name('ipd-addPatient');
 Route::post('/ipd-in-patient-view',[IpdinController::class,'viewPatients'])->name('ipd-viewPatients');
 Route::post('/ipd-patient-data',[IpdinController::class,'getIpdPatientData'])->name('ipd-getIpdPatientData');
@@ -243,6 +258,8 @@ Route::get('/emergency',[EmergencyController::class,'index'])->name('emergency.i
 Route::get('/emergency-details/{id}',[EmergencyController::class,'emergencyDetails']);
 Route::post('/emergency-patient-add',[EmergencyController::class,'addPatient'])->name('emergency-addPatient');
 Route::post('/emergency-patient-view',[EmergencyController::class,'viewPatients'])->name('emergency-viewPatients');
+Route::post('/emergency-patient-movetoipd',[EmergencyController::class,'moveToIpdStatus'])->name('emergency.moveToIpdStatus');
+Route::post('/emergency-patient-discharge',[EmergencyController::class,'patientDischargeStatusE'])->name('emergency.patientDischargeStatusE');
 Route::post('/emergency-patient-data',[EmergencyController::class,'getEmergencyPatientData'])->name('emergency-getEmergencyPatientData');
 Route::post('/emergency-patient-update',[EmergencyController::class,'emergencyPatientDataUpdate'])->name('emergency-emergencyPatientDataUpdate');
 Route::post('/emergency-patient-delete',[EmergencyController::class,'emergencyPatientDataDelete'])->name('emergency-emergencyPatientDataDelete');

@@ -1,11 +1,11 @@
 
 // let table = new DataTable('#usertype-table');
-let table = $('#bedtype-table').DataTable({
+let table = $('#bedGroup-table').DataTable({
     // "order": [[0, "desc"]], // Sort column in descending order
     processing: true,
     serverSide: true,
     ajax:{
-        url:viewBedTypes,
+        url:viewBedGroups,
         type:"POST",
         headers:{
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
@@ -37,43 +37,43 @@ let table = $('#bedtype-table').DataTable({
     ]
 });
 
-$('.bedtype-add').on('click',function(e){
+$('.bedGroup-add').on('click',function(e){
     e.preventDefault();
-    $('.bedtype-title').html('Add User Type');
-    $('#bedtypeNameID').val('');
-    $('#bedtypeName').val('');
-    $('.addBedTypeUpdate').addClass('d-none');
-    $('.addBedTypeSubmit').removeClass('d-none');
+    $('.bedGroup-title').html('Add User Type');
+    $('#bedGroupNameID').val('');
+    $('#bedGroupName').val('');
+    $('.addBedGroupUpdate').addClass('d-none');
+    $('.addBedGroupSubmit').removeClass('d-none');
     });
 // ------usertype add starts----
-$('#addBedTypeForm').on('submit',function(e){
+$('#addBedGroupForm').on('submit',function(e){
    e.preventDefault();
-   let bedtype = $('#bedTypeName').val();
-   let id = $('#bedTypeNameID').val();
-   if(bedtype == ''){
-    $('#bedTypeName').focus();
+   let bedGroup = $('#bedGroupName').val();
+   let id = $('#bedGroupNameID').val();
+   if(bedGroup == ''){
+    $('#bedGroupName').focus();
    }else{
-        if ($('.addBedTypeUpdate').is(':visible')) {
-            bedTypeUpdate(id); // Trigger update function
+        if ($('.addBedGroupUpdate').is(':visible')) {
+            bedGroupUpdate(id); // Trigger update function
         } else {
     $.ajax({
-        url: addBedType,
+        url: addBedGroup,
         method:"POST",
         headers:{
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        data:{bedtype:bedtype},
+        data:{bedGroup:bedGroup},
         success:function(response){
             if(response.success){
-                $('#addBedTypeModel').modal('hide');
-                $('#addBedTypeForm').removeClass('was-validated');
-                $('#addBedTypeForm')[0].reset();
-                $('#bedtype-table').DataTable().ajax.reload();
+                $('#addBedGroupModel').modal('hide');
+                $('#addBedGroupForm').removeClass('was-validated');
+                $('#addBedGroupForm')[0].reset();
+                $('#bedGroup-table').DataTable().ajax.reload();
                 toastSuccessAlert(response.success);
             } else if(response.already_found) {
                 toastErrorAlert(response.already_found);
             }else{
-                toastErrorAlert("error");
+                toastErrorAlert("something went wrong!");
             }
         },
         error: function(xhr, status, error) {
@@ -86,9 +86,9 @@ $('#addBedTypeForm').on('submit',function(e){
 });
 // ------usertype add ends----
 // ------usertype update starts ----
-function bedTypeEdit(id){
+function bedGroupEdit(id){
 $.ajax({
-    url: getBedTypeData,
+    url: getBedGroupData,
     type:"POST",
     headers:{
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -97,43 +97,43 @@ $.ajax({
     success:function(response){
         if(response.success){
             getData = response.data[0];
-            $('.bedType-title').html('Edit Bed Type');
-            $('#bedTypeNameID').val(getData.id);
-            $('#bedTypeName').val(getData.name);
-            $('.addBedTypeSubmit').addClass('d-none');
-            $('.addBedTypeUpdate').removeClass('d-none');
-            $('#addBedTypeModel').modal('show');
+            $('.bedGroup-title').html('Edit Bed Type');
+            $('#bedGroupNameID').val(getData.id);
+            $('#bedGroupName').val(getData.name);
+            $('.addBedGroupSubmit').addClass('d-none');
+            $('.addBedGroupUpdate').removeClass('d-none');
+            $('#addBedGroupModel').modal('show');
         }
     }
 
 });
 }
 
-function bedTypeUpdate(id){
-    let bedtype = $('#bedTypeName').val();
-    if(bedtype == ''){
-        $('#bedTypeName').focus();
+function bedGroupUpdate(id){
+    let bedGroup = $('#bedGroupName').val();
+    if(bedGroup == ''){
+        $('#bedGroupName').focus();
         $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
     }else{
         $.ajax({
-            url: updateBedTypeData,
+            url: updateBedGroupData,
             type: "post",
             data: {
                 id: id,
-                bedtype: bedtype
+                bedGroup: bedGroup
             },
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response) {
                 if (response.success) {
-                    $('#addBedTypeModel').modal('hide');
-                    $('#addBedTypeForm').removeClass('was-validated');
-                    $('#addBedTypeForm')[0].reset();
-                    $('#bedtype-table').DataTable().ajax.reload();
-                    toastSuccessAlert('Bed Type updated successfully');
+                    $('#addBedGroupModel').modal('hide');
+                    $('#addBedGroupForm').removeClass('was-validated');
+                    $('#addBedGroupForm')[0].reset();
+                    $('#bedGroup-table').DataTable().ajax.reload();
+                    toastSuccessAlert(response.success);
                 }else{
-                    toastErrorAlert("error");
+                    toastErrorAlert("something went wrong!");
                 }
             },
             error: function(xhr, status, error) {
@@ -156,10 +156,10 @@ function statusSwitch(id){
         },
         success: function(response) {
             if (response.success) {
-                $('#addBedTypeModel').modal('hide');
-                $('#addBedTypeForm').removeClass('was-validated');
-                $('#addBedTypeForm')[0].reset();
-                $('#bedtype-table').DataTable().ajax.reload();
+                $('#addBedGroupModel').modal('hide');
+                $('#addBedGroupForm').removeClass('was-validated');
+                $('#addBedGroupForm')[0].reset();
+                $('#bedGroup-table').DataTable().ajax.reload();
                 toastSuccessAlert('Status changed successfully');
             } else {
                 toastErrorAlert("Error");
@@ -172,7 +172,7 @@ function statusSwitch(id){
     });
 }
 
-function bedTypeDelete(id){
+function bedGroupDelete(id){
     Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -188,7 +188,7 @@ function bedTypeDelete(id){
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: deleteBedTypeData,
+                url: deleteBedGroupData,
                 type: "POST",
                 data: {
                     id: id
@@ -199,7 +199,7 @@ function bedTypeDelete(id){
                 success: function(response) {
                     if (response.success) {
                         Swal.fire("Deleted!", response.success, "success");
-                        $('#bedtype-table').DataTable().ajax.reload();
+                        $('#bedGroup-table').DataTable().ajax.reload();
                     } else {
                         Swal.fire("Error!", "Error", "error");
                     }

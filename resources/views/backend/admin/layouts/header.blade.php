@@ -157,6 +157,12 @@
            <li>
             <a href="{{route('bedtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Type</a>
           </li>
+           <li>
+            <a href="{{route('bedgroup.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Group</a>
+          </li>
+           <li>
+            <a href="{{route('bed.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed</a>
+          </li>
         </ul>
       </li>
       

@@ -6,6 +6,8 @@ use App\Http\Controllers\backend\admin\CommonController;
 use App\Http\Controllers\backend\admin\emergency\EmergencyController;
 use App\Http\Controllers\backend\admin\home\ProfileController;
 use App\Http\Controllers\backend\admin\ipdin\IpdinController;
+use App\Http\Controllers\backend\admin\master\BedController;
+use App\Http\Controllers\backend\admin\master\BedgroupController;
 use App\Http\Controllers\backend\admin\master\BedtypeController;
 use App\Http\Controllers\backend\admin\master\BloodtypeController;
 use App\Http\Controllers\backend\admin\master\CompanyController;
@@ -157,6 +159,16 @@ Route::post('/bedtype-getdetails',[BedtypeController::class,'getBedTypeData'])->
 Route::post('/bedtype-update',[BedtypeController::class,'updateBedTypeData'])->name('bedtype.updateBedTypeData');
 Route::post('/bedtype-status-update',[BedtypeController::class,'statusUpdate'])->name('bedtype.statusUpdate');
 Route::post('/bedtype-delete',[BedtypeController::class,'deleteBedTypeData'])->name('bedtype.deleteBedTypeData');
+
+Route::get('/bedgroup',[BedgroupController::class,'index'])->name('bedgroup.index');
+Route::post('/bedgroup-details',[BedgroupController::class,'viewBedGroups'])->name('bedgroup.viewBedGroups');
+Route::post('/bedgroup-add',[BedgroupController::class,'addBedGroup'])->name('bedgroup.addBedGroup');
+Route::post('/bedgroup-getdetails',[BedgroupController::class,'getBedGroupData'])->name('bedgroup.getBedGroupData');
+Route::post('/bedgroup-update',[BedgroupController::class,'updateBedGroupData'])->name('bedgroup.updateBedGroupData');
+Route::post('/bedgroup-status-update',[BedgroupController::class,'statusUpdate'])->name('bedgroup.statusUpdate');
+Route::post('/bedgroup-delete',[BedgroupController::class,'deleteBedGroupData'])->name('bedgroup.deleteBedGroupData');
+
+Route::get('/bed',[BedController::class,'index'])->name('bed.index');
 
 Route::get('/billing',[BillingController::class,'index'])->name('billing.index');
 Route::get('/billing-view',[BillingController::class,'billingView'])->name('billing.billingView');

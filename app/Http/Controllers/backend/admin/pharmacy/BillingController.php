@@ -28,7 +28,7 @@ class BillingController extends Controller
             $purchase = Billing::get();
             return DataTables::of($purchase)
             ->addColumn('patient',function($row){
-                return $row->patientData->name??'';
+                return $row->patientData->name ??'Cash';
             })
             ->addColumn('created_at',function($row){
                 return $row->created_at;
@@ -36,25 +36,18 @@ class BillingController extends Controller
             ->addColumn('bill_no',function($row){
                 return $row->bill_no;
             })
-            ->addColumn('doctor',function($row){
-                return $row->res_doctor_id;
-            })
             ->addColumn('total',function($row){
-                return $row->total_amount;
+                return $row->total_amount ?? 0;
             })
             ->addColumn('discount',function($row){
-                return $row->total_discount;
+                return $row->total_discount ?? 0;
             })
             ->addColumn('net_amount',function($row){
-                return $row->net_amount;
+                return $row->net_amount ?? 0;
             })
             ->addColumn('paid_amount',function($row){
-                return $row->paid_amount;
+                return $row->paid_amount ?? 0;
             })
-            ->addColumn('due_amount',function($row){
-                return $row->due_amount;
-            })
-          
             ->addColumn('action',function($row){
 
                 // $encryptedId = Crypt::encryptString($row->id);
@@ -163,6 +156,9 @@ class BillingController extends Controller
                 if (!$billingItems->save()) {
                     throw new \Exception("Failed to insert billing item record");
                 }
+                PurchaseItem::where('id',$request->batchNo[$index])->update([
+                    'stock_out' => $request->qty[$index]
+                ]);
             }
 
             $billingPayments = new BillingPayment();
@@ -188,6 +184,7 @@ class BillingController extends Controller
         $patients = Patient::where('status',1)->get(['id','patient_id','name']);
         $bloodtypes = BloodType::where('status',1)->get();
         $paymentmodes = PaymentMode::where('status',1)->get();
+        //dd($billingItems);
         return view('backend.admin.modules.pharmacy.billing-edit',compact('billings','billingItems','categories','doctors','patients','bloodtypes','paymentmodes'));
     }
     // public function billingEditAutoLoadData(Request $request){

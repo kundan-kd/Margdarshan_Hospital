@@ -22,7 +22,7 @@ Billing-edit
               <div class="mx-1">
                 <label for="billingEdit-patient" style="display: none;">Patient Name</label>
                <select id="billingEdit-patient" class="form-select form-select-sm select2-cls" oninput="validateField(this.id,'select')">
-                <option value="">Select Patient</option>
+                <option value="0"{{$billings[0]->patient_id == 0 ? 'selected':''}}>Cash</option>
                 @foreach ($patients as $patient)
                 <option value="{{$patient->id}}"{{$patient->id == $billings[0]->patient_id ? 'selected':''}}>{{$patient->name}} ({{$patient->patient_id}})</option>
                 @endforeach
@@ -101,23 +101,23 @@ Billing-edit
                                     </div>
                                 </td>
                                 <td>
-                                    <input id="billingEdit-qty{{$item->id}}" name="billingEdit-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" {{$item->qty}} oninput="getBillingAmountEdit({{$item->id}})" required>
+                                    <input id="billingEdit-qty{{$item->id}}" name="billingEdit-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" value="{{$item->qty}}" oninput="getBillingAmountEdit({{$item->id}})" required>
                                 </td>
                                 <td>
                                     <input id="billingEdit-avlQty{{$item->id}}" name="billingEdit-avlQty[]" type="number" class="form-control form-control-sm" value="" placeholder="Avilable Qty" readonly>
                                 </td>
                                 <td>
-                                    <input id="billingEdit-salesPrice{{$item->id}}" name="billingEdit-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" {{$item->sales_price}} readonly>
+                                    <input id="billingEdit-salesPrice{{$item->id}}" name="billingEdit-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" value="{{$item->sales_price}}" readonly>
                                 </td>
                                 <td>
-                                    <input id="billingEdit-tax{{$item->id}}" name="billingEdit-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" {{$item->tax_per}} readonly>
+                                    <input id="billingEdit-tax{{$item->id}}" name="billingEdit-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" value="{{$item->tax_per}}" readonly>
                                 </td>
 
                                 <td style="display: none;">
                                     <input id="billingEdit-taxAmount{{$item->id}}" name="billingEdit-taxAmount[]" class="form-control form-control-sm" type="number" value="">
                                 </td>
                                 <td>
-                                    <input id="billingEdit-amount{{$item->id}}" name="billingEdit-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" {{$item->amount}} readonly>
+                                    <input id="billingEdit-amount{{$item->id}}" name="billingEdit-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" value="{{$item->amount}}" readonly>
                                 </td>
                             </tr>
                           @endforeach
@@ -175,7 +175,7 @@ Billing-edit
                       </tr>
                         <tr>
                         <td class="border-0" colspan="2">Paid Amount (₹)</td>
-                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalPaidAmount">{{$billings[0]->due_amount}}</span></td>
+                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalPaidAmount">{{$billings[0]->Paid_amount ?? 0}}</span></td>
                       </tr>
                       <tr>
                         <td colspan="2" class="border-0">
@@ -196,7 +196,11 @@ Billing-edit
         </div>
         <div class=" pharmacy-footer card-footer border-top">
           <div class="text-end">
-                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Update</button>
+                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 billingEditSubmitBtn"> <i class="ri-checkbox-circle-line"></i> Update</button>
+                <button class="btn btn-primary billingEditSpinnBtn d-none" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Please Wait...
+                </button>
             </div>
         </div>
      </form>

@@ -134,6 +134,9 @@
             <a href="{{route('department.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Department</a>
           </li>
           <li>
+            <a href="{{route('user.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>User</a>
+          </li>
+          <li>
             <a href="{{route('medicine-category.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Medicine Category</a>
           </li>
           <li>
@@ -155,10 +158,10 @@
             <a href="{{route('vendor.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Vendor</a>
           </li>
            <li>
-            <a href="{{route('bedtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Type</a>
-          </li>
-           <li>
             <a href="{{route('bedgroup.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Group</a>
+          </li>
+          <li>
+            <a href="{{route('bedtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Type</a>
           </li>
            <li>
             <a href="{{route('bed.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed</a>

@@ -218,7 +218,7 @@
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="ipd-patientMobile">Phone</label>
-            <input type="text" id="ipd-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="validateField(this.id,'mobile')">
+            <input type="number" id="ipd-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile')">
             <div class="ipd-patientMobile_errorCls d-none"></div>
           </div>
           <div class="col-6">
@@ -228,7 +228,7 @@
           </div>
           <div class="col-6">
             <label class="form-label fw-normal">Alt Phone</label>
-            <input type="text" id="ipd-patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone">
+            <input type="number" id="ipd-patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">
           </div>
           <div class="col-6">
             <label class="form-label fw-normal">Any Known Allergies</label>

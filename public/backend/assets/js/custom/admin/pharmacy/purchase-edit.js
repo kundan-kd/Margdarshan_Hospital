@@ -9,6 +9,21 @@
 $(document).ready(function() {
     $('.select2Edit-cls').select2(); // Initialize Select2 for existing elements
 });
+  // Flat pickr or date picker js 
+    function getDatePicker (receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "m/Y",
+            plugins: [
+                        new monthSelectPlugin({
+                            shorthand: true,  
+                            dateFormat: "m/Y",  
+                            altFormat: "F Y"    
+                        })
+                    ]
+        });
+    }
+    getDatePicker('.expiry-date'); 
+    
 function addNewRowEdit(){
     console.log('addNewRowEdit');
  let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
@@ -36,7 +51,7 @@ function addNewRowEdit(){
             <input id="purchaseEdit_batch${rand}" name="purchaseEdit_batch[]" class="form-control form-control-sm" type="text" placeholder="Batch No" required>
         </td>
         <td>
-            <input id="purchaseEdit_expiry${rand}" name="purchaseEdit_expiry[]" class="form-control form-control-sm expiry-date" type="text" placeholder="Expiry Date" required>
+            <input id="purchaseEdit_expiry${rand}" name="purchaseEdit_expiry[]" class="form-control form-control-sm expiry-date${rand}" type="text" placeholder="Expiry Date" required>
         </td>
         <td>
             <input id="purchaseEdit_mrp${rand}" name="purchaseEdit_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required>
@@ -55,7 +70,7 @@ function addNewRowEdit(){
             <input id="purchaseEdit_tax${rand}" name="purchaseEdit_tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" oninput="getTaxEdit(${rand})" required>
         </td>
         <td style="display: none;">
-            <input id="purchaseEdit_taxAmount${rand}" name="purchaseEdit_taxAmount[]" type="number" class="form-control form-control-sm">
+            <input id="purchaseEdit_taxAmount${rand}" name="purchaseEdit_taxAmount[]" type="text" class="form-control form-control-sm">
         </td>
         <td>
             <input id="purchaseEdit_amount${rand}" name="purchaseEdit_amount[]" class="form-control form-control-sm" type="number" placeholder="Amount" readonly>
@@ -71,6 +86,7 @@ function addNewRowEdit(){
 
     // Reinitialize Select2 for newly added row
     $('.select2Edit-cls').select2();
+    getDatePicker('.expiry-date'+ rand); 
       }
     });
 
@@ -79,6 +95,7 @@ function addNewRowEdit(){
     x.closest("tr").remove(); // remove entire row with tr selector
 
 }
+ 
 
 function updateAmountEdit(){
     let totalAmount = $('input[name="purchaseEdit_amount[]"]').map(function(){return $(this).val();}).get();
@@ -114,9 +131,33 @@ function getTaxEdit(randNum){
     $('#purchaseEdit_taxAmount'+randNum).val(taxAmount);
     updateAmountEdit();
 }
+function checkPayAmount(purchase_id,amount){
+    let totalNetAmount = parseFloat($('.purchaseEdit_netTotalAmt').html());
+    $.ajax({
+        url:getPurchaseData,
+        type:"POST",
+        headers:{
+            'X_CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:purchase_id},
+        success:function(response){
+            let paid_amount = response.data[0].paid_amount;
+            if(totalNetAmount - (parseFloat(amount) + parseFloat(paid_amount)) < 0){
+                $('.purchaseEdit_payAmount_cls').html('Pay amount exceeds net amount.').css('color','red');
+                $('.purchaseEditUpdateBtn').prop('disabled',true);
+                return;
+            }else{
+                $('.purchaseEdit_payAmount_cls').html('');
+                $('.purchaseEditUpdateBtn').prop('disabled',false);
+            }
+        }
+    });
+}
 
 $('#purchaseEdit_form').on('submit',function(e){
   e.preventDefault();
+  $('.purchaseEditUpdateBtn').addClass('d-none');
+  $('.purchaseEditSpinnBtn').removeClass('d-none');
   let purchase_id = $('#purchaseEdit_purchase_id').val();
   let billNo = $('#purchaseEdit_billNo').val();
   let vendorID = $('#purchaseEdit_vendor').val();
@@ -139,13 +180,10 @@ $('#purchaseEdit_form').on('submit',function(e){
   let totalTaxAmount = parseFloat($('.purchaseEdit_taxAmt').html());
   let totalNetAmount = parseFloat($('.purchaseEdit_netTotalAmt').html());
   let paymentMode = $('#purchaseEdit_paymentMode').val();
-  let payAmount = $('#purchaseEdit_payAmount').val();
+  let payAmount = $('#purchaseEdit_payAmount').val() || 0;
   let dueAmount = totalNetAmount - payAmount;
   dueAmount = dueAmount.toFixed(2);
-  if(payAmount > totalNetAmount){
-    $('.purchaseEdit_payAmount_cls').html('Pay amount exceeds net amount.').css('color','red');
-    return;
-  }
+
     $.ajax({
         url:purchaseUpdateDatas,
         type:"POST",
@@ -159,8 +197,13 @@ $('#purchaseEdit_form').on('submit',function(e){
             console.log(response);
             if(response.success){
                 toastSuccessAlert('Purchase updated successfully');
+                setTimeout(function(){
+                    window.location.reload();
+                },1500);
             }else{
                 toastErrorAlert('something error found');
+                $('.purchaseEditSpinnBtn').addClass('d-none');
+                $('.purchaseEditUpdateBtn').removeClass('d-none');
             }
         }
     });

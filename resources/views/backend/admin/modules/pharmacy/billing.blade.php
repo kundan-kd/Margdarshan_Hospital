@@ -19,12 +19,10 @@ Billing
               <th scope="col" class="fw-medium">Patient Name</th>
               <th scope="col" class="fw-medium">Billing Date & Time</th>
               <th scope="col" class="fw-medium">Bill No.</th>
-              <th scope="col" class="fw-medium">Doctor</th>
               <th scope="col" class="fw-medium">Discount</th>
               <th scope="col" class="fw-medium">Total</th>
               <th scope="col" class="fw-medium">Net Amount</th>
               <th scope="col" class="fw-medium">Paid Amount</th>
-              <th scope="col" class="fw-medium">Due</th>
               <th scope="col" class="fw-medium">Action</th>
             </tr>
           </thead>

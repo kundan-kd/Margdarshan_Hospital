@@ -28,8 +28,11 @@ purchase-edit
                         @endforeach
                     </select>
                 </div>
+                @php
+                  $time = date('m/d/Y');
+                @endphp
                 <div class="col-md-3 offset-md-3 text-end">
-                    <p class="mt-3 fw-medium">Date : <span class="fw-normal">09/05/2025 12:40 PM</span></p>
+                    <p class="mt-3 fw-medium">Date : <span class="fw-normal">{{$time}}</span></p>
                 </div>
             </div>
       </div>
@@ -129,15 +132,15 @@ purchase-edit
                                   $taxx = ($purchaseItem->amount * $purchaseItem->tax)/100;
                               @endphp
                               <td style="display: none;">
-                                  <input id="purchaseEdit_taxAmount{{$purchaseItem->id}}" name="purchaseEdit_taxAmount[]" type="number" class="form-control form-control-sm"value="{{$taxx}}">
+                                  <input id="purchaseEdit_taxAmount{{$purchaseItem->id}}" name="purchaseEdit_taxAmount[]" type="text" class="form-control form-control-sm"value="{{$taxx}}">
                               </td>
                               <td>
                                   <input id="purchaseEdit_amount{{$purchaseItem->id}}" name="purchaseEdit_amount[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->amount}}" readonly>
                               </td>
                                <td>
-                                  <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center" onclick="deleteRowEdit(this)">
+                                  {{-- <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center" onclick="deleteRowEdit(this)">
                                       <i class="ri-delete-bin-line"></i>
-                                  </button>
+                                  </button> --}}
                                   {{-- <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center" onclick="deleteRowEdit(this,{{$purchaseItem->id}},{{$purchaseItem->amount}},{{$purchaseItem->tax}})">
                                       <i class="ri-delete-bin-line"></i>
                                   </button> --}}
@@ -185,15 +188,20 @@ purchase-edit
                       <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_netTotalAmt">{{$purchase[0]->net_amount}}</span></td>
                     </tr>
                     <tr>
+                      <td class="border-0" colspan="2">Paid Amount</td>
+                      <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_paidAmt">{{$purchase[0]->paid_amount}}</span></td>
+                    </tr>
+                    <tr>
                       <td colspan="2" class="border-0">
                         <select id="purchaseEdit_paymentMode" class="form-select form-select-sm ">
                           <option value="">Payment Mode</option>
-                          <option value="Card" {{$purchase[0]->payment_mode == 'Card' ? 'selected' : ''}}>Card</option>
-                          <option value="UPI" {{$purchase[0]->payment_mode == 'UPI' ? 'selected' : ''}}>UPI</option>
-                          <option value="Cash" {{$purchase[0]->payment_mode == 'Cash' ? 'selected' : ''}}>Cash</option>
+                          <option value="UPI">UPI</option>
+                          <option value="Card">Card</option>
+                          <option value="Cash">Cash</option>
+                          <option value="Other">Other</option>
                       </select></td>
                       <td class="border-0">
-                         <input id="purchaseEdit_payAmount" type="number" class="form-control form-control-sm" value="{{$purchase[0]->paid_amount}}">
+                         <input id="purchaseEdit_payAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkPayAmount({{$purchase[0]->id}},this.value)">
                          <div class="purchaseEdit_payAmount_cls"></div>
                       </td>
                     </tr>
@@ -203,7 +211,11 @@ purchase-edit
       </div>
       <div class=" pharmacy-footer card-footer border-top">
         <div class="text-end">
-              <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"><i class="ri-checkbox-circle-line"></i> Update</button>
+              <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 purchaseEditUpdateBtn"><i class="ri-checkbox-circle-line"></i> Update</button>
+              <button class="btn btn-primary purchaseEditSpinnBtn d-none" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Please Wait...
+              </button>
           </div>
       </div>
       <form>
@@ -267,6 +279,7 @@ window.onload = function() {
   const getPurchaseNamesEdit = "{{route('billing.getMedicineNames')}}";
   const getPurchaseNamesSelectEdit = "{{route('purchase.getPurchaseNamesSelectEdit')}}";
   const getCategoryEditDatas = "{{route('purchase.getCategoryDatas')}}";
+  const getPurchaseData = "{{route('purchase.getPurchaseData')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/pharmacy/purchase-edit.js')}}"></script>
 @endsection

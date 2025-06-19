@@ -26,16 +26,16 @@ Billing-add
               <div class="mx-1">
                 <label for="billingAdd-patient" style="display: none;">Patient Name</label>
                <select id="billingAdd-patient" class="form-select form-select-sm select2-cls" oninput="validateField(this.id,'select')">
-                <option value="">Select Patient</option>
+                <option value="0">Cash</option>
                 @foreach ($patients as $patient)
                 <option value="{{$patient->id}}">{{$patient->name}} ({{$patient->patient_id}})</option>
                 @endforeach
               </select>
               <div class="billingAdd-patient_errorCls d-none"></div>
               </div>
-              <button class="mx-1 fw-semibold w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#billingAdd-patientModal" onclick="resetAddPatient()">
+              {{-- <button class="mx-1 fw-semibold w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#billingAdd-patientModal" onclick="resetAddPatient()">
                   <i class="ri-add-line"></i>
-              </button>
+              </button> --}}
           </div>
         </div>
       </div>
@@ -97,7 +97,7 @@ Billing-add
                                 </td>
                                 <td>
                                     <div class=" position-relative">
-                                        <input id="billingAdd-expiry0" name="billingAdd-expiry[]" class="form-control radius-8 bg-base"  type="text" value="" placeholder="00/00/0000" readonly>
+                                        <input id="billingAdd-expiry0" name="billingAdd-expiry[]" class="form-control radius-8 bg-base expiry-date"  type="text" value="" placeholder="MM/YYYY">
                                     
                                     </div>
                                 </td>
@@ -191,7 +191,11 @@ Billing-add
         </div>
         <div class=" pharmacy-footer card-footer border-top">
           <div class="text-end">
-                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i>Submit</button>
+                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 billingAddSubmitBtn"> <i class="ri-checkbox-circle-line"></i>Submit</button>
+                <button class="btn btn-primary billingAddSpinnBtn d-none" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Please Wait...
+                </button>
             </div>
         </div>
      </form>

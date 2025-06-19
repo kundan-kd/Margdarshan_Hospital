@@ -263,12 +263,12 @@ function getBatchDetailsEdit(id,randB){
             },
             data:{id:batchValue},
             success:function(response){
-              //  console.log(response);
+                console.log(response);
                 if(response.data != ''){
                     let  getData = response.data[0];
                     let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
                     $("#billingEdit-expiry" + randNum).val(getData.expiry); 
-                    $("#billingEdit-qty" + randNum).val(getData.qty); 
+                    // $("#billingEdit-qty" + randNum).val(getData.qty); 
                     $("#billingEdit-avlQty" + randNum).val(avlQty); 
                     $("#billingEdit-salesPrice" + randNum).val(getData.sales_price); 
                     $("#billingEdit-tax" + randNum).val(getData.tax); 
@@ -278,17 +278,20 @@ function getBatchDetailsEdit(id,randB){
             });
     }
 function getBillingAmountEdit(randQ){
-    let qty = $("#billingEdit-qty" + randQ).val();
+    let qty = parseFloat($("#billingEdit-qty" + randQ).val());
     if(qty <= 0){
         qty = 0;
     }
-    let avlQty =  $("#billingEdit-avlQty" + randQ).val(); 
+    let avlQty =  parseFloat($("#billingEdit-avlQty" + randQ).val()); 
     if(qty > avlQty){
         $("#billingEdit-qty"+randQ).css({"border-color": "#ef4a00","border-width": "1px","border-style": "solid"});
+        $('.billingEditSubmitBtn').prop('disabled',true);
          toastErrorAlert('Stock quantity exceeded limit.');
          return;
     }else{
          $("#billingEdit-qty"+randQ).css("border-color","#d1d5db");
+        $('.billingEditSubmitBtn').prop('disabled',false);
+
     }
     let salesPrice = $("#billingEdit-salesPrice" + randQ).val();
     let tax = $("#billingEdit-tax" + randQ).val();
@@ -332,11 +335,13 @@ function updateTotalBillingEdit() {
 
 $('#billingEdit-Form').on('submit',function(e){
   e.preventDefault();
- 
+
   let patientIDCheck  = validateField('billingEdit-patient', 'select');
   if(patientIDCheck == false){
     return;
   }
+  $('.billingEditSubmitBtn').addClass('d-none');
+  $('.billingEditSpinnBtn').removeClass('d-none');
   let billing_id = $('#billingEdit_billing_id').val();
   let editID = $('input[name="billingEdit_id[]"]').map(function(){return $(this).val();}).get();
   let category = $('select[name="billingEdit-category[]"]').map(function(){return $(this).val();}).get();
@@ -374,9 +379,12 @@ $('#billingEdit-Form').on('submit',function(e){
     },
     success:function(response){
         if(response.success){
-             toastSuccessAlert('Medicine Billing updated successfully');
+             toastSuccessAlert('Billing updated successfully');
+             window.location.reload();
         }else{
              toastErrorAlert('something error found');
+             $('.billingEditSpinnBtn').addClass('d-none');
+             $('.billingEditSubmitBtn').removeClass('d-none');
         }
     }
   });

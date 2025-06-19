@@ -41,6 +41,20 @@
  
 
 
+  // Flat pickr or date picker js 
+    function getDatePicker (receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "m/Y",
+            plugins: [
+                        new monthSelectPlugin({
+                            shorthand: true,  
+                            dateFormat: "m/Y",  
+                            altFormat: "F Y"    
+                        })
+                    ]
+        });
+    }
+    getDatePicker('.expiry-date'); 
 
 function addNewRow() {
     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
@@ -70,7 +84,7 @@ function addNewRow() {
             <input id="purchaseAdd_batch${rand}" name="purchaseAdd_batch[]" class="form-control form-control-sm" type="text" placeholder="Batch No" required>
         </td>
         <td>
-            <input id="purchaseAdd_expiry${rand}" name="purchaseAdd_expiry[]" class="form-control form-control-sm expiry-date" type="text" placeholder="Expiry Date" required>
+            <input id="purchaseAdd_expiry${rand}" name="purchaseAdd_expiry[]" class="form-control form-control-sm expiry-date${rand}" type="text" placeholder="MM/YYYY" required>
         </td>
         <td>
             <input id="purchaseAdd_mrp${rand}" name="purchaseAdd_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required>
@@ -98,6 +112,7 @@ function addNewRow() {
         </td>
     </tr>`;
     $('.newRowAppend').parent().append(newRowData); // Append properly to tbody
+    getDatePicker('.expiry-date'+ rand); 
    $('.select2-cls').select2();
         }
     });
@@ -167,91 +182,96 @@ function getTax(randNum){
     let netAmount = totalAmount - totalDiscount + sumTaxAmount;
     $('.purchaseAdd_discountAmt').html(totalDiscount.toFixed(2));
     $('.purchaseAdd_netTotalAmt').html(netAmount.toFixed(2));
-
+}
+function checkPayAmountPurchaseAdd(netAmount,amount){
+    if(parseFloat(netAmount) < parseFloat(amount)){
+        $('.purchaseAdd_payAmount_cls').html('Pay amount exceeds net amount.').css('color','red');
+            $('.purchaseAddSubmitBtn').prop('disabled',true);
+            return;
+        }else{
+            $('.purchaseAdd_payAmount_cls').html('');
+            $('.purchaseAddSubmitBtn').prop('disabled',false);
+    }
+    
 }
 
 
 $('#purchaseAdd_form').on('submit',function(e){
   e.preventDefault();
-  let billNo = $('#purchaseAdd_billNo').val();
-  let vendorID = $('#purchaseAdd_vendor').val();
+    let billNo_check = validateField('purchaseAdd_billNo', 'input');
+    let vendorID_check = validateField('purchaseAdd_vendor', 'select');
+    if(billNo_check == true && vendorID_check == true){
+        $('.purchaseAddSubmitBtn').addClass('d-none');
+        $('.purchaseAddSpinnBtn').removeClass('d-none');
+        let billNo = $('#purchaseAdd_billNo').val();
+        let vendorID = $('#purchaseAdd_vendor').val();
+        let category = $('select[name="purchaseAdd_category[]"]').map(function(){return $(this).val();}).get();
+        let name = $('select[name="purchaseAdd_name[]"]').map(function(){return $(this).val();}).get();
+        let batchNo = $('input[name="purchaseAdd_batch[]"]').map(function(){return $(this).val();}).get();
+        let expiry = $('input[name="purchaseAdd_expiry[]"]').map(function(){return $(this).val();}).get();
+        let mrp = $('input[name="purchaseAdd_mrp[]"]').map(function(){return $(this).val();}).get();
+        let salesPrice = $('input[name="purchaseAdd_salesPrice[]"]').map(function(){return $(this).val();}).get();
+        let tax = $('input[name="purchaseAdd_tax[]"]').map(function(){return $(this).val();}).get();
+        let qty = $('input[name="purchaseAdd_qty[]"]').map(function(){return $(this).val();}).get();
+        let purchaseRate = $('input[name="purchaseAdd_purchaseRate[]"]').map(function(){return $(this).val();}).get();
+        let amount = $('input[name="purchaseAdd_amount[]"]').map(function(){return $(this).val();}).get();
 
-  let category = $('select[name="purchaseAdd_category[]"]').map(function(){return $(this).val();}).get();
-  let name = $('select[name="purchaseAdd_name[]"]').map(function(){return $(this).val();}).get();
-  let batchNo = $('input[name="purchaseAdd_batch[]"]').map(function(){return $(this).val();}).get();
-  let expiry = $('input[name="purchaseAdd_expiry[]"]').map(function(){return $(this).val();}).get();
-  let mrp = $('input[name="purchaseAdd_mrp[]"]').map(function(){return $(this).val();}).get();
-  let salesPrice = $('input[name="purchaseAdd_salesPrice[]"]').map(function(){return $(this).val();}).get();
-  let tax = $('input[name="purchaseAdd_tax[]"]').map(function(){return $(this).val();}).get();
-  let qty = $('input[name="purchaseAdd_qty[]"]').map(function(){return $(this).val();}).get();
-  let purchaseRate = $('input[name="purchaseAdd_purchaseRate[]"]').map(function(){return $(this).val();}).get();
-  let amount = $('input[name="purchaseAdd_amount[]"]').map(function(){return $(this).val();}).get();
-
-  let naration = $('#purchaseAdd_naration').val();
-  let totalAmount = parseFloat($('.purchaseAdd_totalAmt').html());
-  let totalDiscountPer = parseFloat($('#purchaseAdd_discount').val());
-  let totalDiscount = parseFloat($('.purchaseAdd_discountAmt').html()) || 0;
-  let totalTaxAmount = parseFloat($('.purchaseAdd_taxAmt').html());
-  let totalNetAmount = parseFloat($('.purchaseAdd_netTotalAmt').html());
-  let paymentMode = $('#purchaseAdd_paymentMode').val();
-  let payAmount = $('#purchaseAdd_payAmount').val();
-  let dueAmount = totalNetAmount - payAmount;
-  dueAmount = dueAmount.toFixed(2);
-  $.ajax({
-    url:purchaseAddDatas,
-    type:"POST",
-    headers:{
-        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-    },
-    data:{
-        billNo:billNo,vendorID:vendorID,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
-    },
-    success:function(response){
-        console.log(response);
-        if(response.success){
-             toastSuccessAlert('New Purchase added successfully');
-        }else{
-             toastErrorAlert('something error found');
-        }
-    }
-  });
+        let naration = $('#purchaseAdd_naration').val();
+        let totalAmount = parseFloat($('.purchaseAdd_totalAmt').html());
+        let totalDiscountPer = parseFloat($('#purchaseAdd_discount').val());
+        let totalDiscount = parseFloat($('.purchaseAdd_discountAmt').html()) || 0;
+        let totalTaxAmount = parseFloat($('.purchaseAdd_taxAmt').html());
+        let totalNetAmount = parseFloat($('.purchaseAdd_netTotalAmt').html());
+        let paymentMode = $('#purchaseAdd_paymentMode').val();
+        let payAmount = $('#purchaseAdd_payAmount').val() || 0;
+        let dueAmount = totalNetAmount - payAmount;
+        dueAmount = dueAmount.toFixed(2);
+        $.ajax({
+            url:purchaseAddDatas,
+            type:"POST",
+            headers:{
+                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            data:{
+                billNo:billNo,vendorID:vendorID,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
+            },
+            success:function(response){
+                if(response.success){
+                    toastSuccessAlert('New Purchase added successfully');
+                    setTimeout(function(){
+                        window.location = '/purchase';
+                    },2500);
+                }else{
+                    toastErrorAlert('something error found');
+                    $('.purchaseAddSpinnBtn').addClass('d-none');
+                    $('.purchaseAddSubmitBtn').removeClass('d-none');
+                }
+            }
+        });
+    }else{
+        console.log("Please fill all required fields");
+    }   
 });
 
 
 
-  // Flat pickr or date picker js 
-    function getDatePicker (receiveID) {
-        flatpickr(receiveID, {
-            dateFormat: "m/Y",
-            plugins: [
-                        new monthSelectPlugin({
-                            shorthand: true,  
-                            dateFormat: "m/Y",  
-                            altFormat: "F Y"    
-                        })
-                    ]
-        });
-    }
-    getDatePicker('.expiry-date'); 
  
     function getPurchaseMedicine(id,randNum){
-        console.log(id, randNum);
-         $.ajax({
+        $.ajax({
         url:getPurchaseNames,
         type:"GET",
-        headers:{
-            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-        },
-        data:{id:id},
-        success:function(response){
-            console.log(response);
-        let getData = response.data;
-        let medicineDropdown1 = $("#purchaseAdd_name" + randNum); // Use the randNum to target the specific dropdown
-        medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
-        getData.forEach(element => {
-            medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);
+            headers:{
+                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            data:{id:id},
+            success:function(response){
+            let getData = response.data;
+            let medicineDropdown1 = $("#purchaseAdd_name" + randNum); // Use the randNum to target the specific dropdown
+            medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
+            getData.forEach(element => {
+                medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);
+            });
+            medicineDropdown1.trigger("change"); // Refresh Select2 dropdown
+            }
         });
-        medicineDropdown1.trigger("change"); // Refresh Select2 dropdown
-        }
-    });
     }

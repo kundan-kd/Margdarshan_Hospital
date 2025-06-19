@@ -14,23 +14,32 @@ purchase-add
     <div class="sumTaxAmountCls" style="display: none;"></div>
     <div class="pharmacy-purchase-wrapper card">
         <div class="card-header pb-4 border-bottom-0">
-                <div class="row bg-neutral-100 align-items-center mx-2">
-                    <!-- <div class="col-md-1"><label class="form-label fw-medium mb-0">Bill No :</label></div>
-                    <div class="col-md-2"><input class="form-control form-control-sm" type="number" placeholder="Bill No" ></div> -->
-                    <div class="col-md-3 d-flex align-items-center">
-                        <span class="form-label fw-medium mb-0" style="width: 28%;">Bill No :</span>
-                        <input id="purchaseAdd_billNo" class="form-control form-control-sm" type="text" placeholder="Bill No">
+                <div class="row bg-neutral-100 align-items-center mx-2 gy-2 pb-11">
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <label for="purchaseAdd_billNo" style="display:none;">Vendor Bill No.</label>
+                            <span class="form-label fw-medium mb-0" style="width: 28%;">Bill No :</span> 
+                            <input id="purchaseAdd_billNo" class="form-control form-control-sm" type="text" placeholder="Vendor Bill No" oninput="validateField(this.id,'input')">
+                        </div>
+                        <div class="purchaseAdd_billNo_errorCls d-none" style="padding-left: 75px;"></div>
                     </div>
-                    <div class="col-md-3 d-flex align-items-center">
-                        <select id="purchaseAdd_vendor" class="form-select form-select-sm select2-cls medician-category" style="width: 100%;">
-                            <option value="" selected disabled>Select Vendor</option>
-                            @foreach ($vendors as $vendor)
-                                <option value="{{$vendor->id}}">{{$vendor->name}}</option>
-                            @endforeach
-                        </select>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <label for="purchaseAdd_vendor" style="display:none;">Vendor</label>
+                            <select id="purchaseAdd_vendor" class="form-select form-select-sm select2-cls medician-category" style="width: 100%;" oninput="validateField(this.id,'select')">
+                                <option value="">Select Vendor</option>
+                                @foreach ($vendors as $vendor)
+                                    <option value="{{$vendor->id}}">{{$vendor->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="purchaseAdd_vendor_errorCls d-none"></div>
                     </div>
+                    @php
+                        $time = date('m/d/Y');
+                    @endphp
                     <div class="col-md-3 offset-md-3 text-end">
-                        <p class="mt-3 fw-medium">Date : <span class="fw-normal">09/05/2025 12:40 PM</span></p>
+                        <p class="mb-0 fw-medium">Date : <span class="fw-normal">{{$time}}</span></p>
                     </div>
                 </div>
         </div>
@@ -51,7 +60,7 @@ purchase-add
                                     Batch
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
-                                    Expiry Date1
+                                    Expiry Date
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
                                     MRP
@@ -150,7 +159,7 @@ purchase-add
                         <td class="border-0"><div class="d-flex align-items-center">
                             <input id="purchaseAdd_discount" class="form-control form-control-sm discount-value-field" type="text" value="0" placeholder="Discount" oninput="getDiscount(this.value)"><span class="ms-1">%</span></div>
                         </td>
-                        <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_discountAmt"></td>
+                        <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_discountAmt">0</td>
                         </tr>
                         <tr>
                         <td class="border-0" colspan="2">Taxes</td>
@@ -169,7 +178,8 @@ purchase-add
                             <option value="Cash">Cash</option>
                         </select></td>
                         <td class="border-0">
-                            <input id="purchaseAdd_payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount">
+                            <input id="purchaseAdd_payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount" oninput="checkPayAmountPurchaseAdd(document.getElementsByClassName('purchaseAdd_netTotalAmt')[0].innerHTML,this.value)">
+                             <div class="purchaseAdd_payAmount_cls"></div>
                         </td>
                         </tr>
                     </table>
@@ -178,7 +188,11 @@ purchase-add
         </div>
         <div class=" pharmacy-footer card-footer border-top">
             <div class="text-end">
-                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
+                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 purchaseAddSubmitBtn"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+                <button class="btn btn-primary purchaseAddSpinnBtn d-none" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Please Wait...
+                </button>
             </div>
         </div>
     <form>

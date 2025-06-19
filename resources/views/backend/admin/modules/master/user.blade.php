@@ -1,57 +1,21 @@
 @extends('backend.admin.layouts.main')
 @section('title')
-Patient
-@endsection
-@section('extra-css')
-
+User
 @endsection
 @section('main-container')
 <div class="dashboard-main-body">
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-    <h6 class="fw-normal mb-0">Patient</h6>
+    <h6 class="fw-normal mb-0">User</h6>
     <div class="btns">
-      {{-- <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"  data-bs-toggle="modal" data-bs-target="#add-appointment" onclick="resetAppointmentForm()"><i class="ri-add-box-line"></i> Create New</button> --}}
-      <!-- <a  class="btn btn-warning-600  btn-sm fw-normal " href="#dataTable" download><i class="ri-file-pdf-2-line"></i> Export</a> -->
+      <a class="btn btn-primary-600  btn-sm fw-normal bed-add" data-bs-toggle="modal" data-bs-target="#add-user"><i class="ri-add-line "></i> Add New User</a>
     </div>
   </div>
-  <div class="card basic-data-table">
-    <div class="card-header d-flex align-items-center justify-content-between">
-      <h5 class="card-title mb-0 fw-medium">Patient Details</h5>
-      <div class="d-flex flex-wrap align-items-center gap-2">
-              <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#patient-add-patient" onclick="resetPatientAddPatient()"> <i class="ri-add-line"></i> Add Patient</a>
-          </div>
-    </div>
-    <div class="card-body">
-      <table class="table bordered-table mb-0" id="patient-table" data-page-length='10'>
-        <thead>
-          <tr>
-            <th scope="col" class="fw-medium">Patient ID</th>
-            <th scope="col" class="fw-medium">Name</th>
-            <th scope="col" class="fw-medium">Guardian</th>
-            <th scope="col" class="fw-medium">Gender</th>
-            <th scope="col" class="fw-medium">Blood Type</th>
-            <th scope="col" class="fw-medium">DOB</th>
-            <th scope="col" class="fw-medium">Marital</th>
-            <th scope="col" class="fw-medium">Phone</th>
-            <th scope="col" class="fw-medium">Alt Phone</th>
-            <th scope="col" class="fw-medium">Address</th>
-            <th scope="col" class="fw-medium">Allergies</th>
-            <th scope="col" class="fw-medium">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-               {{-- Table data appended here using ajax datatable --}}
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-  <!-- modal2 start -->
-<div class="modal fade" id="patient-add-patient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-appointmentLabel" aria-hidden="true">
+ <!-- user model start -->
+<div class="modal fade" id="add-user" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-userLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0">
       <div class="modal-header bg-primary-600 p-11">
-        <h6 class="modal-title fw-normal text-white text-md" id="patient-add-appointmentLabel">Add Patient</h6>
+        <h6 class="modal-title fw-normal text-white text-md" id="patient-add-appointmentLabel">Add User</h6>
         <button type="button" class="btn-close btn-custom" data-bs-dismiss="modal" aria-label="Close" onclick="reopenAppointment()"></button>
       </div>
       <form action="" id="patient-addPatientForm">
@@ -144,16 +108,35 @@ Patient
     </div>
   </div>
 </div>
-  <!-- modal 2 end -->
+  <!-- user model end -->
+    <div class="card basic-data-table">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Bed Details</h5>
+      </div>
+      <div class="card-body">
+        <table class="table bordered-table mb-0" id="bed-table" data-page-length='10'>
+          <thead>
+            <tr>
+              <th scope="col">Bed Number</th>
+              <th scope="col">Bed Group</th>
+              <th scope="col">Bed Type</th>
+              <th scope="col">Floor</th>
+              <th scope="col align-items-left">Status</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+           {{-- here data appended through datatable --}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 @endsection
 @section('extra-js')
 <script>
-    const viewPatients = "{{route('patient.viewPatients')}}";
-    const deletePatientData = "{{route('patient.deletePatientData')}}";
-    const patientAddNewPatient = "{{route('patient.patientAddNewPatient')}}"; 
-    const newPatientData = "{{route('patient.newPatientData')}}"; 
-    const patientAddNewPatientDataUpdate = "{{route('patient.patientAddNewPatientDataUpdate')}}"; 
-</script>       
+    
+</script>
   {{-----------external js files added for page functions------------}}
-<script src="{{asset('backend/assets/js/custom/admin/appointment/patient.js')}}"></script>
+  {{-- <script src="{{asset('backend/assets/js/custom/admin/master/bed.js')}}"></script> --}}
 @endsection

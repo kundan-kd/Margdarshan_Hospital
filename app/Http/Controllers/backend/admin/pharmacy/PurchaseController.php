@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backend\admin\pharmacy;
 use App\Http\Controllers\Controller;
 use App\Models\Medicine;
 use App\Models\MedicineCategory;
+use App\Models\PaymentReceived;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\Vendor;
@@ -89,8 +90,8 @@ class PurchaseController extends Controller
         'totalDiscount' => 'nullable',
         'totalTaxAmount' => 'required',
         'totalNetAmount' => 'required',
-        'paymentMode' => 'required',
-        'payAmount' => 'required',
+        'paymentMode' => 'nullable',
+        'payAmount' => 'nullable',
     ]);
 
     // Return validation errors if validation fails
@@ -165,90 +166,102 @@ class PurchaseController extends Controller
         $purchase = Purchase::where('id',$id)->get();
         $vendors = Vendor::where('status',1)->get();
         $purchaseItems = PurchaseItem::with('categoryData','medicineNameData')->where('purchase_id',$id)->get(); // Fetching purchase items with their category_id and medicine name_id data
-        
-        // return response()->json(['purchase'=>$purchase,'items'=>$purchaseItems]);
-      
-        // $currTaxData = [];
-        // foreach($purchaseItems as $pItem){
-
-        //     $currTaxAmt = (($pItem->amount * $pItem->tax) / 100);
-        //     $data = [
-        //         'id'=>$pItem->id,
-        //         'value'=>$currTaxAmt
-        //     ];
-        //     array_push($currTaxData,$data);
-
-        // }
-        // $currTaxDataValue = json_encode($currTaxData);
         return view('backend.admin.modules.pharmacy.purchase-edit',compact('categories','medicines','purchase','vendors','purchaseItems'));
     }
 
     public function purchaseUpdateDatas(Request $request){
-    try {
-        $purchase_id = $request->purchase_id;
-          PurchaseItem::where('purchase_id', $purchase_id)
-                    ->update([
-                        'status' => 0
-                    ]);
+        try {
+            $purchase_id = $request->purchase_id;
+            PurchaseItem::where('purchase_id', $purchase_id)
+                        ->update([
+                            'status' => 0
+                        ]);
 
-        // Update or insert purchase items
-        foreach ($request->id as $key => $item_id) {
-            if (is_null($item_id)) {
-                // Insert new record
-               $purchaseItem = new PurchaseItem();
-                $purchaseItem->purchase_id = $purchase_id;
-                $purchaseItem->category_id = $request->category[$key];
-                $purchaseItem->name_id = $request->name[$key];
-                $purchaseItem->batch_no = $request->batchNo[$key];
-                $purchaseItem->expiry = $request->expiry[$key];
-                $purchaseItem->mrp = $request->mrp[$key];
-                $purchaseItem->sales_price = $request->salesPrice[$key];
-                $purchaseItem->tax = $request->tax[$key];
-                $purchaseItem->qty = $request->qty[$key];
-                $purchaseItem->purchase_rate = $request->purchaseRate[$key];
-                $purchaseItem->amount = $request->amount[$key];
-                $purchaseItem->save();
+            // Update or insert purchase items
+            foreach ($request->id as $key => $item_id) {
+                if (is_null($item_id)) {
+                    // Insert new record
+                $purchaseItem = new PurchaseItem();
+                    $purchaseItem->purchase_id = $purchase_id;
+                    $purchaseItem->category_id = $request->category[$key];
+                    $purchaseItem->name_id = $request->name[$key];
+                    $purchaseItem->batch_no = $request->batchNo[$key];
+                    $purchaseItem->expiry = $request->expiry[$key];
+                    $purchaseItem->mrp = $request->mrp[$key];
+                    $purchaseItem->sales_price = $request->salesPrice[$key];
+                    $purchaseItem->tax = $request->tax[$key];
+                    $purchaseItem->qty = $request->qty[$key];
+                    $purchaseItem->purchase_rate = $request->purchaseRate[$key];
+                    $purchaseItem->amount = $request->amount[$key];
+                    $purchaseItem->save();
 
-            } else {
-                // Update existing record
-                PurchaseItem::where('id', $item_id)
-                    ->where('purchase_id', $purchase_id)
-                    ->update([
-                        'category_id' => $request->category[$key],
-                        'name_id' => $request->name[$key],
-                        'batch_no' => $request->batchNo[$key],
-                        'expiry' => $request->expiry[$key],
-                        'mrp' => $request->mrp[$key],
-                        'sales_price' => $request->salesPrice[$key],
-                        'tax' => $request->tax[$key],
-                        'qty' => $request->qty[$key],
-                        'purchase_rate' => $request->purchaseRate[$key],
-                        'amount' => $request->amount[$key],
-                        'status' =>1
+                } else {
+                    $old_purchase_itm_qty = PurchaseItem::where('id', $item_id)->value('qty');
+                    // Update existing record
+                    PurchaseItem::where('id', $item_id)
+                        ->where('purchase_id', $purchase_id)
+                        ->update([
+                            'category_id' => $request->category[$key],
+                            'name_id' => $request->name[$key],
+                            'batch_no' => $request->batchNo[$key],
+                            'expiry' => $request->expiry[$key],
+                            'mrp' => $request->mrp[$key],
+                            'sales_price' => $request->salesPrice[$key],
+                            'tax' => $request->tax[$key],
+                            'qty' => $request->qty[$key],
+                            'purchase_rate' => $request->purchaseRate[$key],
+                            'amount' => $request->amount[$key],
+                            'status' =>1
+                        ]);
+                        //update stock_in for the medicine starts
+                $oldStocks = Medicine::where('id', $request->name[$key])->get(['stock_in']);
+                $oldMedicineStock = $oldStocks[0]->stock_in ?? 0;
+                $curr_purchase_itm_qty = PurchaseItem::where('id', $item_id)->value('qty');
+                if($old_purchase_itm_qty > $curr_purchase_itm_qty){
+                    $subQty = $old_purchase_itm_qty - $curr_purchase_itm_qty;
+                    Medicine::where('id', $request->name[$key])->update([
+                    'stock_in' => $oldMedicineStock - $subQty
                     ]);
+                }else{
+                    $addQty = $curr_purchase_itm_qty - $old_purchase_itm_qty;
+                    Medicine::where('id', $request->name[$key])->update([
+                    'stock_in' => $oldMedicineStock + $addQty
+                    ]);
+                }        
+                
+                //update stock_in for the medicine ends
+                }
             }
+
+            // Update the purchase record
+            $prev_paidAmount = Purchase::where('id',$purchase_id)->get(['paid_amount']);
+            // dd($request->dueAmount,$request->payAmount,$prev_paidAmount[0]->paid_amount);
+            Purchase::where('id', $purchase_id)->update([
+                'bill_no' => $request->billNo,
+                'vendor_id' => $request->vendorID,
+                'naration' => $request->naration,
+                'total_amount' => $request->totalAmount,
+                'total_discount_per' => $request->totalDiscountPer,
+                'total_discount' => $request->totalDiscount,
+                'total_tax' => $request->totalTaxAmount,
+                'net_amount' => $request->totalNetAmount,
+                'payment_mode' => $request->paymentMode,
+                'paid_amount' => $request->payAmount + $prev_paidAmount[0]->paid_amount,
+                'due' => $request->dueAmount
+            ]);
+            if($request->payAmount > 0){
+            $payment_received = new PaymentReceived();
+            $payment_received->type = 'Purchase';
+            $payment_received->type_id = $purchase_id;
+            $payment_received->amount = $request->payAmount;
+            $payment_received->payment_mode = $request->paymentMode;
+            $payment_received->save();
+            }
+            PurchaseItem::where('purchase_id',$request->purchase_id)->where('status',0)->delete();
+            return response()->json(['success' => true, 'message' => 'Purchase updated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Something went wrong', 'error' => $e->getMessage()]);
         }
-
-        // Update the purchase record
-        Purchase::where('id', $purchase_id)->update([
-            'bill_no' => $request->billNo,
-            'vendor_id' => $request->vendorID,
-            'naration' => $request->naration,
-            'total_amount' => $request->totalAmount,
-            'total_discount_per' => $request->totalDiscountPer,
-            'total_discount' => $request->totalDiscount,
-            'total_tax' => $request->totalTaxAmount,
-            'net_amount' => $request->totalNetAmount,
-            'payment_mode' => $request->paymentMode,
-            'paid_amount' => $request->payAmount,
-            'due' => $request->dueAmount
-        ]);
-        PurchaseItem::where('purchase_id',$request->purchase_id)->where('status',0)->delete();
-        return response()->json(['success' => true, 'message' => 'Purchase updated successfully']);
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => 'Something went wrong', 'error' => $e->getMessage()]);
-    }
-
     }
     function deletePurchasedetails(Request $request){
         Purchase::where('id',$request->id)->delete();
@@ -272,5 +285,9 @@ class PurchaseController extends Controller
         $purchaseItems = PurchaseItem::with('categoryData','medicineNameData')->where('purchase_id',$id)->get();
         // dd($purchases,$purchaseItems);
         return view('backend.admin.modules.pharmacy.purchase-view',compact('purchases','purchaseItems'));
+    }
+    public function getPurchaseData(Request $request){
+        $getData = Purchase::where('id',$request->id)->get();
+        return response()->json(['success'=>'Purchase data fetched','data'=>$getData],200);
     }
 }

@@ -27,10 +27,6 @@ let table = $('#billing-list-table').DataTable({
             name:'bill_no'
         },
         {
-            data:'doctor',
-            name:'doctor'
-        },
-        {
             data:'total',
             name:'total'
         },
@@ -45,10 +41,6 @@ let table = $('#billing-list-table').DataTable({
         {
             data:'paid_amount',
             name:'paid_amount'
-        },
-        {
-            data:'due_amount',
-            name:'due_amount'
         },
         {
             data:'action',

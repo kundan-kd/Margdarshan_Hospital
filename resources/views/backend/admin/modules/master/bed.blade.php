@@ -1,11 +1,11 @@
 @extends('backend.admin.layouts.main')
 @section('title')
-Create Bed
+Bed
 @endsection
 @section('main-container')
 <div class="dashboard-main-body">
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-    <h6 class="fw-normal mb-0">Create Bed</h6>
+    <h6 class="fw-normal mb-0">Bed</h6>
     <div class="btns">
       <a class="btn btn-primary-600  btn-sm fw-normal bed-add" data-bs-toggle="modal" data-bs-target="#addBedModel"><i class="ri-add-line "></i> Add Bed</a>
     </div>
@@ -26,7 +26,7 @@ Create Bed
                   <div class="col-md-12">
                     <input type="hidden" id=bedID>
                     <label class="form-label" for="bedGroup">Bed Group</label>
-                    <select class="form-control form-control-sm" name="bedGroup" id="bedGroup">
+                    <select class="form-control form-control-sm" name="bedGroup" id="bedGroup" required>
                         <option value="">Select</option>
                         @foreach ($bedgroups as $bg)
                         <option value="{{$bg->id}}">{{$bg->name}}</option>
@@ -38,7 +38,7 @@ Create Bed
                 </div>
                   <div class="col-md-12">
                     <label class="form-label" for="bedType">Bed Type</label>
-                    <select class="form-control form-control-sm" name="bedType" id="bedType">
+                    <select class="form-control form-control-sm" name="bedType" id="bedType" required>
                         <option value="">Select</option>
                         @foreach ($bedtypes as $bt)
                         <option value="{{$bt->id}}">{{$bt->name}}</option>
@@ -50,7 +50,7 @@ Create Bed
                 </div>
                   <div class="col-md-12">
                     <label class="form-label" for="bedFloor">Floor</label>
-                    <select class="form-control form-control-sm" name="bedFloor" id="bedFloor">
+                    <select class="form-control form-control-sm" name="bedFloor" id="bedFloor" required>
                         <option value="">Select</option>
                         <option value="-1">Under Ground Floor</option>
                         <option value="0">Ground Floor</option>
@@ -76,10 +76,10 @@ Create Bed
                 </div>
                     <div class="modal-footer mt-3">
                         <button class="btn btn-outline-danger btn-sm" type="button"
-                            data-bs-dismiss="modal" onclick="resetmodel()">Cancel</button>
+                            data-bs-dismiss="modal">Cancel</button>
                         <button class="btn btn-primary btn-sm addBedSubmit" type="submit">Submit</button>
                         <button class="btn btn-primary btn-sm addBedUpdate d-none" type="submit"
-                            onclick="bedUpdate(document.getElementById('bedNameID').value)">Update</button>
+                            onclick="bedUpdate(document.getElementById('bedID').value)">Update</button>
                     </div>
               </form>
         </div>

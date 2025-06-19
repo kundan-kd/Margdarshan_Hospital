@@ -76,7 +76,6 @@ let table = $('#appointment-book-table').DataTable({
     ]
 });
 
-
 $('#addPatientForm').on('submit',function(e){
      e.preventDefault();
     let patientName  = validateField('patientName', 'input');

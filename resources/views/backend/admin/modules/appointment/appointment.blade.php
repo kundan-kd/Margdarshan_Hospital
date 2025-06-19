@@ -229,7 +229,7 @@ $ddate = date("d/m/yy");
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="patientMobile">Phone</label>
-            <input type="text" id="patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="validateField(this.id,'mobile')">
+            <input type="number" id="patientMobile" class="form-control form-control-sm" placeholder="Phone" maxlength="10" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile')">
             <div class="patientMobile_errorCls d-none"></div>
           </div>
           <div class="col-6">
@@ -239,7 +239,7 @@ $ddate = date("d/m/yy");
           </div>
           <div class="col-6">
             <label class="form-label fw-normal">Alt Phone</label>
-            <input type="text" id="patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone">
+            <input type="number" id="patientAltMobile" class="form-control form-control-sm" maxlength="10" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">
           </div>
           <div class="col-6">
             <label class="form-label fw-normal">Any Known Allergies</label>

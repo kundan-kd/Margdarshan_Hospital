@@ -1,3 +1,18 @@
+  // Flat pickr or date picker js 
+    function getDatePicker (receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "m/Y",
+            plugins: [
+                        new monthSelectPlugin({
+                            shorthand: true,  
+                            dateFormat: "m/Y",  
+                            altFormat: "F Y"    
+                        })
+                    ]
+        });
+    }
+    getDatePicker('.expiry-date'); 
+
 function addNewRowBilling() {
     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
       $.ajax({
@@ -29,7 +44,7 @@ function addNewRowBilling() {
                               </td>
                               <td>
                                   <div class=" position-relative">
-                                      <input id="billingAdd-expiry${rand}" name="billingAdd-expiry[]" class="form-control radius-8 bg-base expiry-date"  type="text" placeholder="00/00/0000">
+                                      <input id="billingAdd-expiry${rand}" name="billingAdd-expiry[]" class="form-control radius-8 bg-base expiry-date${rand}"  type="text" placeholder="MM/YYYY">
                                       
                                   </div>
                               </td>
@@ -59,7 +74,7 @@ function addNewRowBilling() {
                           </tr>`;
 
     $('.newRowAppendBilling').parent().append(newRowDataBilling); // Append properly to tbody
-
+    getDatePicker('.expiry-date'+ rand); 
     // Reinitialize Select2 for newly added row
     $('.select2-cls').select2();
        }
@@ -104,7 +119,7 @@ function getBatchDetails(id,randB){
             },
             data:{id:medID},
             success:function(response){
-           //     console.log(response);
+                console.log(response);
             let getData = response.data;
             let batchDropdown2 = $("#billingAdd-batch" + randB); // Use the randNum to target the specific dropdown
             batchDropdown2.find("option:not(:first)").remove(); // empity dropdown except first one
@@ -125,28 +140,40 @@ function getBatchExpiry(id,randE){
         },
         data:{id:id},
         success:function(response){
-            // console.log(response);
-        let getData = response.data[0];
-        let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
-        $("#billingAdd-expiry" + randE).val(getData.expiry); 
-        $("#billingAdd-avlQty" + randE).val(avlQty); 
-        $("#billingAdd-salesPrice" + randE).val(getData.sales_price); 
-        $("#billingAdd-tax" + randE).val(getData.tax); 
+            if(response.data != ''){
+                let getData = response.data[0];
+                let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
+                $("#billingAdd-expiry" + randE).val(getData.expiry); 
+                $("#billingAdd-avlQty" + randE).val(avlQty); 
+                $("#billingAdd-salesPrice" + randE).val(getData.sales_price); 
+                $("#billingAdd-tax" + randE).val(getData.tax); 
+            }
         }
     });
 }
 function getBillingAmount(randA){
-    let qty = $("#billingAdd-qty" + randA).val();
+    let qty = parseFloat($("#billingAdd-qty" + randA).val());
     if(qty <= 0){
         qty = 0;
     }
-    let salesPrice = $("#billingAdd-salesPrice" + randA).val();
-    let tax = $("#billingAdd-tax" + randA).val();
+    let avlQty =  parseFloat($("#billingAdd-avlQty" + randA).val()); 
+    if(qty > avlQty){
+        $("#billingAdd-qty"+randA).css({"border-color": "#ef4a00","border-width": "1px","border-style": "solid"});
+        $('.billingAddSubmitBtn').prop('disabled',true);
+         toastErrorAlert('Stock quantity exceeded limit.');
+         return;
+    }else{
+        $("#billingAdd-qty"+randA).css("border-color","#d1d5db");
+        $('.billingAddSubmitBtn').prop('disabled',false);
+
+    }
+    let salesPrice = $("#billingAdd-salesPrice" + randA).val() ||0;
+    let tax = $("#billingAdd-tax" + randA).val() ||0;
     let amount = qty * salesPrice; // Calculate total amount before taxng tax
-    $('#billingAdd-amount'+randA).val(amount);
-    let currAmount = $('#billingAdd-amount'+randA).val();
+    $('#billingAdd-amount'+randA).val(amount) ||0;
+    let currAmount = $('#billingAdd-amount'+randA).val() ||0;
     let currTaxAmount = (currAmount * tax)/100;
-    $('#billingAdd-taxAmount'+randA).val(currTaxAmount);
+    $('#billingAdd-taxAmount'+randA).val(currTaxAmount) ||0;
     updateTotalBilling();
 
     
@@ -181,11 +208,11 @@ function updateTotalBilling() {
     let totalAmountSum = total_amount.reduce((acc, val) => acc + val, 0);
     let totalTaxAmountSum = total_tax_amount.reduce((acc, val) => acc + val, 0);
     // Update the UI with total amounts
-    $('.billingAdd-totalAmount').html(totalAmountSum.toFixed(2));
-    $('.billingAdd-totalTax').html(totalTaxAmountSum.toFixed(2));
+    $('.billingAdd-totalAmount').html(totalAmountSum.toFixed(2)) ||0;
+    $('.billingAdd-totalTax').html(totalTaxAmountSum.toFixed(2)) ||0;
     // Calculate net amount
     let totalNetAmount = totalAmountSum + totalTaxAmountSum;
-    $('.billingAdd-totalNetAmount').html(totalNetAmount.toFixed(2));
+    $('.billingAdd-totalNetAmount').html(totalNetAmount.toFixed(2)) ||0;
     // Calculate discount if applicable
     let discountPer = parseFloat($('#billingAdd-discountPer').val()) || 0;
     if (discountPer > 0) {
@@ -270,10 +297,11 @@ $('#billingAdd-Form').on('submit',function(e){
   e.preventDefault();
  
   let patientIDCheck  = validateField('billingAdd-patient', 'select');
-  console.log(patientIDCheck);
   if(patientIDCheck == false){
     return;
   }
+  $('.billingAddSubmitBtn').addClass('d-none');
+  $('.billingAddSpinnBtn').removeClass('d-none');
   let category = $('select[name="billingAdd-category[]"]').map(function(){return $(this).val();}).get();
   let name = $('select[name="billingAdd-name[]"]').map(function(){return $(this).val();}).get();
   let batchNo = $('select[name="billingAdd-batch[]"]').map(function(){return $(this).val();}).get();
@@ -308,11 +336,15 @@ $('#billingAdd-Form').on('submit',function(e){
         category:category,name:name,batchNo:batchNo,expiry:expiry,qty:qty,salesPrice:salesPrice,taxPer:taxPer,taxAmount:taxAmount,amount:amount,billNo:billNo,patientID:patientID,resDoctor:resDoctor,outDoctor:outDoctor,notes:notes,totalAmount:totalAmount,discountPer:discountPer,totalDiscountAmount:totalDiscountAmount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
     },
     success:function(response){
-        console.log(response);
         if(response.success){
-             toastSuccessAlert('Medicine Billings successfully done');
+             toastSuccessAlert('Billings done successfully');
+             setTimeout(function(){
+                window.location = '/billing';
+             },1500);
         }else{
              toastErrorAlert('something error found');
+             $('.billingAddSubmitBtn').removeClass('d-none');
+            $('.billingAddSpinnBtn').addClass('d-none');
         }
     }
   });

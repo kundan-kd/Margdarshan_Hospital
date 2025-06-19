@@ -16,6 +16,7 @@ use App\Http\Controllers\backend\admin\master\MedicinecategoryController;
 use App\Http\Controllers\backend\admin\master\MedicinegroupController;
 use App\Http\Controllers\backend\admin\master\PaymentmodeController;
 use App\Http\Controllers\backend\admin\master\UnitController;
+use App\Http\Controllers\backend\admin\master\UserController;
 use App\Http\Controllers\backend\auth\AuthenticationController;
 use App\Http\Controllers\backend\admin\master\UsertypeController;
 use App\Http\Controllers\backend\admin\master\VendorController;
@@ -103,6 +104,7 @@ Route::post('/purchase-details-delete',[PurchaseController::class,'deletePurchas
 Route::get('/purchase-edit-details',[PurchaseController::class,'getPurchaseNamesSelectEdit'])->name('purchase.getPurchaseNamesSelectEdit');
 Route::get('/purchase-category-data',[PurchaseController::class,'getCategoryDatas'])->name('purchase.getCategoryDatas');
 Route::get('/purchase-view/{id}',[PurchaseController::class,'pruchaseViewIndex']);
+Route::post('/purchase-data',[PurchaseController::class,'getPurchaseData'])->name('purchase.getPurchaseData');
 
 Route::get('/medicine-category',[MedicinecategoryController::class,'index'])->name('medicine-category.index');
 Route::post('/medicine-category-details',[MedicinecategoryController::class,'viewMedicineCategory'])->name('medicine-category.viewMedicineCategory');
@@ -169,6 +171,14 @@ Route::post('/bedgroup-status-update',[BedgroupController::class,'statusUpdate']
 Route::post('/bedgroup-delete',[BedgroupController::class,'deleteBedGroupData'])->name('bedgroup.deleteBedGroupData');
 
 Route::get('/bed',[BedController::class,'index'])->name('bed.index');
+Route::post('/bed-details',[BedController::class,'viewBeds'])->name('bed.viewBeds');
+Route::post('/bed-add',[BedController::class,'addBed'])->name('bed.addBed');
+Route::post('/bed-getdetails',[BedController::class,'getBedData'])->name('bed.getBedData');
+Route::post('/bed-update',[BedController::class,'updateBedData'])->name('bed.updateBedData');
+Route::post('/bed-status-update',[BedController::class,'statusUpdate'])->name('bed.statusUpdate');
+Route::post('/bed-delete',[BedController::class,'deleteBedData'])->name('bed.deleteBedData');
+
+Route::get('/user',[UserController::class,'index'])->name('user.index');
 
 Route::get('/billing',[BillingController::class,'index'])->name('billing.index');
 Route::get('/billing-view',[BillingController::class,'billingView'])->name('billing.billingView');
@@ -178,8 +188,6 @@ Route::get('/billing-add-batch',[BillingController::class,'getBatchNumbers'])->n
 Route::get('/billing-add-batch-expity',[BillingController::class,'getBatchExpiryDate'])->name('billing-add.getBatchExpiryDate');
 Route::post('/billing-add-data',[BillingController::class,'billingAddDatas'])->name('billing-add.billingAddDatas');
 Route::get('/billing-edit-page/{id}',[BillingController::class,'billingEditPage']);
-
-
 
 Route::post('/billing-edit-data-load',[BillingController::class,'billingEditAutoLoadData'])->name('billing-edit.billingEditAutoLoadData');
 

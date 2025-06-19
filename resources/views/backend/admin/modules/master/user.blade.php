@@ -15,93 +15,101 @@ User
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0">
       <div class="modal-header bg-primary-600 p-11">
-        <h6 class="modal-title fw-normal text-white text-md" id="patient-add-appointmentLabel">Add User</h6>
-        <button type="button" class="btn-close btn-custom" data-bs-dismiss="modal" aria-label="Close" onclick="reopenAppointment()"></button>
+        <h6 class="modal-title fw-normal text-white text-md" id="user-add-appointmentLabel">Add User</h6>
+        <button type="button" class="btn-close btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="" id="patient-addPatientForm">
+      <form action="" id="addUser-form">
         <div class="modal-body">
-            <div class="row gy-3">
-          <div class="col-6">
-            <input type="hidden" id="patient-patientId">
-            <label class="form-label fw-normal" for="patient-patientName">Patient Name</label>
-            <input type="text" id="patient-patientName" name="#0" class="form-control form-control-sm" placeholder="Patient Name" oninput="validateField(this.id,'input')">
-            <div class="patient-patientName_errorCls d-none"></div>
+          <div class="row gy-3">
+            <input type="hidden" id="userId">
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-departmentId">Department</label>
+                <select class="form-select form-select-sm select2-cls" id="user-departmentId" style="width: 100%" oninput="validateField(this.id,'select')">
+                  <option value="">Select</option>
+                  <option value="Married">Married</option>
+                  <option value="UnMarried">UnMarried</option>
+                </select>            
+              <div class="user-departmentId_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-userType">User Type</label>
+                <select class="form-select form-select-sm select2-cls" id="user-userType" style="width: 100%" oninput="validateField(this.id,'select')">
+                  <option value="">Select</option>
+                  <option value="Married">Married</option>
+                  <option value="UnMarried">UnMarried</option>
+                </select>                    
+                <div class="user-userType_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-bloodType">Blood Type</label>
+                <select class="form-select form-select-sm select2-cls" id="user-bloodType" style="width: 100%" oninput="validateField(this.id,'select')">
+                  <option value="">Select</option>
+                  <option value="Married">Married</option>
+                  <option value="UnMarried">UnMarried</option>
+                </select>
+                <div class="user-bloodType_errorCls d-none"></div>  
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-name">Name</label>
+              <input type="text" id="user-name" class="form-control form-control-sm" placeholder="Enter User Name" oninput="validateField(this.id,'input')">
+              <div class="user-name_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-fname">Father's Name</label>
+              <input type="text" id="user-fname" class="form-control form-control-sm" placeholder="Enter Father's Name" oninput="validateField(this.id,'input')">
+              <div class="user-fname_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-mname">Mother's Name</label>
+              <input type="text" id="user-mname" class="form-control form-control-sm" placeholder="Enter Mother's Name" oninput="validateField(this.id,'input')">
+              <div class="user-mname_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-dob">DOB</label>
+              <input type="date" id="user-dob" class="form-control form-control-sm" placeholder="Enter Date of birth" oninput="validateField(this.id,'input')">
+              <div class="user-dob_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-doj">DOJ</label>
+              <input type="date" id="user-doj" class="form-control form-control-sm" placeholder="Enter Date of joining" oninput="validateField(this.id,'input')">
+              <div class="user-doj_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-pan">PAN</label>
+              <input type="text" id="user-pan" class="form-control form-control-sm" placeholder="Enter PAN Number" oninput="validateField(this.id,'input')">
+              <div class="user-pan_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-adhar">Adhar No.</label>
+              <input type="text" id="user-adhar" class="form-control form-control-sm" placeholder="Enter Adhar Number" oninput="validateField(this.id,'input')">
+              <div class="user-adhar_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-email">Email ID</label>
+              <input type="text" id="user-email" class="form-control form-control-sm" placeholder="Enter Valid Email ID" oninput="validateField(this.id,'email')">
+              <div class="user-email_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-mobile">Phone No.</label>
+              <input type="text" id="user-mobile" class="form-control form-control-sm" placeholder="Enter Phone Number" oninput="validateField(this.id,'mobile')">
+              <div class="user-mobile_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-pass">Password</label>
+              <input type="password" id="user-pass" class="form-control form-control-sm" placeholder="Enter Password" oninput="validateField(this.id,'input')">
+              <div class="user-pass_errorCls d-none"></div>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-cpass">Confirm Password</label>
+              <input type="text" id="user-cpass" class="form-control form-control-sm" placeholder="Re-Enter Password" oninput="validateField(this.id,'input')">
+              <div class="user-cpass_errorCls d-none"></div>
+            </div>
           </div>
-          <div class="col-6">
-            <label class="form-label fw-normal" for="patient-guardianName">Gaurdian Name</label>
-            <input type="text" id="patient-guardianName" name="#0" class="form-control form-control-sm" placeholder="Gaurdian Name" oninput="validateField(this.id,'input')">
-            <div class="patient-guardianName_errorCls d-none"></div>
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal mb-3">Gender</label>
-              <div class="d-flex align-items-center flex-wrap gap-20 text-sm mt-2">
-                <div class="form-check checked-primary d-flex align-items-center gap-2">
-                  <input class="form-check-input" type="radio" name="patient-patientGender" id="patient-patientGender1" value="Male">
-                  <label class="form-check-label line-height-1 fw-medium text-secondary-light" for="patient-patientGender1"> Male</label>
-                </div>
-                <div class="form-check checked-primary d-flex align-items-center gap-2">
-                  <input class="form-check-input" type="radio" name="patient-patientGender" id="patient-patientGender2" value="Female">
-                  <label class="form-check-label line-height-1 fw-medium text-secondary-light" for="patient-patientGender2"> Female </label>
-                </div>
-                <div class="form-check checked-primary d-flex align-items-center gap-2">
-                  <input class="form-check-input" type="radio" name="patient-patientGender" id="patient-patientGender3" value="Other">
-                  <label class="form-check-label line-height-1 fw-medium text-secondary-light" for="patient-patientGender3"> Other </label>
-                </div>
-              </div>
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal" for="patient-patientBloodType">Blood Type</label>
-            <select class="form-select form-select-sm" id="patient-patientBloodType" oninput="validateField(this.id,'select')">
-              <option value="">Select</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-            </select>
-            <div class="patient-patientBloodType_errorCls d-none"></div>
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal" for="patient-patientDOB">DOB</label>
-            <input type="date" id="patient-patientDOB" class="form-control form-control-sm" placeholder="DD-MM-YYYY" oninput="validateField(this.id,'select')">
-            <div class="patient-patientDOB_errorCls d-none"></div>
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal" for="patient-patientMStatus">Marital Status</label>
-            <select class="form-select form-select-sm" id="patient-patientMStatus"  oninput="validateField(this.id,'select')">
-              <option value="">Select</option>
-              <option value="Married">Married</option>
-              <option value="UnMarried">UnMarried</option>
-            </select>
-            <div class="patient-patientMStatus_errorCls d-none"></div>
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal" for="patient-patientMobile">Phone</label>
-            <input type="number" id="patient-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile')">
-            <div class="patient-patientMobile_errorCls d-none"></div>
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal" for="patient-patientAddess">Address</label>
-            <input type="text" id="patient-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
-            <div class="patient-patientAddess_errorCls d-none"></div>
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal">Alt Phone</label>
-            <input type="number" id="patient-patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal">Any Known Allergies</label>
-            <input type="text" id="patient-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
-          </div>
-        </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal" onclick="reopenAppointment()">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal patientAddPatientSubmit">Submit</button>
-          <button type="button" class="btn btn-primary-600  btn-sm fw-normal patientAddPatientUpdate d-none" onclick="patientAddPatientUpdate(document.getElementById('patient-patientId').value)">Update</button>
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal userAddSubmit">Submit</button>
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal userAddUpdate d-none" onclick="userAddUpdate(document.getElementById('userId').value)">Update</button>
            <!-- <button type="button" class="btn btn-warning-600  btn-sm fw-normal">Save & Book Appointment</button>  -->
         </div>
       </form>
@@ -111,16 +119,18 @@ User
   <!-- user model end -->
     <div class="card basic-data-table">
       <div class="card-header">
-        <h5 class="card-title mb-0">Bed Details</h5>
+        <h5 class="card-title mb-0">User Details</h5>
       </div>
       <div class="card-body">
-        <table class="table bordered-table mb-0" id="bed-table" data-page-length='10'>
+        <table class="table bordered-table mb-0" id="user-table" data-page-length='10'>
           <thead>
             <tr>
-              <th scope="col">Bed Number</th>
-              <th scope="col">Bed Group</th>
-              <th scope="col">Bed Type</th>
-              <th scope="col">Floor</th>
+              <th scope="col">Name</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Email ID</th>
+              <th scope="col">DOJ</th>
+              <th scope="col">Department</th>
+              <th scope="col">User Type</th>
               <th scope="col align-items-left">Status</th>
               <th scope="col">Action</th>
             </tr>
@@ -135,8 +145,15 @@ User
 @endsection
 @section('extra-js')
 <script>
-    
+    $('#add-user').on('shown.bs.modal', function () {
+      $('.select2-cls').select2({
+          dropdownParent: $('#add-user')
+      });
+    });
+
+     const viewUsers = "{{route('user.viewUsers')}}";
+     const addUser = "{{route('user.addUser')}}";
 </script>
   {{-----------external js files added for page functions------------}}
-  {{-- <script src="{{asset('backend/assets/js/custom/admin/master/bed.js')}}"></script> --}}
+  <script src="{{asset('backend/assets/js/custom/admin/master/user.js')}}"></script>
 @endsection

@@ -179,6 +179,8 @@ Route::post('/bed-status-update',[BedController::class,'statusUpdate'])->name('b
 Route::post('/bed-delete',[BedController::class,'deleteBedData'])->name('bed.deleteBedData');
 
 Route::get('/user',[UserController::class,'index'])->name('user.index');
+Route::post('/user-view',[UserController::class,'viewUsers'])->name('user.viewUsers');
+Route::post('/user-add',[UserController::class,'addUser'])->name('user.addUser');
 
 Route::get('/billing',[BillingController::class,'index'])->name('billing.index');
 Route::get('/billing-view',[BillingController::class,'billingView'])->name('billing.billingView');

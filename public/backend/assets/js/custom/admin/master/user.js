@@ -17,46 +17,38 @@ let table = $('#user-table').DataTable({
     },
     columns:[
         {
+            data:'staff_id',
+            name:'staff_id'
+        },
+        {
             data:'name',
-            name:'name',
-            orderable: true,
-            searchable: true
+            name:'name'
         },
         {
             data:'mobile',
-            name:'mobile',
-            orderable: true,
-            searchable: true
+            name:'mobile'
         },
         {
             data:'email',
-            name:'email',
-            orderable: true,
-            searchable: true
+            name:'email'
         },
         {
             data:'doj',
-            name:'doj',
-            orderable: true,
-            searchable: true
+            name:'doj'
         },
         {
             data:'department',
-            name:'department',
-            orderable: true,
-            searchable: true
+            name:'department'
         },
         {
             data:'usertype',
-            name:'usertype',
-            orderable: true,
-            searchable: true
+            name:'usertype'
         },
         {
             data:'status',
             name:'status',
             orderable: false,
-            searchable: true
+            searchable: false
         },
         {
             data: 'action',
@@ -71,13 +63,40 @@ $('.user-add').on('click',function(e){
     e.preventDefault();
     $('.user-title').html('Create user');
     $('#userID').val('');
-    $('#userNumber').val('');
-    $('#userGroup').val('');
-    $('#userType').val('');
-    $('#userFloor').val('');
-    $('.adduserUpdate').addClass('d-none');
-    $('.adduserSubmit').removeClass('d-none');
+    $('#addUser-form')[0].reset();
+    $('.userAddUpdate').addClass('d-none');
+    $('.userAddSubmit').removeClass('d-none');
+    $('.opd-cls').addClass('d-none');
     });
+function checkOPD(){
+    let dept_id = $('#user-departmentId').val();
+    let userType = $('#user-userType').val();
+    if(dept_id == 11 && userType == 2){
+        $('.opd-cls').removeClass('d-none');
+    }
+    opdRoomData();
+}
+function opdRoomData(id){
+    $.ajax({
+        url: getOPDRoom,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data:{
+            id:id
+        },
+        success:function(response){
+            if(response.success){
+                $('#user-opdRoom').empty();
+                $('#user-opdRoom').append('<option value="">Select OPD Room</option>');
+                $.each(response.data,function(key,value){
+                    $('#user-opdRoom').append('<option value="'+value.id+'">'+value.room_num+'</option>');
+                });
+            }
+        }
+    });
+}
 // ------user add starts----
 $('#addUser-form').on('submit',function(e){
    e.preventDefault();
@@ -99,6 +118,8 @@ $('#addUser-form').on('submit',function(e){
     let id = $('#userID').val();
     let departmentID = $('#user-departmentId').val();
     let userType = $('#user-userType').val();
+    let fee = $('#user-fee').val();
+    let opdRoom = $('#user-opdRoom').val();
     let bloodType = $('#user-bloodType').val();
     let name = $('#user-name').val();
     let fname = $('#user-fname').val();
@@ -115,31 +136,31 @@ $('#addUser-form').on('submit',function(e){
             toastErrorAlert('Password not matched!');
             return;
         }else{
-                if ($('.userAddUpdate').is(':visible')) {
-                    userUpdate(id); // Trigger update function
-                } else {
-                    $.ajax({
-                        url: addUser,
-                        method:"POST",
-                        headers:{
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        data:{departmentID:departmentID,userType:userType,bloodType:bloodType,name:name,fname:fname,manme:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass},
-                        success:function(response){
-                            if(response.success){
-                                $('#add-user').modal('hide');
-                                $('#addUser-form')[0].reset();
-                                $('#user-table').DataTable().ajax.reload();
-                                toastSuccessAlert('user added successfully');
-                            }else{
-                                toastErrorAlert('error found!');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                            alert("An error occurred: " + error);
+            if ($('.userAddUpdate').is(':visible')) {
+                userUpdate(id); // Trigger update function
+            } else {
+                $.ajax({
+                    url: addUser,
+                    method:"POST",
+                    headers:{
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data:{departmentID:departmentID,userType:userType,fee:fee,opdRoom:opdRoom,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
+                    success:function(response){
+                        if(response.success){
+                            $('#add-user').modal('hide');
+                            $('#addUser-form')[0].reset();
+                            $('#user-table').DataTable().ajax.reload();
+                            toastSuccessAlert('user added successfully');
+                        }else{
+                            toastErrorAlert('error found!');
                         }
-                    });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert("An error occurred: " + error);
+                    }
+                });
             }
         }
     }else{
@@ -149,66 +170,103 @@ $('#addUser-form').on('submit',function(e){
 });
 // ------user add ends----
 // ------user update starts ----
-// function userEdit(id){
-// $.ajax({
-//     url: getuserData,
-//     type:"POST",
-//     headers:{
-//         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//     },
-//     data:{id:id},
-//     success:function(response){
-//         if(response.success){
-//             getData = response.data[0];
-//             $('.user-title').html('Update user');
-//             $('#userID').val(getData.id);
-//             $('#userNumber').val(getData.user_no);
-//             $('#userGroup').val(getData.user_group_id);
-//             $('#userType').val(getData.user_type_id);
-//             $('#userFloor').val(getData.floor);
-//             $('.adduserSubmit').addClass('d-none');
-//             $('.adduserUpdate').removeClass('d-none');
-//             $('#adduserModel').modal('show');
-//         }
-//     }
+function userEdit(id){
+    $.ajax({
+        url: getUserData,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:id},
+        success:function(response){
+            console.log(response);
+            if(response.success){
+                getData = response.data[0];
+                getRoom = response.roomData[0];
+                console.log(getRoom);
+                $('.user-title').html('Update User');
+                $('#userId').val(getData.id);
+                $('#user-departmentId').val(getData.department_id);
+                $('#user-userType').val(getData.usertype_id);
+                $('#user-bloodType').val(getData.bloodtype_id);
+                $('#user-opdRoom').val(getData.room_number);
+                $('#user-fee').val(getData.fee);
+                $('#user-name').val(getData.name);
+                $('#user-fname').val(getData.fname);
+                $('#user-mname').val(getData.mname);
+                $('#user-dob').val(getData.dob);
+                $('#user-doj').val(getData.doj);
+                $('#user-pan').val(getData.pan);
+                $('#user-adhar').val(getData.adhar);
+                $('#user-email').val(getData.email);
+                $('#user-mobile').val(getData.mobile);
+                $('#user-pass').val(getData.plain_password);
+                $('#user-cpass').val(getData.plain_password);
+                $('#add-user').modal('show');
+                $('.userAddSubmit').addClass('d-none');  
+                $('.userAddUpdate').removeClass('d-none');  
+                if(getData.department_id == 11 && getData.usertype_id == 2){
+                    $('.opd-cls').removeClass('d-none');
+                    // $('#user-opdRoom').append('<option value="">Newwwww</option>');
+                    
+                    $('#user-opdRoom').append('<option value="'+getRoom.id+'">'+getRoom.room_num+'</option>');
+                    $('#user-opdRoom').trigger('change'); // Notify Select2 of the update
+                }else{
+                    $('.opd-cls').addClass('d-none');
+                }
+            }
+        }
 
-// });
-// }
+    });
+}
+function userAddUpdate() {
+    let id = $('#userId').val();
+    let departmentID = $('#user-departmentId').val();
+    let userType = $('#user-userType').val();
+    let bloodType = $('#user-bloodType').val();
+    let fee = $('#user-fee').val();
+    let opdRoom = $('#user-opdRoom').val();
+    let name = $('#user-name').val();
+    let fname = $('#user-fname').val();
+    let mname = $('#user-mname').val();
+    let dob = $('#user-dob').val();
+    let doj = $('#user-doj').val();
+    let pan = $('#user-pan').val();
+    let adhar = $('#user-adhar').val();
+    let email = $('#user-email').val();
+    let mobile = $('#user-mobile').val();
+    let pass = $('#user-pass').val();
+    let cpass = $('#user-cpass').val();
 
-// function userUpdate(id){
-//     let userNumber = $('#userNumber').val();
-//     let userGroup = $('#userGroup').val();
-//     let userType = $('#userType').val();
-//     let userFloor = $('#userFloor').val();
-//     if(userNumber == '' || userGroup == '' || userType == '' || userFloor == ''){
-//         $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
-//     }else{
-//         $.ajax({
-//             url: updateuserData,
-//             type: "POST",
-//             data: {
-//                 id:id,userNumber:userNumber,userGroup:userGroup,userType:userType,userFloor:userFloor},
-//             headers: {
-//                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//             },
-//             success: function(response) {
-//                 if(response.success){
-//                     $('#adduserModel').modal('hide');
-//                     $('#adduserForm').removeClass('was-validated');
-//                     $('#adduserForm')[0].reset();
-//                     $('#user-table').DataTable().ajax.reload();
-//                     toastSuccessAlert('user updated successfully');
-//                 }else{
-//                     toastErrorAlert('error found!');
-//                 }
-//             },
-//             error: function(xhr, status, error) {
-//                 console.error(xhr.responseText);
-//                 alert("An error occurred: " + error);
-//             }
-//         });
-//     }
-// }
+    if(cpass != pass){
+        toastErrorAlert('Password not matched!');
+        return;
+    }else{
+        $.ajax({
+            url: updateUser,
+            method:"POST",
+            headers:{
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data:{id:id,departmentID:departmentID,userType:userType,fee:fee,opdRoom:opdRoom,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
+            success:function(response){
+                if(response.success){
+                    $('#add-user').modal('hide');
+                    $('#addUser-form')[0].reset();
+                    $('#user-table').DataTable().ajax.reload();
+                    toastSuccessAlert('User updated successfully');
+                }else{
+                    toastErrorAlert('error found!');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("An error occurred: " + error);
+            }
+        });
+    }
+}
+
 
 // function statusSwitch(id){
 //     $.ajax({
@@ -238,46 +296,46 @@ $('#addUser-form').on('submit',function(e){
 //     });
 // }
 
-// function userDelete(id){
-//     Swal.fire({
-//         title: "Are you sure?",
-//         text: "You won't be able to revert this!",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#3085d6",
-//         cancelButtonColor: "#d33",
-//         confirmButtonText: "Yes, delete it!",
-//         customClass: {
-//             title: 'swal-title-custom'
-//           }
+function userDelete(id){
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+        customClass: {
+            title: 'swal-title-custom'
+          }
         
-//     }).then((result) => {
-//         if (result.isConfirmed) {
-//             $.ajax({
-//                 url: deleteuserData,
-//                 type: "POST",
-//                 data: {
-//                     id: id
-//                 },
-//                 headers: {
-//                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//                 },
-//                 success: function(response) {
-//                     if (response.success) {
-//                         Swal.fire("Deleted!", response.success, "success");
-//                         $('#user-table').DataTable().ajax.reload();
-//                     } else {
-//                         Swal.fire("Error!", "Error", "error");
-//                     }
-//                 },
-//                 error: function(xhr, status, error) {
-//                     console.error(xhr.responseText);
-//                     Swal.fire("Error!", "An error occurred: " + error, "error");
-//                 }
-//             });
-//         }
-//     });
-// }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: deleteUserData,
+                type: "POST",
+                data: {
+                    id: id
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire("Deleted!", response.success, "success");
+                        $('#user-table').DataTable().ajax.reload();
+                    } else {
+                        Swal.fire("Error!", "Error", "error");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    Swal.fire("Error!", "An error occurred: " + error, "error");
+                }
+            });
+        }
+    });
+}
 
 
 

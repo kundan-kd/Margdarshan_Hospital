@@ -142,7 +142,7 @@ Billing-edit
                           <select id="billingEdit-resDoctor" class="form-select form-select-sm select2-cls  w-100">
                               <option value="" selected>Select</option>
                             @foreach ($doctors as $doctor)
-                                <option value="{{$doctor->id}}"{{$doctor->id == $doctors[0]->id ? 'selected':''}}>{{$doctor->firstname}} {{$doctor->lastname}}</option>
+                                <option value="{{$doctor->id}}"{{$doctor->id == $doctors[0]->id ? 'selected':''}}>{{$doctor->name}}</option>
                             @endforeach
                           </select>
                         </div>

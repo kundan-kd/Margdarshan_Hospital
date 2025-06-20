@@ -53,7 +53,7 @@ function validateField(id,inputType) {
                 error.text("Invalid email format").addClass("is_invalid");
                 return false;
             } else {
-                field.removeClass("is_field_invalid");
+                fieldID.removeClass("is_field_invalid");
                 error.html("");
                 return true;
             }

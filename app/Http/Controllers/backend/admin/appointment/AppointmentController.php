@@ -18,7 +18,7 @@ class AppointmentController extends Controller
         $departments = Department::where('status',1)->get();
         $paymentmodes = PaymentMode::where('status',1)->get();
         $patients = Patient::where('status',1)->get();
-        $doctors = User::where('status',1)->where('usertype_id',2)->get(['id','firstname','lastname']);
+        $doctors = User::where('status',1)->where('usertype_id',2)->get(['id','name']);
         return view('backend.admin.modules.appointment.appointment',compact('departments','paymentmodes','patients','doctors'));
     }
     public function viewAppointments(Request $request){
@@ -38,7 +38,7 @@ class AppointmentController extends Controller
             return $row->patient_data->gender;
         })
         ->addColumn('doctor',function($row){
-            return "Dr. ".$row->user_data->firstname." ".$row->user_data->lastname;
+            return "Dr. ".$row->user_data->name;
         })
         ->addColumn('token',function($row){
             return $row->token;

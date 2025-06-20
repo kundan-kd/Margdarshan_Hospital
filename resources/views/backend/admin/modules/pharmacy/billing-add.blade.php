@@ -142,7 +142,7 @@ Billing-add
                           <select id="billingAdd-resDoctor" class="form-select form-select-sm select2-cls  w-100">
                               <option value="" selected>Select</option>
                             @foreach ($doctors as $doctor)
-                                <option value="{{$doctor->id}}">{{$doctor->firstname}} {{$doctor->lastname}}</option>
+                                <option value="{{$doctor->id}}">{{$doctor->name}}</option>
                             @endforeach
                           </select>
                         </div>

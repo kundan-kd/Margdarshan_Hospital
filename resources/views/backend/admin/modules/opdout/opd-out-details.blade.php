@@ -84,7 +84,6 @@
                               $doctors =  \App\Models\User::where('id',$appointments[0]->doctor_id)->get();
                             @endphp --}}
                             <h6 class="text-md fw-medium mt-11 border-bottom pb-8">CONSULTANT DOCTOR</h6>
-                            {{-- <p class="mb-1">{{$doctors[0]->firstname}} {{$doctors[0]->lastname}}</p> --}}
                             <div class="d-flex align-items-center">
                               <p class="mb-0 mx-1">Finding :</p> 
                               <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#add-finding">
@@ -108,11 +107,11 @@
                                     <tbody>
                                       @foreach ($visitsData as $visit)
                                       @php
-                                        $doctor_name = app\Models\User::where('id',$visit->consult_doctor)->get(['firstname','lastname']);
+                                        $doctor_name = app\Models\User::where('id',$visit->consult_doctor)->get(['name']);
                                       @endphp
                                         <tr>
                                         <td>{{$visit->appointment_date}}</td>
-                                        <td>{{$doctor_name[0]->firstname}} {{$doctor_name[0]->lastname}}</td>
+                                        <td>{{$doctor_name[0]->name}}</td>
                                        </tr>
                                       @endforeach
                                     </tbody>
@@ -756,7 +755,7 @@
                <select id="opdOutVisit-consultDoctor" class="form-select form-select-sm select2" oninput="validateField(this.id,'select')">
                       <option value="">Select</option>
                       @foreach ($doctorData as $doctorName)
-                      <option value="{{$doctorName->id}}">{{$doctorName->firstname}} {{$doctorName->lastname}}</option>
+                      <option value="{{$doctorName->id}}">{{$doctorName->name}}</option>
                       @endforeach
               </select>
                <div class="opdOutVisit-consultDoctor_errorCls d-none"></div>

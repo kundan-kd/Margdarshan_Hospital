@@ -15,6 +15,8 @@ use App\Http\Controllers\backend\admin\master\DepartmentController;
 use App\Http\Controllers\backend\admin\master\MedicinecategoryController;
 use App\Http\Controllers\backend\admin\master\MedicinegroupController;
 use App\Http\Controllers\backend\admin\master\PaymentmodeController;
+use App\Http\Controllers\backend\admin\master\RoomnumberController;
+use App\Http\Controllers\backend\admin\master\RoomtypeController;
 use App\Http\Controllers\backend\admin\master\UnitController;
 use App\Http\Controllers\backend\admin\master\UserController;
 use App\Http\Controllers\backend\auth\AuthenticationController;
@@ -181,6 +183,26 @@ Route::post('/bed-delete',[BedController::class,'deleteBedData'])->name('bed.del
 Route::get('/user',[UserController::class,'index'])->name('user.index');
 Route::post('/user-view',[UserController::class,'viewUsers'])->name('user.viewUsers');
 Route::post('/user-add',[UserController::class,'addUser'])->name('user.addUser');
+Route::post('/user-data',[UserController::class,'getUserData'])->name('user.getUserData');
+Route::post('/user-update',[UserController::class,'updateUser'])->name('user.updateUser');
+Route::post('/user-delete',[UserController::class,'deleteUserData'])->name('user.deleteUserData');
+Route::post('/user-opd-room',[UserController::class,'getOPDRoom'])->name('user.getOPDRoom');
+
+Route::get('/roomtype',[RoomtypeController::class,'index'])->name('roomtype.index');
+Route::post('/roomtype-view',[RoomtypeController::class,'viewRoomTypes'])->name('roomtype.viewRoomTypes');
+Route::post('/roomtype-add',[RoomtypeController::class,'addRoomType'])->name('roomtype.addRoomType');
+Route::post('/roomtype-data',[RoomtypeController::class,'getRoomTypeData'])->name('roomtype.getRoomTypeData');
+Route::post('/roomtype-update',[RoomtypeController::class,'updateRoomTypeData'])->name('roomtype.updateRoomTypeData');
+Route::post('/roomtype-status-update',[RoomtypeController::class,'statusUpdate'])->name('roomtype.statusUpdate');
+Route::post('/roomtype-delete',[RoomtypeController::class,'deleteRoomTypeData'])->name('roomtype.deleteRoomTypeData');
+
+Route::get('/roomnum',[RoomnumberController::class,'index'])->name('roomnum.index');
+Route::post('/roomnum-view',[RoomnumberController::class,'viewRoomNums'])->name('roomnum.viewRoomNums');
+Route::post('/roomnum-add',[RoomnumberController::class,'addRoomNum'])->name('roomnum.addRoomNum');
+Route::post('/roomnum-data',[RoomnumberController::class,'getRoomNumData'])->name('roomnum.getRoomNumData');
+Route::post('/roomnum-update',[RoomnumberController::class,'updateRoomNumData'])->name('roomnum.updateRoomNumData');
+Route::post('/roomnum-status-update',[RoomnumberController::class,'statusUpdate'])->name('roomnum.statusUpdate');
+Route::post('/roomnum-delete',[RoomnumberController::class,'deleteRoomNumData'])->name('roomnum.deleteRoomNumData');
 
 Route::get('/billing',[BillingController::class,'index'])->name('billing.index');
 Route::get('/billing-view',[BillingController::class,'billingView'])->name('billing.billingView');

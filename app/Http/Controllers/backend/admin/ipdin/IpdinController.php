@@ -24,7 +24,6 @@ use Yajra\DataTables\Facades\DataTables;
 class IpdinController extends Controller
 {
      public function index(){
-        // $users = User::where('usertype_id',2)->get(['id','firstname','lastname','room_number']);
         return view('backend.admin.modules.ipdin.ipd-in');
     }
     public function ipdInPatientAdd(){
@@ -34,7 +33,7 @@ class IpdinController extends Controller
         $patients = Patient::where('id',$id)->get();
         // $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
-        $doctorData = User::where('status',1)->get(['id','firstname','lastname','department_id']);
+        $doctorData = User::where('status',1)->get(['id','name','department_id']);
         $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
         $medicationData = Medication::where('patient_id',$patients[0]->id)->get();
         $testtypes = TestType::where('status',1)->get();
@@ -246,7 +245,7 @@ class IpdinController extends Controller
                 return $row->appointment_date; //fetched through modal relationship
             })
             ->addColumn('doctor',function($row){
-                return 'Dr. '.$row->doctorData->firstname.' '.$row->doctorData->lastname;
+                return 'Dr. '.$row->doctorData->name;
             })
             ->addColumn('symptons',function($row){
                 return $row->symptoms;
@@ -679,7 +678,7 @@ class IpdinController extends Controller
                 return $row->created_at;
             })
             ->addColumn('name',function($row){
-                return $row->nurseData->firstname;
+                return $row->nurseData->name;
             })
             ->addColumn('note',function($row){
                 return $row->note;

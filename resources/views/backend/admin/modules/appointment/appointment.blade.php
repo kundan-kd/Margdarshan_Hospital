@@ -119,7 +119,7 @@ $ddate = date("d/m/yy");
               <select id="doctorAppt" class="form-select form-select-sm select2-cls" onchange="getDocRoomNum(this.value)" style="width: 100%" oninput="validateField(this.id,'select')">
                 <option value="">Select Doctor</option>
                 @foreach ($doctors as $doctor)
-                <option value="{{$doctor->id}}">Dr. {{$doctor->firstname}} {{$doctor->lastname}}</option>
+                <option value="{{$doctor->id}}">Dr. {{$doctor->name}}</option>
                 @endforeach
               </select>
               <div class="doctorAppt_errorCls d-none"></div>

@@ -7,7 +7,7 @@ User
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
     <h6 class="fw-normal mb-0">User</h6>
     <div class="btns">
-      <a class="btn btn-primary-600  btn-sm fw-normal bed-add" data-bs-toggle="modal" data-bs-target="#add-user"><i class="ri-add-line "></i> Add New User</a>
+      <a class="btn btn-primary-600  btn-sm fw-normal user-add" data-bs-toggle="modal" data-bs-target="#add-user"><i class="ri-add-line "></i> Add New User</a>
     </div>
   </div>
  <!-- user model start -->
@@ -24,28 +24,46 @@ User
             <input type="hidden" id="userId">
             <div class="col-6">
               <label class="form-label fw-normal" for="user-departmentId">Department</label>
-                <select class="form-select form-select-sm select2-cls" id="user-departmentId" style="width: 100%" oninput="validateField(this.id,'select')">
+                <select class="form-select form-select-sm select2-cls" id="user-departmentId" style="width: 100%" oninput="checkOPD();validateField(this.id,'select')">
                   <option value="">Select</option>
-                  <option value="Married">Married</option>
-                  <option value="UnMarried">UnMarried</option>
+                  @foreach ($departments as $dept)
+                    <option value="{{$dept->id}}">{{$dept->name}}</option>
+                  @endforeach
                 </select>            
               <div class="user-departmentId_errorCls d-none"></div>
             </div>
             <div class="col-6">
               <label class="form-label fw-normal" for="user-userType">User Type</label>
-                <select class="form-select form-select-sm select2-cls" id="user-userType" style="width: 100%" oninput="validateField(this.id,'select')">
+                <select class="form-select form-select-sm select2-cls" id="user-userType" style="width: 100%" oninput="checkOPD();validateField(this.id,'select')">
                   <option value="">Select</option>
-                  <option value="Married">Married</option>
-                  <option value="UnMarried">UnMarried</option>
+                  @foreach ($userTypes as $usertype)
+                    <option value="{{$usertype->id}}">{{$usertype->name}}</option>
+                  @endforeach
                 </select>                    
                 <div class="user-userType_errorCls d-none"></div>
             </div>
+
+            <div class="col-6 opd-cls d-none">
+              <label class="form-label fw-normal" for="user-fee">Doctor Fee</label>
+              <input type="text" id="user-fee" class="form-control form-control-sm" placeholder="Enter Doctor Fee">
+            </div>
+            <div class="col-6 opd-cls d-none">
+              <label class="form-label fw-normal" for="user-opdRoom">Select OPD Room</label>
+                <select class="form-select form-select-sm select2-cls" id="user-opdRoom" style="width: 100%">
+                  <option value="">No Room</option>
+                  {{-- @foreach ($opd_rooms as $rooms)
+                    <option value="{{$rooms->id}}">{{$rooms->room_num}}</option>
+                  @endforeach --}}
+                </select>  
+            </div>
+
             <div class="col-6">
               <label class="form-label fw-normal" for="user-bloodType">Blood Type</label>
                 <select class="form-select form-select-sm select2-cls" id="user-bloodType" style="width: 100%" oninput="validateField(this.id,'select')">
                   <option value="">Select</option>
-                  <option value="Married">Married</option>
-                  <option value="UnMarried">UnMarried</option>
+                  @foreach ($bloodTypes as $blodType)
+                    <option value="{{$blodType->id}}">{{$blodType->name}}</option>
+                  @endforeach
                 </select>
                 <div class="user-bloodType_errorCls d-none"></div>  
             </div>
@@ -76,12 +94,12 @@ User
             </div>
             <div class="col-6">
               <label class="form-label fw-normal" for="user-pan">PAN</label>
-              <input type="text" id="user-pan" class="form-control form-control-sm" placeholder="Enter PAN Number" oninput="validateField(this.id,'input')">
+              <input type="text" id="user-pan" class="form-control form-control-sm" placeholder="Enter PAN Number" oninput="this.value=this.value.slice(0,10); validateField(this.id,'input')">
               <div class="user-pan_errorCls d-none"></div>
             </div>
             <div class="col-6">
               <label class="form-label fw-normal" for="user-adhar">Adhar No.</label>
-              <input type="text" id="user-adhar" class="form-control form-control-sm" placeholder="Enter Adhar Number" oninput="validateField(this.id,'input')">
+              <input type="text" id="user-adhar" class="form-control form-control-sm" placeholder="Enter Adhar Number" oninput="this.value=this.value.slice(0,12); validateField(this.id,'input')">
               <div class="user-adhar_errorCls d-none"></div>
             </div>
             <div class="col-6">
@@ -91,7 +109,7 @@ User
             </div>
             <div class="col-6">
               <label class="form-label fw-normal" for="user-mobile">Phone No.</label>
-              <input type="text" id="user-mobile" class="form-control form-control-sm" placeholder="Enter Phone Number" oninput="validateField(this.id,'mobile')">
+              <input type="text" id="user-mobile" class="form-control form-control-sm" placeholder="Enter Phone Number" oninput="this.value=this.value.slice(0,10); validateField(this.id,'mobile')">
               <div class="user-mobile_errorCls d-none"></div>
             </div>
             <div class="col-6">
@@ -125,6 +143,7 @@ User
         <table class="table bordered-table mb-0" id="user-table" data-page-length='10'>
           <thead>
             <tr>
+              <th scope="col">Staff Id</th>
               <th scope="col">Name</th>
               <th scope="col">Phone</th>
               <th scope="col">Email ID</th>
@@ -153,6 +172,10 @@ User
 
      const viewUsers = "{{route('user.viewUsers')}}";
      const addUser = "{{route('user.addUser')}}";
+     const getUserData = "{{route('user.getUserData')}}";
+     const updateUser = "{{route('user.updateUser')}}";
+     const deleteUserData = "{{route('user.deleteUserData')}}";
+     const getOPDRoom = "{{route('user.getOPDRoom')}}";
 </script>
   {{-----------external js files added for page functions------------}}
   <script src="{{asset('backend/assets/js/custom/admin/master/user.js')}}"></script>

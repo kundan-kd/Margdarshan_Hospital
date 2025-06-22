@@ -17,9 +17,10 @@ return new class extends Migration
             $table->integer('bed_type_id')->nullable();
             $table->integer('bed_group_id')->nullable();
             $table->string('floor',10)->nullable();
+            $table->double('amount')->default(0);
+            $table->string('current_status',20)->default('vacant');
             $table->integer('occupied_by_patient_id')->nullable();
-            $table->string('current_status',20)->default('Vacant');
-            $table->string('previous_status',20)->nullable();
+            $table->string('occupied_date',30)->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();
             $table->softDeletes();

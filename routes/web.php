@@ -262,6 +262,9 @@ Route::post('/ipd-in-patient-view',[IpdinController::class,'viewPatients'])->nam
 Route::post('/ipd-patient-data',[IpdinController::class,'getIpdPatientData'])->name('ipd-getIpdPatientData');
 Route::post('/ipd-patient-update',[IpdinController::class,'ipdPatientDataUpdate'])->name('ipd-ipdPatientDataUpdate');
 Route::post('/ipd-patient-delete',[IpdinController::class,'ipdPatientDataDelete'])->name('ipd-ipdPatientDataDelete');
+Route::post('/ipd-patient-bed-detail',[IpdinController::class,'getBedDetailsIpd'])->name('ipd-getBedDetailsIpd');
+Route::post('/ipd-patient-bed-data',[IpdinController::class,'getBedDataIpd'])->name('ipd-getBedDataIpd');
+
 Route::post('/ipd-in-visit-add',[IpdinController::class,'ipdVisitSubmit'])->name('ipd-visit.ipdVisitSubmit');
 Route::post('/ipd-in-visit-view',[IpdinController::class,'viewIpdVisit'])->name('ipd-visit.viewIpdVisit');
 Route::post('/ipd-in-visit-data',[IpdinController::class,'getIpdVisitData'])->name('ipd-visit.getIpdVisitData');
@@ -307,6 +310,9 @@ Route::post('/emergency-patient-discharge',[EmergencyController::class,'patientD
 Route::post('/emergency-patient-data',[EmergencyController::class,'getEmergencyPatientData'])->name('emergency-getEmergencyPatientData');
 Route::post('/emergency-patient-update',[EmergencyController::class,'emergencyPatientDataUpdate'])->name('emergency-emergencyPatientDataUpdate');
 Route::post('/emergency-patient-delete',[EmergencyController::class,'emergencyPatientDataDelete'])->name('emergency-emergencyPatientDataDelete');
+Route::post('/emergency-patient-bed-data',[EmergencyController::class,'getBedDatasEmergency'])->name('emergency-getBedDatasEmergency');
+Route::post('/emergency-patient-bed-details',[EmergencyController::class,'getBedDetailsEmergency'])->name('emergency-getBedDetailsEmergency');
+
 Route::post('/emergency-visit-add',[EmergencyController::class,'emergencyVisitSubmit'])->name('emergency-visit.emergencyVisitSubmit');
 Route::post('/emergency-visit-view',[EmergencyController::class,'viewEmergencyVisit'])->name('emergency-visit.viewEmergencyVisit');
 Route::post('/emergency-visit-data',[EmergencyController::class,'getEmergencyVisitData'])->name('emergency-visit.getEmergencyVisitData');

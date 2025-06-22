@@ -69,60 +69,64 @@ class UserController extends Controller
         }
     }
     public function addUser(Request $request){
-        // dd($request->all());
-        if($request->ajax()){
-            $validator = Validator::make($request->all(), [
-                'departmentID' => 'required',
-                'userType' => 'required',
-                'bloodType' => 'required',
-                'fee' => 'nullable',
-                'opdRoom' => 'nullable',
-                'name' => 'required',
-                'fname' => 'required',
-                'mname' => 'required',
-                'dob' => 'required',
-                'doj' => 'required',
-                'pan' => 'required',
-                'adhar' => 'required',
-                'mobile' => 'required',
-                'email' => 'required',
-                'pass' => 'required'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-            $month = date('m'); // Gets the current month (e.g., "05")
-            $year = date('y'); // Gets the current year (e.g., "25")
-            $user = new User();
-            $user->department_id = $request->departmentID;
-            $user->usertype_id = $request->userType;
-            $user->bloodtype_id = $request->bloodType;
-            $user->fee = $request->fee ?? 0; // Default to 0 if fee is not provided
-            $user->room_number = $request->opdRoom ?? null; // Default to null if opdRoom is not provided
-            $user->name = $request->name;
-            $user->fname = $request->fname;
-            $user->mname = $request->mname;
-            $user->dob = $request->dob;
-            $user->doj = $request->doj;
-            $user->pan = $request->pan;
-            $user->adhar = $request->adhar;
-            $user->mobile = $request->mobile;
-            $user->email = $request->email;
-            $user->password = Hash::make($request->pass);
-            $user->plain_password = $request->pass;
-            if($user->save()){
-                $user->staff_id = "MHST". $month.$year.$user->id;
-                $user->save();
-                RoomNumber::where('id',$request->opdRoom)->update([
-                    'current_status' => 'occupied',
-                    'occupied_by' => 'doctor',
-                    'occupied_by_id' => $user->id
+        $check_user = User::where('email',$request->email)->exists();
+        if($check_user == false){
+            if($request->ajax()){
+                $validator = Validator::make($request->all(), [
+                    'departmentID' => 'required',
+                    'userType' => 'required',
+                    'bloodType' => 'required',
+                    'fee' => 'nullable',
+                    'opdRoom' => 'nullable',
+                    'name' => 'required',
+                    'fname' => 'required',
+                    'mname' => 'required',
+                    'dob' => 'required',
+                    'doj' => 'required',
+                    'pan' => 'required',
+                    'adhar' => 'required',
+                    'mobile' => 'required',
+                    'email' => 'required',
+                    'pass' => 'required'
                 ]);
-                return response()->json(['success' => 'User created successfully.']);
-            } else {
-                return response()->json(['error' => 'Failed to create user.'], 500);
+
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
+                $month = date('m'); // Gets the current month (e.g., "05")
+                $year = date('y'); // Gets the current year (e.g., "25")
+                $user = new User();
+                $user->department_id = $request->departmentID;
+                $user->usertype_id = $request->userType;
+                $user->bloodtype_id = $request->bloodType;
+                $user->fee = $request->fee ?? 0; // Default to 0 if fee is not provided
+                $user->room_number = $request->opdRoom ?? null; // Default to null if opdRoom is not provided
+                $user->name = $request->name;
+                $user->fname = $request->fname;
+                $user->mname = $request->mname;
+                $user->dob = $request->dob;
+                $user->doj = $request->doj;
+                $user->pan = $request->pan;
+                $user->adhar = $request->adhar;
+                $user->mobile = $request->mobile;
+                $user->email = $request->email;
+                $user->password = Hash::make($request->pass);
+                $user->plain_password = $request->pass;
+                if($user->save()){
+                    $user->staff_id = "MHST". $month.$year.$user->id;
+                    $user->save();
+                    RoomNumber::where('id',$request->opdRoom)->update([
+                        'current_status' => 'occupied',
+                        'occupied_by' => 'doctor',
+                        'occupied_by_id' => $user->id
+                    ]);
+                    return response()->json(['success' => 'User created successfully.']);
+                } else {
+                    return response()->json(['error' => 'Failed to create user.'], 500);
+                }
             }
+        }else{
+            return response()->json(['already_found'=>'User with this email id already found'],200);
         }
     }
     public function getUserData(Request $request){
@@ -186,8 +190,14 @@ class UserController extends Controller
         }
     }
     public function getOPDRoom(Request $request){
-        $getRoomNum = User::where('id', $request->id)->get('room_number');
-        $getRoomData = RoomNumber::where('id', $getRoomNum[0]->room_number)->get(['id','room_num']);
+        if($request->id != null || $request->id != ''){
+            // If an ID is provided, fetch the specific user's room number
+            $getRoomNum = User::where('id', $request->id)->value('room_number');
+            $getRoomData = RoomNumber::where('id', $getRoomNum)->get(['id','room_num']);
+        } else {
+            // If no ID is provided, return an empty room data
+            $getRoomData = [];
+        }
         $getData = RoomNumber::where('status', 1)->where('current_status','vacant')->where('roomtype_id', 6)->get();
         return response()->json(['success' => 'OPD Rooms fetched successfully', 'data' => $getData,'roomData'=>$getRoomData], 200);
     }

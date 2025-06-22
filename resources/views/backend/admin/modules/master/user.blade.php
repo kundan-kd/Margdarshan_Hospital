@@ -23,16 +23,6 @@ User
           <div class="row gy-3">
             <input type="hidden" id="userId">
             <div class="col-6">
-              <label class="form-label fw-normal" for="user-departmentId">Department</label>
-                <select class="form-select form-select-sm select2-cls" id="user-departmentId" style="width: 100%" oninput="checkOPD();validateField(this.id,'select')">
-                  <option value="">Select</option>
-                  @foreach ($departments as $dept)
-                    <option value="{{$dept->id}}">{{$dept->name}}</option>
-                  @endforeach
-                </select>            
-              <div class="user-departmentId_errorCls d-none"></div>
-            </div>
-            <div class="col-6">
               <label class="form-label fw-normal" for="user-userType">User Type</label>
                 <select class="form-select form-select-sm select2-cls" id="user-userType" style="width: 100%" oninput="checkOPD();validateField(this.id,'select')">
                   <option value="">Select</option>
@@ -42,7 +32,16 @@ User
                 </select>                    
                 <div class="user-userType_errorCls d-none"></div>
             </div>
-
+            <div class="col-6">
+              <label class="form-label fw-normal" for="user-departmentId">Department</label>
+                <select class="form-select form-select-sm select2-cls" id="user-departmentId" style="width: 100%" oninput="checkOPD();validateField(this.id,'select')">
+                  <option value="">Select</option>
+                  @foreach ($departments as $dept)
+                    <option value="{{$dept->id}}">{{$dept->name}}</option>
+                  @endforeach
+                </select>            
+              <div class="user-departmentId_errorCls d-none"></div>
+            </div>
             <div class="col-6 opd-cls d-none">
               <label class="form-label fw-normal" for="user-fee">Doctor Fee</label>
               <input type="text" id="user-fee" class="form-control form-control-sm" placeholder="Enter Doctor Fee">

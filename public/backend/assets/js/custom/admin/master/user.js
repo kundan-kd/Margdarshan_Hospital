@@ -69,10 +69,11 @@ $('.user-add').on('click',function(e){
     $('.opd-cls').addClass('d-none');
     });
 function checkOPD(){
-    let dept_id = $('#user-departmentId').val();
     let userType = $('#user-userType').val();
-    if(dept_id == 11 && userType == 2){
+    if( userType == 2){
         $('.opd-cls').removeClass('d-none');
+    }else{
+        $('.opd-cls').addClass('d-none');
     }
     opdRoomData();
 }
@@ -87,9 +88,14 @@ function opdRoomData(id){
             id:id
         },
         success:function(response){
+            console.log(response);
             if(response.success){
                 $('#user-opdRoom').empty();
                 $('#user-opdRoom').append('<option value="">Select OPD Room</option>');
+                if(response.roomData.length > 0){
+                let usedRoom = response.roomData[0];
+                $('#user-opdRoom').append('<option selected value="'+usedRoom.id+'">'+usedRoom.room_num+'</option>');
+                }
                 $.each(response.data,function(key,value){
                     $('#user-opdRoom').append('<option value="'+value.id+'">'+value.room_num+'</option>');
                 });
@@ -152,6 +158,8 @@ $('#addUser-form').on('submit',function(e){
                             $('#addUser-form')[0].reset();
                             $('#user-table').DataTable().ajax.reload();
                             toastSuccessAlert('user added successfully');
+                        } else if(response.already_found) {
+                            toastErrorAlert(response.already_found);    
                         }else{
                             toastErrorAlert('error found!');
                         }
@@ -179,11 +187,11 @@ function userEdit(id){
         },
         data:{id:id},
         success:function(response){
-            console.log(response);
+          //  console.log(response);
             if(response.success){
                 getData = response.data[0];
                 getRoom = response.roomData[0];
-                console.log(getRoom);
+             //   console.log(getRoom);
                 $('.user-title').html('Update User');
                 $('#userId').val(getData.id);
                 $('#user-departmentId').val(getData.department_id);
@@ -205,12 +213,12 @@ function userEdit(id){
                 $('#add-user').modal('show');
                 $('.userAddSubmit').addClass('d-none');  
                 $('.userAddUpdate').removeClass('d-none');  
-                if(getData.department_id == 11 && getData.usertype_id == 2){
+                if(getData.usertype_id == 2){
                     $('.opd-cls').removeClass('d-none');
                     // $('#user-opdRoom').append('<option value="">Newwwww</option>');
                     
-                    $('#user-opdRoom').append('<option value="'+getRoom.id+'">'+getRoom.room_num+'</option>');
-                    $('#user-opdRoom').trigger('change'); // Notify Select2 of the update
+                    // $('#user-opdRoom').append('<option value="'+getRoom.id+'">'+getRoom.room_num+'</option>');
+                    // $('#user-opdRoom').trigger('change'); // Notify Select2 of the update
                 }else{
                     $('.opd-cls').addClass('d-none');
                 }

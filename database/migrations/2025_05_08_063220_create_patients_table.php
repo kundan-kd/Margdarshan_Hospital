@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('alt_mobile',30)->nullable();
             $table->string('known_allergies',200)->nullable();
             $table->text('address')->nullable();
+            $table->integer('bed_id')->nullable();
             $table->integer('status')->default(1);
             $table->string('current_status',20)->nullable();
             $table->timestamps();

@@ -44,22 +44,25 @@ class UnitController extends Controller
         }
     }
      public function addUnit(Request $request){
-        //dd($request);
-        $validator = Validator::make($request->all(),[
-            'unitname' => 'required',
-            'unit' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-        }
-        $units = new Unit();
-        $units->name = $request->unitname;
-        $units->unit = $request->unit;
-        if($units->save()){
-            return response()->json(['success'=>'Unit added successfully'],201);
+        $check_unit = Unit::where('name',$request->unitname)->where('unit',$request->unit)->exists();
+        if($check_unit == false){
+            $validator = Validator::make($request->all(),[
+                'unitname' => 'required',
+                'unit' => 'required'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+            }
+            $units = new Unit();
+            $units->name = $request->unitname;
+            $units->unit = $request->unit;
+            if($units->save()){
+                return response()->json(['success'=>'Unit added successfully'],201);
+            }else{
+                return response()->json(['error_success'=>'Unit Category not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'Unit Category not added'],500);
-
+            return response()->json(['already_found'=>'This Unit already found'],200);
         }
     }
     public function getUnitData(Request $request){
@@ -67,12 +70,15 @@ class UnitController extends Controller
         return response()->json(['success'=>'Unit data fetched successfully','data'=>$getData],200);
     }
     public function updateUnitData(Request $request){
-        // dd($request->all());
-        Unit::where('id',$request->id)->update([
-            'name' => $request->unitname,
-            'unit' => $request->unit
-        ]);
-       return response()->json(['success' => 'Unit updated successfully'],200);
+        $check_unit = Unit::where('name',$request->unitname)->where('unit',$request->unit)->exists();
+            if($check_unit == false){        Unit::where('id',$request->id)->update([
+                'name' => $request->unitname,
+                'unit' => $request->unit
+            ]);
+            return response()->json(['success' => 'Unit updated successfully'],200);
+        }else{
+            return response()->json(['already_found'=>'This Unit already found'],200);
+        }    
     }
     public function statusUpdate(Request $request){
         $unitstatus = Unit::where('id',$request->id)->get(['status']);

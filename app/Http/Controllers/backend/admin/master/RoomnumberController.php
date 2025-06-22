@@ -25,6 +25,9 @@ class RoomnumberController extends Controller
             ->addColumn('roomnum',function($row){
                 return $row->room_num;
             })
+            ->addColumn('current_status', function($row) {
+                return $row->current_status === 'vacant'? '<span class="text-success">Vacant</span>': '<span class="text-danger">Occupied</span>';
+            })
             ->addColumn('status',function($row){
                 $ischecked = $row->status == 1 ? 'checked':'';
                 return '<div class="form-switch switch-primary">
@@ -39,7 +42,7 @@ class RoomnumberController extends Controller
                   <iconify-icon icon="mingcute:delete-2-line" onclick="roomNumDelete('.$row->id.')"></iconify-icon>
                 </a>';
             })
-            ->rawColumns(['status','action'])
+            ->rawColumns(['current_status','status','action'])
             ->make(true);
         }
     }
@@ -71,12 +74,16 @@ class RoomnumberController extends Controller
         return response()->json(['success'=>'Room Number data fetched successfully','data'=>$getData],200);
     }
     public function updateRoomNumData(Request $request){
+        $room_check = RoomNumber::where('roomtype_id',$request->roomType)->where('room_num',$request->roomNum)->exists();
+        if($room_check == false){
             RoomNumber::where('id',$request->id)->update([
                 'roomtype_id' => $request->roomType,
                 'room_num' => $request->roomNum
             ]);
             return response()->json(['success' => 'Room Number updated successfully'],200);
-           
+        }else{
+            return response()->json(['already_found' => 'This Room configuration already exists'],200);
+        }     
     }
     public function statusUpdate(Request $request){
         $roomnum_status = RoomNumber::where('id',$request->id)->get(['status']);

@@ -64,8 +64,13 @@ $('.vendor-add').on('click',function(e){
     $('.vendor-title').html('Add Vendor');
     $('#vendorID').val('');
     $('#vendorName').val('');
+    $('#vendorPhone').val('');
+    $('#vendorEmail').val('');
+    $('#vendorAddress').val('');
+    $('#vendorGST').val('');
     $('.vendorUpdate').addClass('d-none');
     $('.vendorSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 
 $('#vendorForm').on('submit',function(e){
@@ -77,7 +82,6 @@ $('#vendorForm').on('submit',function(e){
    let address = $('#vendorAddress').val();
    let gst = $('#vendorGST').val();
    if(name == '' || phone == '' || email == '' || address == '' || gst == ''){
-    $('#vendorName').focus();
     $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
    }else{
         if ($('.vendorUpdate').is(':visible')) {
@@ -97,6 +101,8 @@ $('#vendorForm').on('submit',function(e){
                         $('#vendorForm')[0].reset();
                         $('#vendor-table').DataTable().ajax.reload();
                         toastSuccessAlert('Vendor added successfully');
+                    } else if(response.already_found) {
+                        toastErrorAlert(response.already_found);
                     }else{
                         toastErrorAlert('error found!');
                     }
@@ -161,6 +167,8 @@ function vendorUpdate(id){
                     $('#vendorForm')[0].reset();
                     $('#vendor-table').DataTable().ajax.reload();
                     toastSuccessAlert('Vendor updated successfully');
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);    
                 } else {
                     toastErrorAlert("error");
                 }

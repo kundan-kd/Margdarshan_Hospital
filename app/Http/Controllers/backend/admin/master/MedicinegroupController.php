@@ -41,20 +41,23 @@ class MedicinegroupController extends Controller
         }
     }
      public function addMedicineGroup(Request $request){
-        //dd($request);
-        $validator = Validator::make($request->all(),[
-            'group' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-        }
-        $medicinegroup = new MedicineGroup();
-        $medicinegroup->name = $request->group;
-        if($medicinegroup->save()){
-            return response()->json(['success'=>'Medicine Group added successfully'],201);
+        $check_medGroyp = MedicineGroup::where('name',$request->group)->exists();
+        if($check_medGroyp == false){
+            $validator = Validator::make($request->all(),[
+                'group' => 'required'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+            }
+            $medicinegroup = new MedicineGroup();
+            $medicinegroup->name = $request->group;
+            if($medicinegroup->save()){
+                return response()->json(['success'=>'Medicine Group added successfully'],201);
+            }else{
+                return response()->json(['error_success'=>'Medicine Group not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'Medicine Group not added'],500);
-
+            return response()->json(['already_found'=>'This Medicine Group already found'],200);
         }
     }
     public function getMedicineGroupData(Request $request){
@@ -62,10 +65,15 @@ class MedicinegroupController extends Controller
         return response()->json(['success'=>'Medicine Group fetched successfully','data'=>$getData],200);
     }
     public function updateMedicineGroupData(Request $request){
-        MedicineGroup::where('id',$request->id)->update([
-            'name' => $request->group
-        ]);
-       return response()->json(['success' => 'Medicine Group updated successfully'],200);
+        $check_medGroyp = MedicineGroup::where('name',$request->group)->exists();
+        if($check_medGroyp == false){
+            MedicineGroup::where('id',$request->id)->update([
+                'name' => $request->group
+            ]);
+            return response()->json(['success' => 'Medicine Group updated successfully'],200);
+        }else{
+            return response()->json(['already_found'=>'This Medicine Group already found'],200);
+        }    
     }
     public function statusUpdate(Request $request){
         $groupstatus = MedicineGroup::where('id',$request->id)->get(['status']);

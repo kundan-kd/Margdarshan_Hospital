@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\Department;
 use App\Models\Patient;
 use App\Models\PaymentMode;
+use App\Models\RoomNumber;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -114,8 +115,9 @@ class AppointmentController extends Controller
         return response()->json(['success'=>'Patient details fetched successfully','data'=>$getData],200);
     }
     public function getDoctorData(Request $request){
-        $getData = User::where('id',$request->id)->get(['opd_fee','room_number']);
-        return response()->json(['success'=>'Doctor details fetched successfully','data'=>$getData],200);
+        $getData = User::where('id',$request->id)->get(['fee','room_number']);
+        $roomNum = RoomNumber::where('id',$getData[0]->room_number)->get(['room_num']);
+        return response()->json(['success'=>'Doctor details fetched successfully','data'=>$getData,'roomNum'=>$roomNum],200);
     }
     public function appointmentBook(Request $request){
         $validator = Validator::make($request->all(),[

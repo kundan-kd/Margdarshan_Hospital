@@ -41,20 +41,23 @@ class BloodtypeController extends Controller
         }
     }
      public function addBloodType(Request $request){
-        //dd($request);
-        $validator = Validator::make($request->all(),[
-            'bloodType' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-        }
-        $bloodTypes = new BloodType();
-        $bloodTypes->name = $request->bloodType;
-        if($bloodTypes->save()){
-            return response()->json(['success'=>'blood Type added successfully'],201);
+        $check_bloodtype = BloodType::where('name',$request->bloodType)->exists();
+        if($check_bloodtype == false){
+            $validator = Validator::make($request->all(),[
+                'bloodType' => 'required'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+            }
+            $bloodTypes = new BloodType();
+            $bloodTypes->name = $request->bloodType;
+            if($bloodTypes->save()){
+                return response()->json(['success'=>'blood Type added successfully'],201);
+            }else{
+                return response()->json(['error_success'=>'Blood Type Category not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'Blood Type Category not added'],500);
-
+            return response()->json(['already_found'=>'This Blood Type already found'],200);
         }
     }
     public function getBloodTypeData(Request $request){
@@ -62,10 +65,15 @@ class BloodtypeController extends Controller
         return response()->json(['success'=>'Blood Type data fetched successfully','data'=>$getData],200);
     }
     public function updateBloodTypeData(Request $request){
-        BloodType::where('id',$request->id)->update([
-            'name' => $request->bloodType
-        ]);
-       return response()->json(['success' => 'Blood Type updated successfully'],200);
+        $check_bloodtype = BloodType::where('name',$request->bloodType)->exists();
+        if($check_bloodtype == false){
+            BloodType::where('id',$request->id)->update([
+                'name' => $request->bloodType
+            ]);
+            return response()->json(['success' => 'Blood Type updated successfully'],200);
+        }else{
+            return response()->json(['already_found'=>'This Blood Type already found'],200);
+        }    
     }
     public function statusUpdate(Request $request){
         $bloodTypestatus = BloodType::where('id',$request->id)->get(['status']);

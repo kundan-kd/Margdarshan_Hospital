@@ -44,6 +44,7 @@ $('.userType-add').on('click',function(e){
     $('#userTypeName').val('');
     $('.addUserTypeUpdate').addClass('d-none');
     $('.addUserTypeSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 // ------usertype add starts----
 $('#addUserTypeForm').on('submit',function(e){
@@ -64,13 +65,15 @@ $('#addUserTypeForm').on('submit',function(e){
         },
         data:{usertype:usertype},
         success:function(response){
-            console.log(response);
+            // console.log(response);
             if(response.success){
                 $('#addUserTypeModel').modal('hide');
                 $('#addUserTypeForm').removeClass('was-validated');
                 $('#addUserTypeForm')[0].reset();
                 $('#usertype-table').DataTable().ajax.reload();
                 toastSuccessAlert('User Type added successfully');
+            } else if(response.already_found) {
+                toastErrorAlert(response.already_found);    
             }else{
                 toastErrorAlert('error found!');
             }
@@ -94,10 +97,10 @@ $.ajax({
     },
     data:{id:id},
     success:function(response){
-        console.log(response);
+        // console.log(response);
         if(response.success){
             getData = response.data[0];
-            console.log(getData);
+            // console.log(getData);
             $('.userType-title').html('Update User Type');
             $('#userTypeNameID').val(getData.id);
             $('#userTypeName').val(getData.name);
@@ -133,6 +136,8 @@ function userTypeUpdate(id){
                     $('#addUserTypeForm')[0].reset();
                     $('#usertype-table').DataTable().ajax.reload();
                     toastSuccessAlert('User Type updated successfully');
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);
                 } else {
                     toastErrorAlert("error");
                 }

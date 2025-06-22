@@ -41,20 +41,23 @@ class CompanyController extends Controller
         }
     }
      public function addCompany(Request $request){
-        //dd($request);
-        $validator = Validator::make($request->all(),[
-            'company' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-        }
-        $companys = new Company();
-        $companys->name = $request->company;
-        if($companys->save()){
-            return response()->json(['success'=>'Company added successfully'],201);
+        $check_company = Company::where('name',$request->company)->exists();
+        if($check_company == false){
+            $validator = Validator::make($request->all(),[
+                'company' => 'required'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+            }
+            $companys = new Company();
+            $companys->name = $request->company;
+            if($companys->save()){
+                return response()->json(['success'=>'Company added successfully'],201);
+            }else{
+                return response()->json(['error_success'=>'Company Category not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'Company Category not added'],500);
-
+            return response()->json(['already_found'=>'This Company already found'],200);
         }
     }
     public function getCompanyData(Request $request){
@@ -62,11 +65,15 @@ class CompanyController extends Controller
         return response()->json(['success'=>'Company data fetched successfully','data'=>$getData],200);
     }
     public function updateCompanyData(Request $request){
-        // dd($request->all());
-        Company::where('id',$request->id)->update([
-            'name' => $request->company
-        ]);
-       return response()->json(['success' => 'Company updated successfully'],200);
+        $check_company = Company::where('name',$request->company)->exists();
+        if($check_company == false){
+            Company::where('id',$request->id)->update([
+                'name' => $request->company
+            ]);
+            return response()->json(['success' => 'Company updated successfully'],200);
+        }else{
+            return response()->json(['already_found'=>'This Company already found'],200);
+        }
     }
     public function statusUpdate(Request $request){
         $companystatus = Company::where('id',$request->id)->get(['status']);

@@ -44,6 +44,7 @@ $('.medicineCategory-add').on('click',function(e){
     $('#medicineCategoryName').val('');
     $('.medicineCategoryUpdate').addClass('d-none');
     $('.medicineCategorySubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 
 $('#medicineCategoryForm').on('submit',function(e){
@@ -70,6 +71,8 @@ $('#medicineCategoryForm').on('submit',function(e){
                         $('#medicineCategoryForm')[0].reset();
                         $('#medicineCategory-table').DataTable().ajax.reload();
                         toastSuccessAlert('Medicine category added successfully');
+                    } else if(response.already_found) {
+                        toastErrorAlert(response.already_found);    
                     }else{
                         toastErrorAlert('error found!');
                     }
@@ -129,6 +132,8 @@ function medicineCategoryUpdate(id){
                     $('#medicineCategoryForm')[0].reset();
                     $('#medicineCategory-table').DataTable().ajax.reload();
                     toastSuccessAlert('Modicine Category updated successfully');
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);    
                 } else {
                     toastErrorAlert("error");
                 }

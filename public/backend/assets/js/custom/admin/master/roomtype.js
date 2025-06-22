@@ -42,6 +42,7 @@ $('.roomType-add').on('click',function(e){
     $('#roomTypeName').val('');
     $('.roomTypeUpdate').addClass('d-none');
     $('.roomTypeSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 // ------roomtype add starts----
 $('#addRoomTypeForm').on('submit',function(e){

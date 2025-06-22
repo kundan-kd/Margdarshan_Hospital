@@ -39,20 +39,23 @@ class PaymentmodeController extends Controller
         }
     }
     public function addPaymentMode(Request $request){
-        //dd($request);
-        $validator = Validator::make($request->all(),[
-            'paymentmode' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-        }
-        $paymentmode = new PaymentMode();
-        $paymentmode->name = $request->paymentmode;
-        if($paymentmode->save()){
-            return response()->json(['success'=>'Payment Mode added successfully'],201);
+        $check_pmode = PaymentMode::where('name',$request->paymentmode)->exists();
+        if($check_pmode == false){
+            $validator = Validator::make($request->all(),[
+                'paymentmode' => 'required'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+            }
+            $paymentmode = new PaymentMode();
+            $paymentmode->name = $request->paymentmode;
+            if($paymentmode->save()){
+                return response()->json(['success'=>'Payment Mode added successfully'],201);
+            }else{
+                return response()->json(['error_success'=>'Payment Mode not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'Payment Mode not added'],500);
-
+            return response()->json(['already_found'=>'This Payment Mode already found'],200);
         }
     }
 
@@ -61,10 +64,15 @@ class PaymentmodeController extends Controller
         return response()->json(['success'=>'Payment Mode fetched successfully','data'=>$getData],200);
     }
     public function updatePaymentModeData(Request $request){
-        PaymentMode::where('id',$request->id)->update([
-            'name' => $request->paymentmode
-        ]);
-       return response()->json(['success' => 'Payment Mode updated successfully'],200);
+        $check_pmode = PaymentMode::where('name',$request->paymentmode)->exists();
+        if($check_pmode == false){
+            PaymentMode::where('id',$request->id)->update([
+                'name' => $request->paymentmode
+            ]);
+            return response()->json(['success' => 'Payment Mode updated successfully'],200);
+        }else{
+            return response()->json(['already_found'=>'This Payment Mode already found'],200);
+        }
     }
     public function statusUpdate(Request $request){
         $paymentmode_status = PaymentMode::where('id',$request->id)->get(['status']);

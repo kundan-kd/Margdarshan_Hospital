@@ -41,31 +41,39 @@ class MedicinecategoryController extends Controller
         }
     }
      public function addMedicineCategory(Request $request){
-        //dd($request);
-        $validator = Validator::make($request->all(),[
-            'category' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-        }
-        $medicinecategory = new MedicineCategory();
-        $medicinecategory->name = $request->category;
-        if($medicinecategory->save()){
-            return response()->json(['success'=>'Medicine Category added successfully'],201);
+        $check_medCat = MedicineCategory::where('name',$request->category)->exists();
+        if($check_medCat == false){
+            $validator = Validator::make($request->all(),[
+                'category' => 'required'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+            }
+            $medicinecategory = new MedicineCategory();
+            $medicinecategory->name = $request->category;
+            if($medicinecategory->save()){
+                return response()->json(['success'=>'Medicine Category added successfully'],201);
+            }else{
+                return response()->json(['error_success'=>'Medicine Category not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'Medicine Category not added'],500);
-
-        }
+            return response()->json(['already_found'=>'This Medicine Category already found'],200);
+        }    
     }
     public function getMedicineCategoryData(Request $request){
         $getData = MedicineCategory::where('id',$request->id)->get();
         return response()->json(['success'=>'Medicine Category fetched successfully','data'=>$getData],200);
     }
     public function updateMedicineCategoryData(Request $request){
-        MedicineCategory::where('id',$request->id)->update([
-            'name' => $request->category
-        ]);
-       return response()->json(['success' => 'Payment Mode updated successfully'],200);
+        $check_medCat = MedicineCategory::where('name',$request->category)->exists();
+        if($check_medCat == false){
+            MedicineCategory::where('id',$request->id)->update([
+                'name' => $request->category
+            ]);
+            return response()->json(['success' => 'Payment Mode updated successfully'],200);
+        }else{
+            return response()->json(['already_found'=>'This Medicine Category already found'],200);
+        }       
     }
     public function statusUpdate(Request $request){
         $MCstatus = MedicineCategory::where('id',$request->id)->get(['status']);

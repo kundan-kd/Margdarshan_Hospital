@@ -44,6 +44,7 @@ $('.paymentMode-add').on('click',function(e){
     $('#paymentModeName').val('');
     $('.paymentModeUpdate').addClass('d-none');
     $('.paymentModeSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 // ------usertype add starts----
 $('#paymentModeForm').on('submit',function(e){
@@ -70,6 +71,8 @@ $('#paymentModeForm').on('submit',function(e){
                         $('#paymentModeForm')[0].reset();
                         $('#paymentMode-table').DataTable().ajax.reload();
                         toastSuccessAlert('Payment Mode added successfully');
+                    } else if(response.already_found) {
+                        toastErrorAlert(response.already_found);    
                     }else{
                         toastErrorAlert('error found!');
                     }
@@ -130,6 +133,8 @@ function paymentModeUpdate(id){
                     $('#paymentModeForm')[0].reset();
                     $('#paymentMode-table').DataTable().ajax.reload();
                     toastSuccessAlert('Payment Mode updated successfully');
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);    
                 } else {
                     toastErrorAlert("error");
                 }

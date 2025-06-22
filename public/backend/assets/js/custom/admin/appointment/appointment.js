@@ -226,9 +226,10 @@ function getDocRoomNum(id){
         },
         data: { id:id },
         success: function(response) {
+            // console.log(response);
             if(response.success){
-                $('#roomNumAppt').val(response.data[0].room_number);
-                $('#opd_fee').val(response.data[0].opd_fee);
+                $('#roomNumAppt').val(response.roomNum[0].room_num);
+                $('#opd_fee').val(response.data[0].fee);
             }
         
         }

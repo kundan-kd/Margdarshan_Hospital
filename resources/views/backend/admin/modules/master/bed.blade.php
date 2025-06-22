@@ -35,7 +35,7 @@ Bed
                     <div class="invalid-feedback">
                         Select Bed Group
                     </div>
-                </div>
+                  </div>
                   <div class="col-md-12">
                     <label class="form-label" for="bedType">Bed Type</label>
                     <select class="form-control form-control-sm" name="bedType" id="bedType" required>
@@ -47,7 +47,7 @@ Bed
                     <div class="invalid-feedback">
                         Select Bed Type
                     </div>
-                </div>
+                  </div>
                   <div class="col-md-12">
                     <label class="form-label" for="bedFloor">Floor</label>
                     <select class="form-control form-control-sm" name="bedFloor" id="bedFloor" required>
@@ -63,7 +63,7 @@ Bed
                     <div class="invalid-feedback">
                         Select Bed Flood
                     </div>
-                </div>
+                  </div>
                   <div class="col-md-12">
                     <label class="form-label" for="bedNumber">Bed Name/Number</label>
                     <input class="form-control form-control-sm" id="bedNumber" type="text"
@@ -71,7 +71,15 @@ Bed
                     <div class="invalid-feedback">
                         Enter Bed Number
                     </div>
-                </div>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label" for="amount">Bed Charge</label>
+                    <input class="form-control form-control-sm" id="amount" type="text"
+                        placeholder="Enter Bed Charge" style="background-image: none;" required>
+                    <div class="invalid-feedback">
+                        Enter Bed Charge
+                    </div>
+                  </div>
                 </div>
                 </div>
                     <div class="modal-footer mt-3">
@@ -99,6 +107,8 @@ Bed
               <th scope="col">Bed Group</th>
               <th scope="col">Bed Type</th>
               <th scope="col">Floor</th>
+              <th scope="col">Bed Charge</th>
+              <th scope="col">Current Status</th>
               <th scope="col align-items-left">Status</th>
               <th scope="col">Action</th>
             </tr>

@@ -39,11 +39,12 @@ let table = $('#bedtype-table').DataTable({
 
 $('.bedtype-add').on('click',function(e){
     e.preventDefault();
-    $('.bedtype-title').html('Add User Type');
+    $('.bedtype-title').html('Add Bed Type');
     $('#bedtypeNameID').val('');
     $('#bedtypeName').val('');
     $('.addBedTypeUpdate').addClass('d-none');
     $('.addBedTypeSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 // ------usertype add starts----
 $('#addBedTypeForm').on('submit',function(e){
@@ -97,7 +98,7 @@ $.ajax({
     success:function(response){
         if(response.success){
             getData = response.data[0];
-            $('.bedType-title').html('Edit Bed Type');
+            $('.bedtype-title').html('Edit Bed Type');
             $('#bedTypeNameID').val(getData.id);
             $('#bedTypeName').val(getData.name);
             $('.addBedTypeSubmit').addClass('d-none');
@@ -132,6 +133,8 @@ function bedTypeUpdate(id){
                     $('#addBedTypeForm')[0].reset();
                     $('#bedtype-table').DataTable().ajax.reload();
                     toastSuccessAlert('Bed Type updated successfully');
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);    
                 }else{
                     toastErrorAlert("error");
                 }

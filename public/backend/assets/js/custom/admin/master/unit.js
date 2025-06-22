@@ -47,6 +47,7 @@ $('.unit-add').on('click',function(e){
     $('#unit').val('');
     $('.unitUpdate').addClass('d-none');
     $('.unitSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 
 $('#unitForm').on('submit',function(e){
@@ -76,6 +77,8 @@ $('#unitForm').on('submit',function(e){
                         $('#unitForm')[0].reset();
                         $('#unit-table').DataTable().ajax.reload();
                         toastSuccessAlert('Unit added successfully');
+                    } else if(response.already_found) {
+                        toastErrorAlert(response.already_found);    
                     }else{
                         toastErrorAlert('error found!');
                     }
@@ -142,6 +145,8 @@ function unitUpdate(id){
                     $('#unitForm')[0].reset();
                     $('#unit-table').DataTable().ajax.reload();
                     toastSuccessAlert('Unit updated successfully');
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);    
                 } else {
                     toastErrorAlert("error");
                 }

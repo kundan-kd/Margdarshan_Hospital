@@ -42,6 +42,7 @@ $('.company-add').on('click',function(e){
     $('#companyName').val('');
     $('.companyUpdate').addClass('d-none');
     $('.companySubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 
 $('#companyForm').on('submit',function(e){
@@ -68,6 +69,8 @@ $('#companyForm').on('submit',function(e){
                         $('#companyForm')[0].reset();
                         $('#company-table').DataTable().ajax.reload();
                         toastSuccessAlert('Company added successfully');
+                    } else if(response.already_found) {
+                        toastErrorAlert(response.already_found);      
                     }else{
                         toastErrorAlert('error found!');
                     }
@@ -127,6 +130,8 @@ function companyUpdate(id){
                     $('#companyForm')[0].reset();
                     $('#company-table').DataTable().ajax.reload();
                     toastSuccessAlert('Company updated successfully');
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);      
                 } else {
                     toastErrorAlert("error");
                 }

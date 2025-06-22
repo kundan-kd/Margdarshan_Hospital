@@ -42,6 +42,7 @@ $('.bloodType-add').on('click',function(e){
     $('#bloodTypeName').val('');
     $('.bloodTypeUpdate').addClass('d-none');
     $('.bloodTypeSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 
 $('#bloodTypeForm').on('submit',function(e){
@@ -68,6 +69,8 @@ $('#bloodTypeForm').on('submit',function(e){
                         $('#bloodTypeForm')[0].reset();
                         $('#bloodType-table').DataTable().ajax.reload();
                         toastSuccessAlert('Blood Type added successfully');
+                    } else if(response.already_found) {
+                        toastErrorAlert(response.already_found);
                     }else{
                         toastErrorAlert('error found!');
                     }
@@ -127,6 +130,8 @@ function bloodTypeUpdate(id){
                     $('#bloodTypeForm')[0].reset();
                     $('#bloodType-table').DataTable().ajax.reload();
                     toastSuccessAlert('Blood Type updated successfully');
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);    
                 } else {
                     toastErrorAlert("error");
                 }

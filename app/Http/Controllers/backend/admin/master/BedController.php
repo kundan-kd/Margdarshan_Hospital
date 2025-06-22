@@ -33,6 +33,12 @@ class BedController extends Controller
             ->addColumn('bedFloor',function($row){
                 return $row->floor;
             })
+            ->addColumn('amount',function($row){
+                return $row->amount;
+            })
+            ->addColumn('current_status',function($row){
+                return $row->current_status === 'vacant'? '<span class="text-success">Vacant</span>': '<span class="text-danger">Occupied</span>';
+            })
             ->addColumn('status',function($row){
                 $ischecked = $row->status == 1 ? 'checked':'';
                 return '<div class="form-switch switch-primary">
@@ -47,31 +53,36 @@ class BedController extends Controller
                   <iconify-icon icon="mingcute:delete-2-line" onclick="bedDelete('.$row->id.')"></iconify-icon>
                 </a>';
             })
-            ->rawColumns(['status','action'])
+            ->rawColumns(['current_status','status','action'])
             ->make(true);
         }
     }
     public function addBed(Request $request){
-        //dd($request);
-        $validator = Validator::make($request->all(),[
-            'bedNumber' => 'required',
-            'bedGroup' => 'required',
-            'bedType' => 'required',
-            'bedFloor' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-        }
-        $bed = new bed();
-        $bed->bed_no = $request->bedNumber;
-        $bed->bed_group_id = $request->bedGroup;
-        $bed->bed_type_id = $request->bedType;
-        $bed->floor = $request->bedFloor;
-        if($bed->save()){
-            return response()->json(['success'=>'bed added successfully'],201);
+        $bed_check = Bed::where('bed_no',$request->bedNumber)->where('bed_group_id',$request->bedGroup)->where('bed_type_id',$request->bedType)->where('floor',$request->bedFloor)->exists();
+        if($bed_check == false){
+            $validator = Validator::make($request->all(),[
+                'bedNumber' => 'required',
+                'amount' => 'required',
+                'bedGroup' => 'required',
+                'bedType' => 'required',
+                'bedFloor' => 'required'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+            }
+            $bed = new bed();
+            $bed->bed_no = $request->bedNumber;
+            $bed->bed_group_id = $request->bedGroup;
+            $bed->bed_type_id = $request->bedType;
+            $bed->floor = $request->bedFloor;
+            $bed->amount = $request->amount;
+            if($bed->save()){
+                return response()->json(['success'=>'bed added successfully'],200);
+            }else{
+                return response()->json(['error_success'=>'bed not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'bed not added'],500);
-
+            return response()->json(['already_found'=>'This Bed confirguration already exists']);
         }
     }
 
@@ -80,13 +91,19 @@ class BedController extends Controller
         return response()->json(['success'=>'Bed data fetched successfully','data'=>$getData],200);
     }
     public function updateBedData(Request $request){
-        bed::where('id',$request->id)->update([
-            'bed_no' => $request->bedNumber,
-            'bed_group_id' => $request->bedGroup,
-            'bed_type_id' => $request->bedType,
-            'floor' => $request->bedFloor
-        ]);
-       return response()->json(['success' => 'Bed updated successfully'],200);
+        $bed_check = Bed::where('bed_no',$request->bedNumber)->where('bed_group_id',$request->bedGroup)->where('bed_type_id',$request->bedType)->where('floor',$request->bedFloor)->where('amount',$request->amount)->exists();
+        if($bed_check == false){
+            bed::where('id',$request->id)->update([
+                'bed_no' => $request->bedNumber,
+                'bed_group_id' => $request->bedGroup,
+                'bed_type_id' => $request->bedType,
+                'floor' => $request->bedFloor,
+                'amount' => $request->amount
+            ]);
+            return response()->json(['success' => 'Bed updated successfully'],200);
+        }else{
+            return response()->json(['already_found'=>'This Bed confirguration already exists']);
+        }    
     }
     public function statusUpdate(Request $request){
         $bed_status = bed::where('id',$request->id)->get(['status']);

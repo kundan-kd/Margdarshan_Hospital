@@ -53,28 +53,31 @@ class VendorController extends Controller
         }
     }
      public function addVendor(Request $request){
-        //dd($request);
-        $validator = Validator::make($request->all(),[
-            'name' => 'required',
-            'phone' => 'required',
-            'email' => 'required|email',
-            'address' => 'required',
-            'gst' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-        }
-        $vendors = new Vendor();
-        $vendors->name = $request->name;
-        $vendors->phone = $request->phone;
-        $vendors->email = $request->email;
-        $vendors->address = $request->address;
-        $vendors->gst_number = $request->gst;
-        if($vendors->save()){
-            return response()->json(['success'=>'Vendor added successfully'],201);
+        $check_vendor = Vendor::where('email',$request->email)->where('gst_number',$request->gst)->exists();
+        if($check_vendor == false){
+            $validator = Validator::make($request->all(),[
+                'name' => 'required',
+                'phone' => 'required',
+                'email' => 'required|email',
+                'address' => 'required',
+                'gst' => 'required'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+            }
+            $vendors = new Vendor();
+            $vendors->name = $request->name;
+            $vendors->phone = $request->phone;
+            $vendors->email = $request->email;
+            $vendors->address = $request->address;
+            $vendors->gst_number = $request->gst;
+            if($vendors->save()){
+                return response()->json(['success'=>'Vendor added successfully'],201);
+            }else{
+                return response()->json(['error_success'=>'Vendor not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'Vendor not added'],500);
-
+            return response()->json(['already_found'=>'This Vendor already found'],200);
         }
     }
     public function getVendorData(Request $request){
@@ -82,14 +85,19 @@ class VendorController extends Controller
         return response()->json(['success'=>'Vendor data fetched successfully','data'=>$getData],200);
     }
     public function updateVendorData(Request $request){
-        Vendor::where('id',$request->id)->update([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'address' => $request->address,
-            'gst_number' => $request->gst
-        ]);
-       return response()->json(['success' => 'Vendor updated successfully'],200);
+        $check_vendor = Vendor::where('email',$request->email)->where('gst_number',$request->gst)->exists();
+        if($check_vendor == false){
+            Vendor::where('id',$request->id)->update([
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'address' => $request->address,
+                'gst_number' => $request->gst
+            ]);
+            return response()->json(['success' => 'Vendor updated successfully'],200);
+        }else{
+            return response()->json(['already_found'=>'This Vendor already found'],200);
+        }    
     }
     public function statusUpdate(Request $request){
         $vendorstatus = Vendor::where('id',$request->id)->get(['status']);

@@ -18,7 +18,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
   <h6 class="fw-normal mb-0">Emergency</h6>
   <div class="d-flex flex-wrap align-items-center gap-2">
-          <a href="add-emergency-patient.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-patient" onclick= "resetPatient()"> <i class="ri-add-line"></i> Add Patient</a>
+          <a href="add-emergency-patient.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-patient" onclick= "resetAddPatient();getBedDataEmergency()"> <i class="ri-add-line"></i> Add Patient</a>
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
   <!-- <div class="btns">
@@ -161,6 +161,25 @@
             <label class="form-label fw-normal">Any Known Allergies</label>
             <input type="text" id="emergency-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
           </div>
+            <div class="col-6">
+            <label class="form-label fw-normal" for="emergency-patientBedNum">Bed Number</label>
+            <select class="form-select form-select-sm select2-cls" id="emergency-patientBedNum" style="width: 100%" onchange="getBedDetails(this.value)" oninput="validateField(this.id,'select')">
+              <option value="">Select</option>
+            </select>
+            <div class="emergency-patientBedNum_errorCls d-none"></div>
+          </div>
+          <div class="col-6">
+            <label class="form-label fw-normal">Bed Type</label>
+            <input type="text" id="emergency-patientBedType"  class="form-control form-control-sm" placeholder="Bed Type" readonly>
+          </div>
+          <div class="col-6">
+            <label class="form-label fw-normal">Floor</label>
+            <input type="text" id="emergency-patientBedFloor"  class="form-control form-control-sm" placeholder="Floor No." readonly>
+          </div>
+          <div class="col-6">
+            <label class="form-label fw-normal">Bed Charge</label>
+            <input type="text" id="emergency-patientBedCharge"  class="form-control form-control-sm" placeholder="Bed Charge" readonly>
+          </div>
         </div>
         </div>
         <div class="modal-footer">
@@ -177,11 +196,18 @@
 @endsection
 @section('extra-js')
 <script>
+   $('#emergency-add-patient').on('shown.bs.modal', function () {
+      $('.select2-cls').select2({
+          dropdownParent: $('#emergency-add-patient')
+      });
+    });
   const addPatient = "{{route('emergency-addPatient')}}"; 
   const viewPatients = "{{route('emergency-viewPatients')}}"; 
   const getEmergencyPatientData = "{{route('emergency-getEmergencyPatientData')}}"; 
   const emergencyPatientDataUpdate = "{{route('emergency-emergencyPatientDataUpdate')}}"; 
   const emergencyPatientDataDelete = "{{route('emergency-emergencyPatientDataDelete')}}"; 
+  const getBedDatasEmergency = "{{route('emergency-getBedDatasEmergency')}}"; 
+  const getBedDetailsEmergency = "{{route('emergency-getBedDetailsEmergency')}}"; 
 
   
 </script>

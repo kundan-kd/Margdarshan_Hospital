@@ -41,6 +41,18 @@ let table = $('#bed-table').DataTable({
             searchable: true
         },
         {
+            data:'amount',
+            name:'amount',
+            orderable: true,
+            searchable: true
+        },
+        {
+            data:'current_status',
+            name:'current_status',
+            orderable: true,
+            searchable: true
+        },
+        {
             data:'status',
             name:'status',
             orderable: false,
@@ -65,16 +77,18 @@ $('.bed-add').on('click',function(e){
     $('#bedFloor').val('');
     $('.addBedUpdate').addClass('d-none');
     $('.addBedSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 // ------bed add starts----
 $('#addBedForm').on('submit',function(e){
    e.preventDefault();
    let id = $('#bedID').val();
    let bedNumber = $('#bedNumber').val();
+   let amount = $('#amount').val();
    let bedGroup = $('#bedGroup').val();
    let bedType = $('#bedType').val();
    let bedFloor = $('#bedFloor').val();
-    if(bedNumber == '' || bedGroup == '' || bedType == '' || bedFloor == ''){
+    if(bedNumber == '' || amount == '' || bedGroup == '' || bedType == '' || bedFloor == ''){
         $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
     }else{
         if ($('.addBedUpdate').is(':visible')) {
@@ -86,7 +100,7 @@ $('#addBedForm').on('submit',function(e){
                 headers:{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                data:{bedNumber:bedNumber,bedGroup:bedGroup,bedType:bedType,bedFloor:bedFloor},
+                data:{bedNumber:bedNumber,amount:amount,bedGroup:bedGroup,bedType:bedType,bedFloor:bedFloor},
                 success:function(response){
                     if(response.success){
                         $('#addBedModel').modal('hide');
@@ -94,6 +108,8 @@ $('#addBedForm').on('submit',function(e){
                         $('#addBedForm')[0].reset();
                         $('#bed-table').DataTable().ajax.reload();
                         toastSuccessAlert('Bed added successfully');
+                    }else if(response.already_found){
+                         toastErrorAlert(response.already_found);
                     }else{
                         toastErrorAlert('error found!');
                     }
@@ -125,6 +141,7 @@ $.ajax({
             $('#bedGroup').val(getData.bed_group_id);
             $('#bedType').val(getData.bed_type_id);
             $('#bedFloor').val(getData.floor);
+            $('#amount').val(getData.amount);
             $('.addBedSubmit').addClass('d-none');
             $('.addBedUpdate').removeClass('d-none');
             $('#addBedModel').modal('show');
@@ -136,6 +153,7 @@ $.ajax({
 
 function bedUpdate(id){
     let bedNumber = $('#bedNumber').val();
+    let amount = $('#amount').val();
     let bedGroup = $('#bedGroup').val();
     let bedType = $('#bedType').val();
     let bedFloor = $('#bedFloor').val();
@@ -146,7 +164,7 @@ function bedUpdate(id){
             url: updateBedData,
             type: "POST",
             data: {
-                id:id,bedNumber:bedNumber,bedGroup:bedGroup,bedType:bedType,bedFloor:bedFloor},
+                id:id,bedNumber:bedNumber,amount:amount,bedGroup:bedGroup,bedType:bedType,bedFloor:bedFloor},
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
@@ -157,6 +175,8 @@ function bedUpdate(id){
                     $('#addBedForm')[0].reset();
                     $('#bed-table').DataTable().ajax.reload();
                     toastSuccessAlert('Bed updated successfully');
+                }else if(response.already_found){
+                        toastErrorAlert(response.already_found);
                 }else{
                     toastErrorAlert('error found!');
                 }

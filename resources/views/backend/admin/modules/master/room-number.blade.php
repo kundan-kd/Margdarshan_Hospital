@@ -69,6 +69,7 @@ Room Number
             <tr>
               <th scope="col">Room Number</th>
               <th scope="col">Room Type</th>
+              <th scope="col">Current Status</th>
               <th scope="col align-items-left">Status</th>
               <th scope="col">Action</th>
             </tr>

@@ -42,6 +42,7 @@ $('.medicineGroup-add').on('click',function(e){
     $('#medicineGroupName').val('');
     $('.medicineGroupUpdate').addClass('d-none');
     $('.medicineGroupSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 
 $('#medicineGroupForm').on('submit',function(e){
@@ -68,6 +69,8 @@ $('#medicineGroupForm').on('submit',function(e){
                         $('#medicineGroupForm')[0].reset();
                         $('#medicineGroup-table').DataTable().ajax.reload();
                         toastSuccessAlert('Medicine Group added successfully');
+                    } else if(response.already_found) {
+                        toastErrorAlert(response.already_found);    
                     }else{
                         toastErrorAlert('error found!');
                     }
@@ -127,6 +130,8 @@ function medicineGroupUpdate(id){
                     $('#medicineGroupForm')[0].reset();
                     $('#medicineGroup-table').DataTable().ajax.reload();
                     toastSuccessAlert('Modicine Group updated successfully');
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);    
                 } else {
                     toastErrorAlert("error");
                 }

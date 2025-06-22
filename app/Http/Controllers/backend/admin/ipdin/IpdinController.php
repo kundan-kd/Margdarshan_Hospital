@@ -4,6 +4,8 @@ namespace App\Http\Controllers\backend\admin\ipdin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\Bed;
+use App\Models\BedType;
 use App\Models\Charge;
 use App\Models\LabInvestigation;
 use App\Models\Medication;
@@ -75,7 +77,7 @@ class IpdinController extends Controller
                       <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
                     </a> -->
                      <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="lucide:edit" onclick="ipdPatientEdit('.$row->id.')"></iconify-icon>
+                      <iconify-icon icon="lucide:edit" onclick="ipdPatientEdit('.$row->id.');getBedData('.$row->id.')"></iconify-icon>
                     </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="ipdpatientDelete('.$row->id.')"></iconify-icon>
@@ -84,6 +86,24 @@ class IpdinController extends Controller
         ->rawColumns(['patient_id','status','action'])
         ->make(true);
         }
+    }
+    public function getBedDetailsIpd(Request $request){
+        $getData = Bed::where('id',$request->id)->get();
+        $bedtypename = BedType::where('id',$getData[0]->bed_type_id)->get(['name']);
+        return response()->json(['success'=>'Bed data fetched','data'=>$getData,'bedTypeName'=>$bedtypename],200);
+    }
+    public function getBedDataIpd(Request $request){
+        $getAvailBed =  Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get(['id','bed_no']);
+        $occupiedBed = '';
+        $bedTypeName = '';
+        if($request->id != null || $request->id != ''){
+            $bed = Patient::where('id',$request->id)->get();
+            $occupiedBed = Bed::where('id',$bed[0]->bed_id)->get();
+            $bedTypeName = BedType::where('id',$occupiedBed[0]->bed_type_id)->get(['name']);
+           
+        }
+        return response()->json(['success' => 'Bed data fetched successfully', 'data' => $getAvailBed,'bedData' => $occupiedBed,'bedType'=>$bedTypeName], 200);
+         
     }
     public function addNewPatientIpd(Request $request){
          $validator = Validator::make($request->all(),[
@@ -96,11 +116,13 @@ class IpdinController extends Controller
             'mobile' => 'required',
             'address' => 'required',
             'alt_mobile' => 'nullable',
-            'allergy' => 'nullable'
+            'allergy' => 'nullable',
+            'bedNumId' => 'required'
         ]);
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],422);
         }
+        $now = Carbon::now();
         $month = date('m'); // Gets the current month (e.g., "05")
         $year = date('y'); // Gets the current year (e.g., "25")
         $patient = new Patient();
@@ -115,10 +137,16 @@ class IpdinController extends Controller
         $patient->alt_mobile = $request->alt_mobile;
         $patient->known_allergies = $request->allergy;
         $patient->address = $request->address;
+        $patient->bed_id = $request->bedNumId;
         $patient->current_status = "Admitted";
         if($patient->save()){
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
+            Bed::where('id',$request->bedNumId)->update([
+                'current_status' => 'occupied',
+                'occupied_by_patient_id' => $patient->id,
+                'occupied_date' => $now 
+            ]);
             return response()->json(['success'=>'New IPD Patient added successfully'],201);
         }else{
             return response()->json(['error_success'=>'IPD Patient not added'],500);
@@ -129,6 +157,7 @@ class IpdinController extends Controller
         return response()->json(['success'=>'IPD patient data fetched','data'=>$getData],200);
     }
     public function ipdPatientDataUpdate(Request $request){
+        $old_bed_id = Patient::where('id',$request->id)->get(['bed_id']);
        $update = Patient::where('id',$request->id)->update([
             'name' => $request->name,
             'guardian_name' => $request->guardian_name,
@@ -139,9 +168,23 @@ class IpdinController extends Controller
             'mobile'=> $request->mobile,
             'alt_mobile'=> $request->alt_mobile,
             'known_allergies'=> $request->allergy,
-            'address'=> $request->address
+            'address'=> $request->address,
+            'bed_id'=> $request->bedNumId ?? NULL
         ]);
         if($update){
+            $new_bed_id = Patient::where('id',$request->id)->get(['bed_id']);
+            if($old_bed_id[0]->bed_id != $new_bed_id[0]->bed_id){
+                Bed::where('id',$old_bed_id[0]->bed_id)->update([
+                    'current_status' => 'vacant',
+                    'occupied_by_patient_id' => NULL,
+                    'occupied_date' => NULL
+                ]);
+                Bed::where('id',$new_bed_id[0]->bed_id)->update([
+                    'current_status' => 'occupied',
+                    'occupied_by_patient_id' => $request->id,
+                    'occupied_date' => Carbon::now()
+                ]);
+            }// End of if condition for bed id change
             return response()->json(['success'=>'IPD patient updated successufuly'],200);
         }else{
             return response()->json(['error_success'=>'Patient not updated']);

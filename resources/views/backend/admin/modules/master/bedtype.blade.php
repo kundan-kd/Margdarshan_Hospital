@@ -7,7 +7,7 @@ Bed Type
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
     <h6 class="fw-normal mb-0">Bed Type</h6>
     <div class="btns">
-      <a class="btn btn-primary-600  btn-sm fw-normal userType-add" data-bs-toggle="modal" data-bs-target="#addBedTypeModel"><i class="ri-add-line "></i> Add Bed Type</a>
+      <a class="btn btn-primary-600  btn-sm fw-normal bedtype-add" data-bs-toggle="modal" data-bs-target="#addBedTypeModel"><i class="ri-add-line "></i> Add Bed Type</a>
     </div>
   </div>
      <!-- user type modal start -->

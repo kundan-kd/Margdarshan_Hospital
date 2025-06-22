@@ -39,20 +39,23 @@ class UsertypeController extends Controller
         }
     }
     public function addUserType(Request $request){
-        //dd($request);
-        $validator = Validator::make($request->all(),[
-            'usertype' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-        }
-        $usertype = new UserType();
-        $usertype->name = $request->usertype;
-        if($usertype->save()){
-            return response()->json(['success'=>'Usertype added successfully'],201);
+        $check_usertype = UserType::where('name',$request->usertype)->exists();
+        if($check_usertype == false){
+            $validator = Validator::make($request->all(),[
+                'usertype' => 'required'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+            }
+            $usertype = new UserType();
+            $usertype->name = $request->usertype;
+            if($usertype->save()){
+                return response()->json(['success'=>'Usertype added successfully'],201);
+            }else{
+                return response()->json(['error_success'=>'Usertype not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'Usertype not added'],500);
-
+            return response()->json(['already_found'=>'This User Type already found'],200);
         }
     }
 
@@ -61,10 +64,15 @@ class UsertypeController extends Controller
         return response()->json(['success'=>'User Type data fetched successfully','data'=>$getData],200);
     }
     public function updateUserTypeData(Request $request){
-        UserType::where('id',$request->id)->update([
-            'name' => $request->usertype
-        ]);
-       return response()->json(['success' => 'User Type updated successfully'],200);
+        $check_usertype = UserType::where('name',$request->usertype)->exists();
+        if($check_usertype == false){
+            UserType::where('id',$request->id)->update([
+                'name' => $request->usertype
+            ]);
+            return response()->json(['success' => 'User Type updated successfully'],200);
+        }else{
+            return response()->json(['already_found'=>'This User Type already found'],200);
+        }
     }
     public function statusUpdate(Request $request){
         $usertype_status = UserType::where('id',$request->id)->get(['status']);

@@ -44,6 +44,7 @@ $('.bedGroup-add').on('click',function(e){
     $('#bedGroupName').val('');
     $('.addBedGroupUpdate').addClass('d-none');
     $('.addBedGroupSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 // ------usertype add starts----
 $('#addBedGroupForm').on('submit',function(e){
@@ -132,6 +133,8 @@ function bedGroupUpdate(id){
                     $('#addBedGroupForm')[0].reset();
                     $('#bedGroup-table').DataTable().ajax.reload();
                     toastSuccessAlert(response.success);
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);    
                 }else{
                     toastErrorAlert("something went wrong!");
                 }

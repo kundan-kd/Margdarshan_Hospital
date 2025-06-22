@@ -39,20 +39,23 @@ class DepartmentController extends Controller
         }
     }
     public function addDepartment(Request $request){
-        //dd($request);
-        $validator = Validator::make($request->all(),[
-            'department' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-        }
-        $department = new Department();
-        $department->name = $request->department;
-        if($department->save()){
-            return response()->json(['success'=>'Department added successfully'],201);
+        $check_department = Department::where('name',$request->department)->exists();
+        if($check_department == false){
+            $validator = Validator::make($request->all(),[
+                'department' => 'required'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+            }
+            $department = new Department();
+            $department->name = $request->department;
+            if($department->save()){
+                return response()->json(['success'=>'Department added successfully'],201);
+            }else{
+                return response()->json(['error_success'=>'Depertment not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'Depertment not added'],500);
-
+            return response()->json(['already_found'=>'This Department already found'],200);
         }
     }
 
@@ -61,10 +64,15 @@ class DepartmentController extends Controller
         return response()->json(['success'=>'Department fetched successfully','data'=>$getData],200);
     }
     public function updateDepartmentData(Request $request){
-        Department::where('id',$request->id)->update([
-            'name' => $request->department
-        ]);
-       return response()->json(['success' => 'User Type updated successfully'],200);
+        $check_department = Department::where('name',$request->department)->exists();
+        if($check_department == false){
+            Department::where('id',$request->id)->update([
+                'name' => $request->department
+            ]);
+            return response()->json(['success' => 'User Type updated successfully'],200);
+        }else{
+            return response()->json(['already_found'=>'This Department already found'],200);
+        }    
     }
     public function statusUpdate(Request $request){
         $department_status = Department::where('id',$request->id)->get(['status']);

@@ -44,6 +44,7 @@ $('.department-add').on('click',function(e){
     $('#departmentName').val('');
     $('.departmentUpdate').addClass('d-none');
     $('.departmentSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 // ------usertype add starts----
 $('#departmentForm').on('submit',function(e){
@@ -70,6 +71,8 @@ $('#departmentForm').on('submit',function(e){
                         $('#departmentForm')[0].reset();
                         $('#department-table').DataTable().ajax.reload();
                         toastSuccessAlert('Department added successfully');
+                    } else if(response.already_found) {
+                        toastErrorAlert(response.already_found);    
                     }else{
                         alert('error found!');
                     }
@@ -131,6 +134,8 @@ function departmentUpdate(id){
                     $('#departmentForm')[0].reset();
                     $('#department-table').DataTable().ajax.reload();
                     toastSuccessAlert('Department updated successfully');
+                } else if(response.already_found) {
+                    toastErrorAlert(response.already_found);    
                 } else {
                     toastErrorAlert('Something error found');
                 }

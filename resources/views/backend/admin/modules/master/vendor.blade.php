@@ -34,7 +34,7 @@ Vendor
                         </div>
                         <div class="col-md-12">
                             <label class="form-label" for="vendorPhone">Phone</label>
-                            <input class="form-control form-control-sm" id="vendorPhone" type="text"
+                            <input class="form-control form-control-sm" id="vendorPhone" type="number"
                                 placeholder="Enter Vendor Phone" style="background-image: none;" required>
                             <div class="invalid-feedback">
                                 Enter Vendor Phone Number
@@ -42,7 +42,7 @@ Vendor
                         </div>
                         <div class="col-md-12">
                             <label class="form-label" for="vendorEmail">Email</label>
-                            <input class="form-control form-control-sm" id="vendorEmail" type="text"
+                            <input class="form-control form-control-sm" id="vendorEmail" type="email"
                                 placeholder="Enter Vendor Email" style="background-image: none;" required>
                             <div class="invalid-feedback">
                                 Enter Vendor Email ID

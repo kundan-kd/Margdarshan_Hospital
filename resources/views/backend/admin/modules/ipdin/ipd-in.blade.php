@@ -17,7 +17,7 @@
       <div class="d-flex flex-wrap align-items-center justify-content-between  mb-24">
           <h6 class="fw-normal mb-0">IPD - In Patient</h6>
           <div class="d-flex flex-wrap align-items-center gap-2">
-              <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-add-patient"> <i class="ri-add-line"></i> Add Patient</a>
+              <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1 ipd-add-patientLabel" data-bs-toggle="modal" data-bs-target="#ipd-add-patient" onclick="resetAddPatient();getBedData()"> <i class="ri-add-line"></i> Add IPD Patient</a>
               <!--<button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button>-->
           </div>
      </div>
@@ -189,7 +189,7 @@
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="ipd-patientBloodType">Blood Type</label>
-            <select class="form-select form-select-sm" id="ipd-patientBloodType"style="width:100%" oninput="validateField(this.id,'select')">
+            <select class="form-select form-select-sm select2-cls" id="ipd-patientBloodType"style="width:100%" oninput="validateField(this.id,'select')">
               <option value="">Select</option>
               <option value="A+">A+</option>
               <option value="A-">A-</option>
@@ -209,7 +209,7 @@
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="ipd-patientMStatus">Marital Status</label>
-            <select class="form-select form-select-sm" id="ipd-patientMStatus" style="width: 100%" oninput="validateField(this.id,'select')">
+            <select class="form-select form-select-sm select2-cls" id="ipd-patientMStatus" style="width: 100%" oninput="validateField(this.id,'select')">
               <option value="">Select</option>
               <option value="Married">Married</option>
               <option value="UnMarried">UnMarried</option>
@@ -234,10 +234,29 @@
             <label class="form-label fw-normal">Any Known Allergies</label>
             <input type="text" id="ipd-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
           </div>
+          <div class="col-6">
+            <label class="form-label fw-normal" for="ipd-patientBedNum">Bed Number</label>
+            <select class="form-select form-select-sm select2-cls" id="ipd-patientBedNum" style="width: 100%" onchange="getBedDetails(this.value)" oninput="validateField(this.id,'select')">
+              <option value="">Select</option>
+            </select>
+            <div class="ipd-patientBedNum_errorCls d-none"></div>
+          </div>
+          <div class="col-6">
+            <label class="form-label fw-normal">Bed Type</label>
+            <input type="text" id="ipd-patientBedType"  class="form-control form-control-sm" placeholder="Bed Type" readonly>
+          </div>
+          <div class="col-6">
+            <label class="form-label fw-normal">Floor</label>
+            <input type="text" id="ipd-patientBedFloor"  class="form-control form-control-sm" placeholder="Floor No." readonly>
+          </div>
+          <div class="col-6">
+            <label class="form-label fw-normal">Bed Charge</label>
+            <input type="text" id="ipd-patientBedCharge"  class="form-control form-control-sm" placeholder="Bed Charge" readonly>
+          </div>
         </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal" onclick="reopenAppointment()">Cancel</button>
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary-600  btn-sm fw-normal ipdPatientSubmit">Submit</button>
           <button type="button" class="btn btn-primary-600  btn-sm fw-normal ipdPatientUpdate d-none" onclick="ipdPatientUpdate(document.getElementById('ipdPatientId').value)">Update</button>
         </div>
@@ -249,11 +268,19 @@
 @endsection
 @section('extra-js')
 <script>
+  $('#ipd-add-patient').on('shown.bs.modal', function () {
+      $('.select2-cls').select2({
+          dropdownParent: $('#ipd-add-patient')
+      });
+    });
   const addNewPatientIpd = "{{route('ipd-addPatient')}}"; 
   const viewPatientsIpd = "{{route('ipd-viewPatients')}}"; 
   const getIpdPatientData = "{{route('ipd-getIpdPatientData')}}"; 
   const ipdPatientDataUpdate = "{{route('ipd-ipdPatientDataUpdate')}}"; 
   const ipdPatientDataDelete = "{{route('ipd-ipdPatientDataDelete')}}"; 
+  const getBedDetailsIpd = "{{route('ipd-getBedDetailsIpd')}}"; 
+  const getBedDataIpd = "{{route('ipd-getBedDataIpd')}}"; 
+  
 
   
 </script>

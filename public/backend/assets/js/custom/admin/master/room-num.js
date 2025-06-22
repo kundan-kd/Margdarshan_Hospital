@@ -20,9 +20,13 @@ let table = $('#roomNum-table').DataTable({
             data:'roomnum',
             name:'roomnum'
         },
-         {
+        {
             data:'roomtype',
             name:'roomtype'
+        },
+        {
+            data:'current_status',
+            name:'current_status'
         },
         {
             data:'status',
@@ -46,6 +50,7 @@ $('.roomNum-add').on('click',function(e){
     $('#roomNumName').val('');
     $('.roomNumUpdate').addClass('d-none');
     $('.roomNumSubmit').removeClass('d-none');
+    $('.needs-validation').removeClass('was-validated');
     });
 // ------roomNum add starts----
 $('#addRoomNumForm').on('submit',function(e){
@@ -136,6 +141,8 @@ function roomNumUpdate(id){
                     $('#addRoomNumForm')[0].reset();
                     $('#roomNum-table').DataTable().ajax.reload();
                     toastSuccessAlert('Room Number updated successfully');
+                }else if(response.already_found) {
+                    toastErrorAlert(response.already_found);
                 } else {
                     toastErrorAlert("error");
                 }

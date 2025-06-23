@@ -106,7 +106,7 @@ $ddate = date("d/m/yy");
             </div>
             <div class="col-6">
               <label class="form-label fw-normal" for="departmentAppt">Department</label>
-              <select id="departmentAppt" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" >
+              <select id="departmentAppt" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" onchange="getDoctor(this.value)" >
                 <option value="">Select Department</option>
                 @foreach ($departments as $department)
                 <option value="{{$department->id}}">{{$department->name}}</option>
@@ -116,11 +116,11 @@ $ddate = date("d/m/yy");
             </div>
             <div class="col-6">
               <label class="form-label fw-normal" for="doctorAppt">Doctor</label>
-              <select id="doctorAppt" class="form-select form-select-sm select2-cls" onchange="getDocRoomNum(this.value)" style="width: 100%" oninput="validateField(this.id,'select')">
+              <select id="doctorAppt" class="form-select form-select-sm select2-cls" style="width: 100%" onchange="getDocRoomNum(this.value)" oninput="validateField(this.id,'select')">
                 <option value="">Select Doctor</option>
-                @foreach ($doctors as $doctor)
+                {{-- @foreach ($doctors as $doctor)
                 <option value="{{$doctor->id}}">Dr. {{$doctor->name}}</option>
-                @endforeach
+                @endforeach --}}
               </select>
               <div class="doctorAppt_errorCls d-none"></div>
             </div>
@@ -264,11 +264,14 @@ $ddate = date("d/m/yy");
   const addNewPatient = "{{route('appointment-patient.addNewPatient')}}"; // this route also used in 'billing-add.blade.php' page
   const searchPatient = "{{route('appointment-patient.searchPatient')}}";
   const getPatient = "{{route('appointment-patient.getPatient')}}";
-  const getDoctorData = "{{route('appointment-patient.getDoctorData')}}";
   const appointmentBook = "{{route('appointment-booking.appointmentBook')}}";
   const getAppointmentData = "{{route('appointment-booking.getAppointmentData')}}";
   const updateAppointmentData = "{{route('appointment-booking.updateAppointmentData')}}";
   const deleteAppointmentData = "{{route('appointment-booking.deleteAppointmentData')}}";
+  const getDoctorList = "{{route('appointment-booking.getDoctorList')}}";
+  const getDoctorAddedData = "{{route('appointment-booking.getDoctorAddedData')}}";
+  const getDoctorData = "{{route('appointment-booking.getDoctorData')}}";
+
 </script>
   {{-----------external js files added for page functions------------}}
 <script src="{{asset('backend/assets/js/custom/admin/appointment/appointment.js')}}"></script>
@@ -283,7 +286,7 @@ $ddate = date("d/m/yy");
 // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
         flatpickr(receiveID, {
-            dateFormat: "d-m-yy ",
+            dateFormat: "d-m-Y ",
         });
     }
     getDatePicker('#dateAppt'); 

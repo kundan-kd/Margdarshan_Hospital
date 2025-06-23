@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('staff_id',20)->nullable();
             $table->string('name',100)->nullable();
-            $table->string('firstname');
-            $table->string('lastname');
+            $table->string('firstname',100)->nullable();
+            $table->string('lastname',100)->nullable();
             $table->string('mobile', 15);
             $table->string('email')->unique();
             $table->string('fname',100)->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->integer('usertype_id')->nullable();
             $table->integer('department_id')->nullable();
             $table->double('fee')->default(0);
-            $table->string('room_number')->nullable();
+            $table->integer('room_number')->nullable();
             $table->string('specialization')->nullable();
             $table->string('experience')->nullable();
             $table->string('qualification')->nullable();

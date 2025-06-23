@@ -15,7 +15,8 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">IPD - In Patient Details<span class="{{$patients[0]->current_status == 'Admitted'?'badge text-sm fw-normal bg-danger-600 mx-1 text-white':'badge text-sm fw-normal bg-success-600 mx-1 text-white'}}">{{$patients[0]->current_status}}</span></h6>
          <div class="d-flex flex-wrap align-items-center gap-2">
-          <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="moveToEmergency({{$patients[0]->id}})"> <i class="ri-hotel-bed-line"></i> Move to Emergency</button>
+          <button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToEmergencyModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to Emergency</button>
+          <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
           <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
@@ -1301,7 +1302,82 @@
   </div>
 </div>
 <!-- opd new checkup end -->
-
+ <!--Alert modal start -->
+  <div class="modal fade" id="moveToEmergencyModel" tabindex="-1" role="dialog" aria-labelledby="moveToEmergencyModel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white userType-title">Bed Number</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+           <form action="" id="ipd-emergencyRoomForm" class="needs-validation" novalidate="">
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <label class="form-label" for="room_num">Bed Number</label>
+                    {{-- <input type="hidden" id=opd-ipdRoom"> --}}
+                   <select class="form-control form-control-sm" name="ipd-emergencyRoom" id="ipd-emergencyRoom" required>
+                        <option value="">Select Emergency Bed Number</option>
+                        @foreach ($emergencyAvailBeds as $emergencyBed)
+                        <option value="{{$emergencyBed->id}}">{{$emergencyBed->bed_no}}</option>
+                        @endforeach
+                    </select>   
+                    <div class="invalid-feedback">
+                            Select Emergency Bed
+                        </div> 
+                </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal" onclick="resetmodel()">Cancel</button>
+                        <button class="btn btn-primary btn-sm " type="submit">Submit</button>
+                    </div>
+           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Alert modal end-->
+ <!--Alert ICU modal start -->
+  <div class="modal fade" id="moveToIcuModel" tabindex="-1" role="dialog" aria-labelledby="moveToIcuModel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white userType-title">Bed Number</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+           <form action="" id="ipd-icuBedForm" class="needs-validation" novalidate="">
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <label class="form-label" for="room_num">Bed Number</label>
+                    {{-- <input type="hidden" id=opd-ipdRoom"> --}}
+                   <select class="form-control form-control-sm" name="ipd-icuBed" id="ipd-icuBed" required>
+                        <option value="">Select ICU Bed Number</option>
+                        @foreach ($icuAvailBeds as $icubed)
+                        <option value="{{$icubed->id}}">{{$icubed->bed_no}}</option>
+                        @endforeach
+                    </select>   
+                    <div class="invalid-feedback">
+                            Select ICU Bed
+                        </div> 
+                </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal" onclick="resetmodel()">Cancel</button>
+                        <button class="btn btn-primary btn-sm " type="submit">Submit</button>
+                    </div>
+           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Alert ICU modal end-->
 <!--  opd edit checkup Start -->
  <div class="modal fade" id="ipd-edit-checkup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-edit-checkupLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -1599,7 +1675,8 @@
     });
   const ipdVisitMedicineName = "{{route('common.getMedicineName')}}";
   // const patientDischargeStatus = "{{route('ipd.patientDischargeStatus')}}";
-  // const moveToEmergencyStatus = "{{route('ipd.moveToEmergencyStatus')}}";
+  const moveToEmergencyStatus = "{{route('ipd.moveToEmergencyStatus')}}";
+  const moveToIcuStatus = "{{route('ipd.moveToIcuStatus')}}";
   const ipdVisitSubmit = "{{route('ipd-visit.ipdVisitSubmit')}}";
   const viewIpdVisit = "{{route('ipd-visit.viewIpdVisit')}}";
   const getIpdVisitData = "{{route('ipd-visit.getIpdVisitData')}}";

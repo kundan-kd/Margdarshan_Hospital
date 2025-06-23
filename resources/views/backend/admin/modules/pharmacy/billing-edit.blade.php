@@ -174,8 +174,8 @@ Billing-edit
                         <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalNetAmount">{{$billings[0]->net_amount}}</span></td>
                       </tr>
                         <tr>
-                        <td class="border-0" colspan="2">Paid Amount (₹)</td>
-                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalPaidAmount">{{$billings[0]->Paid_amount ?? 0}}</span></td>
+                        <td class="border-0" colspan="2">Due Amount (₹)</td>
+                        <td class="border-0 text-end fs-6">₹ <span class="billingEdit-totalDueAmount">{{$billings[0]->due_amount ?? 0}}</span></td>
                       </tr>
                       <tr>
                         <td colspan="2" class="border-0">
@@ -186,7 +186,7 @@ Billing-edit
                           @endforeach
                         </select></td>
                         <td class="border-0">
-                          <input id="billingEdit-payAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkBillingPayAmount(this.value)">
+                          <input id="billingEdit-payAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkBillingPayAmount({{$billings[0]->id}},this.value)">
                         </td>
                     </tr>
                 </table>
@@ -217,7 +217,8 @@ Billing-edit
      const getBillingCategoryDataEdit = "{{route('purchase.getCategoryDatas')}}"; //also used somewhere
      const getBillingMedicineNameEdit = "{{route('billing.getMedicineNames')}}"; //also used in billing-add.js
      const getBatchNumberEdit =  "{{route('billing-add.getBatchNumbers')}}"; //also used in billing-add.js
-     const billingEditDatas =  "{{route('billing-Edit.billingEditDatas')}}"; //also used in billing-add.js
+     const billingEditDatas =  "{{route('billing-Edit.billingEditDatas')}}"; //also used in billing-add.js    
+     const getBillingData = "{{route('billing-Edit.getBillingData')}}";
 
 // Flat pickr or date picker js 
     function getDatePicker (receiveID) {

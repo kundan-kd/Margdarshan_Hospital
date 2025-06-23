@@ -226,16 +226,77 @@ function getDocRoomNum(id){
         },
         data: { id:id },
         success: function(response) {
-            // console.log(response);
-            if(response.success){
-                $('#roomNumAppt').val(response.roomNum[0].room_num);
-                $('#opd_fee').val(response.data[0].fee);
+            if(response.data !=''){
+                if(response.success){
+                    $('#roomNumAppt').val(response.roomNum[0].room_num);
+                    $('#opd_fee').val(response.data[0].fee);
+                }
             }
         
         }
     });
 }
+function getDoctorAdded(id){
+    setTimeout(function(){
 
+    
+    $.ajax({
+        url: getDoctorAddedData, // Ensure this is a valid endpoint
+        type: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: { id:id },
+        success: function(response) {
+            console.log(response);
+            if(response.success){
+               $('#doctorAppt').append(`<option selected value="${response.data[0].doctor_id}">${response.doctorData[0].name}</option>`);
+               
+                $('#roomNumAppt').val(response.roomNum[0].room_num);
+                $('#opd_fee').val(response.doctorData[0].fee);
+
+              
+
+              
+            }
+        
+        }
+    });
+    },700);
+}
+function getDoctor(){
+    let departmentID = $('#departmentAppt').val();
+    if(departmentID != ''){
+        $.ajax({
+            url: getDoctorList,
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: { departmentID: departmentID },
+            success: function(response) {
+                if(response.success){
+                    $('#doctorAppt').empty();
+                    $('#doctorAppt').append('<option value="">Select Doctor</option>');
+                    response.data.forEach(function(doctor) {
+                        $('#doctorAppt').append(`<option value="${doctor.id}">${doctor.name}</option>`);
+                    });
+                    $('#doctorAppt').trigger('change'); // Refresh Select2 dropdown
+                }else{
+                    console.log('No doctors found for this department');
+                }
+            },
+            error:function(xhr, status, error){
+                console.log(xhr.respnseText);
+                alert('An Error Occurred: '+error);
+            }
+        });
+    }else{
+        $('#doctorAppt').empty();
+        $('#doctorAppt').append('<option value="">Select Department First</option>');
+        $('#doctorAppt').trigger('change'); // Refresh Select2 dropdown
+    }
+}
 $('#appointmentForm').on('submit',function(e){
   e.preventDefault();
   let itemSearchInput = validateField('itemSearchInput', 'input');
@@ -313,17 +374,24 @@ function appointmentEdit(id){
                 $('#searchPatientID').val(getData.patient_name);
                 $('#patientNameAppt').val(getData.patient_name);
                 $('#departmentAppt').val(getData.department_id).trigger('change');
-                $('#doctorAppt').val(getData.doctor_id).trigger('change');
+                // $('#doctorAppt').val(getData.doctor_id).trigger('change');
                 $('#dateAppt').val(getData.appointment_date);
                 $('#paymentModeAppt').val(getData.payment_mode).trigger('change');
-                $('#roomNumAppt').val(getData.room_number);
-                $('#opd_fee').val(getData.fee);
+                // $('#roomNumAppt').val(getData.room_number);
+                // $('#opd_fee').val(getData.fee);
             }
         }
     });
 }
 
 function updateAppointment(id){
+let name = validateField('patientNameAppt', 'input');
+let depertmentAppt = validateField('departmentAppt', 'select');
+  let doctorAppt = validateField('doctorAppt', 'select');
+  let paymentModeAppt = validateField('paymentModeAppt', 'select');
+  let dateAppt = validateField('dateAppt', 'select');
+  if(name === true && depertmentAppt === true && doctorAppt === true && paymentModeAppt && true && dateAppt === true){
+
     let patientsearch = $('#patient-search').val();
     let patientsearchGet = $('#searchPatientID').val();
     let name = $('#patientNameAppt').val();
@@ -331,10 +399,7 @@ function updateAppointment(id){
     let doctorID = $('#doctorAppt').val();
     let aDate = $('#dateAppt').val();
     let pmode = $('#paymentModeAppt').val();
-    if(patientsearch == '' || patientsearchGet =='' || name =='' || departmentID =='' || doctorID =='' || aDate =='' || pmode ==''){
-        $('#patient-search').focus();
-        $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
-    }else{
+  
         $.ajax({
             url: updateAppointmentData,
             type: "post",
@@ -360,7 +425,9 @@ function updateAppointment(id){
                 alert("An error occurred: " + error);
             }
         });
-    }  
+    }else{
+        console.log("Please fill all required fields");
+    }
 }
 function appointmenttDelete(id){
     Swal.fire({

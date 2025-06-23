@@ -16,7 +16,7 @@ use Yajra\DataTables\Facades\DataTables;
 class AppointmentController extends Controller
 {
     public function index(){
-        $departments = Department::where('status',1)->get();
+        $departments = Department::where('status', 1) ->where('name', '!=', 'Admin')->get();
         $paymentmodes = PaymentMode::where('status',1)->get();
         $patients = Patient::where('status',1)->get();
         $doctors = User::where('status',1)->where('usertype_id',2)->get(['id','name']);
@@ -55,7 +55,7 @@ class AppointmentController extends Controller
                       <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
                     </a> -->
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="lucide:edit" onclick="appointmentEdit('.$row->id.')"></iconify-icon>
+                      <iconify-icon icon="lucide:edit" onclick="appointmentEdit('.$row->id.');getDoctorAdded('.$row->id.')"></iconify-icon>
                     </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="appointmenttDelete('.$row->id.')"></iconify-icon>
@@ -115,9 +115,25 @@ class AppointmentController extends Controller
         return response()->json(['success'=>'Patient details fetched successfully','data'=>$getData],200);
     }
     public function getDoctorData(Request $request){
-        $getData = User::where('id',$request->id)->get(['fee','room_number']);
-        $roomNum = RoomNumber::where('id',$getData[0]->room_number)->get(['room_num']);
+        $getData = '';
+        $roomNum = '';
+        if($request->id != null || $request->id !=''){
+            $getData = User::where('id',$request->id)->get(['fee','room_number']);
+            $roomNum = RoomNumber::where('id',$getData[0]->room_number)->get(['room_num']);
+        }
         return response()->json(['success'=>'Doctor details fetched successfully','data'=>$getData,'roomNum'=>$roomNum],200);
+    }
+    public function getDoctorList(Request $request){
+        $doctors = User::where('status',1)->where('department_id',$request->departmentID)->get(['id','name']);
+        return response()->json(['success'=>'Doctor list fetched successfully','data'=>$doctors],200);
+    }
+    public function getDoctorAddedData(Request $request){
+        // dd($request->all());
+            $appointment = Appointment::where('id',$request->id)->get(['id','doctor_id']);
+            $doctorData = User::where('id',$appointment[0]->doctor_id)->get(['name','fee','room_number']);
+             $roomNum = RoomNumber::where('id',$doctorData[0]->room_number)->get(['room_num']);
+           // dd($appointment,$doctorName);
+        return response()->json(['success'=>'Doctor detail fetched successfully','data'=>$appointment,'doctorData' =>$doctorData,'roomNum'=>$roomNum],200);
     }
     public function appointmentBook(Request $request){
         $validator = Validator::make($request->all(),[
@@ -135,6 +151,7 @@ class AppointmentController extends Controller
         $month = date('m'); // Gets the current month (e.g., "05")
         $year = date('y'); // Gets the current year (e.g., "25")
         $appointment = new Appointment();
+        $appointment->patient_id = 'OPD';
         $appointment->patient_id = $request->patientID;
         $appointment->patient_name = $request->name;
         $appointment->department_id = $request->departmentID;

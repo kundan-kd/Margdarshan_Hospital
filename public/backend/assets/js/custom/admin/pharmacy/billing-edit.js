@@ -125,7 +125,7 @@ function addNewRowBillingEdit() {
                                   <input id="billingEdit-amount${rand}" name="billingEdit-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
                               </td>
                               <td>
-                                    <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowBilling(this)">
+                                    <button type="button" class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowBillingEdit(this)">
                                       <i class="ri-close-line"></i>
                                   </button>
                               </td>
@@ -263,7 +263,6 @@ function getBatchDetailsEdit(id,randB){
             },
             data:{id:batchValue},
             success:function(response){
-                console.log(response);
                 if(response.data != ''){
                     let  getData = response.data[0];
                     let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
@@ -366,8 +365,8 @@ $('#billingEdit-Form').on('submit',function(e){
   let totalNetAmount = parseFloat($('.billingEdit-totalNetAmount').html());
   let paymentMode = $('#billingEdit-paymentMode').val();
   let payAmount = $('#billingEdit-payAmount').val();
-  let dueAmount = totalNetAmount - payAmount;
-  dueAmount = dueAmount.toFixed(2);
+//   let dueAmount = totalNetAmount - payAmount;
+//   dueAmount = dueAmount.toFixed(2);
   $.ajax({
     url:billingEditDatas,
     type:"POST",
@@ -375,7 +374,7 @@ $('#billingEdit-Form').on('submit',function(e){
         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
     },
     data:{
-        billing_id:billing_id,editID:editID,category:category,name:name,batchNo:batchNo,expiry:expiry,qty:qty,salesPrice:salesPrice,taxPer:taxPer,taxAmount:taxAmount,amount:amount,billNo:billNo,patientID:patientID,resDoctor:resDoctor,outDoctor:outDoctor,notes:notes,totalAmount:totalAmount,discountPer:discountPer,totalDiscountAmount:totalDiscountAmount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
+        billing_id:billing_id,editID:editID,category:category,name:name,batchNo:batchNo,expiry:expiry,qty:qty,salesPrice:salesPrice,taxPer:taxPer,taxAmount:taxAmount,amount:amount,billNo:billNo,patientID:patientID,resDoctor:resDoctor,outDoctor:outDoctor,notes:notes,totalAmount:totalAmount,discountPer:discountPer,totalDiscountAmount:totalDiscountAmount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount
     },
     success:function(response){
         if(response.success){
@@ -390,16 +389,39 @@ $('#billingEdit-Form').on('submit',function(e){
   });
 });
 
-function checkBillingPayAmount(payAmount){
- let dueAmount = $('.billingEdit-totalPaidAmount').html();
- dueAmount = parseFloat(dueAmount);
-if (payAmount > dueAmount) {
-    $('.billingEdit-payAmount-error').removeClass('d-none').html('Pay Amount Exceeded Due Amount').addClass('text-danger');
-    $('#billingEdit-payAmount').val(dueAmount); // Reset to max possible value
-    return;
-} else {
-    $('.billingEdit-payAmount-error').addClass('d-none');
-}
+// function checkBillingPayAmount(payAmount){
+//  let dueAmount =  parseFloat($('.billingEdit-totalDueAmount').html()) || 0;
+//  dueAmount = parseFloat(dueAmount);
+// if (payAmount > dueAmount) {
+//     $('.billingEdit-payAmount-error').removeClass('d-none').html('Pay Amount Exceeded Due Amount').addClass('text-danger');
+//     $('#billingEdit-payAmount').val(dueAmount); // Reset to max possible value
+//     return;
+// } else {
+//     $('.billingEdit-payAmount-error').addClass('d-none');
+// }
+// }
+
+function checkBillingPayAmount(billing_id,amount){
+    let totalNetAmount = parseFloat($('.billingEdit-totalNetAmount').html());
+    $.ajax({
+        url:getBillingData,
+        type:"POST",
+        headers:{
+            'X_CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:billing_id},
+        success:function(response){
+            let paid_amount = response.data[0].paid_amount;
+            if(totalNetAmount - (parseFloat(amount) + parseFloat(paid_amount)) < 0){
+                $('.billingEdit-payAmount-error').removeClass('d-none').html('Pay amount exceeds due amount.').css('color','red');
+                $('.billingEditSubmitBtn').prop('disabled',true);
+                return;
+            }else{
+                $('.billingEdit-payAmount-error').addClass('d-none').html('');
+                $('.billingEditSubmitBtn').prop('disabled',false);
+            }
+        }
+    });
 }
 
 

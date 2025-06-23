@@ -32,6 +32,51 @@ function moveToIpd(id){
         }
     });
 }
+
+$('#emergency-ipdBedForm').on('submit',function(e){
+    e.preventDefault();
+    let patient_id = $('#patient_Id').val();
+    let bed = $('#emergency-ipdBed').val();
+    if(bed == ''){
+         $('.needs-validation').addClass('was-validated');
+    }else{
+          Swal.fire({
+        title: "Are you sure to move to IPD ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, Move it!",
+        customClass: {
+            title: 'swal-title-custom'
+          }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url:moveToIpdsStatus,
+                type:"POST",
+                headers:{
+                    'X-CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
+                },
+                data:{id:patient_id,bed_id:bed},
+                success:function(response){
+                    if (response.success) {
+                        Swal.fire("Moved", response.success, "success");
+                        setTimeout(function(){
+                            window.open('/ipd-in');
+                        },2500);
+                    } else {
+                        Swal.fire("Error!", "Error", "error");
+                    }
+                }
+            });
+        }
+    });
+    }
+})
+
+
+
 function patientDischargeE(id){
      Swal.fire({
         title: "Confirm discharge from Emergency?",

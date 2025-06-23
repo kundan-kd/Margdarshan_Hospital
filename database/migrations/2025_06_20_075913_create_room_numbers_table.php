@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('roomtype_id')->nullable();
             $table->string('room_num',11)->nullable();
-            $table->string('current_status',10)->default('Vacant');
+            $table->string('current_status',10)->default('vacant');
             $table->string('occupied_by',20)->nullable();
             $table->integer('occupied_by_id')->nullable();
             $table->integer('status')->default(1);

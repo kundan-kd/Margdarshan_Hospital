@@ -70,7 +70,7 @@ purchase-edit
               <th scope="col" class="fw-medium">Expiry Date</th>
               <th scope="col" class="fw-medium">Purchase Rate (₹)</th>
               <th scope="col" class="fw-medium">Amount (₹)</th>
-              <th scope="col" class="fw-medium">Quantity</th>
+              <th scope="col" class="fw-medium">Total Quantity</th>
               <th scope="col" class="fw-medium">MRP (₹)</th>
               <th scope="col" class="fw-medium">Sale Price (₹)</th>
               {{-- <th scope="col" class="fw-medium">Action</th> --}}

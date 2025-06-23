@@ -19,6 +19,10 @@ let table_patient = $('#ipd-in-patient-list').DataTable({
             name:'patient_id'
         },
         {
+            data:'department',
+            name:'department'
+        },
+        {
             data:'name',
             name:'name'
         },

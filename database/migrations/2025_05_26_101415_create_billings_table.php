@@ -23,8 +23,8 @@ return new class extends Migration
             $table->double('discount_amount')->nullable();
             $table->double('taxes')->nullable();
             $table->double('net_amount')->nullable();
-            $table->double('paid_amount')->nullable();
-            $table->double('due_amount')->nullable();
+            $table->double('paid_amount')->default(0);
+            $table->double('due_amount')->default(0);
             $table->string('payment_mode',40)->nullable();
             $table->text('naration')->nullable();
             $table->integer('status')->default(1);

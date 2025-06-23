@@ -54,7 +54,7 @@ class MedicineController extends Controller
                 return $row->box_packing;
             })
             ->addColumn('stock',function($row){
-                return 'NA';
+                return $row->stock_in - $row->stock_out;
             })
             ->addColumn('action',function($row){
                  return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">

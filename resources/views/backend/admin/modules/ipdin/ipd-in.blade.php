@@ -27,6 +27,7 @@
           <thead>
             <tr >
               <th scope="col" class="fw-medium">Patient ID</th>
+              <th scope="col" class="fw-medium">Depertment</th>
               <th scope="col" class="fw-medium">Name</th>
               <th scope="col" class="fw-medium">Gender</th>
               <th scope="col" class="fw-medium">Blood Type</th>

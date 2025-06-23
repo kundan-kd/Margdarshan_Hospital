@@ -13,7 +13,8 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">OPD - Out Patient Details</h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
-          <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" onclick="moveToIpd({{$patients[0]->id}})"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
+          <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" onclick="#
+          "> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
           {{-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#out-patient-ipd"><i class="ri-stethoscope-line"></i> Move to IPD</button> --}}
           {{-- <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button> --}}
@@ -836,6 +837,44 @@
   </div>
 </div>
 <!-- opd visit view end -->
+ <!--Alert modal start -->
+  <div class="modal fade" id="moveToIpdModel" tabindex="-1" role="dialog" aria-labelledby="addUserTypeModel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white userType-title">Bed Number</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+           <form action="" id="opd-ipdRoomForm" class="needs-validation" novalidate="">
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <label class="form-label" for="room_num">Bed Number</label>
+                    {{-- <input type="hidden" id=opd-ipdRoom"> --}}
+                   <select class="form-control form-control-sm" name="opd-ipdRoom" id="opd-ipdRoom" required>
+                        <option value="">Select IPD Bed Number</option>
+                        @foreach ($ipdAvailBeds as $ipdBed)
+                        <option value="{{$ipdBed->id}}">{{$ipdBed->bed_no}}</option>
+                        @endforeach
+                    </select>   
+                    <div class="invalid-feedback">
+                            Select IPD Bed
+                        </div> 
+                </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal" onclick="resetmodel()">Cancel</button>
+                        <button class="btn btn-primary btn-sm opdToIpdRoomSubmit" type="submit">Submit</button>
+                    </div>
+           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Alert modal end-->
 <!-- add timeline start -->
 <div class="modal fade" id="add-timeline" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-timelineLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md">
@@ -946,7 +985,7 @@ $('#opd-add-lab').on('shown.bs.modal', function () {
     });
 });
 
-  // const moveToIpdStatus = "{{route('opd-out.moveToIpdStatus')}}";
+  const moveToIpdStatus = "{{route('opd-out.moveToIpdStatus')}}";
   const opdOutVisitMedicineName = "{{route('common.getMedicineName')}}";
 
   const opdOutVisitSubmit = "{{route('opd-out-visit.opdOutVisitSubmit')}}";

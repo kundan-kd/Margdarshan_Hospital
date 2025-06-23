@@ -20,7 +20,7 @@ class UserController extends Controller
     $departments = Department::where('status', 1)->get();
     $userTypes = UserType::where('status', 1)->get();
     $bloodTypes = BloodType::where('status', 1)->get();
-    $opd_rooms = RoomNumber::where('status', 1)->where('current_status','vacant')->where('roomtype_id', 6)->get();
+    $opd_rooms = RoomNumber::where('status', 1)->where('current_status','vacant')->where('roomtype_id', 1)->get();
     return view('backend.admin.modules.master.user', compact('departments', 'userTypes', 'bloodTypes','opd_rooms'));
     }
     public function viewUsers(Request $request){
@@ -198,7 +198,7 @@ class UserController extends Controller
             // If no ID is provided, return an empty room data
             $getRoomData = [];
         }
-        $getData = RoomNumber::where('status', 1)->where('current_status','vacant')->where('roomtype_id', 6)->get();
+        $getData = RoomNumber::where('status', 1)->where('current_status','vacant')->where('roomtype_id', 1)->get();
         return response()->json(['success' => 'OPD Rooms fetched successfully', 'data' => $getData,'roomData'=>$getRoomData], 200);
     }
 }

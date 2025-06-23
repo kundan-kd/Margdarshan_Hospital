@@ -37,7 +37,7 @@
         </div>
         <div class="col-md-8 ">
             <div class="d-flex flex-wrap align-items-center justify-content-end gap-2">
-              <a href="opd-add-patient.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"> <i class="ri-add-line"></i> Add Patient</a>
+              {{-- <a href="opd-add-patient.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"> <i class="ri-add-line"></i> Add Patient</a> --}}
               {{-- <a href="#" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</a> --}}
             </div>
         </div>
@@ -65,7 +65,7 @@
       </div>
     </div>
   </div>
-
+ 
 <!-- opd-view start -->
 <div class="modal fade" id="opd-visit-view" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-visit-viewLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -148,7 +148,6 @@
 @section('extra-js')
 <script>
   const viewOpdOut = "{{route('opd-out.viewOpdOut')}}";
-  const moveToIpdStatus = "{{route('opd-out.moveToIpdStatus')}}";
 </script>
     <script src="{{asset('backend/assets/js/custom/admin/opdout/opdout.js')}}"></script>
 

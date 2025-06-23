@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
+            $table->string('type',20)->default('OPD');
             $table->integer('patient_id')->nullable();
             $table->string('patient_name',150)->nullable();
             $table->string('token',30)->nullable();

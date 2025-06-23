@@ -4,6 +4,7 @@ namespace App\Http\Controllers\backend\admin\opdout;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\Bed;
 use App\Models\Charge;
 use App\Models\LabInvestigation;
 use App\Models\Medication;
@@ -35,13 +36,14 @@ class OpdoutController extends Controller
         if($request->doctor_id != null && $request->roomNum != null){
             $appointment = Appointment::where('doctor_id', $request->doctor_id)
                                       ->where('room_number', $request->roomNum)
+                                      ->where('type','OPD')
                                       ->get();
         } elseif ($request->doctor_id != null && $request->roomNum == null) {
-            $appointment = Appointment::where('doctor_id', $request->doctor_id)->get();
+            $appointment = Appointment::where('doctor_id', $request->doctor_id)->where('type','OPD')->get();
         } elseif ($request->doctor_id == null && $request->roomNum != null) {
-            $appointment = Appointment::where('room_number', $request->roomNum)->get();
+            $appointment = Appointment::where('room_number', $request->roomNum)->where('type','OPD')->get();
         } else {
-            $appointment = Appointment::get(); // **Load all records when no filters are applied**
+            $appointment = Appointment::where('type','OPD')->get(); // **Load all records when no filters are applied**
         }
         return DataTables::of($appointment)
            ->addColumn('token',function($row){
@@ -94,20 +96,29 @@ class OpdoutController extends Controller
         $testtypes = TestType::where('status',1)->get();
         $testnames = TestName::where('status',1)->get();
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
-        return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData'));
+        $ipdAvailBeds = Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get();
+        return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds'));
     }
     function moveToIpdStatus(Request $request){
+        $now = Carbon::now();
         $curr_status = Patient::where('id',$request->id)->get(['type']);
+        $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
         $update = Patient::where('id',$request->id)->update([
             'type' =>'IPD',
             'previous_type'=>$curr_status[0]->type
         ]);
         if($update){
+            Bed::where('id',$request->bed_id)->update([
+                'current_status' => 'occupied',
+                'occupied_by_patient_id' => $request->id,
+                'occupied_date' =>$now
+
+            ]);
             $timelines = new Timeline();
             $timelines->type = "OPD";
             $timelines->patient_id = $request->id;
             $timelines->title = "Moved to IPD";
-            $timelines->desc = "Moved to IPD from OPD";
+            $timelines->desc = "Moved to IPD on bed ".$bed_name[0]->bed_no." from OPD";
             $timelines->created_by = "Admin";
             $timelines->save();
             return response()->json(['success'=>'Successfully moved to IPD'],200);

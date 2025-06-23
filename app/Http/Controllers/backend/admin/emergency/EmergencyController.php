@@ -38,7 +38,8 @@ class EmergencyController extends Controller
         $testtypes = TestType::where('status',1)->get();
         $testnames = TestName::where('status',1)->get();
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
-            return view('backend.admin.modules.emergency.emergency-details',compact('patients','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData'));
+        $ipdAvailBeds = Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get();
+        return view('backend.admin.modules.emergency.emergency-details',compact('patients','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds'));
     }
        public function viewPatients(Request $request){
         if($request->ajax()){
@@ -175,7 +176,7 @@ class EmergencyController extends Controller
         return response()->json(['success'=>'Patient data deleted successfully'],200);
     }
     public function getBedDatasEmergency(Request $request){
-        $getAvailBed =  Bed::where('bed_group_id',7)->where('current_status','vacant')->where('status',1)->get(['id','bed_no']);
+        $getAvailBed =  Bed::where('bed_group_id',6)->where('current_status','vacant')->where('status',1)->get(['id','bed_no']);
         $occupiedBed = '';
         $bedTypeName = '';
         if($request->id != null || $request->id != ''){
@@ -192,18 +193,34 @@ class EmergencyController extends Controller
         $bedtypename = BedType::where('id',$getData[0]->bed_type_id)->get(['name']);
         return response()->json(['success'=>'Bed data fetched','data'=>$getData,'bedTypeName'=>$bedtypename],200);
     }
-    function moveToIpdStatus(Request $request){
+    function moveToIpdsStatus(Request $request){
+        $now = Carbon::now();
+        $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
         $curr_status = Patient::where('id',$request->id)->get(['type']);
+        $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
         $update = Patient::where('id',$request->id)->update([
             'type' =>'IPD',
             'previous_type'=>$curr_status[0]->type
         ]);
         if($update){
+            Bed::where('id',$request->bed_id)->update([
+                'current_status' => 'occupied',
+                'occupied_by_patient_id' => $request->id,
+                'occupied_date' =>$now
+
+            ]);
+            Bed::where('id', $previous_bed_data[0]->id)->update([
+                'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
+                'previous_occupied_date' => $previous_bed_data[0]->occupied_date,
+                'occupied_by_patient_id' => null,
+                'occupied_date' => null,
+                'current_status' =>'vacant'
+            ]);
             $timelines = new Timeline();
-            $timelines->type = "EMERGENCY";
+            $timelines->type = "IPD";
             $timelines->patient_id = $request->id;
             $timelines->title = "Moved to IPD";
-            $timelines->desc = "Moved to IPD from Emergency";
+            $timelines->desc = "Moved to IPD on bed ".$bed_name[0]->bed_no." from Emergency";
             $timelines->created_by = "Admin";
             $timelines->save();
             return response()->json(['success'=>'Successfully moved to IPD'],200);

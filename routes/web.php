@@ -75,11 +75,13 @@ Route::post('/appointment-details',[AppointmentController::class,'viewAppointmen
 Route::post('/appointment-addpatient',[AppointmentController::class,'addNewPatient'])->name('appointment-patient.addNewPatient');
 Route::post('/appointment-patient-search',[AppointmentController::class,'searchPatient'])->name('appointment-patient.searchPatient');
 Route::post('/appointment-patient-getdetails',[AppointmentController::class,'getPatient'])->name('appointment-patient.getPatient');
-Route::post('/appointment-doctor-details',[AppointmentController::class,'getDoctorData'])->name('appointment-patient.getDoctorData');
 Route::post('/appointment-booking',[AppointmentController::class,'appointmentBook'])->name('appointment-booking.appointmentBook');
 Route::post('/appointment-booking-getdetails',[AppointmentController::class,'getAppointmentData'])->name('appointment-booking.getAppointmentData');
 Route::post('/appointment-booking-update',[AppointmentController::class,'updateAppointmentData'])->name('appointment-booking.updateAppointmentData');
 Route::post('/appointment-booking-delete',[AppointmentController::class,'deleteAppointmentData'])->name('appointment-booking.deleteAppointmentData');
+Route::post('/appointment-booking-doctor-list',[AppointmentController::class,'getDoctorList'])->name('appointment-booking.getDoctorList');
+Route::post('/appointment-booking-doctor-added-data',[AppointmentController::class,'getDoctorAddedData'])->name('appointment-booking.getDoctorAddedData');
+Route::post('/appointment-booking-doctor-details',[AppointmentController::class,'getDoctorData'])->name('appointment-booking.getDoctorData');
 
 Route::get('/patient',[PatientController::class,'index'])->name('patient.index');
 Route::post('/patient-details',[PatientController::class,'viewPatients'])->name('patient.viewPatients');
@@ -217,6 +219,8 @@ Route::post('/billing-edit-data-load',[BillingController::class,'billingEditAuto
 
 Route::get('/billing-edit-name-details',[BillingController::class,'getBillingNamesSelectEdit'])->name('billing-edit.getBillingNamesSelectEdit');
 Route::post('/billing-update',[BillingController::class,'billingUpdateDatas'])->name('billing-Edit.billingEditDatas');
+Route::post('/billing-data',[BillingController::class,'getBillingData'])->name('billing-Edit.getBillingData');
+Route::get('/billing-view/{id}',[BillingController::class,'billingViewIndex']);
 
 Route::get('/opd-out',[OpdoutController::class,'index'])->name('opd-out.index');
 Route::post('/opd-out-view',[OpdoutController::class,'viewOpdOut'])->name('opd-out.viewOpdOut');
@@ -256,6 +260,7 @@ Route::get('/ipd-in',[IpdinController::class,'index'])->name('ipd-in.index');
 Route::post('/ipd-in-patient-add',[IpdinController::class,'ipdInPatientAdd'])->name('ipd-in.ipdInPatientAdd');
 Route::get('/ipd-in-details/{id}',[IpdinController::class,'ipdInDetails']);
 Route::post('/ipd-in-patient-movetoemergency',[IpdinController::class,'moveToEmergencyStatus'])->name('ipd.moveToEmergencyStatus');
+Route::post('/ipd-in-patient-movetoicu',[IpdinController::class,'moveToIcuStatus'])->name('ipd.moveToIcuStatus');
 Route::post('/ipd-in-patient-discharge',[IpdinController::class,'patientDischargeStatus'])->name('ipd.patientDischargeStatus');
 Route::post('/ipd-in-patient-add',[IpdinController::class,'addNewPatientIpd'])->name('ipd-addPatient');
 Route::post('/ipd-in-patient-view',[IpdinController::class,'viewPatients'])->name('ipd-viewPatients');
@@ -305,7 +310,7 @@ Route::get('/emergency',[EmergencyController::class,'index'])->name('emergency.i
 Route::get('/emergency-details/{id}',[EmergencyController::class,'emergencyDetails']);
 Route::post('/emergency-patient-add',[EmergencyController::class,'addPatient'])->name('emergency-addPatient');
 Route::post('/emergency-patient-view',[EmergencyController::class,'viewPatients'])->name('emergency-viewPatients');
-Route::post('/emergency-patient-movetoipd',[EmergencyController::class,'moveToIpdStatus'])->name('emergency.moveToIpdStatus');
+Route::post('/emergency-patient-movetoipd',[EmergencyController::class,'moveToIpdsStatus'])->name('emergency.moveToIpdsStatus');
 Route::post('/emergency-patient-discharge',[EmergencyController::class,'patientDischargeStatusE'])->name('emergency.patientDischargeStatusE');
 Route::post('/emergency-patient-data',[EmergencyController::class,'getEmergencyPatientData'])->name('emergency-getEmergencyPatientData');
 Route::post('/emergency-patient-update',[EmergencyController::class,'emergencyPatientDataUpdate'])->name('emergency-emergencyPatientDataUpdate');

@@ -69,7 +69,7 @@ class BedgroupController extends Controller
             bedGroup::where('id',$request->id)->update([
                 'name' => $request->bedGroup
             ]);
-        return response()->json(['success' => 'Bed Group updated successfully'],200);
+            return response()->json(['success' => 'Bed Group updated successfully'],200);
         }else{
             return response()->json(['already_found'=>'This Bed Group already found'],200);
         }

@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('current_status',20)->default('vacant');
             $table->integer('occupied_by_patient_id')->nullable();
             $table->string('occupied_date',30)->nullable();
+            $table->integer('previous_occupied_patient_id')->nullable();
+            $table->string('previous_occupied_date',30)->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();
             $table->softDeletes();

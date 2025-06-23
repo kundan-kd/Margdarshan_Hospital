@@ -175,9 +175,7 @@ function getBillingAmount(randA){
     let currTaxAmount = (currAmount * tax)/100;
     $('#billingAdd-taxAmount'+randA).val(currTaxAmount) ||0;
     updateTotalBilling();
-
-    
-}
+    }
 // function updateTotalAmount(){
 //     let total_amount = $('input[name="billingAdd-amount[]"]').map(function(){return $(this).val();}).get();
 //     let totalAmountSum = total_amount.map(Number).reduce((acc,val) => acc + val,0) ?? 0;
@@ -212,7 +210,7 @@ function updateTotalBilling() {
     $('.billingAdd-totalTax').html(totalTaxAmountSum.toFixed(2)) ||0;
     // Calculate net amount
     let totalNetAmount = totalAmountSum + totalTaxAmountSum;
-    $('.billingAdd-totalNetAmount').html(totalNetAmount.toFixed(2)) ||0;
+    $('.billingAdd-totalNetAmount').html(Math.round(totalNetAmount) || 0);
     // Calculate discount if applicable
     let discountPer = parseFloat($('#billingAdd-discountPer').val()) || 0;
     if (discountPer > 0) {
@@ -224,7 +222,7 @@ function updateTotalBilling() {
         $('.billingAdd-totalTax').html(total_tax_after_discount.toFixed(2));
 
         let net_amount_after_discount = totalAmountSum - discountAmount + total_tax_after_discount;
-        $('.billingAdd-totalNetAmount').html(net_amount_after_discount.toFixed(2));
+        $('.billingAdd-totalNetAmount').html(Math.round(net_amount_after_discount) || 0);
     } else {
         // If no discount, ensure discount amount is reset
         $('.billingAdd-discountAmount').html('0.00');
@@ -252,7 +250,6 @@ $('#billingAdd-patientForm').on('submit',function(e){
     let patientMobile = validateField('billingAdd-patientMobile', 'mobile');
     let patientAddess = validateField('billingAdd-patientAddess', 'input');
         if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
-           
             let name = $('#billingAdd-patientName').val();
             let guardian_name = $('#billingAdd-guardianName').val();
             let gender = $('input[name="billingAdd-patientGender"]:checked').val(); // Corrected na

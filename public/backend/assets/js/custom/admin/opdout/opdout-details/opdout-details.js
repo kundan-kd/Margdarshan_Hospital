@@ -1,5 +1,13 @@
-function moveToIpd(id){
-     Swal.fire({
+
+
+$('#opd-ipdRoomForm').on('submit',function(e){
+    e.preventDefault();
+    let patient_id = $('#patient_Id').val();
+    let bed = $('#opd-ipdRoom').val();
+    if(bed == ''){
+         $('.needs-validation').addClass('was-validated');
+    }else{
+          Swal.fire({
         title: "Are you sure to move to IPD ?",
         icon: "warning",
         showCancelButton: true,
@@ -17,7 +25,7 @@ function moveToIpd(id){
                 headers:{
                     'X-CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
                 },
-                data:{id:id},
+                data:{id:patient_id,bed_id:bed},
                 success:function(response){
                     if (response.success) {
                         Swal.fire("Moved", response.success, "success");
@@ -31,4 +39,6 @@ function moveToIpd(id){
             });
         }
     });
-}
+    }
+   
+})

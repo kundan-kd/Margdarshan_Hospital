@@ -26,14 +26,15 @@ let table = $('#billing-list-table').DataTable({
             data:'bill_no',
             name:'bill_no'
         },
+         {
+            data:'discount',
+            name:'discount'
+        },
         {
             data:'total',
             name:'total'
         },
-        {
-            data:'discount',
-            name:'discount'
-        },
+       
         {
             data:'net_amount',
             name:'net_amount'
@@ -53,4 +54,8 @@ let table = $('#billing-list-table').DataTable({
 
 function billingEdit(id){
  window.open('billing-edit-page/' + id, '_blank');
+}
+
+function purchaseDetails(id) {
+      window.open('billing-view/' + id, '_blank');
 }

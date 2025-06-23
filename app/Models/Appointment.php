@@ -15,4 +15,7 @@ class Appointment extends Model
     public function user_data(){
         return $this-> hasOne('App\Models\User','id','doctor_id');
     }
+    public function roomNumberData(){
+        return $this-> belongsTo(RoomNumber::class,'room_number');
+    }
 }

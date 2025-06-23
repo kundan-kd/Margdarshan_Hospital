@@ -48,6 +48,9 @@ class EmergencyController extends Controller
         ->addColumn('patient_id',function($row){
              return '<a target="_blank" class="text-primary cursor-pointer" onclick="emergencyPatientUsingId('.$row->id.')">'.$row->patient_id.'</a>';
         })
+        ->addColumn('bed_no',function($row){
+            return $row->bedData->bed_id;
+        })
         ->addColumn('gender',function($row){
             return $row->gender; //fetched through modal relationship
         })
@@ -200,6 +203,7 @@ class EmergencyController extends Controller
         $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
         $update = Patient::where('id',$request->id)->update([
             'type' =>'IPD',
+            'bed_id' => $request->bed_id,
             'previous_type'=>$curr_status[0]->type
         ]);
         if($update){

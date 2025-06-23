@@ -10,6 +10,6 @@ class Patient extends Model
 {
     use HasFactory,SoftDeletes;
     public function bedData(){
-        return $this->belongsTo(Bed::class,'occupied_by_patient_id');
+        return $this->belongsTo(Bed::class,'bed_id');
     }
 }

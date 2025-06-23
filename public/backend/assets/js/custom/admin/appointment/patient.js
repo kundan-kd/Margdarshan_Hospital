@@ -156,7 +156,7 @@ function patientNewEdit(id){
         success:function(response){
             if(response.success){
                let getData = response.data[0];
-                $('#patient-add-appointmentLabel').html('Edit Patient');
+                $('#patient-add-appointmentLabel').html('Edit OPD Patient');
                 $('.patientAddPatientSubmit').addClass('d-none');
                 $('.patientAddPatientUpdate').removeClass('d-none');
                 $('#patient-add-patient').modal('show');
@@ -170,6 +170,13 @@ function patientNewEdit(id){
                 $('#patient-patientAddess').val(getData.address);
                 $('#patient-patientAltMobile').val(getData.alt_mobile);
                 $('#patient-patientAllergy').val(getData.known_allergies);
+
+                $('input[name="patient-patientGender"]').each(function() {
+                if ($(this).val() === getData.gender) {
+                    $(this).prop('checked', true);
+                }
+        });
+
             }
         }
     });

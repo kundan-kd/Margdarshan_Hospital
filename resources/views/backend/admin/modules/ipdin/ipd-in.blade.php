@@ -28,6 +28,7 @@
             <tr >
               <th scope="col" class="fw-medium">Patient ID</th>
               <th scope="col" class="fw-medium">Depertment</th>
+              <th scope="col" class="fw-medium">Bed No.</th>
               <th scope="col" class="fw-medium">Name</th>
               <th scope="col" class="fw-medium">Gender</th>
               <th scope="col" class="fw-medium">Blood Type</th>
@@ -274,6 +275,14 @@
           dropdownParent: $('#ipd-add-patient')
       });
     });
+    // Flat pickr or date picker js 
+    function getDatePicker (receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "d-m-Y ",
+        });
+    }
+    getDatePicker('#ipd-patientDOB'); 
+
   const addNewPatientIpd = "{{route('ipd-addPatient')}}"; 
   const viewPatientsIpd = "{{route('ipd-viewPatients')}}"; 
   const getIpdPatientData = "{{route('ipd-getIpdPatientData')}}"; 

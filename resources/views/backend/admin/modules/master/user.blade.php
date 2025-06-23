@@ -83,12 +83,12 @@ User
             </div>
             <div class="col-6">
               <label class="form-label fw-normal" for="user-dob">DOB</label>
-              <input type="date" id="user-dob" class="form-control form-control-sm" placeholder="Enter Date of birth" oninput="validateField(this.id,'input')">
+              <input type="date" id="user-dob" class="form-control form-control-sm" placeholder="DD/MM/YYYY" oninput="validateField(this.id,'input')">
               <div class="user-dob_errorCls d-none"></div>
             </div>
             <div class="col-6">
               <label class="form-label fw-normal" for="user-doj">DOJ</label>
-              <input type="date" id="user-doj" class="form-control form-control-sm" placeholder="Enter Date of joining" oninput="validateField(this.id,'input')">
+              <input type="date" id="user-doj" class="form-control form-control-sm" placeholder="DD/MM/YYYY" oninput="validateField(this.id,'input')">
               <div class="user-doj_errorCls d-none"></div>
             </div>
             <div class="col-6">
@@ -168,7 +168,14 @@ User
           dropdownParent: $('#add-user')
       });
     });
-
+     // Flat pickr or date picker js 
+    function getDatePicker (receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "d-m-Y ",
+        });
+    }
+    getDatePicker('#user-dob'); 
+    getDatePicker('#user-doj'); 
      const viewUsers = "{{route('user.viewUsers')}}";
      const addUser = "{{route('user.addUser')}}";
      const getUserData = "{{route('user.getUserData')}}";

@@ -23,6 +23,10 @@ let table_patient_emergency = $('#emergency-patient-list').DataTable({
             name:'name'
         },
         {
+            data:'bed_no',
+            name:'bed_no'
+        },
+        {
             data:'gender',
             name:'gender'
         },
@@ -205,7 +209,7 @@ function emergencyPatientEdit(id){
             console.log(response);
             if(response.success){
                let getData = response.data[0];
-                $('#emergency-add-patientLabel').html('Edit Nurse Note');
+                $('#emergency-add-patientLabel').html('Edit Emergency Patient');
                 $('.emergencyPatientSubmit').addClass('d-none');
                 $('.emergencyPatientUpdate').removeClass('d-none');
                 $('#emergency-add-patient').modal('show');
@@ -220,6 +224,12 @@ function emergencyPatientEdit(id){
                 $('#emergency-patientAltMobile').val(getData.alt_mobile);
                 $('#emergency-patientAllergy').val(getData.known_allergies);
                 $('#emergency-patientBedNum').val(getData.bed_id);
+                $('input[name="emergency-patientGender"]').each(function() {
+                if ($(this).val() === getData.gender) {
+                    $(this).prop('checked', true);
+                }
+        });
+
                 }
         }
     });

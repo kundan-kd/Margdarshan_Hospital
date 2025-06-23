@@ -55,6 +55,9 @@ class IpdinController extends Controller
         ->addColumn('department',function($row){
             return $row->type; //fetched through modal relationship
         })
+        ->addColumn('bed_no',function($row){
+            return $row->bedData->bed_no ?? 'NA'; //fetched through modal relationship
+        })
         ->addColumn('gender',function($row){
             return $row->gender; //fetched through modal relationship
         })
@@ -206,6 +209,7 @@ class IpdinController extends Controller
         $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
         $update = Patient::where('id',$request->id)->update([
             'type' =>'EMERGENCY',
+            'bed_id' => $request->bed_id,
             'previous_type'=>$curr_status[0]->type
         ]);
         if($update){

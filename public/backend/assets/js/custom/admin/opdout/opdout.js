@@ -21,6 +21,7 @@ let table_opd_patients = $('#opd-out-list-table').DataTable({
         { data: 'token', name: 'token' },
         { data: 'patient_name', name: 'patient_name' },
         { data: 'doctor', name: 'doctor' },
+        { data: 'room_no', name: 'room_no' },
         { data: 'appointment_date', name: 'appointment_date' },
         { data: 'mobile', name: 'mobile' },
         { data: 'gender', name: 'gender' },

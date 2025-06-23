@@ -18,7 +18,7 @@ Patient
     <div class="card-header d-flex align-items-center justify-content-between">
       <h5 class="card-title mb-0 fw-medium">Patient Details</h5>
       <div class="d-flex flex-wrap align-items-center gap-2">
-              <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#patient-add-patient" onclick="resetPatientAddPatient()"> <i class="ri-add-line"></i> Add Patient</a>
+              <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#patient-add-patient" onclick="resetPatientAddPatient()"> <i class="ri-add-line"></i> Add OPD Patient</a>
           </div>
     </div>
     <div class="card-body">
@@ -87,7 +87,7 @@ Patient
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="patient-patientBloodType">Blood Type</label>
-            <select class="form-select form-select-sm" id="patient-patientBloodType" oninput="validateField(this.id,'select')">
+            <select class="form-select form-select-sm select2-cls" id="patient-patientBloodType" style="width: 100%" oninput="validateField(this.id,'select')">
               <option value="">Select</option>
               <option value="A+">A+</option>
               <option value="A-">A-</option>
@@ -107,7 +107,7 @@ Patient
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="patient-patientMStatus">Marital Status</label>
-            <select class="form-select form-select-sm" id="patient-patientMStatus"  oninput="validateField(this.id,'select')">
+            <select class="form-select form-select-sm select2-cls" id="patient-patientMStatus" style="width: 100%" oninput="validateField(this.id,'select')">
               <option value="">Select</option>
               <option value="Married">Married</option>
               <option value="UnMarried">UnMarried</option>
@@ -148,6 +148,18 @@ Patient
 @endsection
 @section('extra-js')
 <script>
+    $('#patient-add-patient').on('shown.bs.modal', function () {
+      $('.select2-cls').select2({
+          dropdownParent: $('#patient-add-patient')
+      });
+    });
+  // Flat pickr or date picker js 
+    function getDatePicker (receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "d-m-Y ",
+        });
+    }
+    getDatePicker('#patient-patientDOB'); 
     const viewPatients = "{{route('patient.viewPatients')}}";
     const deletePatientData = "{{route('patient.deletePatientData')}}";
     const patientAddNewPatient = "{{route('patient.patientAddNewPatient')}}"; 

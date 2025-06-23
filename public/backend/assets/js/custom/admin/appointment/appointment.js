@@ -156,7 +156,6 @@ function resetAddPatient(){
 }
 
 function getPatientData(x) {
-    console.log(x);
     validateField('itemSearchInput','input');
     let nameLength = x.length;
     if(nameLength < 3){
@@ -173,7 +172,6 @@ function getPatientData(x) {
             },
             data: { name: x },
             success: function(response) {
-                console.log(response);
                 let getData = response.data;
                
                 if(getData == null || getData == ''){
@@ -229,6 +227,7 @@ function getDocRoomNum(id){
             if(response.data !=''){
                 if(response.success){
                     $('#roomNumAppt').val(response.roomNum[0].room_num);
+                    $('#roomNumApptId').val(response.roomNum[0].id); // Store room number ID for later use
                     $('#opd_fee').val(response.data[0].fee);
                 }
             }
@@ -248,7 +247,6 @@ function getDoctorAdded(id){
         },
         data: { id:id },
         success: function(response) {
-            console.log(response);
             if(response.success){
                $('#doctorAppt').append(`<option selected value="${response.data[0].doctor_id}">${response.doctorData[0].name}</option>`);
                
@@ -311,7 +309,7 @@ $('#appointmentForm').on('submit',function(e){
     let doctorID = $('#doctorAppt').val();
     let date = $('#dateAppt').val();
     let pmode = $('#paymentModeAppt').val();
-    let rnum = $('#roomNumAppt').val();
+    let rnum = $('#roomNumApptId').val();
     let fee = $('#opd_fee').val();
         $.ajax({
             url: appointmentBook,
@@ -323,7 +321,6 @@ $('#appointmentForm').on('submit',function(e){
                 patientID:patientID,name:name,departmentID:departmentID,doctorID:doctorID,date:date,pmode:pmode,rnum:rnum,fee:fee
             },
             success:function(response){
-                 console.log(response);
                 if(response.success){
                     $('#add-appointment').modal('hide');
                     $('#appointmentForm')[0].reset();

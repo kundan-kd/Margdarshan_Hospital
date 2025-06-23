@@ -119,7 +119,7 @@ class AppointmentController extends Controller
         $roomNum = '';
         if($request->id != null || $request->id !=''){
             $getData = User::where('id',$request->id)->get(['fee','room_number']);
-            $roomNum = RoomNumber::where('id',$getData[0]->room_number)->get(['room_num']);
+            $roomNum = RoomNumber::where('id',$getData[0]->room_number)->get(['id','room_num']);
         }
         return response()->json(['success'=>'Doctor details fetched successfully','data'=>$getData,'roomNum'=>$roomNum],200);
     }

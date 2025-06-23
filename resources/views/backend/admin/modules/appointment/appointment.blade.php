@@ -141,6 +141,7 @@ $ddate = date("d/m/yy");
             </div>
             <div class="col-6">
               <label class="form-label fw-normal ">Room No</label>
+              <input type="hidden" id="roomNumApptId" style="display:none;">
               <input type="text" id="roomNumAppt" class="form-control form-control-sm " placeholder="Room No" readonly>
             </div>
             <div class="col-6">
@@ -283,7 +284,7 @@ $ddate = date("d/m/yy");
   });
 });
 
-// Flat pickr or date picker js 
+    // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
         flatpickr(receiveID, {
             dateFormat: "d-m-Y ",

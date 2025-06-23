@@ -23,6 +23,10 @@ let table_patient = $('#ipd-in-patient-list').DataTable({
             name:'department'
         },
         {
+            data:'bed_no',
+            name:'bed_no'
+        },
+        {
             data:'name',
             name:'name'
         },
@@ -202,7 +206,7 @@ function ipdPatientEdit(id){
            // console.log(response);
             if(response.success){
                let getData = response.data[0];
-                $('#ipd-add-patientLabel').html('Edit Nurse Note');
+                $('#ipd-add-patientLabel').html('Edit IPD Patient');
                 $('.ipdPatientSubmit').addClass('d-none');
                 $('.ipdPatientUpdate').removeClass('d-none');
                 $('#ipd-add-patient').modal('show');
@@ -217,6 +221,12 @@ function ipdPatientEdit(id){
                 $('#ipd-patientAltMobile').val(getData.alt_mobile);
                 $('#ipd-patientAllergy').val(getData.known_allergies);
                 $('#ipd-patientBedNum').val(getData.bed_id);
+                $('input[name="ipd-patientGender"]').each(function() {
+                if ($(this).val() === getData.gender) {
+                    $(this).prop('checked', true);
+                }
+        });
+
             }
         }
     });

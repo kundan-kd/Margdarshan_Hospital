@@ -30,7 +30,9 @@
             <select id="opdoutRoomNum" class="select2-class form-select" onchange="getListFilter()">
                 <option value=""> Select Room</option>
                 @foreach ($users as $user)
-                <option value="{{$user->room_number}}">{{$user->room_number}}</option>
+               <option value="{{ $user->room_number }}">
+            {{ $user->roomNumberData->room_num }}
+        </option>
                 @endforeach
             </select>
         </div>
@@ -52,6 +54,7 @@
               <th scope="col" class="fw-medium">Token no.</th>
               <th scope="col" class="fw-medium">Patient Name</th>
               <th scope="col" class="fw-medium">Doctor</th>
+              <th scope="col" class="fw-medium">Room No.</th>
               <th scope="col" class="fw-medium">Appointment Date</th>
               <th scope="col" class="fw-medium">Phone</th>
               <th scope="col" class="fw-medium">Gender</th>

@@ -27,7 +27,7 @@ use Yajra\DataTables\Facades\DataTables;
 class OpdoutController extends Controller
 {
     public function index(){
-        $users = User::where('usertype_id',2)->get(['id','name','room_number']);
+        $users = User::where('usertype_id',2)->with('roomNumberData')->get(['id','name','room_number']);
         return view('backend.admin.modules.opdout.opd-out',compact('users'));
     }
    
@@ -55,8 +55,8 @@ class OpdoutController extends Controller
             ->addColumn('doctor',function($row){
                 return "Dr. ".$row->user_data->name ?? '';
             })
-            ->addColumn('room_number',function($row){
-                return $row->room_number;
+            ->addColumn('room_no',function($row){
+                return $row->roomNumberData->room_num;
             })
             ->addColumn('appointment_date',function($row){
                 return $row->appointment_date;

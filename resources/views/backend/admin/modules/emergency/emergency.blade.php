@@ -18,7 +18,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
   <h6 class="fw-normal mb-0">Emergency</h6>
   <div class="d-flex flex-wrap align-items-center gap-2">
-          <a href="add-emergency-patient.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-patient" onclick= "resetAddPatient();getBedDataEmergency()"> <i class="ri-add-line"></i> Add Patient</a>
+          <a href="add-emergency-patient.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-patient" onclick= "resetAddPatient();getBedDataEmergency()"> <i class="ri-add-line"></i> Add Emergency Patient</a>
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
   <!-- <div class="btns">
@@ -34,6 +34,7 @@
             <tr>
               <th scope="col" class="fw-medium">Patient ID</th>
               <th scope="col" class="fw-medium">Name</th>
+              <th scope="col" class="fw-medium">Bed No.</th>
               <th scope="col" class="fw-medium">Gender</th>
               <th scope="col" class="fw-medium">Blood Type</th>
               <th scope="col" class="fw-medium">DOB</th>
@@ -116,7 +117,7 @@
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="emergency-patientBloodType">Blood Type</label>
-            <select class="form-select form-select-sm" id="emergency-patientBloodType"style="width:100%" oninput="validateField(this.id,'select')">
+            <select class="form-select form-select-sm select2-cls" id="emergency-patientBloodType" style="width: 100%" oninput="validateField(this.id,'select')">
               <option value="">Select</option>
               <option value="A+">A+</option>
               <option value="A-">A-</option>
@@ -136,7 +137,7 @@
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="emergency-patientMStatus">Marital Status</label>
-            <select class="form-select form-select-sm" id="emergency-patientMStatus" style="width: 100%" oninput="validateField(this.id,'select')">
+            <select class="form-select form-select-sm select2-cls" id="emergency-patientMStatus" style="width: 100%" oninput="validateField(this.id,'select')">
               <option value="">Select</option>
               <option value="Married">Married</option>
               <option value="UnMarried">UnMarried</option>
@@ -201,6 +202,13 @@
           dropdownParent: $('#emergency-add-patient')
       });
     });
+    // Flat pickr or date picker js 
+    function getDatePicker (receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "d-m-Y ",
+        });
+    }
+    getDatePicker('#emergency-patientDOB'); 
   const addPatient = "{{route('emergency-addPatient')}}"; 
   const viewPatients = "{{route('emergency-viewPatients')}}"; 
   const getEmergencyPatientData = "{{route('emergency-getEmergencyPatientData')}}"; 

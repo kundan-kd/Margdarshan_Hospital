@@ -21,6 +21,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(UserType::class, 'usertype_id');
     }
+     public function roomNumberData()
+    {
+        return $this->belongsTo(RoomNumber::class, 'room_number');
+    }
 
     /**
      * The attributes that are mass assignable.

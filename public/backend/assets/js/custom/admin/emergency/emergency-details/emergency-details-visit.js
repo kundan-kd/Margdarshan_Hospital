@@ -13,8 +13,10 @@ function resetVisit(){
     $('#emergencyVisit-paymentMode').val('');
     $('#emergencyVisit-refNum').val('');
     $('#emergencyVisit-paidAmount').val('');
+    $('#emergencyVisit-AlreadypaidAmount').val('');
     $('.emergencyVisitSubmit').removeClass('d-none');
     $('.emergencyVisitUpdate').addClass('d-none');
+    $('.emergencyVisit-AlreadypaidAmountCls').addClass('d-none');
 }
 function calculateAmount(){
     let charge = $('#emergencyVisit-charge').val() || 0;
@@ -26,17 +28,31 @@ function calculateAmount(){
     let finelAmount = (charge - discountAmount) + taxAmount;
     $('#emergencyVisit-amount').val(finelAmount);
 }
+function checkEmergencyVisitPaidAmount(){
+    let amount = $('#emergencyVisit-amount').val() || 0;
+    let paidAmount = $('#emergencyVisit-paidAmount').val() || 0;
+    let alreadypaidAmount = $('#emergencyVisit-AlreadypaidAmount').val() || 0;
+    if((parseFloat(paidAmount) + parseFloat(alreadypaidAmount)) > amount){
+        $('.emergencyVisitSubmit').prop('disabled', true);
+        $('.emergencyVisitUpdate').prop('disabled', true);
+        toastErrorAlert('Payment amount exceeds total amount');
+    }else{
+         $('.emergencyVisitSubmit').prop('disabled', false);
+         $('.emergencyVisitUpdate').prop('disabled', false);
+    }
+}
 $('#emergencyVisit-form').on('submit',function(e){
  e.preventDefault();
     let symptoms_check  = validateField('emergencyVisit-symptoms', 'input');
     let previousMedIssue_check  = validateField('emergencyVisit-previousMedIssue', 'input');
+    let admissionDate_check  = validateField('emergencyVisit-admissionDate', 'select');
     let oldPatient_check  = validateField('emergencyVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('emergencyVisit-consultDoctor', 'select');
     let charge_check = validateField('emergencyVisit-charge', 'amount');
     let amount_check = validateField('emergencyVisit-amount', 'amount');
     let paymentMode_check = validateField('emergencyVisit-paymentMode', 'select');
     let paidAmount_check = validateField('emergencyVisit-paidAmount', 'amount');
-    if(symptoms_check === true && previousMedIssue_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true  && amount_check === true && paymentMode_check === true && paidAmount_check === true){ 
+    if(symptoms_check === true && previousMedIssue_check === true && admissionDate_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true  && amount_check === true && paymentMode_check === true && paidAmount_check === true){ 
         let patientId = $('#patient_Id').val();
         let symptoms = $('#emergencyVisit-symptoms').val();
         let previousMedIssue = $('#emergencyVisit-previousMedIssue').val();
@@ -253,9 +269,11 @@ function emergencyVisitEdit(id){
                 $('#emergencyVisit-amount').val(visitData.amount);
                 $('#emergencyVisit-paymentMode').val(visitData.payment_mode);
                 $('#emergencyVisit-refNum').val(visitData.ref_num);
-                $('#emergencyVisit-paidAmount').val(visitData.paid_amount);
+                $('#emergencyVisit-paidAmount').val('');
+                $('#emergencyVisit-AlreadypaidAmount').val(visitData.paid_amount);
                 $('.emergencyVisitSubmit').addClass('d-none');
                 $('.emergencyVisitUpdate').removeClass('d-none');
+                $('.emergencyVisit-AlreadypaidAmountCls').removeClass('d-none');
             }
         }
     });
@@ -263,14 +281,14 @@ function emergencyVisitEdit(id){
 function emergencyVisitUpdate(id){
     let symptoms_check  = validateField('emergencyVisit-symptoms', 'input');
     let previousMedIssue_check  = validateField('emergencyVisit-previousMedIssue', 'input');
+    let admissionDate_check  = validateField('emergencyVisit-admissionDate', 'select');
     let oldPatient_check  = validateField('emergencyVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('emergencyVisit-consultDoctor', 'select');
     let charge_check = validateField('emergencyVisit-charge', 'amount');
-    let tax_check = validateField('emergencyVisit-tax', 'amount');
     let amount_check = validateField('emergencyVisit-amount', 'amount');
     let paymentMode_check = validateField('emergencyVisit-paymentMode', 'select');
-    let paidAmount_check = validateField('emergencyVisit-paidAmount', 'amount');
-    if(symptoms_check === true && previousMedIssue_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true && tax_check === true && amount_check === true && paymentMode_check === true && paidAmount_check === true){  
+    // let paidAmount_check = validateField('emergencyVisit-paidAmount', 'amount');
+    if(symptoms_check === true && previousMedIssue_check === true && admissionDate_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true && amount_check === true && paymentMode_check === true ){  
         let symptoms = $('#emergencyVisit-symptoms').val();
         let previousMedIssue = $('#emergencyVisit-previousMedIssue').val();
         let note = $('#emergencyVisit-note').val();
@@ -283,7 +301,7 @@ function emergencyVisitUpdate(id){
         let amount = $('#emergencyVisit-amount').val();
         let paymentMode = $('#emergencyVisit-paymentMode').val();
         let refNum = $('#emergencyVisit-emergencyVisit-refNum').val();
-        let paidAmount = $('#emergencyVisit-paidAmount').val();
+        let paidAmount = $('#emergencyVisit-paidAmount').val() || 0;
         $.ajax({
             url:emergencyVisitDataUpdate,
             type:"POST",

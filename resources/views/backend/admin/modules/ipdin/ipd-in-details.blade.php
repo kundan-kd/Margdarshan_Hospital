@@ -17,13 +17,14 @@
          <div class="d-flex flex-wrap align-items-center gap-2">
           <button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToEmergencyModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to Emergency</button>
           <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
-          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
+          {{-- <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button> --}}
+          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} data-bs-toggle="modal" data-bs-target="#ipdDischargeModel" onclick="patientDischarge({{$patients[0]->id}})" > <i class="ri-thumb-up-line"></i> Discharge</button>
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
         <!-- <div class="btns">
           <button class="btn btn-danger-600  btn-sm fw-medium"  data-bs-toggle="modal" data-bs-target="#in-patient-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button>
           <button class="btn btn-success-600  btn-sm fw-medium"  data-bs-toggle="modal" data-bs-target="#in-patient-discharge"><i class="ri-thumb-up-line"></i> Discharge</button>
-          <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button>
+          <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button> 
       </div> -->
     </div>
       @php
@@ -233,7 +234,7 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Medication</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#ipd-add-medication-dose" onclick="resetMedication()"> <i class="ri-add-line"></i> Add Medication Dose</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#ipd-add-medication-dose" onclick="resetMedication();getVisitId(document.getElementById('patient_Id').value)"> <i class="ri-add-line"></i> Add Medication Dose</button>
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="table-responsive">
@@ -482,7 +483,7 @@
           <div class="col-md-4">
             <input type="hidden" id="ipdLabID">
               <label class="form-label fw-medium" for="ipdLab-testType">Test Type</label> <sup class="text-danger">*</sup>
-                 <select id="ipdLab-testType" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                 <select id="ipdLab-testType" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select');getTestName(this.value)">
                        <option value="">Select</option>
                       @foreach ($testtypes as $testtype)
                        <option value="{{$testtype->id}}">{{$testtype->name}}</option>
@@ -492,12 +493,11 @@
             </div>
             <div class="col-md-4">
               <label class="form-label fw-medium" for="ipdLab-testName">Test Name</label> <sup class="text-danger">*</sup>
-                 <select id="ipdLab-testName" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
-                 
+                 <select id="ipdLab-testName" class="form-select form-select-sm select2-cls" style="width: 100%" onchange="getTestDetails(this.value)" oninput="validateField(this.id,'select')">
                         <option value="">Select</option>
-                      @foreach ($testnames as $testname)
+                      {{-- @foreach ($testnames as $testname)
                         <option value="{{$testname->id}}">{{$testname->name}}</option>
-                      @endforeach
+                      @endforeach --}}
                     </select>
                     <div class="ipdLab-testName_errorCls d-none"></div>
             </div>
@@ -853,7 +853,7 @@
               </div>
               <div class="col-md-6">
                   <label class="form-label fw-medium" for="ipdMed-medCategory">Medicine Category</label> <sup class="text-danger">*</sup>
-                    <select id="ipdMed-medCategory" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" onchange="medicinelist(this.value)">
+                    <select id="ipdMed-medCategory" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" onchange="medicinelist(this.value,document.getElementById('ipdMed-visitid').value)">
                         <option value="">Select</option>
                         @foreach ($medicineCategory as $medCategory)
                         <option value="{{$medCategory->id}}">{{$medCategory->name}}</option>
@@ -1217,14 +1217,15 @@
         <div class="col-md-6 bg-info-50 pt-3">
           <div class="row gy-3">
             <div class="col-md-6">
-              <label class="form-label fw-medium" for="ipdVisit-admissionDate">Appointment Date</label>
+              <label class="form-label fw-medium" for="ipdVisit-admissionDate">Appointment Date</label> <sup class="text-danger">*</sup>
               <div class=" position-relative">
-                    <input id="ipdVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="text" value="{{ $curr_date}}" readonly="readonly">
+                    <input id="ipdVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" placeholder="DD/MM/YYYY" type="date" value="{{ $curr_date}}" oninput="validateField(this.id,'select')">
                 </div>
+                <div class="ipdVisit-admissionDate_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-               <label class="form-label fw-medium" for="ipdVisit-oldPatient">Old Patient</label>
-              <select id="ipdVisit-oldPatient" class="form-select form-select-sm select2" oninput="validateField(this.id,'select')">
+               <label class="form-label fw-medium" for="ipdVisit-oldPatient">Old Patient</label> <sup class="text-danger">*</sup>
+              <select id="ipdVisit-oldPatient" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
                  <option value="">Select</option>
                  <option value="1">Yes</option>
                  <option value="0">No</option>
@@ -1233,7 +1234,7 @@
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium" for="ipdVisit-consultDoctor"> Consultant Doctor</label> <sup class="text-danger">*</sup>
-               <select id="ipdVisit-consultDoctor" class="form-select form-select-sm select2" oninput="validateField(this.id,'select')">
+               <select id="ipdVisit-consultDoctor" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
                       <option value="">Select</option>
                       @foreach ($doctorData as $doctorName)
                       <option value="{{$doctorName->id}}">{{$doctorName->name}}</option>
@@ -1247,12 +1248,12 @@
                 <div class="ipdVisit-charge_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium" for="ipdVisit-discount"> Discount</label>% <sup class="text-danger">*</sup>
+              <label class="form-label fw-medium" for="ipdVisit-discount"> Discount</label>% 
                <input id="ipdVisit-discount" type="number" class="form-control form-control-sm" placeholder="Discount" value="" oninput="calculateAmount()">
                 <div class="ipdVisit-discount_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium" for="ipdVisit-tax"> Tax</label>% <sup class="text-danger">*</sup>
+              <label class="form-label fw-medium" for="ipdVisit-tax"> Tax</label>% 
                <input id="ipdVisit-tax" type="number" class="form-control form-control-sm" placeholder="Discount" value=""  oninput="calculateAmount()">
                 <div class="ipdVisit-tax_errorCls d-none"></div>
             </div>
@@ -1263,7 +1264,8 @@
             </div>
             <div class="col-md-6">
              <label class="form-label fw-medium" for="ipdVisit-paymentMode"> Payment Mode</label> <sup class="text-danger">*</sup>
-               <select id="ipdVisit-paymentMode" class="form-select form-select-sm" oninput="validateField(this.id,'select')">
+               <select id="ipdVisit-paymentMode" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                <option value="">Select</option>
                 <option value="cash">Cash</option>
                 <option value="upi">UPI</option>
                 <option value="card">Card</option>
@@ -1272,14 +1274,18 @@
               </select>
                <div class="ipdVisit-paymentMode_errorCls d-none"></div>
             </div>
-            <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
+            {{-- <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
               <label class="form-label fw-medium ">Reference Number</label>
               <input id="ipdVisit-refNum" type="number" class="form-control form-control-sm" placeholder=" Enter payment reference number">
-            </div>
+            </div> --}}
             <div class="col-md-6 mb-3">
              <label class="form-label fw-medium" for="ipdVisit-paidAmount">Pay Amount</label> <sup class="text-danger">*</sup>
-               <input id="ipdVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount" oninput="validateField(this.id,'amount')">
+               <input id="ipdVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkIpdVisitPaidAmount()">
                 <div class="ipdVisit-paidAmount_errorCls d-none"></div>
+            </div>
+            <div class="col-md-6 mb-3 ipdVisit-AlreadypaidAmountCls d-none">
+             <label class="form-label fw-medium" for="ipdVisit-paidAmount">Paid Amount</label> 
+               <input id="ipdVisit-AlreadypaidAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" readonly>
             </div>
             <!-- <div class="col-md-6 mb-3">
               <label class="form-label fw-medium"> Live Consultation</label>
@@ -1378,6 +1384,47 @@
     </div>
   </div>
  <!-- Alert ICU modal end-->
+ <!--Alert Discharge modal start -->
+  <div class="modal fade" id="ipdDischargeModel" tabindex="-1" role="dialog" aria-labelledby="moveToIcuModel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white userType-title">Due</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+           <form action="" id="ipd-dischargeAmountForm" class="needs-validation" novalidate="">
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <label class="form-label" for="ipdDueAmount">Total Bill Amount</label>
+                    <input class="form-control form-control-sm" id="ipdBillAmount" type="text"
+                       style="background-image: none;" readonly>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label" for="ipdPayAmount">Paid Amount</label>
+                    <input class="form-control form-control-sm" id="ipdPaidAmount" type="text"
+                        placeholder="Enter Pay Amount" style="background-image: none;" readonly>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label" for="ipdPayAmount"> Pay Amount</label>
+                    <input class="form-control form-control-sm" id="ipdPayAmount" type="text"
+                        placeholder="Enter Pay Amount" style="background-image: none;">
+                  </div>
+                </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal" onclick="resetmodel()">Cancel</button>
+                        <button class="btn btn-primary btn-sm " type="submit">Submit</button>
+                    </div>
+           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Alert DIscharge modal end-->
 <!--  opd edit checkup Start -->
  <div class="modal fade" id="ipd-edit-checkup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-edit-checkupLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -1549,7 +1596,7 @@
             </div>
             <div class="col-md-6 mb-3">
              <label class="form-label fw-medium">Paid Amount <sup class="text-danger">*</sup></label>
-               <input type="number" class="form-control form-control-sm" placeholder="Paid Amount ">
+               <input type="number" class="form-control form-control-sm" placeholder="Paid Amount">
             </div>
             <!-- <div class="col-md-6 mb-3">
               <label class="form-label fw-medium"> Live Consultation</label>
@@ -1649,6 +1696,10 @@
 @endsection
 @section('extra-js')
 <script>
+  // setTimeout(function(){
+  //   getTestDetails(document.getElementById('ipdLab-testName').value);
+  // },500);
+    
   // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
         flatpickr(receiveID, {
@@ -1658,6 +1709,11 @@
     getDatePicker('#ipdVital-date'); 
      getDatePicker('#ipdVisit-admissionDate'); 
     // Flat pickr or date picker js 
+    $('#ipd-new-checkup').on('shown.bs.modal', function () {
+      $('.select2-cls').select2({
+          dropdownParent: $('#ipd-new-checkup')
+      });
+    });
     $('#ipd-add-medication-dose').on('shown.bs.modal', function () {
       $('.select2-cls').select2({
           dropdownParent: $('#ipd-add-medication-dose')
@@ -1674,7 +1730,9 @@
       });
     });
   const ipdVisitMedicineName = "{{route('common.getMedicineName')}}";
-  // const patientDischargeStatus = "{{route('ipd.patientDischargeStatus')}}";
+  const calculateDischargeAmount = "{{route('ipd.calculateDischargeAmount')}}";
+  const submitRestIpdAmount = "{{route('ipd.submitRestIpdAmount')}}";
+  const patientDischargeStatus = "{{route('ipd.patientDischargeStatus')}}";
   const moveToEmergencyStatus = "{{route('ipd.moveToEmergencyStatus')}}";
   const moveToIcuStatus = "{{route('ipd.moveToIcuStatus')}}";
   const ipdVisitSubmit = "{{route('ipd-visit.ipdVisitSubmit')}}";
@@ -1684,12 +1742,15 @@
   const ipdVisitDataUpdate = "{{route('ipd-visit.ipdVisitDataUpdate')}}";
   const ipdVisitDataDelete = "{{route('ipd-visit.ipdVisitDataDelete')}}";
 
+  const ipdVisitId = "{{route('ipd-med.ipdVisitId')}}";
   const ipdMedDataAdd = "{{route('ipd-med.ipdMedDataAdd')}}";
   const viewIpdMedDose = "{{route('ipd-med.viewIpdMedDose')}}";
   const getIpdMedDoseDetails = "{{route('ipd-med.getIpdMedDoseDetails')}}";
   const ipdMedDataUpdate = "{{route('ipd-med.ipdMedDataUpdate')}}";
   const ipdMedDoseDataDelete = "{{route('ipd-med.ipdMedDoseDataDelete')}}";
 
+  const getTestNameByType = "{{route('ipd-lab.getTestNameByType')}}";
+  const getTestDetailsById = "{{route('ipd-lab.getTestDetailsById')}}";
   const ipdLabSubmit = "{{route('ipd-lab.ipdLabSubmit')}}";
   const viewIpdLabDetails = "{{route('ipd-lab.viewIpdLabDetails')}}";
   const getIpdLabData = "{{route('ipd-lab.getIpdLabData')}}";

@@ -117,8 +117,64 @@ $('#ipd-icuBedForm').on('submit',function(e){
     }
 })
 
-function patientDischarge(id){
-     Swal.fire({
+function patientDischarge(id) {
+    $.ajax({
+        url: calculateDischargeAmount,
+        type: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: { id: id },
+        success: function(response) {
+            console.log(response);
+            if (response.success) {
+                $('#ipdBillAmount').val(response.bill_amount || 0);
+                $('#ipdPaidAmount').val(response.received_amount || 0);
+                const payAmount = (response.bill_amount - response.received_amount) || 0;
+                $('#ipdPayAmount').val(payAmount);
+
+                if (payAmount <= 0) {
+                    $('#ipdDischargeModel').modal('hide');
+                    processDischarge(id);
+                }
+            }
+        },
+        error: function(xhr, thrown) {
+            console.error('Error:', thrown);
+        }
+    });
+}
+
+$('#ipd-dischargeAmountForm').on('submit',function(e){
+    e.preventDefault();
+    let patient_id = $('#patient_Id').val();
+    let billAmount = $('#ipdBillAmount').val();
+    let paidAmount = $('#ipdPaidAmount').val();
+    let payAmount = $('#ipdPayAmount').val();
+    if(parseFloat(payAmount) > (parseFloat(billAmount) + parseFloat(paidAmount))){
+        toastErrorAlert('Pay Amount excceds due amount');
+        return;
+    }
+    $.ajax({ 
+        url:submitRestIpdAmount,
+        type:"POST",
+        headers:{
+            'X-CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data:{patient_id:patient_id,payAmount:payAmount},
+        success:function(response){
+            console.log(response);
+            if (response.success) {
+               toastSuccessAlert(response.success);
+               setTimeout(function(){
+                    window.location.reload();
+               },3000);
+            }
+        }
+    });
+})
+function processDischarge(id){
+    Swal.fire({
         title: "Confirm discharge from IPD?",
         icon: "warning",
         showCancelButton: true,

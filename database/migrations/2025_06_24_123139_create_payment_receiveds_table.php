@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('payment_receiveds', function (Blueprint $table) {
             $table->id();
+            $table->integer('patient_id')->nullable();
             $table->string('type',20)->nullable();
-            $table->integer('type_id')->nullable();
+            $table->string('amount_for',20)->nullable();
+            $table->string('title',200)->nullable();
             $table->double('amount')->nullable();
             $table->string('payment_mode',20)->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

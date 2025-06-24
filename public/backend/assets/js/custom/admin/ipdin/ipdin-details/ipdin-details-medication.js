@@ -63,24 +63,45 @@ let table_med_dose = $('#ipd-Med-medicineDoseList').DataTable({
 
     ]
 });
-
-function medicinelist(id){
-$.ajax({
-    url:ipdVisitMedicineName,
-    type:"POST",
-    headers:{
-        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-    },
-    data:{id:id},
-    success:function(response){
-        let medicineDetails = response.data;
-        $('#ipdMed-medName').empty();
-            $('#ipdMed-medName').append(`<option value="">Select</option>`);
-        medicineDetails.forEach(function(medData){
-            $('#ipdMed-medName').append(`<option value="${medData.id}" >${medData.name}</option>`);
+function getVisitId(id){
+    $.ajax({
+        url:ipdVisitId,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:id},
+        success:function(response){
+            console.log(response);
+            let visitDetails = response.data;
+            $('#ipdMed-visitid').empty();
+            $('#ipdMed-visitid').append(`<option value="">Select</option>`);
+            visitDetails.forEach(function(visitData){
+                $('#ipdMed-visitid').append(`<option value="${visitData.id}" >MDVI0${visitData.id}</option>`);
+            });
+        }
+    });
+}
+function medicinelist(medicine_cat_id,visit_id){
+    setTimeout(function(){
+        $.ajax({
+            url:ipdVisitMedicineName,
+            type:"POST",
+            headers:{
+                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            data:{id:medicine_cat_id,visit_id:visit_id},
+            success:function(response){
+                let medicineDetails = response.data;
+                let medicineName = response.medicineNameId[0];
+                $('#ipdMed-medName').empty();
+                    $('#ipdMed-medName').append(`<option value="">Select</option>`);
+                medicineDetails.forEach(function(medData){
+                    $('#ipdMed-medName').append(`<option value="${medData.id}" ${medData.id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
+                });
+            }
         });
-    }
-});
+    },200);    
 }
 $('#ipdMed-form').on('submit',function(e){
     e.preventDefault();

@@ -249,14 +249,14 @@ class PurchaseController extends Controller
                 'paid_amount' => $request->payAmount + $prev_paidAmount[0]->paid_amount,
                 'due' => $request->dueAmount
             ]);
-            if($request->payAmount > 0){
-            $payment_received = new PaymentReceived();
-            $payment_received->type = 'Purchase';
-            $payment_received->type_id = $purchase_id;
-            $payment_received->amount = $request->payAmount;
-            $payment_received->payment_mode = $request->paymentMode;
-            $payment_received->save();
-            }
+            // if($request->payAmount > 0){
+            // $payment_received = new PaymentReceived();
+            // $payment_received->type = 'Purchase';
+            // $payment_received->type_id = $purchase_id;
+            // $payment_received->amount = $request->payAmount;
+            // $payment_received->payment_mode = $request->paymentMode;
+            // $payment_received->save();
+            // }
             PurchaseItem::where('purchase_id',$request->purchase_id)->where('status',0)->delete();
             return response()->json(['success' => true, 'message' => 'Purchase updated successfully']);
         } catch (\Exception $e) {

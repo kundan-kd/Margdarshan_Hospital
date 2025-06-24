@@ -78,7 +78,69 @@ $('#emergency-ipdBedForm').on('submit',function(e){
 
 
 function patientDischargeE(id){
-     Swal.fire({
+
+    $.ajax({
+        url: calculateDischargeAmountEmergency,
+        type: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: { id: id },
+        success: function(response) {
+            console.log(response);
+            if (response.success) {
+                $('#emergencyBillAmount').val(response.bill_amount || 0);
+                $('#emergencyPaidAmount').val(response.received_amount || 0);
+                const payAmount = (response.bill_amount - response.received_amount) || 0;
+                $('#emergencyPayAmount').val(payAmount);
+
+                if (payAmount <= 0) {
+                    $('#emergencyDischargeModel').modal('hide');
+                    processDischarge(id);
+                }
+            }
+        },
+        error: function(xhr, thrown) {
+            console.error('Error:', thrown);
+        }
+    });
+
+    
+}
+$('#emergency-dischargeAmountForm').on('submit',function(e){
+    e.preventDefault();
+    let patient_id = $('#patient_Id').val();
+    let billAmount = $('#emergencyBillAmount').val();
+    let paidAmount = $('#emergencyPaidAmount').val();
+    let payAmount = $('#emergencyPayAmount').val();
+    console.log(billAmount);
+    console.log(paidAmount);
+    console.log(payAmount);
+    if(parseFloat(payAmount) > (parseFloat(billAmount) + parseFloat(paidAmount))){
+        toastErrorAlert('Pay Amount excceds due amount');
+        console.log('Pay Amount excceds due amount');
+        return;
+    }
+    $.ajax({ 
+        url:submitRestEmergencyAmount,
+        type:"POST",
+        headers:{
+            'X-CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data:{patient_id:patient_id,payAmount:payAmount},
+        success:function(response){
+            console.log(response);
+            if (response.success) {
+               toastSuccessAlert(response.success);
+               setTimeout(function(){
+                    window.location.reload();
+               },3000);
+            }
+        }
+    });
+})
+function processDischarge(id){
+    Swal.fire({
         title: "Confirm discharge from Emergency?",
         icon: "warning",
         showCancelButton: true,

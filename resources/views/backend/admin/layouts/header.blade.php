@@ -172,6 +172,12 @@
            <li>
             <a href="{{route('roomnum.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Room Number</a>
           </li>
+           <li>
+            <a href="{{route('testtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Test Type</a>
+          </li>
+           <li>
+            <a href="{{route('testname.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Test Name</a>
+          </li>
         </ul>
       </li>
       

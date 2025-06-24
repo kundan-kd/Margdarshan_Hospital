@@ -13,8 +13,10 @@ function resetVisit(){
     $('#ipdVisit-paymentMode').val('');
     $('#ipdVisit-refNum').val('');
     $('#ipdVisit-paidAmount').val('');
+    $('#ipdVisit-AlreadypaidAmount').val('');
     $('.ipdVisitSubmit').removeClass('d-none');
     $('.ipdVisitUpdate').addClass('d-none');
+    $('.ipdVisit-AlreadypaidAmountCls').addClass('d-none');
 }
 function calculateAmount(){
     let charge = $('#ipdVisit-charge').val() || 0;
@@ -26,17 +28,31 @@ function calculateAmount(){
     let finelAmount = (charge - discountAmount) + taxAmount;
     $('#ipdVisit-amount').val(finelAmount);
 }
+function checkIpdVisitPaidAmount(){
+    let amount = $('#ipdVisit-amount').val() || 0;
+    let paidAmount = $('#ipdVisit-paidAmount').val() || 0;
+    let alreadypaidAmount = $('#ipdVisit-AlreadypaidAmount').val() || 0;
+    if((parseFloat(paidAmount) + parseFloat(alreadypaidAmount)) > amount){
+        $('.ipdVisitSubmit').prop('disabled', true);
+        $('.ipdVisitUpdate').prop('disabled', true);
+        toastErrorAlert('Payment amount exceeds total amount');
+    }else{
+         $('.ipdVisitSubmit').prop('disabled', false);
+         $('.ipdVisitUpdate').prop('disabled', false);
+    }
+}
 $('#ipdVisit-modelForm').on('submit',function(e){
  e.preventDefault();
     let symptoms_check  = validateField('ipdVisit-symptoms', 'input');
     let previousMedIssue_check  = validateField('ipdVisit-previousMedIssue', 'input');
+    let admissionDate_check  = validateField('ipdVisit-admissionDate', 'select');
     let oldPatient_check  = validateField('ipdVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('ipdVisit-consultDoctor', 'select');
     let charge_check = validateField('ipdVisit-charge', 'amount');
     let amount_check = validateField('ipdVisit-amount', 'amount');
     let paymentMode_check = validateField('ipdVisit-paymentMode', 'select');
     let paidAmount_check = validateField('ipdVisit-paidAmount', 'amount');
-    if(symptoms_check === true && previousMedIssue_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true  && amount_check === true && paymentMode_check === true && paidAmount_check === true){ 
+    if(symptoms_check === true && previousMedIssue_check === true && admissionDate_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true  && amount_check === true && paymentMode_check === true && paidAmount_check === true){ 
         let patientId = $('#patient_Id').val();
         let symptoms = $('#ipdVisit-symptoms').val();
         let previousMedIssue = $('#ipdVisit-previousMedIssue').val();
@@ -253,9 +269,11 @@ function ipdVisitEdit(id){
                 $('#ipdVisit-amount').val(visitData.amount);
                 $('#ipdVisit-paymentMode').val(visitData.payment_mode);
                 $('#ipdVisit-refNum').val(visitData.ref_num);
-                $('#ipdVisit-paidAmount').val(visitData.paid_amount);
+                $('#ipdVisit-paidAmount').val('');
+                $('#ipdVisit-AlreadypaidAmount').val(visitData.paid_amount);
                 $('.ipdVisitSubmit').addClass('d-none');
                 $('.ipdVisitUpdate').removeClass('d-none');
+                $('.ipdVisit-AlreadypaidAmountCls').removeClass('d-none');
             }
         }
     });
@@ -263,14 +281,14 @@ function ipdVisitEdit(id){
 function ipdVisitUpdate(id){
     let symptoms_check  = validateField('ipdVisit-symptoms', 'input');
     let previousMedIssue_check  = validateField('ipdVisit-previousMedIssue', 'input');
+    let admissionDate_check  = validateField('ipdVisit-admissionDate', 'select');
     let oldPatient_check  = validateField('ipdVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('ipdVisit-consultDoctor', 'select');
     let charge_check = validateField('ipdVisit-charge', 'amount');
-    let tax_check = validateField('ipdVisit-tax', 'amount');
     let amount_check = validateField('ipdVisit-amount', 'amount');
     let paymentMode_check = validateField('ipdVisit-paymentMode', 'select');
-    let paidAmount_check = validateField('ipdVisit-paidAmount', 'amount');
-    if(symptoms_check === true && previousMedIssue_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true && tax_check === true && amount_check === true && paymentMode_check === true && paidAmount_check === true){  
+    // let paidAmount_check = validateField('ipdVisit-paidAmount', 'amount');
+    if(symptoms_check === true && previousMedIssue_check === true && admissionDate_check == true && oldPatient_check === true && consultDoctor_check === true && charge_check === true && amount_check === true && paymentMode_check === true ){  
         let symptoms = $('#ipdVisit-symptoms').val();
         let previousMedIssue = $('#ipdVisit-previousMedIssue').val();
         let note = $('#ipdVisit-note').val();
@@ -283,7 +301,7 @@ function ipdVisitUpdate(id){
         let amount = $('#ipdVisit-amount').val();
         let paymentMode = $('#ipdVisit-paymentMode').val();
         let refNum = $('#ipdVisit-ipdVisit-refNum').val();
-        let paidAmount = $('#ipdVisit-paidAmount').val();
+        let paidAmount = $('#ipdVisit-paidAmount').val() || 0;
         $.ajax({
             url:ipdVisitDataUpdate,
             type:"POST",

@@ -12,6 +12,8 @@ use App\Models\Medication;
 use App\Models\MedicineCategory;
 use App\Models\NurseNote;
 use App\Models\Patient;
+use App\Models\PaymentBill;
+use App\Models\PaymentReceived;
 use App\Models\TestName;
 use App\Models\TestType;
 use App\Models\Timeline;
@@ -35,7 +37,7 @@ class IpdinController extends Controller
         $patients = Patient::where('id',$id)->get();
         // $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
-        $doctorData = User::where('status',1)->get(['id','name','department_id']);
+        $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
         $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
         $medicationData = Medication::where('patient_id',$patients[0]->id)->get();
         $testtypes = TestType::where('status',1)->get();
@@ -271,6 +273,28 @@ class IpdinController extends Controller
             return response()->json(['success'=>'Successfully moved to ICU'],200);
         }
     }
+    public function calculateDischargeAmount(Request $request){
+        $bill_amount = PaymentBill::where('patient_id',$request->id)->where('status',NULL)->sum('amount');
+        $received_amount = PaymentReceived::where('patient_id',$request->id)->where('status',NULL)->sum('amount');
+        return response()->json(['success'=>'Discharge amount calculated successfully','bill_amount'=>$bill_amount,'received_amount'=>$received_amount],200);
+    }
+    public function submitRestIpdAmount(Request $request){
+         // Insert payment received details
+            if($request->payAmount > 0){
+                $payment_received = new PaymentReceived();
+                $payment_received->patient_id = $request->patient_id;
+                $payment_received->type = 'IPD';
+                $payment_received->amount_for = 'Discharge Amount';
+                $payment_received->title = 'Discharge Amount Received';
+                $payment_received->amount = $request->payAmount;
+                if($payment_received->save()){
+                    return response()->json(['success'=>'Discharge amount submitted'],200);
+                }else{
+                    return response()->json(['error_success'=>'Discharge amount not submitted']);
+                }
+            }
+           
+    }
     public function patientDischargeStatus(Request $request){
         $update = Patient::where('id',$request->id)->update([
             'current_status' =>'Discharged'
@@ -324,13 +348,21 @@ class IpdinController extends Controller
         $optoutVisit->paid_amount = $request->paidAmount;
 
         if($optoutVisit->save()){
-             $timelines = new Timeline();
-             $timelines->type = "IPD";
-             $timelines->patient_id = $request->patientId;
-             $timelines->title = "New Visit";
-             $timelines->desc = "Appointment booked for ipd on ".$request->appointment_date;
-             $timelines->created_by = "Admin";
-             $timelines->save();
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "IPD";
+            $payment_bills->patient_id = $request->patientId;
+            $payment_bills->amount_for = 'Visit';
+            $payment_bills->title = 'New Visit';
+            $payment_bills->amount = $request->amount;
+            $payment_bills->save();
+
+            $timelines = new Timeline();
+            $timelines->type = "IPD";
+            $timelines->patient_id = $request->patientId;
+            $timelines->title = "New Visit";
+            $timelines->desc = "Appointment booked for ipd on ".$request->appointment_date;
+            $timelines->created_by = "Admin";
+            $timelines->save();
             return response()->json(['success'=>'Patient Visit added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Patient visit not added']);
@@ -382,6 +414,7 @@ class IpdinController extends Controller
         return response()->json(['success'=>'ipd visit data fetched','data'=>$getData],200);
     }
     public function ipdVisitDataUpdate(Request $request){
+        $previous_paid_amount = Visit::where('id',$request->id)->get(['paid_amount']);
         $update = Visit::where('id',$request->id)->update([
             'symptoms' => $request->symptoms,
             'previous_med_issue' => $request->previousMedIssue,
@@ -395,7 +428,7 @@ class IpdinController extends Controller
             'amount' => $request->amount,
             'payment_mode' => $request->paymentMode,
             'ref_num' => $request->refNum,
-            'paid_amount' => $request->paidAmount
+            'paid_amount' => $request->paidAmount + $previous_paid_amount[0]->paid_amount
         ]);
         if($update){
             return response()->json(['success'=>'Visit data updated successufuly'],200);
@@ -407,7 +440,15 @@ class IpdinController extends Controller
         Visit::where('id',$request->id)->delete();
         return response()->json(['success'=>'Visit data deleted successfully'],200);
     }
-        public function ipdMedDataAdd(Request $request){
+    public function ipdVisitId(Request $request){
+        $visitId = Visit::where('patient_id',$request->id)->orderBy('id','desc')->get();
+        if($visitId){
+            return response()->json(['success'=>'Visit id fetched successfully','data'=>$visitId],200);
+        }else{
+            return response()->json(['error_success'=>'Visit id not found'],404);
+        }
+    }
+    public function ipdMedDataAdd(Request $request){
         $validator = Validator::make($request->all(),[
             'visitid' => 'required',
             'medCategory' => 'required',
@@ -496,11 +537,20 @@ class IpdinController extends Controller
         Medication::where('id',$request->id)->delete();
         return response()->json(['success'=>'Medicine dose deleted successfully'],200);
     }
-     public function ipdLabSubmit(Request $request){
+    public function getTestNameByType(Request $request){
+        $testTypes = TestName::where('test_type_id',$request->id)->where('status',1)->get(['id','name']);
+        return response()->json(['success'=>'Test names fetched successfully','data'=>$testTypes],200);
+    }
+    public function getTestDetailsById(Request $request){
+        $testDetails = TestName::where('id',$request->id)->get();
+            return response()->json(['success'=>'Test details fetched successfully','data'=>$testDetails],200);
+    }
+    public function ipdLabSubmit(Request $request){
         $validator = Validator::make($request->all(),[
             'testType' => 'required',
             'testName' => 'required',
             'method' => 'nullable',
+            'amount' => 'nullable',
             'reportDays' => 'nullable',
             'testParameter' => 'nullable',
             'testRefRange' => 'nullable',
@@ -516,11 +566,20 @@ class IpdinController extends Controller
             $ipdLab->test_type_id = $request->testType;
             $ipdLab->test_name_id = $request->testName;
             $ipdLab->method = $request->method;
+            $ipdLab->amount = $request->amount;
             $ipdLab->report_days = $request->reportDays;
             $ipdLab->test_parameter = $request->testParameter;
             $ipdLab->test_ref_range = $request->testRefRange;
             $ipdLab->test_unit = $request->testUnit;
         if($ipdLab->save()){
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "IPD";
+            $payment_bills->patient_id = $request->patientId;
+            $payment_bills->amount_for = 'Lab Test';
+            $payment_bills->title = 'Lab Test';
+            $payment_bills->amount = $request->amount;
+            $payment_bills->save();
+
             $timelines = new Timeline();
              $timelines->type = "IPD";
              $timelines->patient_id = $request->patientId;
@@ -555,7 +614,7 @@ class IpdinController extends Controller
                       <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
                     </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="lucide:edit" onclick="ipdLabEdit('.$row->id.')"></iconify-icon>
+                      <iconify-icon icon="lucide:edit" onclick="ipdLabEdit('.$row->id.');getTestName('.$row->test_type_id.','.$row->test_name_id.');getTestDetails('.$row->test_name_id.')"></iconify-icon>
                     </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="ipdLabDelete('.$row->id.')"></iconify-icon>
@@ -587,6 +646,7 @@ class IpdinController extends Controller
             'test_type_id' => $request->testType,
             'test_name_id' => $request->testName,
             'method' => $request->method,
+            'amount' => $request->amount,
             'report_days' => $request->reportDays,
             'test_parameter'=> $request->testParameter,
             'test_ref_range' => $request->testRefRange,
@@ -616,6 +676,14 @@ class IpdinController extends Controller
             $ipdCharge->name = $request->name;
             $ipdCharge->amount = $request->amount;
         if($ipdCharge->save()){
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "IPD";
+            $payment_bills->patient_id = $request->patientId;
+            $payment_bills->amount_for = 'Charge';
+            $payment_bills->title = $request->name;
+            $payment_bills->amount = $request->amount;
+            $payment_bills->save();
+            
             $timelines = new Timeline();
              $timelines->type = "IPD";
              $timelines->patient_id = $request->patientId;

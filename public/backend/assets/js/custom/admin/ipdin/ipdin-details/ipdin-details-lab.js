@@ -53,6 +53,59 @@ let table_lab = $('#ipd-lab-reports-list').DataTable({
         },
     ]
 });
+
+function getTestName(testtype_id, testname_id) {
+    $.ajax({
+        url: getTestNameByType,
+        type: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: { id: testtype_id },
+        success: function(response) {
+            if (response.success) {
+                let testNameData = response.data;
+                let $testNameSelect = $('#ipdLab-testName');
+                $testNameSelect.empty();
+                $testNameSelect.append('<option value="">Select Test Name</option>');
+                $.each(testNameData, function(index, item) {
+                    let isSelected = item.id == testname_id ? 'selected' : '';
+                    $testNameSelect.append(`<option value="${item.id}" ${isSelected}>${item.name}</option>`);
+                });
+            } else {
+                console.log('No test names found for this type');
+            }
+        },
+        error: function(xhr, thrown) {
+            console.log(xhr.responseText);
+            alert('Error: ' + thrown);
+        }
+    });
+}
+
+function getTestDetails(id){
+        $.ajax({
+            url:getTestDetailsById,
+            type:"POST",
+            headers:{
+                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            data:{id:id},
+            success:function(response){
+                if(response.success){
+                    let testData = response.data[0];
+                    $('#ipdLab-shortName').val(testData.s_name);
+                    $('#ipdLab-amount').val(testData.amount);
+                }else{
+                    console.log('No test details found for this test');
+                }
+            },
+            error:function(xhr,thrown){
+                console.log(xhr.responseText);
+                alert('Error: '+thrown);
+            }
+        });
+}
 $('#ipdLab-form').on('submit',function(e){
     e.preventDefault();
     let testType_check = validateField('ipdLab-testType', 'select');
@@ -62,6 +115,7 @@ $('#ipdLab-form').on('submit',function(e){
        let testType = $('#ipdLab-testType').val();
        let testName = $('#ipdLab-testName').val();
        let method = $('#ipdLab-method').val();
+       let amount = $('#ipdLab-amount').val();
        let reportDays = $('#ipdLab-reportDays').val();
        let testParameter = $('#ipdLab-testParameter').val();
        let testRefRange = $('#ipdLab-testRefRange').val();
@@ -70,7 +124,7 @@ $('#ipdLab-form').on('submit',function(e){
             url:ipdLabSubmit,
             type:"POST",
             data:{
-                patientId:patientId,testType:testType,testName:testName,method:method,reportDays:reportDays,testParameter:testParameter,testRefRange:testRefRange,testUnit:testUnit
+                patientId:patientId,testType:testType,testName:testName,method:method,amount:amount,reportDays:reportDays,testParameter:testParameter,testRefRange:testRefRange,testUnit:testUnit
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -213,6 +267,7 @@ function ipdLabUpdate(id){
        let testType = $('#ipdLab-testType').val();
        let testName = $('#ipdLab-testName').val();
        let method = $('#ipdLab-method').val();
+       let amount = $('#ipdLab-amount').val();
        let reportDays = $('#ipdLab-reportDays').val();
        let testParameter = $('#ipdLab-testParameter').val();
        let testRefRange = $('#ipdLab-testRefRange').val();
@@ -221,7 +276,7 @@ function ipdLabUpdate(id){
             url:ipdLabUpdateData,
             type:"POST",
             data:{
-                id:id,testType:testType,testName:testName,method:method,reportDays:reportDays,testParameter:testParameter,testRefRange:testRefRange,testUnit:testUnit
+                id:id,testType:testType,testName:testName,method:method,amount:amount,reportDays:reportDays,testParameter:testParameter,testRefRange:testRefRange,testUnit:testUnit
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

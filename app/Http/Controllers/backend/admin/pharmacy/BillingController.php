@@ -10,6 +10,7 @@ use App\Models\BloodType;
 use App\Models\Medicine;
 use App\Models\MedicineCategory;
 use App\Models\Patient;
+use App\Models\paymentBill;
 use App\Models\PaymentMode;
 use App\Models\PurchaseItem;
 use App\Models\PaymentReceived;
@@ -139,7 +140,28 @@ class BillingController extends Controller
             if (!$billings->save()) {
                 throw new \Exception("Failed to insert billing record");
             }
-
+            // Insert payment bill details
+            if($request->totalNetAmount > 0){
+            $payment_received = new paymentBill();
+            $payment_received->patient_id = $request->patientID;
+            $payment_received->type = 'Billing';
+            $payment_received->amount_for = 'Medicine Billing';
+            $payment_received->title = 'Medicine Billing id: '.$billings->id;
+            $payment_received->amount = $request->totalNetAmount;
+            $payment_received->payment_mode = $request->paymentMode;
+            $payment_received->save();
+            }
+            // Insert payment received details
+            if($request->payAmount > 0){
+            $payment_received = new PaymentReceived();
+            $payment_received->patient_id = $request->patientID;
+            $payment_received->type = 'Billing';
+            $payment_received->amount_for = 'Medicine Billing';
+            $payment_received->title = 'Medicine Billing id: '.$billings->id;
+            $payment_received->amount = $request->payAmount;
+            $payment_received->payment_mode = $request->paymentMode;
+            $payment_received->save();
+        }
             // Store purchase items
             foreach ($request->category as $index => $category) {
                 $billingItems = new BillingItem();
@@ -174,7 +196,7 @@ class BillingController extends Controller
             if (!$billingPayments->save()) {
                     throw new \Exception("Failed to insert billing payment record");
                 }
-
+            
             DB::commit();
             return response()->json(['success' => 'Medicine Billing done successfully'], 200);
         } catch (\Exception $e) {
@@ -295,15 +317,19 @@ class BillingController extends Controller
         // $billingPayments->billing_id = $billing_id;
         // $billingPayments->payment_mode_id = $request->paymentMode;
         // $billingPayments->amount = $request->payAmount;
+        // ----------------------------------------------------
+        
         if($request->payAmount > 0){
             $payment_received = new PaymentReceived();
+            $payment_received->patient_id = $request->patientID;
             $payment_received->type = 'Billing';
-            $payment_received->type_id = $billing_id;
+            $payment_received->amount_for = 'Medicine Billing';
+            $payment_received->title = 'Medicine Billing id: '.$billing_id;
             $payment_received->amount = $request->payAmount;
             $payment_received->payment_mode = $request->paymentMode;
             $payment_received->save();
         }
-
+// ----------------------------
         // if (!$billingPayments->save()) {
         //     throw new \Exception("Failed to insert billing payment record");
         // }

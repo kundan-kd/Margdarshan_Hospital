@@ -17,14 +17,15 @@
         <div class="d-flex flex-wrap align-items-center gap-2">
           <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="#"> <i class="ri-stethoscope-line"></i> Move to IPD</button>
           {{-- <button class="btn btn-danger-600  btn-sm fw-normal d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#emergency-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button> --}}
-          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
+          {{-- <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button> --}}
+          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} data-bs-toggle="modal" data-bs-target="#emergencyDischargeModel" onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
         <!-- <div class="btns">
             <button class="btn btn-primary-600  btn-sm fw-normal " data-bs-toggle="modal" data-bs-target="#emergency-emergency"><i class="ri-stethoscope-line"></i> Move to emergency</button>
             <button class="btn btn-danger-600  btn-sm fw-normal " data-bs-toggle="modal" data-bs-target="#emergency-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button>
             <button class="btn btn-success-600  btn-sm fw-normal" data-bs-toggle="modal" data-bs-target="#emergency-discharge"><i class="ri-thumb-up-line"></i> Discharge</button>
-            <button class="btn btn-warning-600  btn-sm fw-normal"><i class="ri-file-pdf-2-line"></i> Export</button>
+            <button class="btn btn-warning-600  btn-sm fw-normal"><i class="ri-file-pdf-2-line"></i> Export</button> 
         </div> -->
     </div>
     @php
@@ -236,7 +237,7 @@
                   <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Medication</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-medication-dose"> <i class="ri-add-line"></i> Add Medication Dose</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-medication-dose" onclick="getVisitId(document.getElementById('patient_Id').value)"> <i class="ri-add-line"></i> Add Medication Dose</button>
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#emergency-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="table-responsive">
@@ -403,7 +404,7 @@
               </div>
               <div class="col-md-6">
                   <label class="form-label fw-medium" for="emergencyMed-medCategory">Medicine Category</label> <sup class="text-danger">*</sup>
-                    <select id="emergencyMed-medCategory" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" onchange="medicinelist(this.value)">
+                    <select id="emergencyMed-medCategory" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" onchange="medicinelist(this.value,document.getElementById('emergencyMed-visitid').value)">
                         <option value="">Select</option>
                         @foreach ($medicineCategory as $medCategory)
                         <option value="{{$medCategory->id}}">{{$medCategory->name}}</option>
@@ -454,7 +455,7 @@
           <div class="col-md-4">
             <input type="hidden" id="emergencyLabID">
               <label class="form-label fw-medium" for="emergencyLab-testType">Test Type</label> <sup class="text-danger">*</sup>
-                 <select id="emergencyLab-testType" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                 <select id="emergencyLab-testType" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select');getTestName(this.value)"">
                        <option value="">Select</option>
                       @foreach ($testtypes as $testtype)
                        <option value="{{$testtype->id}}">{{$testtype->name}}</option>
@@ -464,12 +465,11 @@
             </div>
             <div class="col-md-4">
               <label class="form-label fw-medium" for="emergencyLab-testName">Test Name</label> <sup class="text-danger">*</sup>
-                 <select id="emergencyLab-testName" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
-                 
-                        <option value="">Select</option>
-                      @foreach ($testnames as $testname)
+                 <select id="emergencyLab-testName" class="form-select form-select-sm select2-cls" style="width: 100%" onchange="getTestDetails(this.value)" oninput="validateField(this.id,'select')">
+                      <option value="">Select</option>
+                      {{-- @foreach ($testnames as $testname)
                         <option value="{{$testname->id}}">{{$testname->name}}</option>
-                      @endforeach
+                      @endforeach --}}
                     </select>
                     <div class="emergencyLab-testName_errorCls d-none"></div>
             </div>
@@ -1061,14 +1061,15 @@
         <div class="col-md-6 bg-info-50 pt-3">
           <div class="row gy-3">
             <div class="col-md-6">
-              <label class="form-label fw-medium" for="emergencyVisit-admissionDate">Appointment Date</label>
+              <label class="form-label fw-medium" for="emergencyVisit-admissionDate">Appointment Date</label> <sup class="text-danger">*</sup>
               <div class=" position-relative">
-                    <input id="emergencyVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="text" value="{{ $curr_date}}" readonly="readonly">
+                    <input id="emergencyVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="date" placeholder="DD/MM/YYYY" value="{{ $curr_date}}" oninput="validateField(this.id,'select')">
                 </div>
+                <div class="emergencyVisit-admissionDate_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-               <label class="form-label fw-medium" for="emergencyVisit-oldPatient">Old Patient</label>
-              <select id="emergencyVisit-oldPatient" class="form-select form-select-sm select2" oninput="validateField(this.id,'select')">
+               <label class="form-label fw-medium" for="emergencyVisit-oldPatient">Old Patient</label> <sup class="text-danger">*</sup>
+              <select id="emergencyVisit-oldPatient" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
                  <option value="">Select</option>
                  <option value="1">Yes</option>
                  <option value="0">No</option>
@@ -1077,7 +1078,7 @@
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium" for="emergencyVisit-consultDoctor"> Consultant Doctor</label> <sup class="text-danger">*</sup>
-               <select id="emergencyVisit-consultDoctor" class="form-select form-select-sm select2" oninput="validateField(this.id,'select')">
+               <select id="emergencyVisit-consultDoctor" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
                       <option value="">Select</option>
                       @foreach ($doctorData as $doctorName)
                       <option value="{{$doctorName->id}}">{{$doctorName->name}}</option>
@@ -1091,12 +1092,12 @@
                 <div class="emergencyVisit-charge_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium" for="emergencyVisit-discount"> Discount</label>% <sup class="text-danger">*</sup>
+              <label class="form-label fw-medium" for="emergencyVisit-discount"> Discount</label>% 
                <input id="emergencyVisit-discount" type="number" class="form-control form-control-sm" placeholder="Discount" value="" oninput="calculateAmount()">
                 <div class="emergencyVisit-discount_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-              <label class="form-label fw-medium" for="emergencyVisit-tax"> Tax</label>% <sup class="text-danger">*</sup>
+              <label class="form-label fw-medium" for="emergencyVisit-tax"> Tax</label>% 
                <input id="emergencyVisit-tax" type="number" class="form-control form-control-sm" placeholder="Discount" value=""  oninput="calculateAmount()">
                 <div class="emergencyVisit-tax_errorCls d-none"></div>
             </div>
@@ -1107,7 +1108,8 @@
             </div>
             <div class="col-md-6">
              <label class="form-label fw-medium" for="emergencyVisit-paymentMode"> Payment Mode</label> <sup class="text-danger">*</sup>
-               <select id="emergencyVisit-paymentMode" class="form-select form-select-sm" oninput="validateField(this.id,'select')">
+               <select id="emergencyVisit-paymentMode" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                <option value="">Select</option>
                 <option value="cash">Cash</option>
                 <option value="upi">UPI</option>
                 <option value="card">Card</option>
@@ -1116,14 +1118,18 @@
               </select>
                <div class="emergencyVisit-paymentMode_errorCls d-none"></div>
             </div>
-            <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
+            {{-- <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
               <label class="form-label fw-medium ">Reference Number</label>
               <input id="emergencyVisit-refNum" type="number" class="form-control form-control-sm" placeholder=" Enter payment reference number">
-            </div>
+            </div> --}}
             <div class="col-md-6 mb-3">
              <label class="form-label fw-medium" for="emergencyVisit-paidAmount">Pay Amount</label> <sup class="text-danger">*</sup>
-               <input id="emergencyVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount" oninput="validateField(this.id,'amount')">
+               <input id="emergencyVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkEmergencyVisitPaidAmount()">
                 <div class="emergencyVisit-paidAmount_errorCls d-none"></div>
+            </div>
+            <div class="col-md-6 mb-3 emergencyVisit-AlreadypaidAmountCls d-none">
+             <label class="form-label fw-medium" for="ipdVisit-paidAmount">Paid Amount</label> 
+               <input id="emergencyVisit-AlreadypaidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount" readonly>
             </div>
             <!-- <div class="col-md-6 mb-3">
               <label class="form-label fw-medium"> Live Consultation</label>
@@ -1200,26 +1206,82 @@
     </div>
   </div>
  <!-- Alert modal end-->
+  <!--Alert Discharge modal start -->
+  <div class="modal fade" id="emergencyDischargeModel" tabindex="-1" role="dialog" aria-labelledby="moveToIcuModel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white userType-title">Due</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+           <form action="" id="emergency-dischargeAmountForm" class="needs-validation" novalidate="">
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <label class="form-label" for="emergencyBillAmount">Total Bill Amount</label>
+                    <input class="form-control form-control-sm" id="emergencyBillAmount" type="text"
+                       style="background-image: none;" readonly>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label" for="emergencyPaidAmount">Paid Amount</label>
+                    <input class="form-control form-control-sm" id="emergencyPaidAmount" type="text"
+                        placeholder="Enter Pay Amount" style="background-image: none;" readonly>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label" for="emergencyPayAmount"> Pay Amount</label>
+                    <input class="form-control form-control-sm" id="emergencyPayAmount" type="text"
+                        placeholder="Enter Pay Amount" style="background-image: none;">
+                  </div>
+                </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal" onclick="resetmodel()">Cancel</button>
+                        <button class="btn btn-primary btn-sm " type="submit">Submit</button>
+                    </div>
+           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Alert DIscharge modal end-->
 @endsection
 @section('extra-js')
 <script>
-   $('#emergency-add-medication-dose').on('shown.bs.modal', function () {
-      $('.select2-cls').select2({
-          dropdownParent: $('#emergency-add-medication-dose')
-      });
+  // Flat pickr or date picker js 
+    function getDatePicker (receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "d-m-Y",
+        });
+    }
+    getDatePicker('#emergencyVisit-admissionDate'); 
+
+    $('#emergency-new-checkup').on('shown.bs.modal', function () {
+        $('.select2-cls').select2({
+            dropdownParent: $('#emergency-new-checkup')
+        });
     });
-     $('#emergency-add-lab').on('shown.bs.modal', function () {
-      $('.select2-cls').select2({
-          dropdownParent: $('#emergency-add-lab')
-      });
+    $('#emergency-add-medication-dose').on('shown.bs.modal', function () {
+        $('.select2-cls').select2({
+            dropdownParent: $('#emergency-add-medication-dose')
+        });
+    });
+    $('#emergency-add-lab').on('shown.bs.modal', function () {
+        $('.select2-cls').select2({
+            dropdownParent: $('#emergency-add-lab')
+        });
     });
      $('#emergency-nurse-note').on('shown.bs.modal', function () {
-      $('.select2-cls').select2({
-          dropdownParent: $('#emergency-nurse-note')
-      });
+        $('.select2-cls').select2({
+            dropdownParent: $('#emergency-nurse-note')
+        });
     });
       const emergencyMedicineName = "{{route('common.getMedicineName')}}";
       const moveToIpdsStatus = "{{route('emergency.moveToIpdsStatus')}}";
+      const calculateDischargeAmountEmergency = "{{route('emergency.calculateDischargeAmountEmergency')}}";
+      const submitRestEmergencyAmount = "{{route('emergency.submitRestEmergencyAmount')}}";
       const patientDischargeStatusE = "{{route('emergency.patientDischargeStatusE')}}";
 
     const emergencyVisitSubmit = "{{route('emergency-visit.emergencyVisitSubmit')}}";
@@ -1229,12 +1291,15 @@
     const emergencyVisitDataUpdate = "{{route('emergency-visit.emergencyVisitDataUpdate')}}";
     const emergencyVisitDataDelete = "{{route('emergency-visit.emergencyVisitDataDelete')}}";
 
+    const emergencyVisitId = "{{route('emergency-med.emergencyVisitId')}}";
     const emergencyMedDataAdd = "{{route('emergency-med.emergencyMedDataAdd')}}";
     const viewEmergencyMedDose = "{{route('emergency-med.viewEmergencyMedDose')}}";
     const getEmergencyMedDoseDetails = "{{route('emergency-med.getEmergencyMedDoseDetails')}}";
     const emergencyMedDataUpdate = "{{route('emergency-med.emergencyMedDataUpdate')}}";
     const emergencyMedDoseDataDelete = "{{route('emergency-med.emergencyMedDoseDataDelete')}}";
 
+    const getTestNameByTypeEmergency = "{{route('emergency-lab.getTestNameByTypeEmergency')}}";
+    const getTestDetailsByIdEmergency = "{{route('emergency-lab.getTestDetailsByIdEmergency')}}";
     const emergencyLabSubmit = "{{route('emergency-lab.emergencyLabSubmit')}}";
     const viewEmergencyLabData = "{{route('emergency-lab.viewEmergencyLabData')}}";
     const getEmergencyLabData = "{{route('emergency-lab.getEmergencyLabData')}}";

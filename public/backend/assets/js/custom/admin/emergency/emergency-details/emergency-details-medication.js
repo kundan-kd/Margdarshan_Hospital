@@ -63,21 +63,40 @@ let table_med_dose = $('#emergency-Med-medicineDoseList').DataTable({
 
     ]
 });
-
-function medicinelist(id){
+function getVisitId(id){
+    $.ajax({
+        url:emergencyVisitId,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:id},
+        success:function(response){
+            console.log(response);
+            let visitDetails = response.data;
+            $('#emergencyMed-visitid').empty();
+            $('#emergencyMed-visitid').append(`<option value="">Select</option>`);
+            visitDetails.forEach(function(visitData){
+                $('#emergencyMed-visitid').append(`<option value="${visitData.id}" >MDVI0${visitData.id}</option>`);
+            });
+        }
+    });
+}
+function medicinelist(medicine_cat_id,visit_id){
 $.ajax({
     url:emergencyMedicineName,
     type:"POST",
     headers:{
         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
     },
-    data:{id:id},
+    data:{id:medicine_cat_id,visit_id:visit_id},
     success:function(response){
-        let medicineDetails = response.data;
+       let medicineDetails = response.data;
+        let medicineName = response.medicineNameId[0];
         $('#emergencyMed-medName').empty();
             $('#emergencyMed-medName').append(`<option value="">Select</option>`);
         medicineDetails.forEach(function(medData){
-            $('#emergencyMed-medName').append(`<option value="${medData.id}" >${medData.name}</option>`);
+            $('#emergencyMed-medName').append(`<option value="${medData.id}" ${medData.id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
         });
     }
 });

@@ -71,7 +71,17 @@ let table_patient = $('#ipd-in-patient-list').DataTable({
             searchable: true
         },
 
-    ]
+    ],
+    dom: 'Bfrtip',
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                title: 'IPD Patient List',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9] // Excludes index 11 (action)
+                }
+            }
+        ]
 });
 function resetAddPatient(){
     $('#ipd-addPatientForm')[0].reset();

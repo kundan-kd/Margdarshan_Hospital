@@ -47,10 +47,10 @@
 {{-- for date month format --}}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
 
-{{-- <!-- Buttons Extension for Datatable to perform extra functions -->
+<!-- Buttons Extension for Datatable to perform extra functions -->
 <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script> --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   {{-----------common js for common function in all pages------------}}
   <script src="{{asset('backend/assets/js/custom/common.js')}}"></script>

@@ -154,3 +154,8 @@ border-radius: 4px !important;
     -o-border-radius: 4px;
 }
 /* -border search start   end*/
+/* export to excel button css changes */
+div.dt-buttons {
+    float: right !important;
+}
+/* export to excel button css changes ends */

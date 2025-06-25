@@ -87,7 +87,7 @@
                             <h6 class="text-md fw-medium mt-11 border-bottom pb-8">CONSULTANT DOCTOR</h6>
                             <div class="d-flex align-items-center">
                               <p class="mb-0 mx-1">Finding :</p> 
-                              <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#add-finding">
+                              <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#add-finding" onclick="generateBar({{$patients[0]->patient_id}})">
                                 <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-primary" data-bs-title="Finding">
                                   <i class="ri-add-line"></i>
                                 </div>

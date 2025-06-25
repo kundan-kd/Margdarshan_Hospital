@@ -42,3 +42,7 @@ $('#opd-ipdRoomForm').on('submit',function(e){
     }
    
 })
+
+function generateBar(x){
+    console.log(x);
+}

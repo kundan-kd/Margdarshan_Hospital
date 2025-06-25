@@ -250,11 +250,16 @@ Route::post('/opd-out-visit-view',[OpdoutController::class,'viewOptOutVisit'])->
 Route::post('/opd-out-visit-data',[OpdoutController::class,'getOpdOutVisitData'])->name('opd-out-visit.getOpdOutVisitData');
 Route::post('/opd-out-visit-update',[OpdoutController::class,'opdOutVisitDataUpdate'])->name('opd-out-visit.opdOutVisitDataUpdate');
 Route::post('/opd-out-visit-delete',[OpdoutController::class,'opdOutVisitDataDelete'])->name('opd-out-visit.opdOutVisitDataDelete');
+
+Route::post('/opd-out-medicine-visit-list',[OpdoutController::class,'ipdVisitIdOpd'])->name('opd-out-med.ipdVisitIdOpd');
 Route::post('/opd-out-medicine-dose-add',[OpdoutController::class,'opdOutMedDataAdd'])->name('opd-out-med.opdOutMedDataAdd');
 Route::post('/opd-out-medicine-dose-view',[OpdoutController::class,'viewOptOutMedDose'])->name('opd-out-med.viewOptOutMedDose');
 Route::post('/opd-out-medicine-dose-data',[OpdoutController::class,'getOpdOutMedDoseDetails'])->name('opd-out-med.getOpdOutMedDoseDetails');
 Route::post('/opd-out-medicine-dose-update',[OpdoutController::class,'opdOutMedDataUpdate'])->name('opd-out-med.opdOutMedDataUpdate');
 Route::post('/opd-out-medicine-dose-delete',[OpdoutController::class,'opdOutMedDoseDataDelete'])->name('opd-out-med.opdOutMedDoseDataDelete');
+
+Route::post('/opd-out-lab-test-get',[OpdoutController::class,'getTestNameByTypeOpd'])->name('opd-out-lab.getTestNameByTypeOpd');
+Route::post('/opd-out-lab-test-get-details',[OpdoutController::class,'getTestDetailsByIdOpd'])->name('opd-out-lab.getTestDetailsByIdOpd');
 Route::post('/opd-out-lab-test-add',[OpdoutController::class,'opdOutLabSubmit'])->name('opd-out-lab.opdOutLabSubmit');
 Route::post('/opd-out-lab-test-details',[OpdoutController::class,'viewOpdOutLabDetails'])->name('opd-out-lab.viewOpdOutLabDetails');
 Route::post('/opd-out-lab-test-data',[OpdoutController::class,'getOpdOutLabData'])->name('opd-out-lab.getOpdOutLabData');
@@ -280,6 +285,7 @@ Route::post('/ipd-in-patient-add',[IpdinController::class,'ipdInPatientAdd'])->n
 Route::get('/ipd-in-details/{id}',[IpdinController::class,'ipdInDetails']);
 Route::post('/ipd-in-patient-movetoemergency',[IpdinController::class,'moveToEmergencyStatus'])->name('ipd.moveToEmergencyStatus');
 Route::post('/ipd-in-patient-movetoicu',[IpdinController::class,'moveToIcuStatus'])->name('ipd.moveToIcuStatus');
+Route::post('/ipd-in-patient-movetoipd',[IpdinController::class,'moveToIpdStatusFromIcu'])->name('ipd.moveToIpdStatusFromIcu');
 Route::post('/ipd-in-patient-discharge',[IpdinController::class,'patientDischargeStatus'])->name('ipd.patientDischargeStatus');
 Route::post('/ipd-in-patient-discharge-data',[IpdinController::class,'calculateDischargeAmount'])->name('ipd.calculateDischargeAmount');
 Route::post('/ipd-in-patient-discharge-amount',[IpdinController::class,'submitRestIpdAmount'])->name('ipd.submitRestIpdAmount');
@@ -331,6 +337,8 @@ Route::post('/ipd-nurse-note-view',[IpdinController::class,'viewIpdNurseNote'])-
 Route::post('/ipd-nurse-note-data',[IpdinController::class,'getIpdNurseNoteData'])->name('ipd-nurse.getIpdNurseNoteData');
 Route::post('/ipd-nurse-note-update',[IpdinController::class,'ipdNurseNoteDataUpdate'])->name('ipd-nurse.ipdNurseNoteDataUpdate');
 Route::post('/ipd-nurse-note-delete',[IpdinController::class,'ipdNurseDataDelete'])->name('ipd-nurse.ipdNurseDataDelete');
+
+Route::post('/ipd-bill-view',[IpdinController::class,'viewIpdBills'])->name('ipd.viewIpdBills');
 
 Route::get('/emergency',[EmergencyController::class,'index'])->name('emergency.index');
 Route::get('/emergency-details/{id}',[EmergencyController::class,'emergencyDetails']);
@@ -386,6 +394,8 @@ Route::post('/emergency-vital-add',[EmergencyController::class,'emergencyVItalSu
 Route::post('/emergency-vital-data',[EmergencyController::class,'getEmergencyVitalData'])->name('emergency-vital.getEmergencyVitalData');
 Route::post('/emergency-vital-update',[EmergencyController::class,'emergencyVitalDataUpdate'])->name('emergency-vital.emergencyVitalDataUpdate');
 Route::post('/emergency-vital-delete',[EmergencyController::class,'emergencyVitalDataDelete'])->name('emergency-vital.emergencyVitalDataDelete');
+
+Route::post('/emergency-bill-view',[EmergencyController::class,'viewEmergencyBills'])->name('emergency.viewEmergencyBills');
 
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');

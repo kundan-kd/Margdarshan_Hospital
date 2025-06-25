@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('type',30)->nullable();
             $table->string('previous_type',20)->nullable();
+            $table->string('type_change_date',30)->nullable();
             $table->string('patient_id',50)->nullable();
             $table->string('name',150)->nullable();
             $table->string('guardian_name',150)->nullable();

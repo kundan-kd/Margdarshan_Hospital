@@ -13,6 +13,8 @@ use App\Models\OpdoutLabtest;
 use App\Models\OpdoutMedicinedose;
 use App\Models\OpdoutVisit;
 use App\Models\Patient;
+use App\Models\PaymentBill;
+use App\Models\PaymentReceived;
 use App\Models\TestName;
 use App\Models\TestType;
 use App\Models\Timeline;
@@ -90,7 +92,7 @@ class OpdoutController extends Controller
         $patients = Patient::where('id',$id)->get();
         $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
-        $doctorData = User::where('status',1)->get(['id','name','department_id']);
+        $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
         $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
         $medicationData = Medication::where('patient_id',$patients[0]->id)->get();
         $testtypes = TestType::where('status',1)->get();
@@ -161,6 +163,23 @@ class OpdoutController extends Controller
         $optoutVisit->ref_num = $request->refNum;
         $optoutVisit->paid_amount = $request->paidAmount;
         if($optoutVisit->save()){
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "OPD";
+            $payment_bills->patient_id = $request->patientId;
+            $payment_bills->amount_for = 'Visit';
+            $payment_bills->title = 'New Visit';
+            $payment_bills->amount = $request->amount;
+            $payment_bills->save();
+             
+            if($request->paidAmount > 0){
+                $payment_received = new PaymentReceived();
+                $payment_received->patient_id = $request->patientId;
+                $payment_received->type = 'OPD';
+                $payment_received->amount_for = 'Visit';
+                $payment_received->title = 'New Visit';
+                $payment_received->amount = $request->paidAmount;
+                $payment_received->save();
+            }
             $timelines = new Timeline();
             $timelines->type = "OPD";
             $timelines->patient_id = $request->patientId;
@@ -243,6 +262,14 @@ class OpdoutController extends Controller
     public function opdOutVisitDataDelete(Request $request){
         Visit::where('id',$request->id)->delete();
         return response()->json(['success'=>'Visit data deleted successfully'],200);
+    }
+    public function ipdVisitIdOpd(Request $request){
+        $visitId = Visit::where('patient_id',$request->id)->orderBy('id','desc')->get();
+        if($visitId){
+            return response()->json(['success'=>'Visit id fetched successfully','data'=>$visitId],200);
+        }else{
+            return response()->json(['error_success'=>'Visit id not found'],404);
+        }
     }
     public function opdOutMedDataAdd(Request $request){
         $validator = Validator::make($request->all(),[
@@ -333,6 +360,14 @@ class OpdoutController extends Controller
         Medication::where('id',$request->id)->delete();
         return response()->json(['success'=>'Medicine dose deleted successfully'],200);
     }
+    public function getTestNameByTypeOpd(Request $request){
+        $testTypes = TestName::where('test_type_id',$request->id)->where('status',1)->get(['id','name']);
+        return response()->json(['success'=>'Test names fetched successfully','data'=>$testTypes],200);
+    }
+    public function getTestDetailsByIdOpd(Request $request){
+        $testDetails = TestName::where('id',$request->id)->get();
+            return response()->json(['success'=>'Test details fetched successfully','data'=>$testDetails],200);
+    }
     public function opdOutLabSubmit(Request $request){
         $validator = Validator::make($request->all(),[
             'testType' => 'required',
@@ -353,11 +388,20 @@ class OpdoutController extends Controller
             $optoutLab->test_type_id = $request->testType;
             $optoutLab->test_name_id = $request->testName;
             $optoutLab->method = $request->method;
+            $optoutLab->amount = $request->amount;
             $optoutLab->report_days = $request->reportDays;
             $optoutLab->test_parameter = $request->testParameter;
             $optoutLab->test_ref_range = $request->testRefRange;
             $optoutLab->test_unit = $request->testUnit;
         if($optoutLab->save()){
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "OPD";
+            $payment_bills->patient_id = $request->patientId;
+            $payment_bills->amount_for = 'Lab Test';
+            $payment_bills->title = 'Lab Test';
+            $payment_bills->amount = $request->amount;
+            $payment_bills->save();
+
             $timelines = new Timeline();
              $timelines->type = "OPD";
              $timelines->patient_id = $request->patientId;
@@ -392,7 +436,7 @@ class OpdoutController extends Controller
                       <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
                     </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="lucide:edit" onclick="opdOutLabEdit('.$row->id.')"></iconify-icon>
+                      <iconify-icon icon="lucide:edit" onclick="opdOutLabEdit('.$row->id.');getTestName('.$row->test_type_id.','.$row->test_name_id.');getTestDetails('.$row->test_name_id.')"></iconify-icon>
                     </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutLabDelete('.$row->id.')"></iconify-icon>
@@ -424,6 +468,7 @@ class OpdoutController extends Controller
             'test_type_id' => $request->testType,
             'test_name_id' => $request->testName,
             'method' => $request->method,
+            'amount' => $request->amount,
             'report_days' => $request->reportDays,
             'test_parameter'=> $request->testParameter,
             'test_ref_range' => $request->testRefRange,
@@ -453,13 +498,21 @@ class OpdoutController extends Controller
             $optoutCharge->name = $request->name;
             $optoutCharge->amount = $request->amount;
         if($optoutCharge->save()){
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "IPD";
+            $payment_bills->patient_id = $request->patientId;
+            $payment_bills->amount_for = 'Charge';
+            $payment_bills->title = $request->name;
+            $payment_bills->amount = $request->amount;
+            $payment_bills->save();
+
             $timelines = new Timeline();
-             $timelines->type = "OPD";
-             $timelines->patient_id = $request->patientId;
-             $timelines->title = "Charges";
-             $timelines->desc = "Charges added for treatment or test";
-             $timelines->created_by = "Admin";
-             $timelines->save();
+            $timelines->type = "OPD";
+            $timelines->patient_id = $request->patientId;
+            $timelines->title = "Charges";
+            $timelines->desc = "Charges added for treatment or test";
+            $timelines->created_by = "Admin";
+            $timelines->save();
             return response()->json(['success'=>'Charge added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Charge not added']);

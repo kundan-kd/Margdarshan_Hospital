@@ -55,6 +55,9 @@
                   <li class="nav-item" role="presentation">
                     <button class="nav-link px-16 py-10 " id="pills-history-tab-emergency" data-bs-toggle="pill" data-bs-target="#pills-history-emergency" type="button" role="tab" aria-controls="pills-history-emergency" aria-selected="false">Vital History</button>
                   </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link px-16 py-10 " id="pills-bills-tab-emergency" data-bs-toggle="pill" data-bs-target="#pills-bills-emergency" type="button" role="tab" aria-controls="pills-history-emergency" aria-selected="false">Bills</button>
+                  </li>
             </ul>
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="pills-Overview-emergency" role="tabpanel" aria-labelledby="Overview-tab-emergency" tabindex="0">
@@ -369,6 +372,29 @@
                                 </button>
                               </td>
                              </tr> --}}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="pills-bills-emergency" role="tabpanel" aria-labelledby="pills-bills-tab-emergency" tabindex="0">
+                  <div class="row">
+                    <div class="col-md-12 px-3">
+                      <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
+                        <h6 class="text-md fw-normal mb-0">Bills Created History</h6>
+                      </div>
+                            <div class="table-responsive">
+                        <table class="table striped-table w-100" id="emergencybill-list">
+                          <thead>
+                             <tr>
+                              <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Title</th>
+                              <th class="fw-medium">Amount</th>
+                             </tr>
+                          </thead>
+                          <tbody>
+
                           </tbody>
                         </table>
                       </div>
@@ -810,8 +836,8 @@
                 <label class="form-label fw-medium" for="emergencyNurse-name">Nurse<sup class="text-danger">*</sup></label>
                     <select id="emergencyNurse-name" class="form-select form-select-sm select2-cls" style="width: 100%;" oninput="validateField(this.id,'select')">
                         <option value="">Select</option>
-                        @foreach ($doctorData as $dData)
-                        <option value="{{$dData->id}}">{{$dData->name}}</option>
+                        @foreach ($nurseData as $nData)
+                        <option value="{{$nData->id}}">{{$nData->name}}</option>
                         @endforeach
                     </select>
                     <div class="emergencyNurse-name_errorCls d-none"></div>
@@ -1168,7 +1194,7 @@
   </div>
 </div>
 <!-- opd visit view end -->
- <!--Alert modal start -->
+ <!--Alert IPD modal start -->
   <div class="modal fade" id="moveToIpdModel" tabindex="-1" role="dialog" aria-labelledby="moveToIpdModel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content border-0">
@@ -1205,7 +1231,7 @@
       </div>
     </div>
   </div>
- <!-- Alert modal end-->
+ <!-- Alert IPD modal end-->
   <!--Alert Discharge modal start -->
   <div class="modal fade" id="emergencyDischargeModel" tabindex="-1" role="dialog" aria-labelledby="moveToIcuModel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -1324,6 +1350,8 @@
      const getEmergencyVitalData = "{{route('emergency-vital.getEmergencyVitalData')}}";
      const emergencyVitalDataUpdate = "{{route('emergency-vital.emergencyVitalDataUpdate')}}";
      const emergencyVitalDataDelete = "{{route('emergency-vital.emergencyVitalDataDelete')}}";
+
+     const viewEmergencyBills = "{{route('emergency.viewEmergencyBills')}}";
 </script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details.js')}}"></script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details-visit.js')}}"></script>
@@ -1332,4 +1360,5 @@
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details-charge.js')}}"></script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details-nurse.js')}}"></script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details-vital.js')}}"></script>
+  <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details-bills.js')}}"></script>
 @endsection

@@ -35,13 +35,14 @@ class EmergencyController extends Controller
         // $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
         $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
+        $nurseData = User::where('status',1)->where('usertype_id',3)->get(['id','name','department_id']);
         $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
         $medicationData = Medication::where('patient_id',$patients[0]->id)->get();
         $testtypes = TestType::where('status',1)->get();
         $testnames = TestName::where('status',1)->get();
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
         $ipdAvailBeds = Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get();
-        return view('backend.admin.modules.emergency.emergency-details',compact('patients','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds'));
+        return view('backend.admin.modules.emergency.emergency-details',compact('patients','medicineCategory','doctorData','nurseData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds'));
     }
        public function viewPatients(Request $request){
         if($request->ajax()){
@@ -133,6 +134,14 @@ class EmergencyController extends Controller
                 'occupied_by_patient_id' => $patient->id,
                 'occupied_date' => $now 
             ]);
+            $bed_amount = Bed::where('id',$request->bedNumId)->get(['amount']);
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "EMERGENCY";
+            $payment_bills->patient_id = $patient->id;
+            $payment_bills->amount_for = 'Bed Charge';
+            $payment_bills->title = 'Patient Addmitted to Emergency';
+            $payment_bills->amount = $bed_amount[0]->amount;
+            $payment_bills->save();
             return response()->json(['success'=>'New IPD Patient added successfully'],201);
         }else{
             return response()->json(['error_success'=>'IPD Patient not added'],500);
@@ -206,7 +215,8 @@ class EmergencyController extends Controller
         $update = Patient::where('id',$request->id)->update([
             'type' =>'IPD',
             'bed_id' => $request->bed_id,
-            'previous_type'=>$curr_status[0]->type
+            'previous_type'=>$curr_status[0]->type,
+            'type_change_date' => $now
         ]);
         if($update){
             Bed::where('id',$request->bed_id)->update([
@@ -257,7 +267,7 @@ class EmergencyController extends Controller
             if($request->payAmount > 0){
                 $payment_received = new PaymentReceived();
                 $payment_received->patient_id = $request->patient_id;
-                $payment_received->type = 'Emergency';
+                $payment_received->type = 'EMERGENCY';
                 $payment_received->amount_for = 'Discharge Amount';
                 $payment_received->title = 'Discharge Amount Received';
                 $payment_received->amount = $request->payAmount;
@@ -314,13 +324,22 @@ class EmergencyController extends Controller
             $payment_bills->amount = $request->amount;
             $payment_bills->save();
 
-             $timelines = new Timeline();
-             $timelines->type = "EMERGENCY";
-             $timelines->patient_id = $request->patientId;
-             $timelines->title = "New Visit";
-             $timelines->desc = "Appointment booked for emergency on ".$request->appointment_date;
-             $timelines->created_by = "Admin";
-             $timelines->save();
+            if($request->paidAmount > 0){
+                $payment_received = new PaymentReceived();
+                $payment_received->patient_id = $request->patientId;
+                $payment_received->type = 'EMERGENCY';
+                $payment_received->amount_for = 'Visit';
+                $payment_received->title = 'New Visit';
+                $payment_received->amount = $request->paidAmount;
+                $payment_received->save();
+            }   
+            $timelines = new Timeline();
+            $timelines->type = "EMERGENCY";
+            $timelines->patient_id = $request->patientId;
+            $timelines->title = "New Visit";
+            $timelines->desc = "Appointment booked for emergency on ".$request->appointment_date;
+            $timelines->created_by = "Admin";
+            $timelines->save();
             return response()->json(['success'=>'Emergency Visit added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Emergency visit not added']);
@@ -844,5 +863,22 @@ class EmergencyController extends Controller
     public function emergencyVitalDataDelete(Request $request){
         Vital::where('id',$request->id)->delete();
         return response()->json(['success'=>'Vital deleted successfully'],200);
+    }
+    public function viewEmergencyBills(Request $request){
+        if($request->ajax()){
+            $bills = PaymentBill::where('patient_id',$request->patient_id)->orderBy('created_at', 'desc')->get();
+            return DataTables::of($bills)
+            ->addColumn('created_at',function($row){
+                return $row->created_at;
+            })
+            ->addColumn('name',function($row){
+                return $row->amount_for;
+            })
+            ->addColumn('amount',function($row){
+                return $row->amount;
+            })
+            ->rawColumns([''])
+            ->make(true);
+        }
     }
 }

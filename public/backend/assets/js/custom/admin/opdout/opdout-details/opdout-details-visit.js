@@ -26,6 +26,19 @@ function calculateAmount(){
     let finelAmount = (charge - discountAmount) + taxAmount;
     $('#opdOutVisit-amount').val(finelAmount);
 }
+function checkOpdVisitPaidAmount(){
+    let amount = $('#opdOutVisit-amount').val() || 0;
+    let paidAmount = $('#opdOutVisit-paidAmount').val() || 0;
+    let alreadypaidAmount = $('#opdOutVisit-AlreadypaidAmount').val() || 0;
+    if((parseFloat(paidAmount) + parseFloat(alreadypaidAmount)) > amount){
+        $('.opdOutVisitSubmit').prop('disabled', true);
+        $('.opdOutVisitUpdate').prop('disabled', true);
+        toastErrorAlert('Payment amount exceeds total amount');
+    }else{
+         $('.opdOutVisitSubmit').prop('disabled', false);
+         $('.opdOutVisitUpdate').prop('disabled', false);
+    }
+}
 $('#opdOutVisit-modelForm').on('submit',function(e){
  e.preventDefault();
     let symptoms_check  = validateField('opdOutVisit-symptoms', 'input');

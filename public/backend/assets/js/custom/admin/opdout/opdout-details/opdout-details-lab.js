@@ -78,6 +78,58 @@ let table_lab = $('#opd-lab-reports-list').DataTable({
         },
     ]
 });
+function getTestName(testtype_id, testname_id) {
+    $.ajax({
+        url: getTestNameByTypeOpd,
+        type: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: { id: testtype_id },
+        success: function(response) {
+            if (response.success) {
+                let testNameData = response.data;
+                let $testNameSelect = $('#opdOutLab-testName');
+                $testNameSelect.empty();
+                $testNameSelect.append('<option value="">Select Test Name</option>');
+                $.each(testNameData, function(index, item) {
+                    let isSelected = item.id == testname_id ? 'selected' : '';
+                    $testNameSelect.append(`<option value="${item.id}" ${isSelected}>${item.name}</option>`);
+                });
+            } else {
+                console.log('No test names found for this type');
+            }
+        },
+        error: function(xhr, thrown) {
+            console.log(xhr.responseText);
+            alert('Error: ' + thrown);
+        }
+    });
+}
+
+function getTestDetails(id){
+        $.ajax({
+            url:getTestDetailsByIdOpd,
+            type:"POST",
+            headers:{
+                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            data:{id:id},
+            success:function(response){
+                if(response.success){
+                    let testData = response.data[0];
+                    $('#opdOutLab-shortName').val(testData.s_name);
+                    $('#opdOutLab-amount').val(testData.amount);
+                }else{
+                    console.log('No test details found for this test');
+                }
+            },
+            error:function(xhr,thrown){
+                console.log(xhr.responseText);
+                alert('Error: '+thrown);
+            }
+        });
+}
 $('#opdOutLab-form').on('submit',function(e){
     e.preventDefault();
     let testType_check = validateField('opdOutLab-testType', 'select');
@@ -87,6 +139,7 @@ $('#opdOutLab-form').on('submit',function(e){
        let testType = $('#opdOutLab-testType').val();
        let testName = $('#opdOutLab-testName').val();
        let method = $('#opdOutLab-method').val();
+       let amount = $('#opdOutLab-amount').val();
        let reportDays = $('#opdOutLab-reportDays').val();
        let testParameter = $('#opdOutLab-testParameter').val();
        let testRefRange = $('#opdOutLab-testRefRange').val();
@@ -95,7 +148,7 @@ $('#opdOutLab-form').on('submit',function(e){
             url:opdOutLabSubmit,
             type:"POST",
             data:{
-                patientId:patientId,testType:testType,testName:testName,method:method,reportDays:reportDays,testParameter:testParameter,testRefRange:testRefRange,testUnit:testUnit
+                patientId:patientId,testType:testType,testName:testName,method:method,amount:amount,reportDays:reportDays,testParameter:testParameter,testRefRange:testRefRange,testUnit:testUnit
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -237,6 +290,7 @@ function opdOutLabUpdate(id){
        let testType = $('#opdOutLab-testType').val();
        let testName = $('#opdOutLab-testName').val();
        let method = $('#opdOutLab-method').val();
+       let amount = $('#opdOutLab-amount').val();
        let reportDays = $('#opdOutLab-reportDays').val();
        let testParameter = $('#opdOutLab-testParameter').val();
        let testRefRange = $('#opdOutLab-testRefRange').val();
@@ -245,7 +299,7 @@ function opdOutLabUpdate(id){
             url:opdOutLabUpdateData,
             type:"POST",
             data:{
-                id:id,testType:testType,testName:testName,method:method,reportDays:reportDays,testParameter:testParameter,testRefRange:testRefRange,testUnit:testUnit
+                id:id,testType:testType,testName:testName,method:method,amount:amount,reportDays:reportDays,testParameter:testParameter,testRefRange:testRefRange,testUnit:testUnit
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

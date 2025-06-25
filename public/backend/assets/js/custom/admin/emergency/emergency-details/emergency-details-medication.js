@@ -96,7 +96,11 @@ $.ajax({
         $('#emergencyMed-medName').empty();
             $('#emergencyMed-medName').append(`<option value="">Select</option>`);
         medicineDetails.forEach(function(medData){
-            $('#emergencyMed-medName').append(`<option value="${medData.id}" ${medData.id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
+             if(response.medicineNameId !=''){
+                $('#emergencyMed-medName').append(`<option value="${medData.id}" ${medData.id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
+             }else{
+                 $('#emergencyMed-medName').append(`<option value="${medData.id}">${medData.name}</option>`);
+             }
         });
     }
 });

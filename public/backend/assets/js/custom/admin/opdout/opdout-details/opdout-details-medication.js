@@ -64,23 +64,49 @@ let table_med_dose = $('#opdOutMed-medicineDoseList').DataTable({
     ]
 });
 
-function medicinelist(id){
-$.ajax({
-    url:opdOutVisitMedicineName,
-    type:"POST",
-    headers:{
-        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-    },
-    data:{id:id},
-    success:function(response){
-        let medicineDetails = response.data;
-        $('#opdOutMed-medName').empty();
-            $('#opdOutMed-medName').append(`<option value="">Select</option>`);
-        medicineDetails.forEach(function(medData){
-            $('#opdOutMed-medName').append(`<option value="${medData.id}" >${medData.name}</option>`);
+function getVisitId(id){
+    $.ajax({
+        url:ipdVisitIdOpd,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:id},
+        success:function(response){
+            let visitDetails = response.data;
+            $('#opdOutMed-visitid').empty();
+            $('#opdOutMed-visitid').append(`<option value="">Select</option>`);
+            visitDetails.forEach(function(visitData){
+                $('#opdOutMed-visitid').append(`<option value="${visitData.id}" >MDVI0${visitData.id}</option>`);
+            });
+        }
+    });
+}
+function medicinelist(medicine_cat_id,visit_id){
+    setTimeout(function(){
+        $.ajax({
+            url:ipdVisitMedicineNameOpd,
+            type:"POST",
+            headers:{
+                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            data:{id:medicine_cat_id,visit_id:visit_id},
+            success:function(response){
+                let medicineDetails = response.data;
+                let medicineName = response.medicineNameId[0];
+                $('#opdOutMed-medName').empty();
+                    $('#opdOutMed-medName').append(`<option value="">Select</option>`);
+                medicineDetails.forEach(function(medData){
+                    if(response.medicineNameId !=''){
+                        $('#opdOutMed-medName').append(`<option value="${medData.id}" ${medData.id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
+                    }else{
+                        $('#opdOutMed-medName').append(`<option value="${medData.id}">${medData.name}</option>`);
+
+                    }
+                });
+            }
         });
-    }
-});
+    },200);    
 }
 $('#opdOutMed-form').on('submit',function(e){
     e.preventDefault();

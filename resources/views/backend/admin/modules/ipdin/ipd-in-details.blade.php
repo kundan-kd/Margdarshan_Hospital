@@ -16,7 +16,8 @@
         <h6 class="fw-normal mb-0">IPD - In Patient Details<span class="{{$patients[0]->current_status == 'Admitted'?'badge text-sm fw-normal bg-danger-600 mx-1 text-white':'badge text-sm fw-normal bg-success-600 mx-1 text-white'}}">{{$patients[0]->current_status}}</span></h6>
          <div class="d-flex flex-wrap align-items-center gap-2">
           <button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToEmergencyModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to Emergency</button>
-          <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
+          <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->current_status == 'Discharged' || $patients[0]->type == 'IPD'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to IPD</button>
+          <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged' || $patients[0]->type == 'ICU'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
           {{-- <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button> --}}
           <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} data-bs-toggle="modal" data-bs-target="#ipdDischargeModel" onclick="patientDischarge({{$patients[0]->id}})" > <i class="ri-thumb-up-line"></i> Discharge</button>
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
@@ -54,6 +55,9 @@
                  
                   <li class="nav-item" role="presentation">
                     <button class="nav-link px-16 py-10 " id="pills-history-tab" data-bs-toggle="pill" data-bs-target="#pills-history" type="button" role="tab" aria-controls="pills-history" aria-selected="false">Vital History</button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link px-16 py-10 " id="pills-bills-tab" data-bs-toggle="pill" data-bs-target="#pills-bills" type="button" role="tab" aria-controls="pills-bills" aria-selected="false">Bills</button>
                   </li>
             </ul>
             <div class="tab-content" id="pills-tabContent">
@@ -404,6 +408,30 @@
                     </div>
                   </div>
                 </div>
+             <div class="tab-pane fade" id="pills-bills" role="tabpanel" aria-labelledby="pills-bills-tab" tabindex="0">
+                  <div class="row">
+                    <div class="col-md-12 px-3">
+                      <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
+                        <h6 class="text-md fw-normal mb-0">Bills Created History</h6>
+                        
+                      </div>
+                      <div class="table-responsive">
+                        <table class="table striped-table w-100" id="ipdbill-list">
+                          <thead>
+                             <tr>
+                              <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Title</th>
+                              <th class="fw-medium">Amount</th>
+                             </tr>
+                          </thead>
+                          <tbody>
+
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
         </div>  
     </div>
@@ -602,8 +630,8 @@
                 <label class="form-label fw-medium" for="ipdNurse-name">Nurse<sup class="text-danger">*</sup></label>
                     <select id="ipdNurse-name" class="form-select form-select-sm select2-cls" style="width: 100%;" oninput="validateField(this.id,'select')">
                         <option value="">Select</option>
-                        @foreach ($doctorData as $dData)
-                        <option value="{{$dData->id}}">{{$dData->name}}</option>
+                        @foreach ($nurseData as $nData)
+                        <option value="{{$nData->id}}">{{$nData->name}}</option>
                         @endforeach
                     </select>
                     <div class="ipdNurse-name_errorCls d-none"></div>
@@ -1285,7 +1313,7 @@
             </div>
             <div class="col-md-6 mb-3 ipdVisit-AlreadypaidAmountCls d-none">
              <label class="form-label fw-medium" for="ipdVisit-paidAmount">Paid Amount</label> 
-               <input id="ipdVisit-AlreadypaidAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" readonly>
+               <input id="ipdVisit-AlreadypaidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount" readonly>
             </div>
             <!-- <div class="col-md-6 mb-3">
               <label class="form-label fw-medium"> Live Consultation</label>
@@ -1346,6 +1374,44 @@
     </div>
   </div>
  <!-- Alert modal end-->
+ <!--Alert IPD modal start -->
+  <div class="modal fade" id="moveToIpdModel" tabindex="-1" role="dialog" aria-labelledby="moveToIpdModel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white userType-title">Bed Number</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+           <form action="" id="ipd-ipdBedForm" class="needs-validation" novalidate="">
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <label class="form-label" for="room_num">Bed Number</label>
+                    {{-- <input type="hidden" id=opd-ipdRoom"> --}}
+                   <select class="form-control form-control-sm" name="ipd-ipdBed" id="ipd-ipdBed" required>
+                        <option value="">Select IPD Bed Number</option>
+                        @foreach ($ipdAvailablelBeds as $ipdBed)
+                        <option value="{{$ipdBed->id}}">{{$ipdBed->bed_no}}</option>
+                        @endforeach
+                    </select>   
+                    <div class="invalid-feedback">
+                            Select IPD Bed
+                        </div> 
+                </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal" onclick="resetmodel()">Cancel</button>
+                        <button class="btn btn-primary btn-sm " type="submit">Submit</button>
+                    </div>
+           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Alert IPD modal end-->
  <!--Alert ICU modal start -->
   <div class="modal fade" id="moveToIcuModel" tabindex="-1" role="dialog" aria-labelledby="moveToIcuModel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -1735,6 +1801,7 @@
   const patientDischargeStatus = "{{route('ipd.patientDischargeStatus')}}";
   const moveToEmergencyStatus = "{{route('ipd.moveToEmergencyStatus')}}";
   const moveToIcuStatus = "{{route('ipd.moveToIcuStatus')}}";
+  const moveToIpdStatusFromIcu = "{{route('ipd.moveToIpdStatusFromIcu')}}";
   const ipdVisitSubmit = "{{route('ipd-visit.ipdVisitSubmit')}}";
   const viewIpdVisit = "{{route('ipd-visit.viewIpdVisit')}}";
   const getIpdVisitData = "{{route('ipd-visit.getIpdVisitData')}}";
@@ -1775,6 +1842,8 @@
   const getIpdNurseNoteData = "{{route('ipd-nurse.getIpdNurseNoteData')}}";
   const ipdNurseNoteDataUpdate = "{{route('ipd-nurse.ipdNurseNoteDataUpdate')}}";
   const ipdNurseDataDelete = "{{route('ipd-nurse.ipdNurseDataDelete')}}";
+
+  const viewIpdBills = "{{route('ipd.viewIpdBills')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details.js')}}"></script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-visit.js')}}"></script>
@@ -1783,4 +1852,5 @@
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-charge.js')}}"></script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-vital.js')}}"></script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-nurse.js')}}"></script>
+<script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-bills.js')}}"></script>
 @endsection

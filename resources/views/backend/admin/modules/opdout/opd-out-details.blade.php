@@ -211,7 +211,7 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Medication</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-medication-dose" onclick="resetMedication()"> <i class="ri-add-line"></i> Add Medication Dose</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-medication-dose" onclick="resetMedication();getVisitId(document.getElementById('patient_Id').value)"> <i class="ri-add-line"></i> Add Medication Dose</button>
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="table-responsive">
@@ -530,7 +530,7 @@
           <div class="col-md-4">
             <input type="hidden" id="opOutLabID">
               <label class="form-label fw-medium" for="opdOutLab-testType">Test Type</label> <sup class="text-danger">*</sup>
-                 <select id="opdOutLab-testType" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                 <select id="opdOutLab-testType" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select');getTestName(this.value)">
                        <option value="">Select</option>
                       @foreach ($testtypes as $testtype)
                        <option value="{{$testtype->id}}">{{$testtype->name}}</option>
@@ -540,12 +540,12 @@
             </div>
             <div class="col-md-4">
               <label class="form-label fw-medium" for="opdOutLab-testName">Test Name</label> <sup class="text-danger">*</sup>
-                 <select id="opdOutLab-testName" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                 <select id="opdOutLab-testName" class="form-select form-select-sm select2-cls" style="width: 100%" onchange="getTestDetails(this.value)" oninput="validateField(this.id,'select')">
                  
                         <option value="">Select</option>
-                      @foreach ($testnames as $testname)
+                      {{-- @foreach ($testnames as $testname)
                         <option value="{{$testname->id}}">{{$testname->name}}</option>
-                      @endforeach
+                      @endforeach --}}
                     </select>
                     <div class="opdOutLab-testName_errorCls d-none"></div>
             </div>
@@ -652,7 +652,7 @@
               </div>
               <div class="col-md-6">
                   <label class="form-label fw-medium" for="opdOutMed-medCategory">Medicine Category</label> <sup class="text-danger">*</sup>
-                    <select id="opdOutMed-medCategory" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" onchange="medicinelist(this.value)">
+                    <select id="opdOutMed-medCategory" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" onchange="medicinelist(this.value,document.getElementById('opdOutMed-visitid').value)">
                         <option value="">Select</option>
                         @foreach ($medicineCategory as $medCategory)
                         <option value="{{$medCategory->id}}">{{$medCategory->name}}</option>
@@ -739,7 +739,7 @@
             <div class="col-md-6">
               <label class="form-label fw-medium" for="opdOutVisit-admissionDate">Appointment Date</label>
               <div class=" position-relative">
-                    <input id="opdOutVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="text" value="{{ $curr_date}}" readonly="readonly">
+                    <input id="opdOutVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="date" placeholder="DD/MM/YYYY" value="{{ $curr_date}}">
                 </div>
             </div>
             <div class="col-md-6">
@@ -792,14 +792,18 @@
               </select>
                <div class="opdOutVisit-paymentMode_errorCls d-none"></div>
             </div>
-            <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
+            {{-- <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
               <label class="form-label fw-medium ">Reference Number</label>
               <input id="opdOutVisit-refNum" type="number" class="form-control form-control-sm" placeholder=" Enter payment reference number">
-            </div>
+            </div> --}}
             <div class="col-md-6 mb-3">
              <label class="form-label fw-medium" for="opdOutVisit-paidAmount">Pay Amount</label> <sup class="text-danger">*</sup>
-               <input id="opdOutVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount" oninput="validateField(this.id,'amount')">
+               <input id="opdOutVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkOpdVisitPaidAmount()">
                 <div class="opdOutVisit-paidAmount_errorCls d-none"></div>
+            </div>
+            <div class="col-md-6 mb-3 opdOutVisit-AlreadypaidAmountCls d-none">
+             <label class="form-label fw-medium" for="opdOutVisit-paidAmount">Paid Amount</label> 
+               <input id="opdOutVisit-AlreadypaidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount" readonly>
             </div>
             <!-- <div class="col-md-6 mb-3">
               <label class="form-label fw-medium"> Live Consultation</label>
@@ -984,6 +988,7 @@ $('#opd-add-lab').on('shown.bs.modal', function () {
         dropdownParent: $('#opd-add-lab')
     });
 });
+  const ipdVisitMedicineNameOpd = "{{route('common.getMedicineName')}}";
 
   const moveToIpdStatus = "{{route('opd-out.moveToIpdStatus')}}";
   const opdOutVisitMedicineName = "{{route('common.getMedicineName')}}";
@@ -995,12 +1000,15 @@ $('#opd-add-lab').on('shown.bs.modal', function () {
   const opdOutVisitDataUpdate = "{{route('opd-out-visit.opdOutVisitDataUpdate')}}";
   const opdOutVisitDataDelete = "{{route('opd-out-visit.opdOutVisitDataDelete')}}";
 
+  const ipdVisitIdOpd = "{{route('opd-out-med.ipdVisitIdOpd')}}";
   const opdOutMedDataAdd = "{{route('opd-out-med.opdOutMedDataAdd')}}";
   const viewOptOutMedDose = "{{route('opd-out-med.viewOptOutMedDose')}}";
   const getOpdOutMedDoseDetails = "{{route('opd-out-med.getOpdOutMedDoseDetails')}}";
   const opdOutMedDataUpdate = "{{route('opd-out-med.opdOutMedDataUpdate')}}";
   const opdOutMedDoseDataDelete = "{{route('opd-out-med.opdOutMedDoseDataDelete')}}";
 
+  const getTestNameByTypeOpd = "{{route('opd-out-lab.getTestNameByTypeOpd')}}";
+  const getTestDetailsByIdOpd = "{{route('opd-out-lab.getTestDetailsByIdOpd')}}";
   const opdOutLabSubmit = "{{route('opd-out-lab.opdOutLabSubmit')}}";
   const viewOpdOutLabDetails = "{{route('opd-out-lab.viewOpdOutLabDetails')}}";
   const getOpdOutLabData = "{{route('opd-out-lab.getOpdOutLabData')}}";

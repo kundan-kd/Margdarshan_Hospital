@@ -38,6 +38,7 @@ class IpdinController extends Controller
         // $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
         $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
+        $nurseData = User::where('status',1)->where('usertype_id',3)->get(['id','name','department_id']);
         $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
         $medicationData = Medication::where('patient_id',$patients[0]->id)->get();
         $testtypes = TestType::where('status',1)->get();
@@ -45,7 +46,8 @@ class IpdinController extends Controller
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
          $emergencyAvailBeds = Bed::where('bed_group_id',6)->where('current_status','vacant')->where('status',1)->get();
          $icuAvailBeds = Bed::where('bed_group_id',4)->where('current_status','vacant')->where('status',1)->get();
-            return view('backend.admin.modules.ipdin.ipd-in-details',compact('patients','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData','emergencyAvailBeds','icuAvailBeds'));
+         $ipdAvailablelBeds = Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get();
+            return view('backend.admin.modules.ipdin.ipd-in-details',compact('patients','medicineCategory','doctorData','nurseData','visitsData','medicationData','testtypes','testnames','labInvestigationData','emergencyAvailBeds','icuAvailBeds','ipdAvailablelBeds'));
     }
     public function viewPatients(Request $request){
         if($request->ajax()){
@@ -157,6 +159,14 @@ class IpdinController extends Controller
                 'occupied_by_patient_id' => $patient->id,
                 'occupied_date' => $now 
             ]);
+            $bed_amount = Bed::where('id',$request->bedNumId)->get(['amount']);
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "IPD";
+            $payment_bills->patient_id = $patient->id;
+            $payment_bills->amount_for = 'Bed Charge';
+            $payment_bills->title = 'Patient Addmitted to IPD';
+            $payment_bills->amount = $bed_amount[0]->amount;
+            $payment_bills->save();
             return response()->json(['success'=>'New IPD Patient added successfully'],201);
         }else{
             return response()->json(['error_success'=>'IPD Patient not added'],500);
@@ -212,7 +222,8 @@ class IpdinController extends Controller
         $update = Patient::where('id',$request->id)->update([
             'type' =>'EMERGENCY',
             'bed_id' => $request->bed_id,
-            'previous_type'=>$curr_status[0]->type
+            'previous_type'=>$curr_status[0]->type,
+            'type_change_date' => $now
         ]);
         if($update){
             Bed::where('id',$request->bed_id)->update([
@@ -246,7 +257,9 @@ class IpdinController extends Controller
         $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
         $update = Patient::where('id',$request->id)->update([
             'type' =>'ICU',
-            'previous_type'=>$curr_status[0]->type
+            'bed_id' => $request->bed_id,
+            'previous_type'=>$curr_status[0]->type,
+            'type_change_date' => $now
         ]);
         if($update){
             Bed::where('id',$request->bed_id)->update([
@@ -271,6 +284,42 @@ class IpdinController extends Controller
             $timelines->created_by = "Admin";
             $timelines->save();
             return response()->json(['success'=>'Successfully moved to ICU'],200);
+        }
+    }
+    public function moveToIpdStatusFromIcu(Request $request){
+        $now = Carbon::now();
+        $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
+        $curr_status = Patient::where('id',$request->id)->get(['type']);
+        $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
+        $update = Patient::where('id',$request->id)->update([
+            'type' =>'IPD',
+            'bed_id' => $request->bed_id,
+            'previous_type'=>$curr_status[0]->type,
+            'type_change_date' => $now
+        ]);
+        if($update){
+            Bed::where('id',$request->bed_id)->update([
+                'current_status' => 'occupied',
+                'occupied_by_patient_id' => $request->id,
+                'occupied_date' =>$now
+
+            ]);
+            Bed::where('id', $previous_bed_data[0]->id)->update([
+                'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
+                'previous_occupied_date' => $previous_bed_data[0]->occupied_date,
+                'occupied_by_patient_id' => null,
+                'occupied_date' => null,
+                'current_status' =>'vacant'
+            ]);
+
+            $timelines = new Timeline();
+            $timelines->type = "ICU";
+            $timelines->patient_id = $request->id;
+            $timelines->title = "Moved to IPD";
+            $timelines->desc = "Moved to IPD on bed ".$bed_name[0]->bed_no." from ICU";
+            $timelines->created_by = "Admin";
+            $timelines->save();
+            return response()->json(['success'=>'Successfully moved to IPD'],200);
         }
     }
     public function calculateDischargeAmount(Request $request){
@@ -355,6 +404,16 @@ class IpdinController extends Controller
             $payment_bills->title = 'New Visit';
             $payment_bills->amount = $request->amount;
             $payment_bills->save();
+             
+            if($request->paidAmount > 0){
+                $payment_received = new PaymentReceived();
+                $payment_received->patient_id = $request->patientId;
+                $payment_received->type = 'IPD';
+                $payment_received->amount_for = 'Visit';
+                $payment_received->title = 'New Visit';
+                $payment_received->amount = $request->paidAmount;
+                $payment_received->save();
+            }
 
             $timelines = new Timeline();
             $timelines->type = "IPD";
@@ -888,6 +947,23 @@ class IpdinController extends Controller
     public function ipdNurseDataDelete(Request $request){
         NurseNote::where('id',$request->id)->delete();
         return response()->json(['success'=>'Nurse note deleted successfully'],200);
+    }
+    public function viewIpdBills(Request $request){
+        if($request->ajax()){
+            $bills = PaymentBill::where('patient_id',$request->patient_id)->orderBy('created_at', 'desc')->get();
+            return DataTables::of($bills)
+            ->addColumn('created_at',function($row){
+                return $row->created_at;
+            })
+            ->addColumn('name',function($row){
+                return $row->amount_for;
+            })
+            ->addColumn('amount',function($row){
+                return $row->amount;
+            })
+            ->rawColumns([''])
+            ->make(true);
+        }
     }
    
 }

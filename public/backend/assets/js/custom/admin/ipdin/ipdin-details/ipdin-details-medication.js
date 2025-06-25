@@ -72,7 +72,6 @@ function getVisitId(id){
         },
         data:{id:id},
         success:function(response){
-            console.log(response);
             let visitDetails = response.data;
             $('#ipdMed-visitid').empty();
             $('#ipdMed-visitid').append(`<option value="">Select</option>`);
@@ -97,7 +96,12 @@ function medicinelist(medicine_cat_id,visit_id){
                 $('#ipdMed-medName').empty();
                     $('#ipdMed-medName').append(`<option value="">Select</option>`);
                 medicineDetails.forEach(function(medData){
-                    $('#ipdMed-medName').append(`<option value="${medData.id}" ${medData.id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
+                    if(response.medicineNameId !=''){
+                        $('#ipdMed-medName').append(`<option value="${medData.id}" ${medData.id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
+                    }else{
+                        $('#ipdMed-medName').append(`<option value="${medData.id}">${medData.name}</option>`);
+
+                    }
                 });
             }
         });

@@ -87,7 +87,6 @@ function patientDischargeE(id){
         },
         data: { id: id },
         success: function(response) {
-            console.log(response);
             if (response.success) {
                 $('#emergencyBillAmount').val(response.bill_amount || 0);
                 $('#emergencyPaidAmount').val(response.received_amount || 0);
@@ -113,9 +112,7 @@ $('#emergency-dischargeAmountForm').on('submit',function(e){
     let billAmount = $('#emergencyBillAmount').val();
     let paidAmount = $('#emergencyPaidAmount').val();
     let payAmount = $('#emergencyPayAmount').val();
-    console.log(billAmount);
-    console.log(paidAmount);
-    console.log(payAmount);
+    
     if(parseFloat(payAmount) > (parseFloat(billAmount) + parseFloat(paidAmount))){
         toastErrorAlert('Pay Amount excceds due amount');
         console.log('Pay Amount excceds due amount');
@@ -129,7 +126,6 @@ $('#emergency-dischargeAmountForm').on('submit',function(e){
         },
         data:{patient_id:patient_id,payAmount:payAmount},
         success:function(response){
-            console.log(response);
             if (response.success) {
                toastSuccessAlert(response.success);
                setTimeout(function(){

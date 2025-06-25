@@ -124,7 +124,7 @@ class AppointmentController extends Controller
         return response()->json(['success'=>'Doctor details fetched successfully','data'=>$getData,'roomNum'=>$roomNum],200);
     }
     public function getDoctorList(Request $request){
-        $doctors = User::where('status',1)->where('department_id',$request->departmentID)->get(['id','name']);
+        $doctors = User::where('status',1)->where('department_id',$request->departmentID)->where('usertype_id',2)->get(['id','name']);
         return response()->json(['success'=>'Doctor list fetched successfully','data'=>$doctors],200);
     }
     public function getDoctorAddedData(Request $request){

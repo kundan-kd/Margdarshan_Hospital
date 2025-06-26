@@ -18,59 +18,45 @@ let table = $('#appointment-book-table').DataTable({
         }
     },
     columns:[
+         {
+            data:'patient_id',
+            name:'patient_id'
+        },
         {
             data:'patient_name',
-            name:'patient_name',
-            orderable: true,
-            searchable: true
+            name:'patient_name'
         },
         {
             data:'appointment_date',
-            name:'appointment_date',
-            orderable: true,
-            searchable: true
+            name:'appointment_date'
         },
         {
             data:'mobile',
-            name:'mobile',
-            orderable: false,
-            searchable: true
+            name:'mobile'
         },
         {
             data:'gender',
-            name:'gender',
-            orderable: true,
-            searchable: true
+            name:'gender'
         },
         {
             data:'doctor',
-            name:'doctor',
-            orderable: true,
-            searchable: true
-        },
-        {
-            data:'token',
-            name:'token',
-            orderable: true,
-            searchable: true
+            name:'doctor'
         },
         {
             data:'fee',
-            name:'fee',
-            orderable: false,
-            searchable: true
+            name:'fee'
         },
         {
             data:'status',
             name:'status',
-            orderable: true,
-            searchable: true
+            orderable: false,
+            searchable: false
         },
         {
             data:'action',
             name:'action',
             orderable: false,
-            searchable: true
+            searchable: false
         },
 
     ]
@@ -137,12 +123,9 @@ function resetAppointmentForm(){
     $('.doctorAppt_errorCls').addClass('d-none');
     $('.dateAppt_errorCls').addClass('d-none');
     $('.paymentModeAppt_errorCls').addClass('d-none');
- // Reset Select2 dropdown to default value
     $('#departmentAppt').val('').trigger('change');
     $('#doctorAppt').val('').trigger('change');
     $('#paymentModeAppt').val('').trigger('change');
-
-
 }
 function resetAddPatient(){
     $('#addPatientForm')[0].reset();
@@ -253,9 +236,6 @@ function getDoctorAdded(id){
                 $('#roomNumAppt').val(response.roomNum[0].room_num);
                 $('#opd_fee').val(response.doctorData[0].fee);
 
-              
-
-              
             }
         
         }
@@ -294,6 +274,9 @@ function getDoctor(){
         $('#doctorAppt').append('<option value="">Select Department First</option>');
         $('#doctorAppt').trigger('change'); // Refresh Select2 dropdown
     }
+}
+function opdPatientUsingId(id){
+     window.open('opd-out-details/' + id, '_blank');
 }
 $('#appointmentForm').on('submit',function(e){
   e.preventDefault();

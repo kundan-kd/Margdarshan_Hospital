@@ -25,6 +25,18 @@ Room Number
                 <div class="row gy-3">
                     <input type="hidden" id=roomNumID>
                     <div class="col-md-12">
+                        <label class="form-label" for="roomGroup">Room Group</label>
+                        <select class="form-control form-control-sm" name="roomGroup" id="roomGroup" required>
+                            <option value="">Select</option>
+                            @foreach ($bedRoomGroups as $rg)
+                            <option value="{{$rg->id}}">{{$rg->name}}</option>
+                            @endforeach
+                        </select>    
+                        <div class="invalid-feedback">
+                            Select Room Group
+                        </div>
+                    </div>
+                    <div class="col-md-12">
                         <label class="form-label" for="roomType">Room Type</label>
                         <select class="form-control form-control-sm" name="roomType" id="roomType" required>
                             <option value="">Select</option>
@@ -51,7 +63,7 @@ Room Number
                             data-bs-dismiss="modal" onclick="resetmodel()">Cancel</button>
                         <button class="btn btn-primary btn-sm roomNumSubmit" type="submit">Submit</button>
                         <button class="btn btn-primary btn-sm roomNumUpdate d-none" type="submit"
-                            onclick="roomNumUpdate(document.getElementById('roomNumNameID').value)">Update</button>
+                            onclick="roomNumUpdate(document.getElementById('roomNumID').value)">Update</button>
                     </div>
               </form>
         </div>
@@ -68,6 +80,7 @@ Room Number
           <thead>
             <tr>
               <th scope="col">Room Number</th>
+              <th scope="col">Room Group</th>
               <th scope="col">Room Type</th>
               <th scope="col">Current Status</th>
               <th scope="col align-items-left">Status</th>

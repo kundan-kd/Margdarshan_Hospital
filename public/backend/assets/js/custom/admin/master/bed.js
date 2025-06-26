@@ -74,11 +74,68 @@ $('.bed-add').on('click',function(e){
     $('#bedNumber').val('');
     $('#bedGroup').val('');
     $('#bedType').val('');
+    $('#roomNum').val('');
     $('#bedFloor').val('');
     $('.addBedUpdate').addClass('d-none');
     $('.addBedSubmit').removeClass('d-none');
     $('.needs-validation').removeClass('was-validated');
     });
+
+function getRoomNum(group_id,bed_id){
+    $.ajax({
+        url:getRoomNumber,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:group_id,bed_id:bed_id},
+        success:function(response){
+            console.log(response);
+            let getData = response.data;
+             let bedD = response.bedData[0];  
+            let roomNum = $('#roomNum');
+            roomNum.empty();
+            roomNum.append(`<option value="">Select</option>`);
+            getData.forEach(function(element){
+                if(response.bedData !=''){
+                    roomNum.append(`<option value="${element.id}"${element.id == bedD.id ?'selected':''}>${element.room_num}</option>`);
+                }else{
+                    roomNum.append(`<option value="${element.id}">${element.room_num}</option>`);
+                }
+            });
+        }
+    });
+}    
+function generateBedNum() {
+     $('#bedNumber').val('');
+    setTimeout(function(){
+        let bedFloor = $('#bedFloor').val() ||'';
+        let bedGroup = $('#bedGroup').val() ||'';
+        let roomNumber = $('#roomNum').val() ||'';
+        let bedType = $('#bedType').val() ||'';
+        if (bedFloor !=='' && bedGroup !== '' && roomNumber !== '' && bedType !== ''){
+            $.ajax({
+                    url:getBedDataDetails,
+                    type:"POST",
+                    headers:{
+                        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+                    },
+                    data:{bedFloor:bedFloor,bedGroup:bedGroup,roomNumber:roomNumber,bedType:bedType},
+                    success:function(response){
+                        console.log(response);
+                        let getData = response.data;
+                        let floor = getData.floor;
+                        let group = (getData.group.substring(0, 3)).toUpperCase();
+                        let room = getData.room;
+                        let type = (getData.type.substring(0, 2)).toUpperCase();
+                        let rand =  Math.floor(Math.random() * 1000);
+                        $('#bedNumber').val(group+floor+room+type+rand);
+                    }
+            });
+        }
+    },200);
+ 
+}
 // ------bed add starts----
 $('#addBedForm').on('submit',function(e){
    e.preventDefault();
@@ -88,7 +145,8 @@ $('#addBedForm').on('submit',function(e){
    let bedGroup = $('#bedGroup').val();
    let bedType = $('#bedType').val();
    let bedFloor = $('#bedFloor').val();
-    if(bedNumber == '' || amount == '' || bedGroup == '' || bedType == '' || bedFloor == ''){
+   let roomNum = $('#roomNum').val();
+    if(bedNumber == '' || amount == '' || bedGroup == '' || bedType == '' || bedFloor == '' || roomNum == ''){
         $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
     }else{
         if ($('.addBedUpdate').is(':visible')) {
@@ -100,7 +158,7 @@ $('#addBedForm').on('submit',function(e){
                 headers:{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                data:{bedNumber:bedNumber,amount:amount,bedGroup:bedGroup,bedType:bedType,bedFloor:bedFloor},
+                data:{bedNumber:bedNumber,amount:amount,bedGroup:bedGroup,bedType:bedType,bedFloor:bedFloor,roomNum:roomNum},
                 success:function(response){
                     if(response.success){
                         $('#addBedModel').modal('hide');
@@ -157,14 +215,15 @@ function bedUpdate(id){
     let bedGroup = $('#bedGroup').val();
     let bedType = $('#bedType').val();
     let bedFloor = $('#bedFloor').val();
-    if(bedNumber == '' || bedGroup == '' || bedType == '' || bedFloor == ''){
+    let roomNum = $('#roomNum').val();
+    if(bedNumber == '' || bedGroup == '' || bedType == '' || bedFloor == '' || roomNum ==''){
         $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
     }else{
         $.ajax({
             url: updateBedData,
             type: "POST",
             data: {
-                id:id,bedNumber:bedNumber,amount:amount,bedGroup:bedGroup,bedType:bedType,bedFloor:bedFloor},
+                id:id,bedNumber:bedNumber,amount:amount,bedGroup:bedGroup,bedType:bedType,bedFloor:bedFloor,roomNum:roomNum},
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },

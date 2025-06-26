@@ -12,4 +12,7 @@ class RoomNumber extends Model
     public function roomtypeData(){
         return $this->belongsTo(RoomType::class,'roomtype_id');
     }
+    public function roomGroupData(){
+        return $this->belongsTo(BedGroup::class,'room_group_id');
+    }
 }

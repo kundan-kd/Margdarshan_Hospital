@@ -4,6 +4,7 @@ namespace App\Http\Controllers\backend\admin\pharmacy;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Composition;
 use App\Models\Medicine;
 use App\Models\MedicineCategory;
 use App\Models\MedicineGroup;
@@ -16,11 +17,12 @@ use Yajra\DataTables\Facades\DataTables;
 class MedicineController extends Controller
 {
     public function index(){
-        $categories = MedicineCategory::get();
-        $companies = Company::get();
-        $groups = MedicineGroup::get();
-        $units = Unit::get();
-        return view('backend.admin.modules.pharmacy.medicine',compact('categories','companies','groups','units'));
+        $categories = MedicineCategory::where('status',1)->get();
+        $companies = Company::where('status',1)->get();
+        $groups = MedicineGroup::where('status',1)->get();
+        $units = Unit::where('status',1)->get();
+        $compositions = Composition::where('status',1)->get();
+        return view('backend.admin.modules.pharmacy.medicine',compact('categories','companies','groups','units','compositions'));
     }
     public function medicineView(Request $request){
         if($request->ajax()){
@@ -140,4 +142,44 @@ class MedicineController extends Controller
         $purchaseItems = PurchaseItem::where('name_id',$id)->get();
         return view('backend.admin.modules.pharmacy.medicine-view',compact('medicines','purchaseItems'));
      }
+     public function medicineLowInventory(){
+        return view('backend.admin.modules.pharmacy.medicine-low-inventory');
+     }
+       public function medicineLowInventoryView(Request $request){
+        if($request->ajax()){
+             // Only get medicines where stock_in - stock_out is less than or equal to 0
+            $medicineLow = Medicine::get()->filter(function($row) {
+                return (($row->stock_in - $row->stock_out) <= 0) || (($row->stock_in - $row->stock_out) <= $row->re_ordering_level);
+            });
+            return DataTables::of($medicineLow)
+            ->addColumn('name',function($row){
+                return $row->name;
+            })
+            ->addColumn('category',function($row){
+                return $row->categoryData->name;
+            })
+            ->addColumn('company',function($row){
+                return $row->companyData->name;
+            })
+            ->addColumn('composition',function($row){
+                return $row->composition;
+            })
+            ->addColumn('group',function($row){
+                return $row->groupData->name;
+            })
+            ->addColumn('unit',function($row){
+                return $row->unitData->unit;
+            })
+            ->addColumn('re_ordering_level',function($row){
+                return $row->re_ordering_level;
+            })
+            ->addColumn('stock',function($row){
+               $stock = $row->stock_in - $row->stock_out;
+                return '<span style="color:red;">' . $stock . '</span>';
+
+            })
+            ->rawColumns(['stock'])
+            ->make(true);
+        }
+    }
 }

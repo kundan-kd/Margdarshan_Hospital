@@ -1,13 +1,13 @@
 @extends('backend.admin.layouts.main')
 @section('title')
-Bed Group
+Bed/Room Group
 @endsection
 @section('main-container')
 <div class="dashboard-main-body">
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-    <h6 class="fw-normal mb-0">Bed Group</h6>
+    <h6 class="fw-normal mb-0">Bed/Room Group</h6>
     <div class="btns">
-      <a class="btn btn-primary-600  btn-sm fw-normal bedGroup-add" data-bs-toggle="modal" data-bs-target="#addBedGroupModel"><i class="ri-add-line "></i> Add Bed Group</a>
+      <a class="btn btn-primary-600  btn-sm fw-normal bedGroup-add" data-bs-toggle="modal" data-bs-target="#addBedGroupModel"><i class="ri-add-line "></i> Add Group</a>
     </div>
   </div>
      <!-- user type modal start -->
@@ -27,9 +27,9 @@ Bed Group
                     <label class="form-label" for="room_num">Name</label>
                     <input type="hidden" id=bedGroupNameID>
                     <input class="form-control form-control-sm" id="bedGroupName" type="text"
-                        placeholder="Enter Bed Group Name" style="background-image: none;" required>
+                        placeholder="Enter Group Name" style="background-image: none;" required>
                     <div class="invalid-feedback">
-                        Enter Bed Group Name
+                        Enter Bed/Room Group Name
                     </div>
                 </div>
                 </div>
@@ -49,7 +49,7 @@ Bed Group
  <!-- user type modal end-->
     <div class="card basic-data-table">
       <div class="card-header">
-        <h5 class="card-title mb-0">Bed Group Details</h5>
+        <h5 class="card-title mb-0">Bed/Room Group Details</h5>
       </div>
       <div class="card-body">
         <table class="table bordered-table mb-0" id="bedGroup-table" data-page-length='10'>

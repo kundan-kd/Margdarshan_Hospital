@@ -30,9 +30,9 @@ class TesttypeController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                   <iconify-icon icon="lucide:edit" onclick="testTypeEdit('.$row->id.')"></iconify-icon>
                 </a>
-                <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                   <iconify-icon icon="mingcute:delete-2-line" onclick="testTypeDelete('.$row->id.')"></iconify-icon>
-                </a>';
+                </a>-->';
             })
             ->rawColumns(['status','action'])
             ->make(true);

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PaymentBill extends Model
+class Composition extends Model
 {
     //
 }

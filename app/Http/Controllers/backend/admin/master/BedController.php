@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bed;
 use App\Models\BedGroup;
 use App\Models\BedType;
+use App\Models\RoomNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -47,25 +48,68 @@ class BedController extends Controller
             })
             ->addColumn('action',function($row){
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                  <iconify-icon icon="lucide:edit" onclick="bedEdit('.$row->id.')"></iconify-icon>
+                  <iconify-icon icon="lucide:edit" onclick="bedEdit('.$row->id.');getRoomNum('.$row->bed_group_id.','.$row->room_num_id.')"></iconify-icon>
                 </a>
-                <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                   <iconify-icon icon="mingcute:delete-2-line" onclick="bedDelete('.$row->id.')"></iconify-icon>
-                </a>';
+                </a>-->';
             })
             ->rawColumns(['current_status','status','action'])
             ->make(true);
         }
     }
+    public function getRoomNumber(Request $request){
+        $getData = RoomNumber::where('room_group_id',$request->id)->where('status',1)->get();
+        $getBedData = '';
+        if($request->bed_id > 0){
+            $getBedData = RoomNumber::where('id',$request->bed_id)->get();
+        }
+        return response()->json(['success'=>'Room Number data fetched','data'=>$getData,'bedData'=>$getBedData],200);
+    }
+    public function getBedDataDetails(Request $request){
+        $bedFloors = '';
+        if($request->bedFloor == -1){
+            $bedFloors = 'UG';
+        }else if($request->bedFloor == 0){
+            $bedFloors = 'GF';
+        }else if($request->bedFloor == 1){
+            $bedFloors = '1F';
+        }else if($request->bedFloor == 2){
+            $bedFloors = '2F';
+        }else if($request->bedFloor == 3){
+            $bedFloors = '3F';
+        }else if($request->bedFloor == 4){
+            $bedFloors = '4F';
+        }else if($request->bedFloor == 5){
+            $bedFloors = '5F';
+        }else if($request->bedFloor == 6){
+            $bedFloors = '6F';
+        }else if($request->bedFloor == 7){
+            $bedFloors = '7F';
+        }else{
+            $bedFloors = 'TF';
+        }
+        $bedGroup = BedGroup::where('id',$request->bedGroup)->get(['name']);
+        $roomNum = RoomNumber::where('id',$request->roomNumber)->get(['room_num']);
+        $bedType = BedType::where('id',$request->bedType)->get(['name']);
+        $bedData = [
+            'floor'=>$bedFloors,
+            'group'=>$bedGroup[0]->name ??'',
+            'room'=>$roomNum[0]->room_num ??'',
+            'type'=>$bedType[0]->name ??''
+        ];
+        return response()->json(['success'=>'Bed Data fetched','data'=>$bedData],200);
+    }
     public function addBed(Request $request){
-        $bed_check = Bed::where('bed_no',$request->bedNumber)->where('bed_group_id',$request->bedGroup)->where('bed_type_id',$request->bedType)->where('floor',$request->bedFloor)->exists();
+        $bed_check = Bed::where('bed_no',$request->bedNumber)->where('bed_group_id',$request->bedGroup)->where('bed_type_id',$request->bedType)->where('floor',$request->bedFloor)->where('room_num_id',$request->roomNum)->exists();
         if($bed_check == false){
             $validator = Validator::make($request->all(),[
                 'bedNumber' => 'required',
                 'amount' => 'required',
                 'bedGroup' => 'required',
                 'bedType' => 'required',
-                'bedFloor' => 'required'
+                'bedFloor' => 'required',
+                'roomNum' => 'required'
             ]);
             if($validator->fails()){
                 return response()->json(['error_validation'=> $validator->errors()->all(),],422);
@@ -75,6 +119,7 @@ class BedController extends Controller
             $bed->bed_group_id = $request->bedGroup;
             $bed->bed_type_id = $request->bedType;
             $bed->floor = $request->bedFloor;
+            $bed->room_num_id = $request->roomNum;
             $bed->amount = $request->amount;
             if($bed->save()){
                 return response()->json(['success'=>'bed added successfully'],200);
@@ -90,21 +135,47 @@ class BedController extends Controller
         $getData = bed::where('id',$request->id)->get();
         return response()->json(['success'=>'Bed data fetched successfully','data'=>$getData],200);
     }
-    public function updateBedData(Request $request){
-        $bed_check = Bed::where('bed_no',$request->bedNumber)->where('bed_group_id',$request->bedGroup)->where('bed_type_id',$request->bedType)->where('floor',$request->bedFloor)->where('amount',$request->amount)->exists();
-        if($bed_check == false){
-            bed::where('id',$request->id)->update([
-                'bed_no' => $request->bedNumber,
-                'bed_group_id' => $request->bedGroup,
-                'bed_type_id' => $request->bedType,
-                'floor' => $request->bedFloor,
-                'amount' => $request->amount
-            ]);
-            return response()->json(['success' => 'Bed updated successfully'],200);
-        }else{
-            return response()->json(['already_found'=>'This Bed confirguration already exists']);
-        }    
+    public function updateBedData(Request $request)
+{
+    // Check for duplicate configuration in other records
+    $bed_check = Bed::where('bed_no', $request->bedNumber)
+        ->where('bed_group_id', $request->bedGroup)
+        ->where('bed_type_id', $request->bedType)
+        ->where('floor', $request->bedFloor)
+        ->where('room_num_id', $request->roomNum)
+        ->where('id', '!=', $request->id) // Exclude the current record
+        ->exists();
+
+    if (!$bed_check) {
+        Bed::where('id', $request->id)->update([
+            'bed_no'        => $request->bedNumber,
+            'bed_group_id'  => $request->bedGroup,
+            'bed_type_id'   => $request->bedType,
+            'floor'         => $request->bedFloor,
+            'room_num_id'   => $request->roomNum,
+            'amount'        => $request->amount
+        ]);
+        return response()->json(['success' => 'Bed updated successfully'], 200);
+    } else {
+        return response()->json(['already_found' => 'This bed configuration already exists'], 409);
     }
+}
+    // public function updateBedData(Request $request){
+    //     $bed_check = Bed::where('bed_no',$request->bedNumber)->where('bed_group_id',$request->bedGroup)->where('bed_type_id',$request->bedType)->where('floor',$request->bedFloor)->where('room_num_id',$request->roomNum)->exists();
+    //     if($bed_check == false){
+    //         bed::where('id',$request->id)->update([
+    //             'bed_no' => $request->bedNumber,
+    //             'bed_group_id' => $request->bedGroup,
+    //             'bed_type_id' => $request->bedType,
+    //             'floor' => $request->bedFloor,
+    //             'room_num_id' => $request->roomNum,
+    //             'amount' => $request->amount
+    //         ]);
+    //         return response()->json(['success' => 'Bed updated successfully'],200);
+    //     }else{
+    //         return response()->json(['already_found'=>'This Bed confirguration already exists']);
+    //     }    
+    // }
     public function statusUpdate(Request $request){
         $bed_status = bed::where('id',$request->id)->get(['status']);
         $new_status = 1;

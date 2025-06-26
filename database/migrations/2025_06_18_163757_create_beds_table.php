@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('bed_no',50)->nullable();
             $table->integer('bed_type_id')->nullable();
+            $table->integer('room_num_id')->nullable();
             $table->integer('bed_group_id')->nullable();
             $table->string('floor',10)->nullable();
             $table->double('amount')->default(0);

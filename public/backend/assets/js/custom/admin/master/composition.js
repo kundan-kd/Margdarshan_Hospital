@@ -1,11 +1,11 @@
 
-// let table = new DataTable('#usertype-table');
-let table = $('#bedGroup-table').DataTable({
+// let table = new DataTable('#composition-table');
+let table = $('#composition-table').DataTable({
     // "order": [[0, "desc"]], // Sort column in descending order
     processing: true,
     serverSide: true,
     ajax:{
-        url:viewBedGroups,
+        url:viewCompositions,
         type:"POST",
         headers:{
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
@@ -37,44 +37,45 @@ let table = $('#bedGroup-table').DataTable({
     ]
 });
 
-$('.bedGroup-add').on('click',function(e){
+$('.composition-add').on('click',function(e){
     e.preventDefault();
-    $('.bedGroup-title').html('Add Bed/Room Group');
-    $('#bedGroupNameID').val('');
-    $('#bedGroupName').val('');
-    $('.addBedGroupUpdate').addClass('d-none');
-    $('.addBedGroupSubmit').removeClass('d-none');
+    $('.composition-title').html('Add Composition');
+    $('#compositionNameID').val('');
+    $('#compositionName').val('');
+    $('.addcompositionUpdate').addClass('d-none');
+    $('.addcompositionSubmit').removeClass('d-none');
     $('.needs-validation').removeClass('was-validated');
     });
-// ------usertype add starts----
-$('#addBedGroupForm').on('submit',function(e){
+// ------composition add starts----
+$('#addcompositionForm').on('submit',function(e){
    e.preventDefault();
-   let bedGroup = $('#bedGroupName').val();
-   let id = $('#bedGroupNameID').val();
-   if(bedGroup == ''){
-    $('#bedGroupName').focus();
+   let composition = $('#compositionName').val();
+   let id = $('#compositionID').val();
+   if(composition == ''){
+    $('#compositionName').focus();
    }else{
-        if ($('.addBedGroupUpdate').is(':visible')) {
-            bedGroupUpdate(id); // Trigger update function
+        if ($('.addcompositionUpdate').is(':visible')) {
+            compositionUpdate(id); // Trigger update function
         } else {
     $.ajax({
-        url: addBedGroup,
+        url: addComposition,
         method:"POST",
         headers:{
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        data:{bedGroup:bedGroup},
+        data:{composition:composition},
         success:function(response){
+            // console.log(response);
             if(response.success){
-                $('#addBedGroupModel').modal('hide');
-                $('#addBedGroupForm').removeClass('was-validated');
-                $('#addBedGroupForm')[0].reset();
-                $('#bedGroup-table').DataTable().ajax.reload();
+                $('#addcompositionModel').modal('hide');
+                $('#addcompositionForm').removeClass('was-validated');
+                $('#addcompositionForm')[0].reset();
+                $('#composition-table').DataTable().ajax.reload();
                 toastSuccessAlert(response.success);
             } else if(response.already_found) {
-                toastErrorAlert(response.already_found);
+                toastErrorAlert(response.already_found);    
             }else{
-                toastErrorAlert("something went wrong!");
+                toastErrorAlert('error found!');
             }
         },
         error: function(xhr, status, error) {
@@ -85,58 +86,60 @@ $('#addBedGroupForm').on('submit',function(e){
         }
    }
 });
-// ------usertype add ends----
-// ------usertype update starts ----
-function bedGroupEdit(id){
+// ------composition add ends----
+// ------composition update starts ----
+function compositionEdit(id){
 $.ajax({
-    url: getBedGroupData,
+    url: getCompositionData,
     type:"POST",
     headers:{
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     },
     data:{id:id},
     success:function(response){
+        // console.log(response);
         if(response.success){
             getData = response.data[0];
-            $('.bedGroup-title').html('Edit Bed/Room Group');
-            $('#bedGroupNameID').val(getData.id);
-            $('#bedGroupName').val(getData.name);
-            $('.addBedGroupSubmit').addClass('d-none');
-            $('.addBedGroupUpdate').removeClass('d-none');
-            $('#addBedGroupModel').modal('show');
+            // console.log(getData);
+            $('.composition-title').html('Update Composition');
+            $('#compositionID').val(getData.id);
+            $('#compositionName').val(getData.name);
+            $('.addcompositionSubmit').addClass('d-none');
+            $('.addcompositionUpdate').removeClass('d-none');
+            $('#addcompositionModel').modal('show');
         }
     }
 
 });
 }
 
-function bedGroupUpdate(id){
-    let bedGroup = $('#bedGroupName').val();
-    if(bedGroup == ''){
-        $('#bedGroupName').focus();
+function compositionUpdate(id){
+    let composition = $('#compositionName').val();
+    if(composition == ''){
+        $('#compositionName').focus();
         $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
     }else{
         $.ajax({
-            url: updateBedGroupData,
+            url: updateCompositionData,
             type: "post",
             data: {
                 id: id,
-                bedGroup: bedGroup
+                composition: composition
             },
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response) {
                 if (response.success) {
-                    $('#addBedGroupModel').modal('hide');
-                    $('#addBedGroupForm').removeClass('was-validated');
-                    $('#addBedGroupForm')[0].reset();
-                    $('#bedGroup-table').DataTable().ajax.reload();
+                    $('#addcompositionModel').modal('hide');
+                    $('#addcompositionForm').removeClass('was-validated');
+                    $('#addcompositionForm')[0].reset();
+                    $('#composition-table').DataTable().ajax.reload();
                     toastSuccessAlert(response.success);
                 } else if(response.already_found) {
-                    toastErrorAlert(response.already_found);    
-                }else{
-                    toastErrorAlert("something went wrong!");
+                    toastErrorAlert(response.already_found);
+                } else {
+                    toastErrorAlert("error");
                 }
             },
             error: function(xhr, status, error) {
@@ -159,10 +162,10 @@ function statusSwitch(id){
         },
         success: function(response) {
             if (response.success) {
-                $('#addBedGroupModel').modal('hide');
-                $('#addBedGroupForm').removeClass('was-validated');
-                $('#addBedGroupForm')[0].reset();
-                $('#bedGroup-table').DataTable().ajax.reload();
+                $('#addcompositionModel').modal('hide');
+                $('#addcompositionForm').removeClass('was-validated');
+                $('#addcompositionForm')[0].reset();
+                $('#composition-table').DataTable().ajax.reload();
                 toastSuccessAlert('Status changed successfully');
             } else {
                 toastErrorAlert("Error");
@@ -175,7 +178,7 @@ function statusSwitch(id){
     });
 }
 
-function bedGroupDelete(id){
+function compositionDelete(id){
     Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -191,7 +194,7 @@ function bedGroupDelete(id){
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: deleteBedGroupData,
+                url: deletecompositionData,
                 type: "POST",
                 data: {
                     id: id
@@ -202,7 +205,7 @@ function bedGroupDelete(id){
                 success: function(response) {
                     if (response.success) {
                         Swal.fire("Deleted!", response.success, "success");
-                        $('#bedGroup-table').DataTable().ajax.reload();
+                        $('#composition-table').DataTable().ajax.reload();
                     } else {
                         Swal.fire("Error!", "Error", "error");
                     }

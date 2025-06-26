@@ -26,6 +26,10 @@ class AppointmentController extends Controller
      if($request->ajax()){
         $appointment = Appointment::get();
         return DataTables::of($appointment)
+        ->addColumn('patient_id',function($row){
+            // return $row->patient_data->patient_id;
+            return '<a target="_blank" class="text-primary cursor-pointer" onclick="opdPatientUsingId('.$row->patient_id.')">'.$row->patient_data->patient_id.'</a>';
+        })
         ->addColumn('patient_name',function($row){
             return $row->patient_name;
         })
@@ -41,9 +45,7 @@ class AppointmentController extends Controller
         ->addColumn('doctor',function($row){
             return "Dr. ".$row->user_data->name;
         })
-        ->addColumn('token',function($row){
-            return $row->token;
-        })
+        
         ->addColumn('fee',function($row){
             return $row->fee;
         })
@@ -61,7 +63,7 @@ class AppointmentController extends Controller
                       <iconify-icon icon="mingcute:delete-2-line" onclick="appointmenttDelete('.$row->id.')"></iconify-icon>
                     </a>';
         })
-        ->rawColumns(['action'])
+        ->rawColumns(['patient_id','action'])
         ->make(true);
      }
     }

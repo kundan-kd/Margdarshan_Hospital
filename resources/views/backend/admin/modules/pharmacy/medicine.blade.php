@@ -9,6 +9,7 @@ medicines
   <h6 class="fw-normal mb-0">Medicines</h6>
   <div class="btns">
     <a class="btn btn-primary-600  btn-sm fw-normal mx-2 createNewBtn" data-bs-toggle="modal" data-bs-target="#medician-list-add" onclick="resetMedicineAdd()"><i class="ri-add-line"></i>Add Medicine</a>
+    <a href="{{route('medicine.medicineLowInventory')}}" class="btn btn-primary-600  btn-sm fw-normal mx-2 inven"></i>Low Inventory</a>
     {{-- <a class="btn btn-warning-600  btn-sm fw-normal "><i class="ri-download-line"></i> Import</a> --}}
     {{-- <a class="btn btn-warning-600  btn-sm fw-normal "><i class="ri-file-pdf-2-line"></i> Export</a> --}}
   </div>
@@ -104,18 +105,23 @@ medicines
             </div>
             <div class="col-md-3 mb-3">
               <label class="form-label fw-normal" for="createMed_reOrderingLevel">Re-Ordering Level</label>
-              <input id="createMed_reOrderingLevel" type="text" class="form-control form-control-sm" placeholder="Re-Ordering Level" oninput="validateField(this.id,'input')">
+              <input id="createMed_reOrderingLevel" type="number" class="form-control form-control-sm" placeholder="Re-Ordering Level" oninput="validateField(this.id,'select')">
              <div class="createMed_reOrderingLevel_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">
               <label class="form-label fw-normal" for="createMed_rack">Rack</label>
-                <input id="createMed_rack" type="text" class="form-control form-control-sm" placeholder="Rack" oninput="validateField(this.id,'select')">
+                <input id="createMed_rack" type="text" class="form-control form-control-sm" placeholder="Rack">
                 <div class="createMed_rack_errorCls d-none"></div>
             </div>
           
             <div class="col-md-3 mb-3">
               <label class="form-label fw-normal" for="createMed_composition">Composition</label>
-                <input id="createMed_composition" type="text" class="form-control form-control-sm" placeholder="Composition" oninput="validateField(this.id,'input')"> 
+               <select id="createMed_composition" name="createMed_composition[]" class="form-select form-select-sm select2-cls" multiple style="width: 100%" oninput="validateField(this.id,'select')">
+                   <option value="">Select</option>
+                    @foreach ($compositions as $composition)
+                          <option value="{{$composition->id}}">{{$composition->name}}</option>
+                    @endforeach
+                  </select>
                <div class="createMed_composition_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">

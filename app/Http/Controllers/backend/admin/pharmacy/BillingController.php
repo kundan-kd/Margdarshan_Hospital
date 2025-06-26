@@ -10,7 +10,7 @@ use App\Models\BloodType;
 use App\Models\Medicine;
 use App\Models\MedicineCategory;
 use App\Models\Patient;
-use App\Models\paymentBill;
+use App\Models\PaymentBill;
 use App\Models\PaymentMode;
 use App\Models\PurchaseItem;
 use App\Models\PaymentReceived;
@@ -142,7 +142,7 @@ class BillingController extends Controller
             }
             // Insert payment bill details
             if($request->totalNetAmount > 0){
-            $payment_received = new paymentBill();
+            $payment_received = new PaymentBill();
             $payment_received->patient_id = $request->patientID;
             $payment_received->type = 'Billing';
             $payment_received->amount_for = 'Medicine Billing';

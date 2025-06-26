@@ -21,6 +21,10 @@ let table = $('#roomNum-table').DataTable({
             name:'roomnum'
         },
         {
+            data:'roomgroup',
+            name:'roomgroup'
+        },
+        {
             data:'roomtype',
             name:'roomtype'
         },
@@ -46,8 +50,10 @@ let table = $('#roomNum-table').DataTable({
 $('.roomNum-add').on('click',function(e){
     e.preventDefault();
     $('.roomNum-title').html('Add Room Type');
-    $('#roomNumNameID').val('');
-    $('#roomNumName').val('');
+    $('#roomNumID').val('');
+    $('#roomGroup').val('');
+    $('#roomType').val('');
+    $('#roomNum').val('');
     $('.roomNumUpdate').addClass('d-none');
     $('.roomNumSubmit').removeClass('d-none');
     $('.needs-validation').removeClass('was-validated');
@@ -56,9 +62,10 @@ $('.roomNum-add').on('click',function(e){
 $('#addRoomNumForm').on('submit',function(e){
     e.preventDefault();
     let id = $('#roomNumID').val();
+    let roomGroup = $('#roomGroup').val();
     let roomType = $('#roomType').val();
     let roomNum = $('#roomNum').val();
-    if(roomType == '' || roomNum == ''){
+    if(roomGroup == '' || roomType == '' || roomNum == ''){
         $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
     }else{
         if ($('.roomNumUpdate').is(':visible')) {
@@ -70,7 +77,7 @@ $('#addRoomNumForm').on('submit',function(e){
                 headers:{
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                data:{roomType:roomType,roomNum:roomNum},
+                data:{roomGroup:roomGroup,roomType:roomType,roomNum:roomNum},
                 success:function(response){
                     if(response.success){
                         $('#addRoomNumModel').modal('hide');
@@ -107,6 +114,7 @@ $.ajax({
             getData = response.data[0];
             $('.roomNum-title').html('Update room Type');
             $('#roomNumID').val(getData.id);
+            $('#roomGroup').val(getData.room_group_id);
             $('#roomType').val(getData.roomtype_id);
             $('#roomNum').val(getData.room_num);
             $('.roomNumSubmit').addClass('d-none');
@@ -119,9 +127,10 @@ $.ajax({
 }
 
 function roomNumUpdate(id){
+    let roomGroup = $('#roomGroup').val();
     let roomType = $('#roomType').val();
     let roomNum = $('#roomNum').val();
-    if(roomType == '' || roomNum == ''){
+    if(roomGroup == '' || roomType == '' || roomNum == ''){
         $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
     }else{
         $.ajax({
@@ -129,7 +138,7 @@ function roomNumUpdate(id){
             type: "POST",
             data: {
                 id: id,
-                roomType:roomType,roomNum:roomNum
+                roomGroup:roomGroup,roomType:roomType,roomNum:roomNum
             },
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

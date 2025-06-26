@@ -25,32 +25,8 @@ Bed
                 <div class="row gy-3">
                   <div class="col-md-12">
                     <input type="hidden" id=bedID>
-                    <label class="form-label" for="bedGroup">Bed Group</label>
-                    <select class="form-control form-control-sm" name="bedGroup" id="bedGroup" required>
-                        <option value="">Select</option>
-                        @foreach ($bedgroups as $bg)
-                        <option value="{{$bg->id}}">{{$bg->name}}</option>
-                        @endforeach
-                    </select>    
-                    <div class="invalid-feedback">
-                        Select Bed Group
-                    </div>
-                  </div>
-                  <div class="col-md-12">
-                    <label class="form-label" for="bedType">Bed Type</label>
-                    <select class="form-control form-control-sm" name="bedType" id="bedType" required>
-                        <option value="">Select</option>
-                        @foreach ($bedtypes as $bt)
-                        <option value="{{$bt->id}}">{{$bt->name}}</option>
-                        @endforeach
-                    </select>    
-                    <div class="invalid-feedback">
-                        Select Bed Type
-                    </div>
-                  </div>
-                  <div class="col-md-12">
                     <label class="form-label" for="bedFloor">Floor</label>
-                    <select class="form-control form-control-sm" name="bedFloor" id="bedFloor" required>
+                    <select class="form-control form-control-sm" name="bedFloor" id="bedFloor" onchange="generateBedNum()" required>
                         <option value="">Select</option>
                         <option value="-1">Under Ground Floor</option>
                         <option value="0">Ground Floor</option>
@@ -61,9 +37,47 @@ Bed
                         <option value="5">5rd Floor</option>
                     </select>    
                     <div class="invalid-feedback">
-                        Select Bed Flood
+                        Select Floor
                     </div>
                   </div>
+                  <div class="col-md-12">
+                    <label class="form-label" for="bedGroup">Bed Group</label>
+                    <select class="form-control form-control-sm" name="bedGroup" id="bedGroup" onchange="getRoomNum(this.value,0);generateBedNum()" required>
+                        <option value="">Select</option>
+                        @foreach ($bedgroups as $bg)
+                        <option value="{{$bg->id}}">{{$bg->name}}</option>
+                        @endforeach
+                    </select>    
+                    <div class="invalid-feedback">
+                        Select Bed Group
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label" for="roomNum">Room Number</label>
+                    <select class="form-control form-control-sm" name="roomNum" id="roomNum" onchange="generateBedNum()" required>
+                        <option value="">Select</option>
+                        {{-- @foreach ($bedgroups as $bg)
+                        <option value="{{$bg->id}}">{{$bg->name}}</option>
+                        @endforeach --}}
+                    </select>    
+                    <div class="invalid-feedback">
+                        Select Bed Group
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-12">
+                    <label class="form-label" for="bedType">Bed Type</label>
+                    <select class="form-control form-control-sm" name="bedType" id="bedType" onchange="generateBedNum()"  required>
+                        <option value="">Select</option>
+                        @foreach ($bedtypes as $bt)
+                        <option value="{{$bt->id}}">{{$bt->name}}</option>
+                        @endforeach
+                    </select>    
+                    <div class="invalid-feedback">
+                        Select Bed Type
+                    </div>
+                  </div>
+                  
                   <div class="col-md-12">
                     <label class="form-label" for="bedNumber">Bed Name/Number</label>
                     <input class="form-control form-control-sm" id="bedNumber" type="text"
@@ -124,7 +138,9 @@ Bed
 @section('extra-js')
 <script>
     const viewBeds = "{{route('bed.viewBeds')}}";
-    const addBed = "{{route('bed.addBed')}}";
+    const getRoomNumber = "{{route('bed.getRoomNumber')}}";
+    const getBedDataDetails = "{{route('bed.getBedDataDetails')}}";
+        const addBed = "{{route('bed.addBed')}}";
     const getBedData = "{{route('bed.getBedData')}}";
     const updateBedData = "{{route('bed.updateBedData')}}";
     const statusUpdate = "{{route('bed.statusUpdate')}}";

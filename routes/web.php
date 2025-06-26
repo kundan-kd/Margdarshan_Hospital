@@ -11,6 +11,7 @@ use App\Http\Controllers\backend\admin\master\BedgroupController;
 use App\Http\Controllers\backend\admin\master\BedtypeController;
 use App\Http\Controllers\backend\admin\master\BloodtypeController;
 use App\Http\Controllers\backend\admin\master\CompanyController;
+use App\Http\Controllers\backend\admin\master\CompositionController;
 use App\Http\Controllers\backend\admin\master\DepartmentController;
 use App\Http\Controllers\backend\admin\master\MedicinecategoryController;
 use App\Http\Controllers\backend\admin\master\MedicinegroupController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\backend\admin\pharmacy\MedicineController;
 use App\Http\Controllers\backend\admin\pharmacy\PurchaseController;
 use App\Http\Middleware\RedirectIfNotAuthenticated;
 use App\Models\Company;
+use App\Models\Composition;
 use App\Models\TestType;
 use Illuminate\Support\Facades\Route;
 
@@ -95,6 +97,8 @@ Route::post('/patient-delete',[PatientController::class,'deletePatientData'])->n
 
 Route::get('/medicine',[MedicineController::class,'index'])->name('medicine.index');
 Route::get('/medicine-details',[MedicineController::class,'medicineView'])->name('medicine.medicineView');
+Route::get('/medicine-low-inventory',[MedicineController::class,'medicineLowInventory'])->name('medicine.medicineLowInventory');
+Route::get('/medicine-low-inventory-details',[MedicineController::class,'medicineLowInventoryView'])->name('medicine.medicineLowInventoryView');
 Route::post('/medicine-add',[MedicineController::class,'medicineAdd'])->name('medicine.medicineAdd');
 Route::post('/medicine-data',[MedicineController::class,'getMedicineData'])->name('medicine.getMedicineData');
 Route::post('/medicine-update',[MedicineController::class,'updateMedicineData'])->name('medicine.updateMedicineData');
@@ -179,6 +183,8 @@ Route::post('/bedgroup-delete',[BedgroupController::class,'deleteBedGroupData'])
 
 Route::get('/bed',[BedController::class,'index'])->name('bed.index');
 Route::post('/bed-details',[BedController::class,'viewBeds'])->name('bed.viewBeds');
+Route::post('/bed-get-room',[BedController::class,'getRoomNumber'])->name('bed.getRoomNumber');
+Route::post('/bed-get-bed-details',[BedController::class,'getBedDataDetails'])->name('bed.getBedDataDetails');
 Route::post('/bed-add',[BedController::class,'addBed'])->name('bed.addBed');
 Route::post('/bed-getdetails',[BedController::class,'getBedData'])->name('bed.getBedData');
 Route::post('/bed-update',[BedController::class,'updateBedData'])->name('bed.updateBedData');
@@ -224,6 +230,14 @@ Route::post('/testname-data',[TestnameController::class,'getTestNameData'])->nam
 Route::post('/testname-update',[TestnameController::class,'updateTestNameData'])->name('testname.updateTestNameData');
 Route::post('/testname-status-update',[TestnameController::class,'statusUpdate'])->name('testname.statusUpdate');
 Route::post('/testname-delete',[TestnameController::class,'deleteTestNameData'])->name('testname.deleteTestNameData');
+
+Route::get('/composition',[CompositionController::class,'index'])->name('composition.index');
+Route::post('/composition-view',[CompositionController::class,'viewCompositions'])->name('composition.viewCompositions');
+Route::post('/composition-add',[CompositionController::class,'addComposition'])->name('composition.addComposition');
+Route::post('/composition-data',[CompositionController::class,'getCompositionData'])->name('composition.getCompositionData');
+Route::post('/composition-update',[CompositionController::class,'updateCompositionData'])->name('composition.updateCompositionData');
+Route::post('/composition-status-update',[CompositionController::class,'statusUpdate'])->name('composition.statusUpdate');
+Route::post('/composition-delete',[CompositionController::class,'deleteCompositionData'])->name('composition.deleteCompositionData');
 
 Route::get('/billing',[BillingController::class,'index'])->name('billing.index');
 Route::get('/billing-view',[BillingController::class,'billingView'])->name('billing.billingView');

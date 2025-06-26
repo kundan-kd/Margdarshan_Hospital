@@ -64,13 +64,13 @@
   </div>
   <div class="sidebar-menu-area">
     <ul class="sidebar-menu" id="sidebar-menu">
-      <li>
+      <li class="mb-1">
         <a href="{{route('auth.dashboard')}}">
       <i class="ri-home-4-line"></i>
           <span>Dashboard</span>
         </a>
       </li>
-      <li class="sidebar-menu-group-title">Application</li>
+      {{-- <li class="sidebar-menu-group-title">Application</li> --}}
       <li class="dropdown mb-1">
         <a href="javascript:void(0)">
           <i class="ri-calendar-event-line"></i>
@@ -86,7 +86,7 @@
         </ul>
       </li> 
 
-      <li class="dropdown">
+      <li class="dropdown mb-1">
         <a href="javascript:void(0)">
           <i class="ri-capsule-line"></i>
           <span>Pharmacy</span> 
@@ -103,25 +103,25 @@
           </li>
         </ul>
       </li>
-      <li>
+      <li class="mb-1">
         <a href="{{route('opd-out.index')}}">
           <i class="ri-stethoscope-line"></i>
           <span>OPD-Out</span>
         </a>
       </li>
-      <li>
+      <li class="mb-1">
         <a href="{{route('ipd-in.index')}}">
           <i class="ri-stethoscope-line"></i>
           <span>IPD-In Patients</span>
         </a>
       </li>
-      <li>
+      <li class="mb-1">
         <a href="{{route('emergency.index')}}">
           <i class="ri-hospital-line"></i>
           <span>Emergency</span>
         </a>
       </li>
-      <li class="dropdown">
+      <li class="dropdown mb-1">
         <a href="javascript:void(0)">
          <i class="ri-settings-3-line"></i>
           <span>Master</span> 
@@ -158,7 +158,7 @@
             <a href="{{route('vendor.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Vendor</a>
           </li>
            <li>
-            <a href="{{route('bedgroup.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Group</a>
+            <a href="{{route('bedgroup.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed/Room Group</a>
           </li>
           <li>
             <a href="{{route('bedtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Type</a>
@@ -177,6 +177,9 @@
           </li>
            <li>
             <a href="{{route('testname.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Test Name</a>
+          </li>
+           <li>
+            <a href="{{route('composition.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Composition</a>
           </li>
         </ul>
       </li>

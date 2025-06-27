@@ -46,6 +46,7 @@ Route::post('/send-otp',[AuthenticationController::class,'sendotp'])->name('auth
 Route::post('/verify-otp',[AuthenticationController::class,'verifyotp'])->name('auth.verify-pass-otp');
 Route::post('/update-password',[AuthenticationController::class,'updatepass'])->name('auth.new-pass-update');
 Route::get('/logout',[AuthenticationController::class,'logout'])->name('auth.logout');
+Route::get('/setup-roles', [AuthenticationController::class, 'setupRoles']);
 
 Route::middleware(['prevent-back'])->group(function () {
 Route::get('/my-dashboard',[AuthenticationController::class,'dashboard'])->name('auth.dashboard');

@@ -103,18 +103,22 @@
           </li>
         </ul>
       </li>
-      <li class="mb-1">
+      {{-- @can('OPD Patient View') --}}
+        <li class="mb-1">
         <a href="{{route('opd-out.index')}}">
           <i class="ri-stethoscope-line"></i>
           <span>OPD-Out</span>
         </a>
-      </li>
+        </li>
+      {{-- @endcan
+      @can('OPD Patient View') --}}
       <li class="mb-1">
         <a href="{{route('ipd-in.index')}}">
           <i class="ri-stethoscope-line"></i>
           <span>IPD-In Patients</span>
         </a>
       </li>
+      {{-- @endcan --}}
       <li class="mb-1">
         <a href="{{route('emergency.index')}}">
           <i class="ri-hospital-line"></i>
@@ -128,13 +132,19 @@
         </a>
         <ul class="sidebar-submenu">
           <li>
-            <a href="{{route('usertype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>User Type</a>
+            <a href="{{route('bedgroup.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed/Room Group</a>
           </li>
           <li>
-            <a href="{{route('department.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Department</a>
+            <a href="{{route('bedtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Type</a>
+          </li>
+           <li>
+            <a href="{{route('bed.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed</a>
           </li>
           <li>
-            <a href="{{route('user.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>User</a>
+            <a href="{{route('roomtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Room Type</a>
+          </li>
+           <li>
+            <a href="{{route('roomnum.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Room Number</a>
           </li>
           <li>
             <a href="{{route('medicine-category.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Medicine Category</a>
@@ -149,38 +159,36 @@
             <a href="{{route('unit.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Unit</a>
           </li>
           <li>
-            <a href="{{route('blood-type.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Blood Type</a>
+            <a href="{{route('composition.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Composition</a>
           </li>
+           <li>
+            <a href="{{route('testtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Lab Test Type</a>
+          </li>
+           <li>
+            <a href="{{route('testname.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Test Name</a>
+          </li>
+          {{-- <li> //hidden Intentionally
+            <a href="{{route('blood-type.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Blood Type</a>
+          </li> --}}
           <li>
             <a href="{{route('paymentmode.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Payment Mode</a>
           </li>
            <li>
             <a href="{{route('vendor.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Vendor</a>
           </li>
-           <li>
-            <a href="{{route('bedgroup.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed/Room Group</a>
+          {{-- <li>    //hidden Intentionally
+            <a href="{{route('usertype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>User Type</a>
+          </li> --}}
+          <li>
+            <a href="{{route('department.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Department</a>
           </li>
           <li>
-            <a href="{{route('bedtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Type</a>
+            <a href="{{route('user.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>User</a>
           </li>
-           <li>
-            <a href="{{route('bed.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed</a>
-          </li>
-           <li>
-            <a href="{{route('roomtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Room Type</a>
-          </li>
-           <li>
-            <a href="{{route('roomnum.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Room Number</a>
-          </li>
-           <li>
-            <a href="{{route('testtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Test Type</a>
-          </li>
-           <li>
-            <a href="{{route('testname.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Test Name</a>
-          </li>
-           <li>
-            <a href="{{route('composition.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Composition</a>
-          </li>
+           
+           
+          
+           
         </ul>
       </li>
       

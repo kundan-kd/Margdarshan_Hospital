@@ -115,6 +115,8 @@ class UserController extends Controller
                 if($user->save()){
                     $user->staff_id = "MHST". $month.$year.$user->id;
                     $user->save();
+                    $user_type_name = UserType::where('id',$request->userType)->pluck('name');
+                    $user->assignRole($user_type_name[0]);
                     RoomNumber::where('id',$request->opdRoom)->update([
                         'current_status' => 'occupied',
                         'occupied_by' => 'doctor',

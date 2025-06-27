@@ -2,6 +2,17 @@
 @section('title')
 medicines
 @endsection
+@section('extra-css')
+{{-- /* Remove border from the Select2 container */
+<style>
+.selection + .select2-container--default .select2-selection--multiple,
+.selection + .select2-container--default .select2-selection--single {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style> --}}
+@endsection
 @section('main-container')
   <div class="dashboard-main-body">
 
@@ -116,7 +127,7 @@ medicines
           
             <div class="col-md-3 mb-3">
               <label class="form-label fw-normal" for="createMed_composition">Composition</label>
-               <select id="createMed_composition" name="createMed_composition[]" class="form-select form-select-sm select2-cls" multiple style="width: 100%" oninput="validateField(this.id,'select')">
+               <select id="createMed_composition" name="createMed_composition[]" class="form-select form-select-sm select2-cls" multiple="multiple" style="width: 100%" oninput="validateField(this.id,'select')">
                    <option value="">Select</option>
                     @foreach ($compositions as $composition)
                           <option value="{{$composition->id}}">{{$composition->name}}</option>
@@ -186,8 +197,10 @@ medicines
 <script>
    window.addEventListener('load', () => {
     $('.select2-cls').select2({
-    dropdownParent: $('#medician-list-add')
+    dropdownParent: $('#medician-list-add'),
+     placeholder: "Select"
   });
+
 });
   const medicineView = "{{route('medicine.medicineView')}}";
   const medicineAdd = "{{route('medicine.medicineAdd')}}";

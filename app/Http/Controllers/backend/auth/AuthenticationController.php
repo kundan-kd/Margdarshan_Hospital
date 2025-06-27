@@ -9,8 +9,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class AuthenticationController extends Controller
 {
@@ -119,4 +120,18 @@ class AuthenticationController extends Controller
     //return view('backend.auth.logout');
       return redirect("/");
    }
+   
+   public function setupRoles(){
+    $admin = Role::create(['name' => 'admin']);
+    $editor = Role::create(['name' => 'editor']);
+
+    $edit = Permission::create(['name' => 'edit articles']);
+    $delete = Permission::create(['name' => 'delete articles']);
+
+    $admin->givePermissionTo([$edit, $delete]);
+    $editor->givePermissionTo($edit);
+
+    return 'Roles and permissions created!';
+}
+
 }

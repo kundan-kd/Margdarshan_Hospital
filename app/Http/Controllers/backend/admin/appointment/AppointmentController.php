@@ -71,15 +71,9 @@ class AppointmentController extends Controller
     public function addNewPatient(Request $request){
         $validator = Validator::make($request->all(),[
             'name' => 'required',
-            'guardian_name' => 'required',
             'gender' => 'nullable',
-            'bloodtype' => 'nullable',
-            'dob' => 'required',
-            'mstatus' => 'required',
             'mobile' => 'required',
-            'address' => 'required',
-            'alt_mobile' => 'nullable',
-            'allergy' => 'nullable'
+            'address' => 'required'
         ]);
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],422);
@@ -89,14 +83,8 @@ class AppointmentController extends Controller
         $patient = new Patient();
         $patient->type = "OPD";
         $patient->name = $request->name;
-        $patient->guardian_name = $request->guardian_name;
-        $patient->gender = $request->gender;
-        $patient->bloodtype = $request->bloodtype;
-        $patient->dob = $request->dob;
-        $patient->marital_status = $request->mstatus;
+        $patient->gender = $request->gender ?? NULL;
         $patient->mobile = $request->mobile;
-        $patient->alt_mobile = $request->alt_mobile;
-        $patient->known_allergies = $request->allergy;
         $patient->address = $request->address;
         if($patient->save()){
             $patient->patient_id = "MHPT". $month.$year.$patient->id;

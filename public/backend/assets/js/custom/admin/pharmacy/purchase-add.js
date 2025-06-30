@@ -218,7 +218,7 @@ $('#purchaseAdd_form').on('submit',function(e){
 
         let naration = $('#purchaseAdd_naration').val();
         let totalAmount = parseFloat($('.purchaseAdd_totalAmt').html());
-        let totalDiscountPer = parseFloat($('#purchaseAdd_discount').val());
+        let totalDiscountPer = parseFloat($('#purchaseAdd_discount').val()) || 0;
         let totalDiscount = parseFloat($('.purchaseAdd_discountAmt').html()) || 0;
         let totalTaxAmount = parseFloat($('.purchaseAdd_taxAmt').html());
         let totalNetAmount = parseFloat($('.purchaseAdd_netTotalAmt').html());

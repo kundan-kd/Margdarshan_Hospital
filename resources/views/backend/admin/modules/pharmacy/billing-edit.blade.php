@@ -162,7 +162,7 @@ Billing-edit
                       </tr>
                       <tr>
                         <td class="border-0 align-middle">Discount (₹)</td>
-                        <td class="border-0"><div class="d-flex align-items-center"><input id="billingEdit-discountPer" class="form-control form-control-sm discount-value-field" type="text" placeholder="Discount" value="{{$billings[0]->discount_per}}" oninput="getBillingAmountEdit()"><span class="ms-1">%</span></div></td>
+                        <td class="border-0"><div class="d-flex align-items-center"><input id="billingEdit-discountPer" class="form-control form-control-sm discount-value-field" type="number" placeholder="Discount" value="{{$billings[0]->discount_per}}" oninput="getBillingAmountEdit()"><span class="ms-1">%</span></div></td>
                         <td class="border-0 text-end fs-6">₹ <span class="billingEdit-discountAmount">{{$billings[0]->discount_amount}}</span></td>
                       </tr>
                       <tr>

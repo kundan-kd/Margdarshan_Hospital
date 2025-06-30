@@ -180,8 +180,7 @@ class PurchaseController extends Controller
             // Update or insert purchase items
             foreach ($request->id as $key => $item_id) {
                 if (is_null($item_id)) {
-                    // Insert new record
-                $purchaseItem = new PurchaseItem();
+                    $purchaseItem = new PurchaseItem();  // Insert new record
                     $purchaseItem->purchase_id = $purchase_id;
                     $purchaseItem->category_id = $request->category[$key];
                     $purchaseItem->name_id = $request->name[$key];
@@ -193,8 +192,12 @@ class PurchaseController extends Controller
                     $purchaseItem->qty = $request->qty[$key];
                     $purchaseItem->purchase_rate = $request->purchaseRate[$key];
                     $purchaseItem->amount = $request->amount[$key];
-                    $purchaseItem->save();
-
+                        if ($purchaseItem->save()) {
+                            $oldStock = Medicine::where('id', $request->name[$key])->pluck('stock_in')->first();
+                            Medicine::where('id', $request->name[$key])->update([
+                                'stock_in' => $oldStock + $request->qty[$key]
+                            ]);
+                        }
                 } else {
                     $old_purchase_itm_qty = PurchaseItem::where('id', $item_id)->value('qty');
                     // Update existing record
@@ -213,7 +216,7 @@ class PurchaseController extends Controller
                             'amount' => $request->amount[$key],
                             'status' =>1
                         ]);
-                        //update stock_in for the medicine starts
+                //update stock_in for the medicine starts
                 $oldStocks = Medicine::where('id', $request->name[$key])->get(['stock_in']);
                 $oldMedicineStock = $oldStocks[0]->stock_in ?? 0;
                 $curr_purchase_itm_qty = PurchaseItem::where('id', $item_id)->value('qty');
@@ -228,14 +231,13 @@ class PurchaseController extends Controller
                     'stock_in' => $oldMedicineStock + $addQty
                     ]);
                 }        
-                
                 //update stock_in for the medicine ends
                 }
             }
 
             // Update the purchase record
-            $prev_paidAmount = Purchase::where('id',$purchase_id)->get(['paid_amount']);
-            // dd($request->dueAmount,$request->payAmount,$prev_paidAmount[0]->paid_amount);
+            $prev_paidAmount = Purchase::where('id',$purchase_id)->pluck('paid_amount')->first();
+            $prev_dueAmount = Purchase::where('id',$purchase_id)->pluck('due')->first();
             Purchase::where('id', $purchase_id)->update([
                 'bill_no' => $request->billNo,
                 'vendor_id' => $request->vendorID,
@@ -246,8 +248,8 @@ class PurchaseController extends Controller
                 'total_tax' => $request->totalTaxAmount,
                 'net_amount' => $request->totalNetAmount,
                 'payment_mode' => $request->paymentMode,
-                'paid_amount' => $request->payAmount + $prev_paidAmount[0]->paid_amount,
-                'due' => $request->dueAmount
+                'paid_amount' => $request->payAmount + $prev_paidAmount,
+                'due' => $prev_dueAmount - $request->payAmount
             ]);
             // if($request->payAmount > 0){
             // $payment_received = new PaymentReceived();

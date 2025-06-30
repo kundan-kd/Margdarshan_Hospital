@@ -16,6 +16,9 @@
           @can('OPD Move To IPD')
             <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" onclick="#"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
           @endcan
+          @can('OPD Move To IPD')
+          <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" onclick="#"> <i class="ri-stethoscope-line"></i></i> Move to ICU</button>
+          @endcan
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
           {{-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#out-patient-ipd"><i class="ri-stethoscope-line"></i> Move to IPD</button> --}}
           {{-- <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button> --}}
@@ -41,13 +44,16 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link px-16 py-10 " id="pills-charges-tab" data-bs-toggle="pill" data-bs-target="#pills-charges" type="button" role="tab" aria-controls="pills-charges" aria-selected="false">Charges</button>
-                  </li>
+                </li>
                   <!--<li class="nav-item" role="presentation">-->
                   <!--  <button class="nav-link px-16 py-10 " id="pills-timeline-tab" data-bs-toggle="pill" data-bs-target="#pills-timeline" type="button" role="tab" aria-controls="pills-timeline" aria-selected="false">Timeline</button>-->
                   <!--</li>-->
-                  <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation">
                     <button class="nav-link px-16 py-10 " id="pills-history-tab" data-bs-toggle="pill" data-bs-target="#pills-history" type="button" role="tab" aria-controls="pills-history" aria-selected="false">Vital History</button>
-                  </li>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link px-16 py-10 " id="pills-payment-tab" data-bs-toggle="pill" data-bs-target="#pills-payment" type="button" role="tab" aria-controls="pills-payment" aria-selected="false">Advance</button>
+                </li>
             </ul>
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="pills-Overview" role="tabpanel" aria-labelledby="Overview-tab" tabindex="0">
@@ -276,23 +282,7 @@
                                     </tr>
                                   </thead>
                                   <tbody>
-                                      <tr>
-                                        <td>18/05/2025</td>
-                                          <td ><span class="text-nowrap">Abodoman X-ray <br> (AX)</span> </td>
-                                          <td>Pathology</td>
-                                          <td>22/05/2025</td>
-                                          <td class="text-nowrap">
-                                            <button class="mx-1 bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#opd-lab-test-veiw">
-                                              <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                                            </button>
-                                            <button  class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#opd-edit-lab" >
-                                              <iconify-icon icon="lucide:edit"></iconify-icon>
-                                            </button>
-                                            <button  class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                                              <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
-                                            </button>
-                                          </td>
-                                      </tr>
+                                     {{-- data appended using datatable --}}
                                     </tbody>
                               </table>
                         </div>
@@ -319,22 +309,7 @@
                              </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td>05/04/2023</td>
-                              <td>OPD</td>
-                              <td>5545.00</td>
-                              <td>
-                                  <!-- <button class="mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                                  </button> -->
-                                  <button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#opd-edit-charges">
-                                    <iconify-icon icon="lucide:edit"></iconify-icon>
-                                  </button>
-                                  <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                                    <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
-                                  </button>
-                                </td>
-                             </tr>
+                            
                           </tbody>
                         </table>
                       </div>
@@ -426,7 +401,7 @@
                              </tr>
                           </thead>
                           <tbody>
-                             <tr>
+                             {{-- <tr>
                               <td>04/02/2025</td>
                               <td>150 ( 03:00 PM)</td>
                               <td>80kg ( 12:55 PM) </td>
@@ -438,7 +413,34 @@
                                   <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
                                 </button>
                               </td>
+                             </tr> --}}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="pills-payment" role="tabpanel" aria-labelledby="pills-payment-tab" tabindex="0">
+                  <div class="row">
+                    <div class="col-md-12 px-3">
+                      <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
+                          <h6 class="text-md fw-normal mb-0">Advance Amount</h6>
+                          @can('OPD Charge Add')
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-advance" onclick="resetAdvance()"> <i class="ri-add-line"></i> Add Amount</button>
+                          @endcan
+                        </div>
+                      <div class="table-responsive">
+                        <table class="table  striped-table w-100" id="opd-out-advance-list">
+                          <thead>
+                             <tr>
+                              <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Amount</th>
+                              <th class="fw-medium">Payment Mode</th>
+                              <th class="fw-medium">Action</th>
                              </tr>
+                          </thead>
+                          <tbody>
+                            
                           </tbody>
                         </table>
                       </div>
@@ -535,6 +537,46 @@
   </div>
 </div>
 <!-- Add charges History end -->
+<!-- Add charges Start -->
+<div class="modal fade" id="opd-add-advance" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-add-advanceLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header p-11 bg-primary-500">
+        <h6 class="modal-title fw-normal text-md text-white" id="opd-add-advanceLabel"> Add Advance Amount</h6>
+        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="opdOutAdvance-form">
+        <div class="modal-body">
+          <div class="row">
+              <div class="col-md-6">
+                <input type="hidden" id="opdOutAdvanceId">
+                <label class="form-label fw-medium" for="opdOutAdvance-amount">Amount</label> <sup class="text-danger">*</sup>
+                  <input id="opdOutAdvance-amount" type="number" class="form-control form-control-sm" placeholder="Charge Name" oninput="validateField(this.id,'select')">
+                  <div class="opdOutAdvance-amount_errorCls d-none"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium" for="opdOutAdvance-pmode">Payment Mode</label> <sup class="text-danger">*</sup>
+                  <select id="opdOutAdvance-pmode" class="form-select form-select-sm " oninput="validateField(this.id,'select')">
+                    <option value="">Select</option>
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Card">Card</option>
+                    <option value="Internet Banking">Internet Banking</option>
+                  </select>
+                  <div class="opdOutAdvance-pmode_errorCls d-none"></div>
+              </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutAdvanceSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutAdvanceUpdate d-none" onclick="opdOutAdvanceUpdate(document.getElementById('opdOutAdvanceId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- Add charges History end -->
 <!-- Add add-lab Start -->
 <div class="modal fade" id="opd-add-lab" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-add-labLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -550,11 +592,11 @@
             <input type="hidden" id="opOutLabID">
               <label class="form-label fw-medium" for="opdOutLab-testType">Test Type</label> <sup class="text-danger">*</sup>
                  <select id="opdOutLab-testType" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select');getTestName(this.value)">
-                       <option value="">Select</option>
-                      @foreach ($testtypes as $testtype)
-                       <option value="{{$testtype->id}}">{{$testtype->name}}</option>
-                      @endforeach
-                    </select>
+                      <option value="">Select</option>
+                        @foreach ($testtypes as $testtype)
+                      <option value="{{$testtype->id}}">{{$testtype->name}}</option>
+                        @endforeach
+                  </select>
                     <div class="opdOutLab-testType_errorCls d-none"></div>
             </div>
             <div class="col-md-4">
@@ -650,7 +692,48 @@
   </div>
 </div>
 <!-- lab-test-veiw end -->
-
+<!-- Add add-lab Start -->
+<!-- Modal for Uploading Lab Report -->
+<div class="modal fade" id="opd-lab-report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-lab-reportLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header p-11 bg-primary-500">
+        <h6 class="modal-title fw-normal text-md text-white" id="opd-add-labLabel">Add Test Report</h6>
+        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="opdOutLabReport-form" enctype="multipart/form-data">
+        @csrf
+        <div class="modal-body">
+          <div class="row gy-3">
+            <div class="col-md-6">
+              <input type="hidden" id="opdOutLabIReportId" name="report_id">
+              <label class="form-label fw-medium" for="opdOutLabReport-title">Title <sup class="text-danger">*</sup></label>
+              <input id="opdOutLabReport-title" name="title" type="text" class="form-control form-control-sm" placeholder="Report Title" required>
+              <div class="opdOutLabReport-title_errorCls text-danger d-none"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-medium" for="opdOutLabReport-file">Report (PDF) <sup class="text-danger">*</sup></label>
+              <input id="opdOutLabReport-file" name="report_file" type="file" accept="application/pdf" class="form-control form-control-sm" required>
+              <div class="opdOutLabReport-file_errorCls text-danger d-none"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          {{-- @can('OPD Lab Add') --}}
+            <button type="submit" class="btn btn-primary-600 btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          {{-- @endcan --}}
+        </div>
+      </form>
+      {{-- <div class="text-center m-2">
+        <a id="downloadPdfLink" href="#" class="btn btn-outline-secondary btn-sm" target="_blank" style="display: none//;">
+          <i class="ri-file-download-line"></i> Download
+        </a>
+      </div> --}}
+    </div>
+  </div>
+</div>
+<!-- Add add-lab end -->
 <!--  Add medication Start -->
  <div class="modal fade" id="opd-add-medication-dose" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-add-medication-doseLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -872,7 +955,7 @@
   </div>
 </div>
 <!-- opd visit view end -->
- <!--Alert modal start -->
+ <!--Alert mote to ipd modal start -->
   <div class="modal fade" id="moveToIpdModel" tabindex="-1" role="dialog" aria-labelledby="addUserTypeModel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content border-0">
@@ -909,7 +992,45 @@
       </div>
     </div>
   </div>
- <!-- Alert modal end-->
+ <!-- Alert move to ipd modal end-->
+ <!--Alert move to icu modal start -->
+  <div class="modal fade" id="moveToIcuModel" tabindex="-1" role="dialog" aria-labelledby="moveToIcuModel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white userType-title">Bed Number</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+           <form action="" id="opd-icuRoomForm" class="needs-validation" novalidate="">
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <label class="form-label" for="room_num">Bed Number</label>
+                    {{-- <input type="hidden" id=opd-ipdRoom"> --}}
+                   <select class="form-control form-control-sm" name="opd-icuRoom" id="opd-icuRoom" required>
+                        <option value="">Select ICU Bed Number</option>
+                        @foreach ($icuAvailBeds as $icuBed)
+                        <option value="{{$icuBed->id}}">{{$icuBed->bed_no}}</option>
+                        @endforeach
+                    </select>   
+                    <div class="invalid-feedback">
+                            Select ICU Bed
+                        </div> 
+                </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal" onclick="resetmodel()">Cancel</button>
+                        <button class="btn btn-primary btn-sm opdToIcuRoomSubmit" type="submit">Submit</button>
+                    </div>
+           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Alert move to icu modal end-->
 <!-- add timeline start -->
 <div class="modal fade" id="add-timeline" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-timelineLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-md">
@@ -953,47 +1074,6 @@
 </div>
 <!-- add timeline end -->
 
-<!-- edit timeline start -->
-<div class="modal fade" id="edit-timeline" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="edit-timelineLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-md">
-    <div class="modal-content">
-      <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="edit-timelineLabel">Edit Timeline</h6>
-        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          <div class="row gy-3">
-            <div class="col-md-12">
-              <label class="form-label fw-medium">Title<sup class="text-danger">*</sup></label>
-              <input type="text" class="form-control form-control-sm" placeholder="Enter title">
-            </div>
-            <div class="col-md-12">
-              <label class="form-label fw-medium">Date<sup class="text-danger">*</sup></label>
-              <div class=" position-relative">
-                    <input class="form-control radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="12/2024" readonly="readonly">
-                    <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                </div>
-            </div>
-            <div class="col-md-12">
-              <label class="form-label fw-medium">Description</label>
-              <textarea type="text" class="form-control " placeholder="Description" rows="2"></textarea>
-            </div>
-            <div class="col-md-12">
-               <label for="file-upload-name" class="mb-16 border border-neutral-600 fw-medium text-secondary-light w-100 p-1 rounded d-inline-flex align-items-center justify-content-center gap-2 bg-hover-neutral-200">
-                      <i class="ri-upload-cloud-2-line text-xl"></i>
-                      Click to upload 
-                      <input type="file" class="form-control w-auto mt-24 form-control-lg" id="file-upload-name" multiple hidden>
-                  </label>
-                  <ul id="uploaded-img-names" class=""></ul>
-            </div>
-          </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
-    </div>
-  </div>
-</div>
 @endsection
 @section('extra-js')
 
@@ -1022,6 +1102,7 @@ $('#opd-add-lab').on('shown.bs.modal', function () {
   const ipdVisitMedicineNameOpd = "{{route('common.getMedicineName')}}";
 
   const moveToIpdStatus = "{{route('opd-out.moveToIpdStatus')}}";
+  const moveToIcuStatus = "{{route('opd-out.moveToIcuStatus')}}";
   const opdOutVisitMedicineName = "{{route('common.getMedicineName')}}";
 
   const opdOutVisitSubmit = "{{route('opd-out-visit.opdOutVisitSubmit')}}";
@@ -1058,6 +1139,13 @@ $('#opd-add-lab').on('shown.bs.modal', function () {
   const getOpdOutVitalData = "{{route('opd-out-vital.getOpdOutVitalData')}}";
   const opdOutVItalDataUpdate = "{{route('opd-out-vital.opdOutVItalDataUpdate')}}";
   const opdOutVitalDataDelete = "{{route('opd-out-vital.opdOutVitalDataDelete')}}";
+  // opdOutAdvanceSubmit,view,edit  is in opdout-details.js page
+  const opdOutAdvanceSubmit = "{{route('opd-out-advance.opdOutAdvanceSubmit')}}";
+  const viewOpdOutAdvance = "{{route('opd-out-advance.viewOpdOutAdvance')}}";
+  const getOpdOutAdvanceData = "{{route('opd-out-advance.getOpdOutAdvanceData')}}";
+  const opdOutAdvanceDataUpdate = "{{route('opd-out-advance.opdOutAdvanceDataUpdate')}}";
+
+  const labReportSubmit = "{{route('opd-out-lab.labReportSubmit')}}";
 
 </script>
  {{-----------external js files added for page functions------------}}

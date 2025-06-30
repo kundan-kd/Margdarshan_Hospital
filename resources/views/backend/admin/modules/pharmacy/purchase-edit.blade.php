@@ -81,11 +81,6 @@ purchase-edit
                           </tr>
                       </thead>
                       <tbody>
-                        @php
-
-                      //      dd($currTaxData);
-                        @endphp
-                      
                         @foreach ($purchaseItems as $purchaseItem)
                           <tr class="fieldGroup">
                               <td>
@@ -172,13 +167,13 @@ purchase-edit
                       <td class="border-0" colspan="2">Total</td>
                       <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_totalAmt">{{$purchase[0]->total_amount}}</span></td>
                     </tr>
-                    <tr>
+                    {{-- <tr>
                       <td class="border-0 align-middle">Discount</td>
                       <td class="border-0"><div class="d-flex align-items-center">
                         <input id="purchaseEdit_discount" class="form-control form-control-sm discount-value-field" type="text" value="{{$purchase[0]->total_discount_per}}" placeholder="Discount" oninput="updateAmountEdit()"><span class="ms-1">%</span></div>
                       </td>
                       <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_discountAmt">{{$purchase[0]->total_discount}}</td>
-                    </tr>
+                    </tr> --}}
                     <tr>
                       <td class="border-0" colspan="2">Taxes</td>
                       <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_taxAmt">{{$purchase[0]->total_tax}}</span></td>
@@ -190,6 +185,10 @@ purchase-edit
                     <tr>
                       <td class="border-0" colspan="2">Paid Amount</td>
                       <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_paidAmt">{{$purchase[0]->paid_amount}}</span></td>
+                    </tr>
+                    <tr>
+                      <td class="border-0" colspan="2">Due</td>
+                      <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_dueAmt">{{$purchase[0]->due}}</span></td>
                     </tr>
                     <tr>
                       <td colspan="2" class="border-0">

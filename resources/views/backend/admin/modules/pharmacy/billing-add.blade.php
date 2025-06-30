@@ -26,6 +26,7 @@ Billing-add
               <div class="mx-1">
                 <label for="billingAdd-patient" style="display: none;">Patient Name</label>
                <select id="billingAdd-patient" class="form-select form-select-sm select2-cls" oninput="validateField(this.id,'select')">
+                <option value="">Select Patient</option>
                 <option value="0">Cash</option>
                 @foreach ($patients as $patient)
                 <option value="{{$patient->id}}">{{$patient->name}} ({{$patient->patient_id}})</option>
@@ -33,9 +34,9 @@ Billing-add
               </select>
               <div class="billingAdd-patient_errorCls d-none"></div>
               </div>
-              {{-- <button class="mx-1 fw-semibold w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#billingAdd-patientModal" onclick="resetAddPatient()">
+              <button class="mx-1 fw-semibold w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#billingAdd-patientModal" onclick="resetAddPatient()">
                   <i class="ri-add-line"></i>
-              </button> --}}
+              </button>
           </div>
         </div>
       </div>
@@ -97,7 +98,7 @@ Billing-add
                                 </td>
                                 <td>
                                     <div class=" position-relative">
-                                        <input id="billingAdd-expiry0" name="billingAdd-expiry[]" class="form-control radius-8 bg-base expiry-date"  type="text" value="" placeholder="MM/YYYY">
+                                        <input id="billingAdd-expiry0" name="billingAdd-expiry[]" class="form-control radius-8 bg-base expiry-date"  type="text" value="" placeholder="MM/YYYY" readonly>
                                     
                                     </div>
                                 </td>
@@ -162,7 +163,7 @@ Billing-add
                       </tr>
                       <tr>
                         <td class="border-0 align-middle">Discount (₹)</td>
-                        <td class="border-0"><div class="d-flex align-items-center"><input id="billingAdd-discountPer" class="form-control form-control-sm discount-value-field" type="text" placeholder="Discount" value="" oninput="getBillingAmount()"><span class="ms-1">%</span></div></td>
+                        <td class="border-0"><div class="d-flex align-items-center"><input id="billingAdd-discountPer" class="form-control form-control-sm discount-value-field" type="number" placeholder="Discount" value="" oninput="getBillingAmount()"><span class="ms-1">%</span></div></td>
                         <td class="border-0 text-end fs-6">₹ <span class="billingAdd-discountAmount">0</span></td>
                       </tr>
                       <tr>
@@ -207,7 +208,7 @@ Billing-add
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0">
       <div class="modal-header bg-primary-600 p-11">
-        <h6 class="modal-title fw-normal text-white text-md" id="add-appointmentLabel">Add Patient</h6>
+        <h6 class="modal-title fw-normal text-white text-md" id="add-appointmentLabel">Add Out Patient</h6>
         <button type="button" class="btn-close btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form action="" id="billingAdd-patientForm">
@@ -218,11 +219,11 @@ Billing-add
             <input type="text" id="billingAdd-patientName" name="#0" class="form-control form-control-sm" placeholder="Patient Name" oninput="validateField(this.id,'input')">
             <div class="billingAdd-patientName_errorCls d-none"></div>
           </div>
-          <div class="col-6">
+          {{-- <div class="col-6">
             <label class="form-label fw-normal" for="billingAdd-guardianName">Gaurdian Name</label>
             <input type="text" id="billingAdd-guardianName" name="#0" class="form-control form-control-sm" placeholder="Gaurdian Name" oninput="validateField(this.id,'input')">
             <div class="billingAdd-guardianName_errorCls d-none"></div>
-          </div>
+          </div> --}}
           <div class="col-6">
             <label class="form-label fw-normal mb-3">Gender</label>
               <div class="d-flex align-items-center flex-wrap gap-20 text-sm mt-2">
@@ -240,7 +241,7 @@ Billing-add
                 </div>
               </div>
           </div>
-          <div class="col-6">
+          {{-- <div class="col-6">
             <label class="form-label fw-normal" for="billingAdd-patientBloodType">Blood Type</label>
             <select class="form-select form-select-sm" id="billingAdd-patientBloodType" oninput="validateField(this.id,'select')">
               <option value="">Select</option>
@@ -250,13 +251,13 @@ Billing-add
             
             </select>
             <div class="billingAdd-patientBloodType_errorCls d-none"></div>
-          </div>
-          <div class="col-6">
+          </div> --}}
+          {{-- <div class="col-6">
             <label class="form-label fw-normal" for="billingAdd-patientDOB">DOB</label>
             <input type="date" id="billingAdd-patientDOB" class="form-control form-control-sm" placeholder="DD-MM-YYYY" oninput="validateField(this.id,'select')">
             <div class="billingAdd-patientDOB_errorCls d-none"></div>
-          </div>
-          <div class="col-6">
+          </div> --}}
+          {{-- <div class="col-6">
             <label class="form-label fw-normal" for="billingAdd-patientMStatus">Marital Status</label>
             <select class="form-select form-select-sm" id="billingAdd-patientMStatus"  oninput="validateField(this.id,'select')">
               <option value="">Select</option>
@@ -264,7 +265,7 @@ Billing-add
               <option value="UnMarried">UnMarried</option>
             </select>
             <div class="billingAdd-patientMStatus_errorCls d-none"></div>
-          </div>
+          </div> --}}
           <div class="col-6">
             <label class="form-label fw-normal" for="billingAdd-patientMobile">Phone</label>
             <input type="text" id="billingAdd-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="validateField(this.id,'mobile')">
@@ -275,14 +276,14 @@ Billing-add
             <input type="text" id="billingAdd-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
             <div class="billingAdd-patientAddess_errorCls d-none"></div>
           </div>
-          <div class="col-6">
+          {{-- <div class="col-6">
             <label class="form-label fw-normal">Alt Phone</label>
             <input type="text" id="billingAdd-patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone">
           </div>
           <div class="col-6">
             <label class="form-label fw-normal">Any Known Allergies</label>
             <input type="text" id="billingAdd-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
-          </div>
+          </div> --}}
         </div>
         </div>
         <div class="modal-footer">
@@ -298,7 +299,6 @@ Billing-add
 @endsection
 @section('extra-js')
 <script>
-  
 // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
         flatpickr(receiveID, {

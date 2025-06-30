@@ -176,86 +176,176 @@ $('#opdOutLab-form').on('submit',function(e){
         console.log("Please fill all required fields");
     }   
 })
-function opdOutLabView(id){
-    $.ajax({
-        url:getOpdOutLabData,
-        type:"POST",
-        headers:{
-            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-        },
-        data:{id:id},
-        success:function(response){
-            if(response.success){
-                let getLabData = response.data.labData[0];
-                let getpatientData = response.data.patientData[0];
-                let getTestType = response.data.testType[0];
-                let getTestName = response.data.testName[0];
-                let visit_lab_data = '';
-                        visit_lab_data += ` <div class="row">
+function opdOutLabView(id) {
+  $.ajax({
+    url: getOpdOutLabData, // Define this route in your JS
+    type: "POST",
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    data: { id: id },
+    success: function (response) {
+      if (response.success) {
+        const lab = response.data.labData;
+        const patient = response.data.patientData;
+        const testType = response.data.testType;
+        const testName = response.data.testName;
+        const testReports = response.testReport;
+
+        let html = `
+        <div class="row">
           <div class="col-md-12">
-            <table class="table  table-borderless table-sm payment-pharmacy-table">
-                <tbody>
-                  <tr>
-                      <th class="fw-medium">Bill No</th>
-                        <td>PATH0${getLabData.id}</td>
-                      <th class="fw-medium">Patient</th>
-                      <td>${getpatientData.name}</td>
-                  </tr>
-                  <tr>
-                    <th class="fw-medium">Test Type</th>
-                      <td>${getTestType.name}</td>
-                      <th class="fw-medium">Test Name</th>
-                      <td>${getTestName.name}</td>
-                  </tr>
-                  <tr>     
-                      <th class="fw-medium">Short Name</th>
-                      <td>${getTestName.s_name}</td>
-                      <th class="fw-medium">Amount</th>
-                      <td>${getTestName.amount}</td>
-                  </tr>
-                  <tr>           
-                    <th class="fw-medium">Sample Collection</th>
-                      <td>${getLabData.created_at}</td>
-                      <th class="fw-medium">Report Date</th>
-                      <td>${getLabData.report_days}</td>
-                  </tr>
-                  <tr>    
-                      <th class="fw-medium">Test Method</th>
-                      <td>${getLabData.method}</td>    
-                  </tr>
-                </tbody>
+            <table class="table table-borderless table-sm">
+              <tbody>
+                <tr>
+                  <th>Bill No</th><td>PATH0${lab.id}</td>
+                  <th>Patient</th><td>${patient.name}</td>
+                </tr>
+                <tr>
+                  <th>Test Type</th><td>${testType.name}</td>
+                  <th>Test Name</th><td>${testName.name}</td>
+                </tr>
+                <tr>
+                  <th>Short Name</th><td>${testName.s_name}</td>
+                  <th>Amount</th><td>${testName.amount}</td>
+                </tr>
+                <tr>
+                  <th>Sample Collection</th><td>${lab.created_at}</td>
+                  <th>Report Date</th><td>${lab.report_days}</td>
+                </tr>
+                <tr>
+                  <th>Test Method</th><td>${lab.method}</td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
-        <table class="table  table-borderless table-sm payment-pharmacy-table">
-               <thead>
-                 <tr>
-                   <th>#</th>
-                   <th class="fw-medium">Test Parameter Name</th>
-                   <th class="fw-medium text-nowrap">Report Value</th>
-                   <th class="fw-medium">Report Reference</th>
-                 </tr>
-               </thead>
-               <tbody>
+
+        <table class="table table-borderless table-sm mt-3">
+          <thead>
+            <tr>
+              <th>Test Parameter</th>
+              <th>Report Value</th>
+              <th>Reference</th>
+              <th>Download</th>
+            </tr>
+            </thead>
+            <tbody>
                 <tr>
-                  <td></td>
-                  <td>${getLabData.test_parameter}</td>
-                  <td>${getLabData.test_ref_range}</td>
-                  <td>${getLabData.test_unit}</td>
+                    <td>${lab.test_parameter}</td>
+                    <td>${lab.test_ref_range}</td>
+                    <td>${lab.test_unit}</td>
+                    <td>`;
+                    if (testReports.length > 0) {
+                        testReports.forEach((report, index) => {
+                            html += `<a href="${report.report_file_url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="ri-file-download-line"></i> PDF
+                                </a>`;
+                            });
+                            } else {
+                            html += `<tr><td colspan="5" class="text-center text-muted">No reports available.</td></tr>`;
+                            }
+                            html += `</td>
                 </tr>
-               </tbody>
-        </table>`;   
-                        $('.opdOutLabDataAppend').html(visit_lab_data);
-            }else{
-                alert('error');
-            }
-        },
-        error:function(xhr,thrown){
-            console.log(xhr.respnseText);
-            alert('Error: '+thrown );
-        }
-    });
+            </tbody></table>`;
+        $('.opdOutLabDataAppend').html(html);
+      } else {
+        alert('Failed to fetch lab data.');
+      }
+    },
+    error: function () {
+      alert('Server error while fetching lab data.');
+    }
+  });
 }
+// function opdOutLabView(id){
+//     $.ajax({
+//         url:getOpdOutLabData,
+//         type:"POST",
+//         headers:{
+//             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+//         },
+//         data:{id:id},
+//         success:function(response){
+//             console.log(response);
+//             if(response.success){
+//                 let getLabData = response.data.labData[0];
+//                 let getpatientData = response.data.patientData[0];
+//                 let getTestType = response.data.testType[0];
+//                 let getTestName = response.data.testName[0];
+//                 let testReport = response.testReport;
+//                 let visit_lab_data = '';
+//                         visit_lab_data += ` <div class="row">
+//           <div class="col-md-12">
+//             <table class="table  table-borderless table-sm payment-pharmacy-table">
+//                 <tbody>
+//                   <tr>
+//                       <th class="fw-medium">Bill No</th>
+//                         <td>PATH0${getLabData.id}</td>
+//                       <th class="fw-medium">Patient</th>
+//                       <td>${getpatientData.name}</td>
+//                   </tr>
+//                   <tr>
+//                     <th class="fw-medium">Test Type</th>
+//                       <td>${getTestType.name}</td>
+//                       <th class="fw-medium">Test Name</th>
+//                       <td>${getTestName.name}</td>
+//                   </tr>
+//                   <tr>     
+//                       <th class="fw-medium">Short Name</th>
+//                       <td>${getTestName.s_name}</td>
+//                       <th class="fw-medium">Amount</th>
+//                       <td>${getTestName.amount}</td>
+//                   </tr>
+//                   <tr>           
+//                     <th class="fw-medium">Sample Collection</th>
+//                       <td>${getLabData.created_at}</td>
+//                       <th class="fw-medium">Report Date</th>
+//                       <td>${getLabData.report_days}</td>
+//                   </tr>
+//                   <tr>    
+//                       <th class="fw-medium">Test Method</th>
+//                       <td>${getLabData.method}</td>    
+//                   </tr>
+//                 </tbody>
+//             </table>
+//           </div>
+//         </div>
+//         <table class="table  table-borderless table-sm payment-pharmacy-table">
+//                <thead>
+//                  <tr>
+//                    <th>#</th>
+//                    <th class="fw-medium">Test Parameter Name</th>
+//                    <th class="fw-medium text-nowrap">Report Value</th>
+//                    <th class="fw-medium">Report Reference</th>
+//                    <th class="fw-medium">Download Report</th>
+//                  </tr>
+//                </thead>
+//                <tbody>
+//                 <tr>
+//                   <td></td>
+//                   <td>${getLabData.test_parameter}</td>
+//                   <td>${getLabData.test_ref_range}</td>
+//                   <td>${getLabData.test_unit}</td>
+//                   <td>`;
+//                          testReport.forEach(function(element){
+//                             console.log(element);
+//                          });
+//                        visit_lab_data+= `</td>
+//                 </tr>
+//                </tbody>
+//         </table>`;   
+//         $('.opdOutLabDataAppend').html(visit_lab_data);
+//             }else{
+//                 alert('error');
+//             }
+//         },
+//         error:function(xhr,thrown){
+//             console.log(xhr.respnseText);
+//             alert('Error: '+thrown );
+//         }
+//     });
+// }
 function opdOutLabEdit(id){
 $.ajax({
         url: getOpdOutLabDetails,
@@ -308,7 +398,7 @@ function opdOutLabUpdate(id){
                 if(response.success){
                     $('#opd-add-lab').modal('hide');
                     $('#opdOutLab-form')[0].reset();
-                     $('#opd-lab-reports-list').DataTable().ajax.reload();
+                    $('#opd-lab-reports-list').DataTable().ajax.reload();
                     toastSuccessAlert(response.success);
                 }else if(response.error_validation){
                     console.log(response.error_validation);
@@ -360,3 +450,107 @@ function opdOutLabDelete(id){
         }
     });
 }
+function uploadPdf(id,patient_id){
+    $('#opd-lab-report').modal('show');
+    $('#opdOutLabIReportId').val(id);
+}
+
+
+$('#opdOutLabReport-form').on('submit',function(e){
+    e.preventDefault();
+        let lab_id = $('#opdOutLabIReportId').val();
+        let title = $('#opdOutLabReport-title').val();
+        let lab_pdf = $('#opdOutLabReport-file').prop('files')[0];
+        if (title == '') {
+        $('#opdOutLabReport-title').focus();
+        } else {
+        let formData = new FormData();
+        formData.append('lab_id', lab_id);
+        formData.append('patient_id', patient_id);
+        formData.append('title', title);
+        formData.append('lab_pdf', lab_pdf);
+        $.ajax({
+            url: labReportSubmit,
+            type: "post",
+            data: formData,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                console.log(response);
+                if (response.success) {
+                    //  alert(response.success);
+                    $('#opd-lab-report').modal('hide');
+                     $('#opdOutLabReport-form')[0].reset();
+                    // $('#opd-lab-reports-list').DataTable().ajax.reload();
+                    toastSuccessAlert(response.success);
+                } else {
+                    toastErrorAlert(response.error_success);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("An error occurred: " + error);
+            }
+        });
+    }
+
+
+})
+
+  
+
+
+//   $('#opdOutLabReport-form').on('submit', function (e) {
+//     e.preventDefault(); // Prevent default form submission
+
+//     // Clear previous error messages
+//     $('.opdOutLabReport-title_errorCls').addClass('d-none').text('');
+//     $('.opdOutLabReport-file_errorCls').addClass('d-none').text('');
+
+//     // Create FormData object and append fields manually (optional)
+//     var formData = new FormData();
+
+//     // Get values from form inputs
+//     var reportId = $('#opdOutLabIReportId').val();
+//     var title = $('#opdOutLabReport-title').val();
+//     var file = $('#opdOutLabReport-file')[0].files[0];
+
+//     // Append to FormData
+//     formData.append('report_id', reportId);
+//     formData.append('title', title);
+//     formData.append('report_file', file);
+
+//     // Append CSRF token
+//     formData.append('_token', $('input[name="_token"]').val());
+
+//     // Send AJAX request
+//     $.ajax({
+//       url: '/opd-lab-report/store', // Update with your actual route
+//       type: 'POST',
+//       data: formData,
+//       processData: false,
+//       contentType: false,
+//       success: function (response) {
+//         alert('✅ Report submitted successfully!');
+//         $('#opdOutLabReport-form')[0].reset();
+//         $('#yourModalId').modal('hide'); // Replace with your modal ID
+//       },
+//       error: function (xhr) {
+//         if (xhr.status === 422) {
+//           let errors = xhr.responseJSON.errors;
+//           if (errors.title) {
+//             $('.opdOutLabReport-title_errorCls').removeClass('d-none').text(errors.title[0]);
+//           }
+//           if (errors.report_file) {
+//             $('.opdOutLabReport-file_errorCls').removeClass('d-none').text(errors.report_file[0]);
+//           }
+//         } else {
+//           alert('❌ Something went wrong. Please try again.');
+//         }
+//       }
+//     });
+//   });

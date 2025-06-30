@@ -154,13 +154,13 @@ purchase-add
                         <td class="border-0" colspan="2">Total</td>
                         <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_totalAmt">0</span></td>
                         </tr>
-                        <tr>
+                        {{-- <tr>
                         <td class="border-0 align-middle">Discount</td>
                         <td class="border-0"><div class="d-flex align-items-center">
                             <input id="purchaseAdd_discount" class="form-control form-control-sm discount-value-field" type="text" value="0" placeholder="Discount" oninput="getDiscount(this.value)"><span class="ms-1">%</span></div>
                         </td>
                         <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_discountAmt">0</td>
-                        </tr>
+                        </tr> --}}
                         <tr>
                         <td class="border-0" colspan="2">Taxes</td>
                         <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_taxAmt">0</span></td>

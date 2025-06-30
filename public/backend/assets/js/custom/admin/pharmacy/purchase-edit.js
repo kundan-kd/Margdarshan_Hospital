@@ -1,11 +1,3 @@
-// document.querySelectorAll('input[type="number"]').forEach(input => {
-//     input.addEventListener('input', function() {
-//         if (this.value <= 0) {
-//             this.value = 0; // Reset to minimum allowed value
-//         }
-//     });
-// });
-
 $(document).ready(function() {
     $('.select2Edit-cls').select2(); // Initialize Select2 for existing elements
 });
@@ -114,7 +106,6 @@ function updateAmountEdit(){
 
     let netamount = sumTotalAmount - totalDiscountAmount + totalTaxAfterDiscount;
     $('.purchaseEdit_netTotalAmt').html(netamount.toFixed(2));
-
 }
 function getAmountEdit(randNum){
     let qty = parseFloat($('#purchaseEdit_qty' + randNum).val()) || 0; // Convert to number, default to 0 if invalid
@@ -172,18 +163,14 @@ $('#purchaseEdit_form').on('submit',function(e){
   let qty = $('input[name="purchaseEdit_qty[]"]').map(function(){return $(this).val();}).get();
   let purchaseRate = $('input[name="purchaseEdit_purchaseRate[]"]').map(function(){return $(this).val();}).get();
   let amount = $('input[name="purchaseEdit_amount[]"]').map(function(){return $(this).val();}).get();
-
   let naration = $('#purchaseAdd_naration').val();
   let totalAmount = parseFloat($('.purchaseEdit_totalAmt').html());
-  let totalDiscountPer = parseFloat($('#purchaseEdit_discount').val());
-  let totalDiscount = parseFloat($('.purchaseEdit_discountAmt').html());
+  let totalDiscountPer = parseFloat($('#purchaseEdit_discount').val()) || 0;
+  let totalDiscount = parseFloat($('.purchaseEdit_discountAmt').html() || 0);
   let totalTaxAmount = parseFloat($('.purchaseEdit_taxAmt').html());
   let totalNetAmount = parseFloat($('.purchaseEdit_netTotalAmt').html());
   let paymentMode = $('#purchaseEdit_paymentMode').val();
   let payAmount = $('#purchaseEdit_payAmount').val() || 0;
-  let dueAmount = totalNetAmount - payAmount;
-  dueAmount = dueAmount.toFixed(2);
-
     $.ajax({
         url:purchaseUpdateDatas,
         type:"POST",
@@ -191,10 +178,9 @@ $('#purchaseEdit_form').on('submit',function(e){
             'X_CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
         },
         data:{
-            purchase_id:purchase_id,id:id,billNo:billNo,vendorID:vendorID,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
+            purchase_id:purchase_id,id:id,billNo:billNo,vendorID:vendorID,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount
         },
         success:function(response){
-            console.log(response);
             if(response.success){
                 toastSuccessAlert('Purchase updated successfully');
                 setTimeout(function(){
@@ -214,46 +200,44 @@ function deleteRowEdit(x){
  updateAmountEdit();
 }
 
-
-    function getPurchaseMedicineEdit(id,randNum) {
-        $.ajax({
-            url: getPurchaseNamesEdit,
-            type: "GET",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: { id: id },
-            success: function (response) {
-                console.log(response);
-                let getData = response.data;
+function getPurchaseMedicineEdit(id,randNum) {
+    $.ajax({
+        url: getPurchaseNamesEdit,
+        type: "GET",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: { id: id },
+        success: function (response) {
+            let getData = response.data;
+            let medicineDropdown = $("#purchaseEdit_name" + randNum);
+            medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
+            getData.forEach(element => {
+                medicineDropdown.append(`<option value="${element.id}">${element.name}</option>`);
+            });
+            medicineDropdown.trigger("change"); // Refresh Select2 dropdown
+        }
+    });
+}
+function getPurchaseMedicineSelectedEdit(id,randNum) {
+    let purchaseID = $('#purchaseEdit_id' + randNum).val();
+    $.ajax({
+        url: getPurchaseNamesSelectEdit,
+        type: "GET",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: { id: id, purchaseID: purchaseID },
+        success: function (response) {
+            let getData = response.data.nameData[0];
+            let getNameID = getData.name_id;
+            let getMedicineData = response.data.medicines;
                 let medicineDropdown = $("#purchaseEdit_name" + randNum);
-                medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
-                getData.forEach(element => {
-                    medicineDropdown.append(`<option value="${element.id}">${element.name}</option>`);
-                });
-                medicineDropdown.trigger("change"); // Refresh Select2 dropdown
-            }
-        });
-    }
-    function getPurchaseMedicineSelectedEdit(id,randNum) {
-         let purchaseID = $('#purchaseEdit_id' + randNum).val();
-        $.ajax({
-            url: getPurchaseNamesSelectEdit,
-            type: "GET",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: { id: id, purchaseID: purchaseID },
-            success: function (response) {
-                let getData = response.data.nameData[0];
-                let getNameID = getData.name_id;
-                let getMedicineData = response.data.medicines;
-                 let medicineDropdown = $("#purchaseEdit_name" + randNum);
-                medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
-                getMedicineData.forEach(element => {
-                   medicineDropdown.append(`<option value="${element.id}"${element.id == getNameID ? 'selected':''}>${element.name}</option>`);
-                });
-                medicineDropdown.trigger("change"); // Refresh Select2 dropdown
-            }
-        });
-    }
+            medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
+            getMedicineData.forEach(element => {
+                medicineDropdown.append(`<option value="${element.id}"${element.id == getNameID ? 'selected':''}>${element.name}</option>`);
+            });
+            medicineDropdown.trigger("change"); // Refresh Select2 dropdown
+        }
+    });
+}

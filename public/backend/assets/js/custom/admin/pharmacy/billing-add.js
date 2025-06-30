@@ -1,17 +1,17 @@
   // Flat pickr or date picker js 
-    function getDatePicker (receiveID) {
-        flatpickr(receiveID, {
-            dateFormat: "m/Y",
-            plugins: [
-                        new monthSelectPlugin({
-                            shorthand: true,  
-                            dateFormat: "m/Y",  
-                            altFormat: "F Y"    
-                        })
-                    ]
-        });
-    }
-    getDatePicker('.expiry-date'); 
+    // function getDatePicker (receiveID) {
+    //     flatpickr(receiveID, {
+    //         dateFormat: "m/Y",
+    //         plugins: [
+    //                     new monthSelectPlugin({
+    //                         shorthand: true,  
+    //                         dateFormat: "m/Y",  
+    //                         altFormat: "F Y"    
+    //                     })
+    //                 ]
+    //     });
+    // }
+    // getDatePicker('.expiry-date'); 
 
 function addNewRowBilling() {
     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
@@ -44,7 +44,7 @@ function addNewRowBilling() {
                               </td>
                               <td>
                                   <div class=" position-relative">
-                                      <input id="billingAdd-expiry${rand}" name="billingAdd-expiry[]" class="form-control radius-8 bg-base expiry-date${rand}"  type="text" placeholder="MM/YYYY">
+                                      <input id="billingAdd-expiry${rand}" name="billingAdd-expiry[]" class="form-control radius-8 bg-base expiry-date${rand}"  type="text" placeholder="MM/YYYY" readonly>
                                       
                                   </div>
                               </td>
@@ -150,6 +150,7 @@ function getBatchExpiry(id,randE){
             }
         }
     });
+    getBillingAmount(randE);
 }
 function getBillingAmount(randA){
     let qty = parseFloat($("#billingAdd-qty" + randA).val());
@@ -165,7 +166,6 @@ function getBillingAmount(randA){
     }else{
         $("#billingAdd-qty"+randA).css("border-color","#d1d5db");
         $('.billingAddSubmitBtn').prop('disabled',false);
-
     }
     let salesPrice = $("#billingAdd-salesPrice" + randA).val() ||0;
     let tax = $("#billingAdd-tax" + randA).val() ||0;
@@ -176,29 +176,6 @@ function getBillingAmount(randA){
     $('#billingAdd-taxAmount'+randA).val(currTaxAmount) ||0;
     updateTotalBilling();
     }
-// function updateTotalAmount(){
-//     let total_amount = $('input[name="billingAdd-amount[]"]').map(function(){return $(this).val();}).get();
-//     let totalAmountSum = total_amount.map(Number).reduce((acc,val) => acc + val,0) ?? 0;
-//     $('.billingAdd-totalAmount').html(totalAmountSum); // Update the total amount in the UI
-//     let total_tax_amount = $('input[name="billingAdd-taxAmount[]"').map(function(){return $(this).val();}).get();
-//     let totalTaxAmountSum = total_tax_amount.map(Number).reduce((acc,val) => acc + val,0) ?? 0;
-//     $('.billingAdd-totalTax').html(totalTaxAmountSum);
-//     let totalNetAmount = parseFloat(totalAmountSum) + parseFloat(totalTaxAmountSum);
-//     $('.billingAdd-totalNetAmount').html(totalNetAmount);
-// }
-
-// function updateDiscount(){
-//     let discountPer = $('#billingAdd-discountPer').val() || 0;
-//     let total_amount = $('.billingAdd-totalAmount').html();
-//     let total_tax_amount = $('.billingAdd-totalTax').html();
-//     let discountAmount = (parseFloat(total_amount) * discountPer)/100; 
-//     $('.billingAdd-discountAmount').html(discountAmount);
-//     let tax_after_discount = (parseFloat(total_tax_amount) * discountPer)/100;
-//     let total_tax_after_discount = total_tax_amount - tax_after_discount;
-//     $('.billingAdd-totalTax').html(total_tax_after_discount.toFixed(2));
-//     let net_amount_after_discount = parseFloat(total_amount) - discountAmount + total_tax_after_discount;
-//      $('.billingAdd-totalNetAmount').html(net_amount_after_discount.toFixed(2));
-// }
 function updateTotalBilling() {
     // Calculate total amount and total tax amount
     let total_amount = $('input[name="billingAdd-amount[]"]').map(function() { return parseFloat($(this).val()) || 0; }).get();
@@ -241,25 +218,20 @@ function resetAddPatient(){
 
 $('#billingAdd-patientForm').on('submit',function(e){
      e.preventDefault();
-    let patientName  = validateField('billingAdd-patientName', 'input');
-    let guardianName = validateField('billingAdd-guardianName', 'input');
-    // let patientGender = validateField('patientGender', 'radio');
-    let patientBloodType = validateField('billingAdd-patientBloodType', 'select');
-    let patientDOB = validateField('billingAdd-patientDOB', 'select');
-    let patientMStatus = validateField('billingAdd-patientMStatus', 'select');     
+    let patientName  = validateField('billingAdd-patientName', 'input'); 
     let patientMobile = validateField('billingAdd-patientMobile', 'mobile');
     let patientAddess = validateField('billingAdd-patientAddess', 'input');
-        if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
+        if(patientName === true && patientMobile === true && patientAddess === true){    
             let name = $('#billingAdd-patientName').val();
-            let guardian_name = $('#billingAdd-guardianName').val();
+            // let guardian_name = $('#billingAdd-guardianName').val();
             let gender = $('input[name="billingAdd-patientGender"]:checked').val(); // Corrected na
-            let bloodtype = $('#billingAdd-patientBloodType').val();
-            let dob = $('#billingAdd-patientDOB').val();
-            let mstatus = $('#billingAdd-patientMStatus').val();
+            // let bloodtype = $('#billingAdd-patientBloodType').val();
+            // let dob = $('#billingAdd-patientDOB').val();
+            // let mstatus = $('#billingAdd-patientMStatus').val();
             let mobile = $('#billingAdd-patientMobile').val();
             let address = $('#billingAdd-patientAddess').val();
-            let alt_mobile = $('#billingAdd-patientAltMobile').val();
-            let allergy = $('#billingAdd-patientAllergy').val();
+            // let alt_mobile = $('#billingAdd-patientAltMobile').val();
+            // let allergy = $('#billingAdd-patientAllergy').val();
             $.ajax({
                 url: billingAddNewPatient,
                 type:"POST",
@@ -267,7 +239,7 @@ $('#billingAdd-patientForm').on('submit',function(e){
                     'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                 },
                 data:{
-                name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
+                name:name,gender:gender,mobile:mobile,address:address
                 },
                 success:function(response){
                     if(response.success){

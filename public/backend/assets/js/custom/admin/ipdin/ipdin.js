@@ -8,6 +8,9 @@ let table_patient = $('#ipd-in-patient-list').DataTable({
         headers:{
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
         },
+        data: function (d) {
+            d.patientType = $('#patientType').val();  
+        },
         error:function(xhr, error, thrown){
             console.log(xhr.responseText);
             alert('Error: '+thrown);
@@ -71,18 +74,22 @@ let table_patient = $('#ipd-in-patient-list').DataTable({
             searchable: true
         },
 
-    ],
-    dom: 'Bfrtip',
-        buttons: [
-            {
-                extend: 'excelHtml5',
-                title: 'IPD Patient List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6,7,8,9] // Excludes index 11 (action)
-                }
-            }
-        ]
+    ]
+    // ,
+    // dom: 'Bfrtip',
+    //     buttons: [
+    //         {
+    //             extend: 'excelHtml5',
+    //             title: 'IPD Patient List',
+    //             exportOptions: {
+    //                 columns: [0,1,2,3,4,5,6,7,8,9] // Excludes index 11 (action)
+    //             }
+    //         }
+    //     ]
 });
+function getPatientListFilter(){
+    $('#ipd-in-patient-list').DataTable().ajax.reload();
+}
 function resetAddPatient(){
     $('#ipd-addPatientForm')[0].reset();
     $('#ipdPatientId').val('');

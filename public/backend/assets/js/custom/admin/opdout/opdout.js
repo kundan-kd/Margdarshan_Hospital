@@ -32,7 +32,6 @@ let table_opd_patients = $('#opd-out-list-table').DataTable({
 
 function getListFilter(){
     $('#opd-out-list-table').DataTable().ajax.reload();
-    console.log('hello');
 }
 
 function patientDetailsUsingToken(id){

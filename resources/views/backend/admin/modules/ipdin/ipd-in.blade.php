@@ -23,6 +23,17 @@
               <!--<button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button>-->
           </div>
      </div>
+      <div class=" row my-3">
+        <div class="col-md-2">
+            <div class="d-flex justify-content-between ">
+            <select id="patientType" class="select2-class form-select" onchange="getPatientListFilter()">
+                <option value=""> Select Patient Type</option>
+                <option value="IPD">IPD</option>
+                <option value="ICU">ICU</option>
+            </select>
+        </div>
+        </div>
+      </div>
     <div class="card basic-data-table">
       <div class="card-body">
         <table class="table bordered-table mb-0 w-100" id="ipd-in-patient-list" data-page-length='10'>

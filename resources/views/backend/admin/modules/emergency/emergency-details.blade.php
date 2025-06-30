@@ -18,6 +18,9 @@
           @can('Emergency Move To IPD')
             <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="#"> <i class="ri-stethoscope-line"></i> Move to IPD</button>
           @endcan
+          @can('Emergency Move To ICU')
+            <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="#"> <i class="ri-stethoscope-line"></i> Move to ICU</button>
+          @endcan
           {{-- <button class="btn btn-danger-600  btn-sm fw-normal d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#emergency-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button> --}}
           {{-- <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button> --}}
           @can('Emergency Discharge')
@@ -1139,6 +1142,44 @@
     </div>
   </div>
  <!-- Alert IPD modal end-->
+ <!--Alert IPD modal start -->
+  <div class="modal fade" id="moveToIcuModel" tabindex="-1" role="dialog" aria-labelledby="moveToIcuModel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white userType-title">Bed Number</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+           <form action="" id="emergency-icuBedForm" class="needs-validation" novalidate="">
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <label class="form-label" for="">Bed Number</label>
+                    {{-- <input type="hidden" id=opd-ipdRoom"> --}}
+                   <select class="form-control form-control-sm" name="emergency-icuBed" id="emergency-icuBed" required>
+                        <option value="">Select ICU Bed Number</option>
+                        @foreach ($icuAvailBeds as $icuBed)
+                        <option value="{{$icuBed->id}}">{{$icuBed->bed_no}}</option>
+                        @endforeach
+                    </select>   
+                    <div class="invalid-feedback">
+                            Select ICU Bed
+                        </div> 
+                </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal" onclick="resetmodel()">Cancel</button>
+                        <button class="btn btn-primary btn-sm " type="submit">Submit</button>
+                    </div>
+           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Alert IPD modal end-->
   <!--Alert Discharge modal start -->
   <div class="modal fade" id="emergencyDischargeModel" tabindex="-1" role="dialog" aria-labelledby="moveToIcuModel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -1212,7 +1253,8 @@
         });
     });
       const emergencyMedicineName = "{{route('common.getMedicineName')}}";
-      const moveToIpdsStatus = "{{route('emergency.moveToIpdsStatus')}}";
+      const moveToIpdStatus = "{{route('emergency.moveToIpdStatus')}}";
+      const moveToIcuStatus = "{{route('emergency.moveToIcuStatus')}}";
       const calculateDischargeAmountEmergency = "{{route('emergency.calculateDischargeAmountEmergency')}}";
       const submitRestEmergencyAmount = "{{route('emergency.submitRestEmergencyAmount')}}";
       const patientDischargeStatusE = "{{route('emergency.patientDischargeStatusE')}}";

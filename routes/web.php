@@ -5,6 +5,7 @@ use App\Http\Controllers\backend\admin\appointment\PatientController;
 use App\Http\Controllers\backend\admin\CommonController;
 use App\Http\Controllers\backend\admin\emergency\EmergencyController;
 use App\Http\Controllers\backend\admin\home\ProfileController;
+use App\Http\Controllers\backend\admin\invoice\InvoiceController;
 use App\Http\Controllers\backend\admin\ipdin\IpdinController;
 use App\Http\Controllers\backend\admin\master\BedController;
 use App\Http\Controllers\backend\admin\master\BedgroupController;
@@ -260,6 +261,7 @@ Route::get('/opd-out',[OpdoutController::class,'index'])->name('opd-out.index');
 Route::post('/opd-out-view',[OpdoutController::class,'viewOpdOut'])->name('opd-out.viewOpdOut');
 Route::get('/opd-out-details/{id}',[OpdoutController::class,'opdOutDetails']);
 Route::post('/opd-out-movetoipd',[OpdoutController::class,'moveToIpdStatus'])->name('opd-out.moveToIpdStatus');
+Route::post('/opd-out-movetoicu',[OpdoutController::class,'moveToIcuStatus'])->name('opd-out.moveToIcuStatus');
 Route::post('/opd-out-visit-add',[OpdoutController::class,'opdOutVisitSubmit'])->name('opd-out-visit.opdOutVisitSubmit');
 Route::post('/opd-out-visit-view',[OpdoutController::class,'viewOptOutVisit'])->name('opd-out-visit.viewOptOutVisit');
 Route::post('/opd-out-visit-data',[OpdoutController::class,'getOpdOutVisitData'])->name('opd-out-visit.getOpdOutVisitData');
@@ -282,6 +284,8 @@ Route::post('/opd-out-lab-test-edit',[OpdoutController::class,'getOpdOutLabDetai
 Route::post('/opd-out-lab-test-update',[OpdoutController::class,'opdOutLabUpdateData'])->name('opd-out-lab.opdOutLabUpdateData');
 Route::post('/opd-out-lab-test-delete',[OpdoutController::class,'opdOutLabDataDelete'])->name('opd-out-lab.opdOutLabDataDelete');
 
+Route::post('/opd-out-lab-report-add',[OpdoutController::class,'labReportSubmit'])->name('opd-out-lab.labReportSubmit');
+
 Route::post('/opd-out-charge-add',[OpdoutController::class,'opdOutChargeSubmit'])->name('opd-out-charge.opdOutChargeSubmit');
 Route::post('/opd-out-charge-view',[OpdoutController::class,'viewOpdOutCharge'])->name('opd-out-charge.viewOpdOutCharge');
 Route::post('/opd-out-charge-edit',[OpdoutController::class,'getOpdOutChargeData'])->name('opd-out-charge.getOpdOutChargeData');
@@ -293,6 +297,11 @@ Route::post('/opd-out-vital-view',[OpdoutController::class,'viewOpdOutVital'])->
 Route::post('/opd-out-vital-data',[OpdoutController::class,'getOpdOutVitalData'])->name('opd-out-vital.getOpdOutVitalData');
 Route::post('/opd-out-vital-update',[OpdoutController::class,'opdOutVItalDataUpdate'])->name('opd-out-vital.opdOutVItalDataUpdate');
 Route::post('/opd-out-vital-delete',[OpdoutController::class,'opdOutVitalDataDelete'])->name('opd-out-vital.opdOutVitalDataDelete');
+
+Route::post('/opd-out-advance-add',[OpdoutController::class,'opdOutAdvanceSubmit'])->name('opd-out-advance.opdOutAdvanceSubmit');
+Route::post('/opd-out-advance-view',[OpdoutController::class,'viewOpdOutAdvance'])->name('opd-out-advance.viewOpdOutAdvance');
+Route::post('/opd-out-advance-data',[OpdoutController::class,'getOpdOutAdvanceData'])->name('opd-out-advance.getOpdOutAdvanceData');
+Route::post('/opd-out-advance-update',[OpdoutController::class,'opdOutAdvanceDataUpdate'])->name('opd-out-advance.opdOutAdvanceDataUpdate');
 
 
 Route::get('/ipd-in',[IpdinController::class,'index'])->name('ipd-in.index');
@@ -359,7 +368,8 @@ Route::get('/emergency',[EmergencyController::class,'index'])->name('emergency.i
 Route::get('/emergency-details/{id}',[EmergencyController::class,'emergencyDetails']);
 Route::post('/emergency-patient-add',[EmergencyController::class,'addPatient'])->name('emergency-addPatient');
 Route::post('/emergency-patient-view',[EmergencyController::class,'viewPatients'])->name('emergency-viewPatients');
-Route::post('/emergency-patient-movetoipd',[EmergencyController::class,'moveToIpdsStatus'])->name('emergency.moveToIpdsStatus');
+Route::post('/emergency-patient-movetoipd',[EmergencyController::class,'moveToIpdStatus'])->name('emergency.moveToIpdStatus');
+Route::post('/emergency-patient-movetoicu',[EmergencyController::class,'moveToIcuStatus'])->name('emergency.moveToIcuStatus');
 Route::post('/emergency-patient-discharge',[EmergencyController::class,'patientDischargeStatusE'])->name('emergency.patientDischargeStatusE');
 Route::post('/emergency-patient-discharge-data',[EmergencyController::class,'calculateDischargeAmountEmergency'])->name('emergency.calculateDischargeAmountEmergency');
 Route::post('/emergency-patient-discharge-amount',[EmergencyController::class,'submitRestEmergencyAmount'])->name('emergency.submitRestEmergencyAmount');
@@ -412,6 +422,8 @@ Route::post('/emergency-vital-delete',[EmergencyController::class,'emergencyVita
 
 Route::post('/emergency-bill-view',[EmergencyController::class,'viewEmergencyBills'])->name('emergency.viewEmergencyBills');
 
+
+Route::get('/invoice',[InvoiceController::class,'generateInvoice']);
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
 

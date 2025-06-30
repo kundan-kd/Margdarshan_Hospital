@@ -12,7 +12,9 @@ use App\Models\MedicineCategory;
 use App\Models\OpdoutLabtest;
 use App\Models\OpdoutMedicinedose;
 use App\Models\OpdoutVisit;
+use App\Models\LabReport;
 use App\Models\Patient;
+use App\Models\PaymentAdvance;
 use App\Models\PaymentBill;
 use App\Models\PaymentReceived;
 use App\Models\TestName;
@@ -99,7 +101,8 @@ class OpdoutController extends Controller
         $testnames = TestName::where('status',1)->get();
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
         $ipdAvailBeds = Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get();
-        return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds'));
+        $icuAvailBeds = Bed::where('bed_group_id',4)->where('current_status','vacant')->where('status',1)->get();
+        return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds','icuAvailBeds'));
     }
     function moveToIpdStatus(Request $request){
         $now = Carbon::now();
@@ -107,7 +110,9 @@ class OpdoutController extends Controller
         $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
         $update = Patient::where('id',$request->id)->update([
             'type' =>'IPD',
-            'previous_type'=>$curr_status[0]->type
+            'bed_id' => $request->bed_id,
+            'previous_type'=>$curr_status[0]->type,
+            'type_change_date' => $now
         ]);
         if($update){
             Bed::where('id',$request->bed_id)->update([
@@ -124,6 +129,33 @@ class OpdoutController extends Controller
             $timelines->created_by = "Admin";
             $timelines->save();
             return response()->json(['success'=>'Successfully moved to IPD'],200);
+        }
+    }
+    function moveToIcuStatus(Request $request){
+        $now = Carbon::now();
+        $curr_status = Patient::where('id',$request->id)->get(['type']);
+        $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
+        $update = Patient::where('id',$request->id)->update([
+            'type' =>'ICU',
+            'bed_id' => $request->bed_id,
+            'previous_type'=>$curr_status[0]->type,
+            'type_change_date' => $now
+        ]);
+        if($update){
+            Bed::where('id',$request->bed_id)->update([
+                'current_status' => 'occupied',
+                'occupied_by_patient_id' => $request->id,
+                'occupied_date' =>$now
+
+            ]);
+            $timelines = new Timeline();
+            $timelines->type = "OPD";
+            $timelines->patient_id = $request->id;
+            $timelines->title = "Moved to ICU";
+            $timelines->desc = "Moved to ICU on bed ".$bed_name[0]->bed_no." from OPD";
+            $timelines->created_by = "Admin";
+            $timelines->save();
+            return response()->json(['success'=>'Successfully moved to ICU'],200);
         }
     }
     function opdOutVisitSubmit(Request $request){
@@ -435,6 +467,9 @@ class OpdoutController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#opd-lab-test-veiw" onclick="opdOutLabView('.$row->id.')">
                       <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
                     </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <iconify-icon icon="mdi:file-upload-outline" onclick="uploadPdf('.$row->id.','.$row->patient_id.')"></iconify-icon>
+                    </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="opdOutLabEdit('.$row->id.');getTestName('.$row->test_type_id.','.$row->test_name_id.');getTestDetails('.$row->test_name_id.')"></iconify-icon>
                     </a>
@@ -446,19 +481,53 @@ class OpdoutController extends Controller
             ->make(true);
         }
     }
-    public function getOpdOutLabData(Request $request){
-        $getLabData = LabInvestigation::where('id',$request->id)->get();
-        $patientData = Patient::where('id',$getLabData[0]->patient_id)->get();
-        $testType = TestType::where('id',$getLabData[0]->test_type_id)->get();
-        $testName = TestName::where('id',$getLabData[0]->test_name_id)->get();
-        $data = [
-               'labData' =>$getLabData, 
-               'patientData' =>$patientData, 
-               'testType' =>$testType, 
-               'testName' =>$testName, 
-        ];
-        return response()->json(['success'=>'opdout lab data fetched','data'=>$data],200);
+    // public function getOpdOutLabData(Request $request){
+    //     $getLabData = LabInvestigation::where('id',$request->id)->get();
+    //     $patientData = Patient::where('id',$getLabData[0]->patient_id)->get();
+    //     $testType = TestType::where('id',$getLabData[0]->test_type_id)->get();
+    //     $testName = TestName::where('id',$getLabData[0]->test_name_id)->get();
+    //     $testReport = LabReport::where('lab_id',$request->id)->get(['file_path']);
+    //     $data = [
+    //            'labData' =>$getLabData, 
+    //            'patientData' =>$patientData, 
+    //            'testType' =>$testType, 
+    //            'testName' =>$testName, 
+    //            'testReport' =>$testReport, 
+    //     ];
+    //     return response()->json(['success'=>'opdout lab data fetched','data'=>$data],200);
+    // }
+    public function getOpdOutLabData(Request $request)
+{
+    $lab = LabInvestigation::find($request->id);
+    if (!$lab) {
+        return response()->json(['success' => false, 'message' => 'Lab record not found'], 404);
     }
+
+    $patient = Patient::find($lab->patient_id);
+    $testType = TestType::find($lab->test_type_id);
+    $testName = TestName::find($lab->test_name_id);
+
+    // Get all reports and build full URLs
+    $testReports = LabReport::where('lab_id', $lab->id)->get()->map(function ($report) {
+        return [
+            'test_parameter' => $report->test_parameter ?? '-',
+            'test_value' => $report->test_value ?? '-',
+            'test_reference' => $report->test_reference ?? '-',
+            'report_file_url' => asset('backend/uploads/lab_reports/' . $report->file_path),
+        ];
+    });
+
+    return response()->json([
+        'success' => true,
+        'data' => [
+            'labData' => $lab,
+            'patientData' => $patient,
+            'testType' => $testType,
+            'testName' => $testName,
+        ],
+        'testReport' => $testReports,
+    ]);
+}
     public function getOpdOutLabDetails(Request $request){
          $getData = LabInvestigation::where('id',$request->id)->get();
         return response()->json(['success'=>'opdout lab data fetched','data'=>$getData],200);
@@ -620,7 +689,7 @@ class OpdoutController extends Controller
         return response()->json(['success'=>'Vital data fetched','data'=>$getData],200);
    }
    public function opdOutVItalDataUpdate(Request $request){
-         $update = Vital::where('id',$request->id)->update([
+        $update = Vital::where('id',$request->id)->update([
             'name' => $request->name,
             'value' => $request->value,
             'date' => $request->date
@@ -634,6 +703,93 @@ class OpdoutController extends Controller
     public function opdOutVitalDataDelete(Request $request){
         Vital::where('id',$request->id)->delete();
         return response()->json(['success'=>'Vital deleted successfully'],200);
+    }
+    public function opdOutAdvanceSubmit(Request $request){
+         $validator = Validator::make($request->all(),[
+            'amount' => 'required',
+            'pmode' => 'required'
+        ]);
+        if($validator->fails()){
+            return response()->json(['error_validation'=>$validator->errors()->all()],200);
+        }
+          $optoutAdvance = new PaymentAdvance();
+            $optoutAdvance->patient_id = $request->patientId;
+            $optoutAdvance->amount = $request->amount;
+            $optoutAdvance->payment_mode = $request->pmode;
+        if($optoutAdvance->save()){
+            $timelines = new Timeline();
+             $timelines->type = "OPD";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "Advance";
+             $timelines->desc = "Advance Payment amount rs.".$request->amount." added";
+             $timelines->created_by = "Admin";
+             $timelines->save();
+            return response()->json(['success'=>'Advance added successfully'],200);
+        }else{
+            return response()->json(['error_success'=>'Advance not added']);
+        }
+    }
+    public function viewOpdOutAdvance(Request $request){
+        if($request->ajax()){
+            $advance = PaymentAdvance::where('patient_id',$request->patient_id)->get();
+            return DataTables::of($advance)
+            ->addColumn('created_at',function($row){
+                return $row->created_at;
+            })
+            ->addColumn('amount',function($row){
+                return $row->amount;
+            })
+            ->addColumn('pmode',function($row){
+                return $row->payment_mode;
+            })
+            ->addColumn('action',function($row){
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
+                      <iconify-icon icon="lucide:edit" onclick="opdOutAdvanceEdit('.$row->id.')"></iconify-icon>
+                    </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+    }
+    public function getOpdOutAdvanceData(Request $request){
+        $getData = PaymentAdvance::where('id',$request->id)->get();
+        return response()->json(['success'=>'Advance data fetched','data'=>$getData],200);
+    }
+    public function opdOutAdvanceDataUpdate(Request $request){
+        $update = PaymentAdvance::where('id',$request->id)->update([
+            'amount' => $request->amount,
+            'payment_mode' => $request->pmode
+        ]);
+        if($update){
+            return response()->json(['success'=>'Advance payment updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Advance payment data not updated']);
+        }
+    }
+    public function labReportSubmit(Request $request){
+                $lab_file = $request->file('lab_pdf');
+                $labreports = new LabReport();
+                $labreports->patient_id = $request->patient_id;
+                $labreports->lab_id = $request->lab_id;
+                $labreports->title = $request->title;
+                
+                if ($lab_file) {
+                    // Define your file path and name
+                    $imageName =  $request->patient_id.'.'.$request->lab_id.'.'.time().'.'.$lab_file->getClientOriginalExtension();
+                    $destinationPath = public_path('/backend/uploads/lab_reports');
+                    
+                    // Move the file to the destination path
+                    $lab_file->move($destinationPath, $imageName);
+                    
+                    // Save the image path in your database
+                    $labreports->file_path = $imageName;
+                }
+                
+                if ($labreports->save()) {
+                    return response()->json(['success' => 'Lab report added successfully'], 200);
+                } else {
+                    return response()->json(['error_success' => 'Lab report not added'], 400);
+                }
     }
    
 }

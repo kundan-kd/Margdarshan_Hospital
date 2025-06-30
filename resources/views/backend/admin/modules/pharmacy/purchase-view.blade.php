@@ -51,40 +51,40 @@ purchase-edit
                                <th class="text-nowrap text-neutral-700">
                                   MRP (₹)
                               </th>
-                              <th class="text-nowrap text-neutral-700">
-                                  Sale Price (₹)
+                              <th class="text-nowrap text-neutral-700 ">
+                                   Purchase Price (₹)
                               </th>
                               <th class="text-nowrap text-neutral-700">
                                   Quantity
                               </th>
                               <th class="text-nowrap text-neutral-700">
-                                  Available Quantity
-                              </th>
-                              <th class="text-nowrap text-neutral-700 ">
-                                   Purchase Price (₹)
+                                 Amount (₹)
                               </th>
                               <th class="text-nowrap text-neutral-700 ">
                                   Tax (%)
                               </th>
                               <th class="text-nowrap text-neutral-700">
-                                 Amount (₹)
+                                 Amount With Tax(₹)
                               </th>
                           </tr>
                   </thead>
                   <tbody>
                     @foreach ( $purchaseItems as $items)
+                    @php
+                      $tax_amount = round(($items->amount * $items->tax)/100);
+                      $amount_with_tax = $items->amount + $tax_amount;
+                    @endphp
                       <tr>
                         <td class="text-neutral-700">{{$items->categoryData->name}}</td>
                         <td class="text-neutral-700">{{$items->medicineNameData->name}}</td>
                         <td class="text-neutral-700">{{$items->batch_no}}</td>
                         <td class="text-neutral-700">{{$items->expiry}}</td>
                         <td class="text-neutral-700">{{$items->mrp}}</td>
-                        <td class="text-neutral-700">{{$items->sales_price}}</td>
+                         <td class="text-neutral-700">{{$items->purchase_rate}}</td>
                         <td class="text-neutral-700">{{$items->qty}}</td>
-                        <td class="text-neutral-700">{{$items->qty - $items->stock_out}}</td>
-                        <td class="text-neutral-700">{{$items->purchase_rate}}</td>
-                        <td class="text-neutral-700">{{$items->tax}}</td>
                         <td class="text-neutral-700">{{$items->amount}}</td>
+                        <td class="text-neutral-700">{{$items->tax}}</td>
+                        <td class="text-neutral-700">{{$amount_with_tax}}</td>
                       </tr>
                        @endforeach
                   </tbody>
@@ -95,7 +95,6 @@ purchase-edit
                         <tr>
                           <td class="text-neutral-700 fw-medium">Payment Mode <span class="fw-medium">: {{$purchases[0]->payment_mode}}</span></td>
                         </tr>
-                       
                      </table>
                 </div>
                 <div class="col-md-3 offset-md-3 ">
@@ -104,10 +103,10 @@ purchase-edit
                           <td class="text-neutral-700 fw-medium">Total</td>
                           <td class="text-neutral-700 text-end">₹ {{$purchases[0]->total_amount}}</td>
                         </tr>
-                        <tr>
+                        {{-- <tr>
                           <td class="text-neutral-700 fw-medium">Discount</td>
                           <td class="text-neutral-700 text-end">{{$purchases[0]->total_discount_per}}%</td>
-                        </tr>
+                        </tr> --}}
                         <tr>
                           <td class="text-neutral-700 fw-medium">Tax Amount</td>
                           <td class="text-neutral-700 text-end">₹ {{$purchases[0]->total_tax}}</td>
@@ -118,15 +117,11 @@ purchase-edit
                         </tr>
                         <tr>
                           <td class="text-neutral-700 fw-medium">Paid Amount</td>
-                          <td class="text-neutral-700 text-end">₹ {{$purchases[0]->paid_amount}}</td>
+                          <td class="text-neutral-700 text-end">₹ {{$purchases[0]->paid_amount ?? 0}}</td>
                         </tr>
                         <tr>
-                          <td class="text-neutral-700 fw-medium">Refund Amount</td>
-                          <td class="text-neutral-700 text-end">₹ 0</td>
-                        </tr>
-                        <tr>
-                          <td class="text-neutral-700 fw-medium">Due Amount</td>
-                          <td class="text-neutral-700 text-end">₹ {{$purchases[0]->due}}</td>
+                          <td class="text-neutral-700 fw-medium">Due</td>
+                          <td class="text-neutral-700 text-end">₹ {{$purchases[0]->due ?? 0}}</td>
                         </tr>
                      </table>
                 </div>
@@ -137,5 +132,5 @@ purchase-edit
   </div>
 @endsection
 @section('extra-js')
-<script src="{{asset('backend/assets/js/custom/admin/pharmacy/purchase.js')}}"></script>
+  <script src="{{asset('backend/assets/js/custom/admin/pharmacy/purchase.js')}}"></script>
 @endsection

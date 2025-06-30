@@ -44,14 +44,18 @@ class IpdinController extends Controller
         $testtypes = TestType::where('status',1)->get();
         $testnames = TestName::where('status',1)->get();
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
-         $emergencyAvailBeds = Bed::where('bed_group_id',6)->where('current_status','vacant')->where('status',1)->get();
-         $icuAvailBeds = Bed::where('bed_group_id',4)->where('current_status','vacant')->where('status',1)->get();
-         $ipdAvailablelBeds = Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get();
-            return view('backend.admin.modules.ipdin.ipd-in-details',compact('patients','medicineCategory','doctorData','nurseData','visitsData','medicationData','testtypes','testnames','labInvestigationData','emergencyAvailBeds','icuAvailBeds','ipdAvailablelBeds'));
+        $emergencyAvailBeds = Bed::where('bed_group_id',6)->where('current_status','vacant')->where('status',1)->get();
+        $icuAvailBeds = Bed::where('bed_group_id',4)->where('current_status','vacant')->where('status',1)->get();
+        $ipdAvailablelBeds = Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get();
+        return view('backend.admin.modules.ipdin.ipd-in-details',compact('patients','medicineCategory','doctorData','nurseData','visitsData','medicationData','testtypes','testnames','labInvestigationData','emergencyAvailBeds','icuAvailBeds','ipdAvailablelBeds'));
     }
     public function viewPatients(Request $request){
         if($request->ajax()){
-        $patients = Patient::where('type','IPD')->orWhere('type','ICU')->get();
+        if($request->patientType != null ){
+            $patients = Patient::where('type',$request->patientType)->get();
+        }else{
+            $patients = Patient::where('type','IPD')->orWhere('type','ICU')->get();
+        }    
         return DataTables::of($patients)
         ->addColumn('patient_id',function($row){
              return '<a target="_blank" class="text-primary cursor-pointer" onclick="ipdPatientUsingId('.$row->id.')">'.$row->patient_id.'</a>';

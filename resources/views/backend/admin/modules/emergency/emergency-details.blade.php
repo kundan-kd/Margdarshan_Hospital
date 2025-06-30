@@ -15,10 +15,14 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">Emergency Details<span class="{{$patients[0]->current_status == 'Admitted'?'badge text-sm fw-normal bg-danger-600 mx-1 text-white':'badge text-sm fw-normal bg-success-600 mx-1 text-white'}}">{{$patients[0]->current_status}}</span></h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
-          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="#"> <i class="ri-stethoscope-line"></i> Move to IPD</button>
+          @can('Emergency Move To IPD')
+            <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="#"> <i class="ri-stethoscope-line"></i> Move to IPD</button>
+          @endcan
           {{-- <button class="btn btn-danger-600  btn-sm fw-normal d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#emergency-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button> --}}
           {{-- <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button> --}}
-          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} data-bs-toggle="modal" data-bs-target="#emergencyDischargeModel" onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
+          @can('Emergency Discharge')
+            <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} data-bs-toggle="modal" data-bs-target="#emergencyDischargeModel" onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
+          @endcan
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
         <!-- <div class="btns">
@@ -196,7 +200,9 @@
                     <div class="col-md-12 px-3">
                        <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Checkups</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-new-checkup"> <i class="ri-add-line"></i> New Checkup</button>
+                        @can('Emergency Visit Add')
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-new-checkup"> <i class="ri-add-line"></i> New Checkup</button>
+                        @endcan
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#emergency-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="card basic-data-table">
@@ -240,7 +246,9 @@
                   <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Medication</h6>
+                        @can('Emergency Medication Add')
                         <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-medication-dose" onclick="getVisitId(document.getElementById('patient_Id').value)"> <i class="ri-add-line"></i> Add Medication Dose</button>
+                        @endcan
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#emergency-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="table-responsive">
@@ -268,7 +276,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Lab Investigations</h6>
+                        @can('Emergency Lab Add')
                         <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#emergency-add-lab"> <i class="ri-add-line"></i> Add Lab</button>
+                        @endcan
                       </div>
                       <div class="card basic-data-table">
                             <table class="table bordered-table mb-0 w-100" id="emergancy-lab-reports-list" data-page-length='10'>
@@ -294,7 +304,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Charges</h6>
-                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-charges"> <i class="ri-add-line"></i> Add Charges</button>
+                          @can('Emergency Charge Add')
+                            <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-charges"> <i class="ri-add-line"></i> Add Charges</button>
+                          @endcan
                         </div>
                       <div class="table-responsive">
                         <table class="table  striped-table w-100" id="emergancy-charges-list">
@@ -319,7 +331,9 @@
                       <div class="col-md-12 px-3">
                         <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Nurse Note</h6>
-                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-nurse-note"> <i class="ri-add-line"></i> Add Nurse Note</button>
+                          @can('Emergency Nurse Note Add')
+                            <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-nurse-note"> <i class="ri-add-line"></i> Add Nurse Note</button>
+                          @endcan
                           <!-- <button class="btn btn-primary-600  btn-sm fw-medium" ><i class="ri-add-line"></i> Add Nurse Note</button> -->
                         </div>
                       </div>
@@ -346,7 +360,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Vital History</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-vital-history"> <i class="ri-add-line"></i> Add Vital History</button>
+                        @can('Emergency Vital Add')
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-vital-history"> <i class="ri-add-line"></i> Add Vital History</button>
+                        @endcan
                       </div>
                             <div class="table-responsive">
                         <table class="table striped-table w-100" id="emergencyVital-list">
@@ -458,9 +474,13 @@
         
         </div>
         <div class="modal-footer">
-           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyMedDoseSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyMedDoseUpdate d-none" onclick="emergencyMedDoseUpdate(document.getElementById('emergencyMedDoseId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+           @can('Emergency Medication Add')
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyMedDoseSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          @endcan
+          @can('Emergency Medication Edit')
+            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyMedDoseUpdate d-none" onclick="emergencyMedDoseUpdate(document.getElementById('emergencyMedDoseId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          @endcan
         </div>
       </form>
     </div>
@@ -552,8 +572,12 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyLabSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyLabUpdate d-none" onclick="emergencyLabsUpdate(document.getElementById('emergencyLabID').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+            @can('Emergency Lab Add')
+              <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyLabSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+            @endcan
+            @can('Emergency Lab Edit')
+              <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyLabUpdate d-none" onclick="emergencyLabsUpdate(document.getElementById('emergencyLabID').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+            @endcan
           </div>
       </form>
       </div>
@@ -729,8 +753,12 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyChargeSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyChargeUpdate d-none" onclick="emergencyChargeUpdate(document.getElementById('emergencyChargeId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          @can('Emergency Charge Add')
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyChargeSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          @endcan
+          @can('Emergency Charge Edit')
+            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyChargeUpdate d-none" onclick="emergencyChargeUpdate(document.getElementById('emergencyChargeId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          @endcan
         </div>
     </form>
     </div>
@@ -854,9 +882,13 @@
           </div>
         </div>
         <div class="modal-footer">
-           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyNurseNoteSubmit"> <i class="ri-checkbox-circle-line" oninput="validateField(this.id,'input')"></i> Save</button>
-           <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyNurseNoteUpdate d-none" onclick="emergencyNurseNoteUpdate(document.getElementById('emergencyNurseNoteId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          @can('Emergency Nurse Note Add')
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyNurseNoteSubmit"> <i class="ri-checkbox-circle-line" oninput="validateField(this.id,'input')"></i> Save</button>
+          @endcan
+          @can('Emergency Nurse Note Edit')
+            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyNurseNoteUpdate d-none" onclick="emergencyNurseNoteUpdate(document.getElementById('emergencyNurseNoteId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          @endcan
         </div>
       </form>
     </div>
@@ -899,147 +931,18 @@
       </div>
        <div class="modal-footer">
         <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyVItalSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyVItalUpdate d-none" onclick="emergencyVItalUpdate(document.getElementById('emergencyVitalId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+        @can('Emergency Vital Add')
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyVItalSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+        @endcan
+        @can('Emergency Vital Edit')
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyVItalUpdate d-none" onclick="emergencyVItalUpdate(document.getElementById('emergencyVitalId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+        @endcan
       </div>
     </form>
     </div>
   </div>
 </div>
 <!-- Add vital History end -->
-<!-- edit vital History Start -->
-<div class="modal fade" id="emergency-edit-vital-history" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="emergency-edit-vital-historyLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="emergency-edit-vital-historyLabel"> Edit Vital</h6>
-        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <table class="table table-borderless">
-                   <thead>
-                          <tr class="border-bottom">
-                            <th class="text-nowrap text-neutral-700">Vital Name <sup class="text-danger">*</sup></th>
-                            <th class="text-nowrap text-neutral-700">	Vital Value <sup class="text-danger">*</sup></th>
-                            <th class="text-nowrap text-neutral-700">Date <sup class="text-danger">*</sup></th>
-                          </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                         <select class="form-select form-select-sm" disabled>
-                            <option value="1">Select</option>
-                            <option value="2" selected>Height (1 - 200 Centimeters)</option>
-                            <option value="3" >Weight (1 - 100 Kg)</option>
-                            <option value="4" >Pulse (70 - 100 Beats per)</option>
-                            <option value="5">Temperature (95.8  -  99.3 Fahrenheit )</option>
-                            <option value="6">BP (90/60  -  140/90 mmHg)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="number" class="form-control form-control-sm" placeholder="160">
-                      </td>
-                      <td>
-                         <div class=" position-relative">
-                              <input class="form-control form-control-sm radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="05/22/2025 03:55 PM" readonly="readonly">
-                              <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                          </div>
-                      </td>
-                    </tr>
-                     <tr>
-                      <td>
-                         <select class="form-select form-select-sm" disabled>
-                            <option value="1">Select</option>
-                            <option value="2" >Height (1 - 200 Centimeters)</option>
-                            <option value="3" selected>Weight (1 - 100 Kg)</option>
-                            <option value="4" >Pulse (70 - 100 Beats per)</option>
-                            <option value="5">Temperature (95.8  -  99.3 Fahrenheit )</option>
-                            <option value="6">BP (90/60  -  140/90 mmHg)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="number" class="form-control form-control-sm" placeholder="60">
-                      </td>
-                      <td>
-                         <div class=" position-relative">
-                              <input class="form-control form-control-sm radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="04/22/2025 03:55 PM" readonly="readonly">
-                              <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                          </div>
-                      </td>
-                    </tr>
-                     <tr>
-                      <td>
-                         <select class="form-select form-select-sm" disabled>
-                            <option value="1">Select</option>
-                            <option value="2" >Height (1 - 200 Centimeters)</option>
-                            <option value="3" >Weight (1 - 100 Kg)</option>
-                            <option value="4" selected>Pulse (70 - 100 Beats per)</option>
-                            <option value="5">Temperature (95.8  -  99.3 Fahrenheit )</option>
-                            <option value="6">BP (90/60  -  140/90 mmHg)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="number" class="form-control form-control-sm" placeholder="80">
-                      </td>
-                      <td>
-                         <div class=" position-relative">
-                              <input class="form-control form-control-sm radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="04/22/2025 03:55 PM" readonly="readonly">
-                              <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                          </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                         <select class="form-select form-select-sm" disabled>
-                            <option value="1">Select</option>
-                            <option value="2" >Height (1 - 200 Centimeters)</option>
-                            <option value="3" >Weight (1 - 100 Kg)</option>
-                            <option value="4" >Pulse (70 - 100 Beats per)</option>
-                            <option value="5" selected>Temperature (95.8  -  99.3 Fahrenheit )</option>
-                            <option value="6">BP (90/60  -  140/90 mmHg)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="number" class="form-control form-control-sm" placeholder="96">
-                      </td>
-                      <td>
-                         <div class=" position-relative">
-                              <input class="form-control form-control-sm radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="04/22/2025 03:55 PM" readonly="readonly">
-                              <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                          </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                         <select class="form-select form-select-sm" disabled>
-                            <option value="1">Select</option>
-                            <option value="2" >Height (1 - 200 Centimeters)</option>
-                            <option value="3" >Weight (1 - 100 Kg)</option>
-                            <option value="4" >Pulse (70 - 100 Beats per)</option>
-                            <option value="5" >Temperature (95.8  -  99.3 Fahrenheit )</option>
-                            <option value="6" selected>BP (90/60  -  140/90 mmHg)</option>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="number" class="form-control form-control-sm" placeholder="120/20">
-                      </td>
-                      <td>
-                         <div class=" position-relative">
-                              <input class="form-control form-control-sm radius-8 bg-base medication-date flatpickr-input active" type="text" placeholder="04/22/2025 03:55 PM" readonly="readonly">
-                              <span class="position-absolute end-0 top-50 translate-middle-y me-12 line-height-1"><iconify-icon icon="solar:calendar-linear" class="icon text-lg"></iconify-icon></span>
-                          </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                 </table>
-        </div>
-       <div class="modal-footer">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- edit vital History end -->
 <!--  opd new checkup Start -->
  <div class="modal fade" id="emergency-new-checkup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="emergency-new-checkupLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -1170,8 +1073,12 @@
       </div>
       <div class="modal-footer">
          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyVisitSubmit"><i class="ri-checkbox-circle-line"></i> Submit</button>
+        @can('Emergency Visit Add')
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyVisitSubmit"><i class="ri-checkbox-circle-line"></i> Submit</button>
+        @endcan
+        @can('Emergency Visit Edit')
         <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyVisitUpdate d-none" onclick="emergencyVisitUpdate(document.getElementById('emergencyVisitId').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
+        @endcan
       </div>
     </form>
     </div>

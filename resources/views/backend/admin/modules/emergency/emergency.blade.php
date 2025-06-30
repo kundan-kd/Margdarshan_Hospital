@@ -18,7 +18,9 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
   <h6 class="fw-normal mb-0">Emergency</h6>
   <div class="d-flex flex-wrap align-items-center gap-2">
+    @can('Emergency Patient Add')
           <a href="add-emergency-patient.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-patient" onclick= "resetAddPatient();getBedDataEmergency()"> <i class="ri-add-line"></i> Add Emergency Patient</a>
+    @endcan      
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
   <!-- <div class="btns">
@@ -185,8 +187,12 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal" onclick="reopenAppointment()">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal emergencyPatientSubmit">Submit</button>
+          @can('Emergency Patient Add')
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal emergencyPatientSubmit">Submit</button>
+          @endcan
+          @can('Emergency Patient Edit')
           <button type="button" class="btn btn-primary-600  btn-sm fw-normal emergencyPatientUpdate" onclick="emergencyPatientUpdate(document.getElementById('emergencyPatientId').value)">Update</button>
+          @endcan
            <!-- <button type="button" class="btn btn-warning-600  btn-sm fw-normal">Save & Book Appointment</button>  -->
         </div>
       </form>

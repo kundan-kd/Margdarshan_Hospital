@@ -91,9 +91,9 @@ class IpdinController extends Controller
                      <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="ipdPatientEdit('.$row->id.');getBedData('.$row->id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="ipdpatientDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
         })
         ->rawColumns(['patient_id','status','action'])
         ->make(true);
@@ -455,9 +455,9 @@ class IpdinController extends Controller
                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="lucide:edit" onclick="ipdVisitEdit('.$row->id.')"></iconify-icon>
                         </a>
-                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="mingcute:delete-2-line" onclick="ipdVisitDelete('.$row->id.')"></iconify-icon>
-                        </a>';
+                        </a>-->';
             })
             ->rawColumns(['action'])       
             ->make(true);
@@ -566,9 +566,9 @@ class IpdinController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="lucide:edit" onclick="ipdMedDoseEdit('.$row->id.')"></iconify-icon>
                         </a>
-                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="mingcute:delete-2-line" onclick="ipdMedDoseDelete('.$row->id.')"></iconify-icon>
-                        </a>';
+                        </a>-->';
             })
             ->rawColumns(['action'])       
             ->make(true);
@@ -675,9 +675,9 @@ class IpdinController extends Controller
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="ipdLabEdit('.$row->id.');getTestName('.$row->test_type_id.','.$row->test_name_id.');getTestDetails('.$row->test_name_id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="ipdLabDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -772,9 +772,9 @@ class IpdinController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="ipdChargeEdit('.$row->id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="ipdChargeDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -844,9 +844,9 @@ class IpdinController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="ipdVitalEdit('.$row->id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="ipdVitalDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -920,9 +920,9 @@ class IpdinController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="ipdNurseNoteEdit('.$row->id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="ipdNurseNoteDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);

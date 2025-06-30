@@ -18,7 +18,9 @@ Patient
     <div class="card-header d-flex align-items-center justify-content-between">
       <h5 class="card-title mb-0 fw-medium">Patient Details</h5>
       <div class="d-flex flex-wrap align-items-center gap-2">
+        @can('Appointment Patient Add')
               <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#patient-add-patient" onclick="resetPatientAddPatient()"> <i class="ri-add-line"></i> Add OPD Patient</a>
+        @endcan
           </div>
     </div>
     <div class="card-body">
@@ -136,8 +138,12 @@ Patient
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal" onclick="reopenAppointment()">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal patientAddPatientSubmit">Submit</button>
-          <button type="button" class="btn btn-primary-600  btn-sm fw-normal patientAddPatientUpdate d-none" onclick="patientAddPatientUpdate(document.getElementById('patient-patientId').value)">Update</button>
+          @can('Appointment Patient Add')
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal patientAddPatientSubmit">Submit</button>
+          @endcan
+          @can('Appointment Patient Edit')
+            <button type="button" class="btn btn-primary-600  btn-sm fw-normal patientAddPatientUpdate d-none" onclick="patientAddPatientUpdate(document.getElementById('patient-patientId').value)">Update</button>
+          @endcan
            <!-- <button type="button" class="btn btn-warning-600  btn-sm fw-normal">Save & Book Appointment</button>  -->
         </div>
       </form>

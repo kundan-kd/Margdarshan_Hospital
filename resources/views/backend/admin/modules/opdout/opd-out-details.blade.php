@@ -13,8 +13,9 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">OPD - Out Patient Details</h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
-          <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" onclick="#
-          "> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
+          @can('OPD Move To IPD')
+            <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" onclick="#"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
+          @endcan
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
           {{-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#out-patient-ipd"><i class="ri-stethoscope-line"></i> Move to IPD</button> --}}
           {{-- <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button> --}}
@@ -183,7 +184,9 @@
                     <div class="col-md-12 px-3">
                        <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Checkups</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-new-checkup" onclick="resetVisit()"> <i class="ri-add-line"></i> New Checkup</button>
+                        @can('OPD Visit Add')
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"       data-bs-toggle="modal" data-bs-target="#opd-new-checkup" onclick="resetVisit()"> <i class="ri-add-line"></i> New Checkup</button>
+                        @endcan
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="basic-data-table">
@@ -211,7 +214,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Medication</h6>
+                        @can('OPD Medication Add')
                         <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-medication-dose" onclick="resetMedication();getVisitId(document.getElementById('patient_Id').value)"> <i class="ri-add-line"></i> Add Medication Dose</button>
+                        @endcan
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="table-responsive">
@@ -255,7 +260,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Lab Investigations</h6>
+                        @can('OPD Lab Add')
                         <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-lab" onclick="resetLabTest()"> <i class="ri-add-line"></i> Add Lab</button>
+                        @endcan
                       </div>
                       <div class="card basic-data-table">
                             <table class="table bordered-table mb-0 w-100" id="opd-lab-reports-list" data-page-length='10'>
@@ -297,7 +304,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Charges</h6>
+                          @can('OPD Charge Add')
                           <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-charges" onclick="resetCharge()"> <i class="ri-add-line"></i> Add Charges</button>
+                          @endcan
                         </div>
                       <div class="table-responsive">
                         <table class="table  striped-table w-100" id="opd-out-charges-list">
@@ -402,7 +411,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Vital History</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-vital-history" onclick="resetVital()"> <i class="ri-add-line"></i> Add Vital History</button>
+                        @can('OPD Vital Add')
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-vital-history" onclick="resetVital()"> <i class="ri-add-line"></i> Add Vital History</button>
+                        @endcan
                       </div>
                       <div class="table-responsive">
                         <table class="table striped-table w-100" id="opdOutVital-list">
@@ -474,8 +485,12 @@
       </div>
        <div class="modal-footer">
         <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOurVItalSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOurVItalUpdate d-none" onclick="opdOurVItalUpdate(document.getElementById('opdOutVitalId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+        @can('OPD Vital Add')
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOurVItalSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+        @endcan
+        @can('OPD Vital Edit')
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOurVItalUpdate d-none" onclick="opdOurVItalUpdate(document.getElementById('opdOutVitalId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+        @endcan
       </div>
     </form>
     </div>
@@ -508,8 +523,12 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutChargeSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutChargeUpdate d-none" onclick="opdOutChargeUpdate(document.getElementById('opdOutChargeId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          @can('OPD Charge Add')
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutChargeSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          @endcan
+          @can('OPD Charge Add')
+            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutChargeUpdate d-none" onclick="opdOutChargeUpdate(document.getElementById('opdOutChargeId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          @endcan
         </div>
     </form>
     </div>
@@ -602,8 +621,12 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutLabSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutLabUpdate d-none" onclick="opdOutLabUpdate(document.getElementById('opOutLabID').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+            @can('OPD Lab Add')
+              <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutLabSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+            @endcan
+            @can('OPD Lab Edit')
+              <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutLabUpdate d-none" onclick="opdOutLabUpdate(document.getElementById('opOutLabID').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+            @endcan
           </div>
       </form>
       </div>
@@ -680,9 +703,13 @@
         
         </div>
         <div class="modal-footer">
-           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutMedDoseSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutMedDoseUpdate d-none" onclick="opdOutMedDoseUpdate(document.getElementById('opdOutMedDoseId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          @can('OPD Medication Add')
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutMedDoseSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          @endcan
+          @can('OPD Medication Edit')
+            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutMedDoseUpdate d-none" onclick="opdOutMedDoseUpdate(document.getElementById('opdOutMedDoseId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          @endcan
         </div>
       </form>
     </div>
@@ -818,8 +845,12 @@
       </div>
       <div class="modal-footer">
          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutVisitSubmit"><i class="ri-checkbox-circle-line"></i> Submit</button>
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutVisitUpdate d-none" onclick="opdOutVisitUpdate(document.getElementById('opdOutVisitId').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
+        @can('OPD Visit Add')
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutVisitSubmit"><i class="ri-checkbox-circle-line"></i> Submit</button>
+        @endcan
+        @can('OPD Visit Edit')
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutVisitUpdate d-none" onclick="opdOutVisitUpdate(document.getElementById('opdOutVisitId').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
+        @endcan
       </div>
     </div>
   </form>

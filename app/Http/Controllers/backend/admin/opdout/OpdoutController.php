@@ -220,9 +220,9 @@ class OpdoutController extends Controller
                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="lucide:edit" onclick="opdOutVisitEdit('.$row->id.')"></iconify-icon>
                         </a>-->
-                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutVisitDelete('.$row->id.')"></iconify-icon>
-                        </a>';
+                        </a>-->';
             })
             ->rawColumns(['action'])       
             ->make(true);
@@ -330,9 +330,9 @@ class OpdoutController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="lucide:edit" onclick="opdOutMedDoseEdit('.$row->id.')"></iconify-icon>
                         </a>
-                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutMedDoseDelete('.$row->id.')"></iconify-icon>
-                        </a>';
+                        </a>-->';
             })
             ->rawColumns(['action'])       
             ->make(true);
@@ -438,9 +438,9 @@ class OpdoutController extends Controller
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="opdOutLabEdit('.$row->id.');getTestName('.$row->test_type_id.','.$row->test_name_id.');getTestDetails('.$row->test_name_id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutLabDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -535,9 +535,9 @@ class OpdoutController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="opdOutChargeEdit('.$row->id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutChargeDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -607,9 +607,9 @@ class OpdoutController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="opdOutVitalEdit('.$row->id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="opdOutVitalDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);

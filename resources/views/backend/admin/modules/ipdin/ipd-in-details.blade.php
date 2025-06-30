@@ -15,11 +15,17 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">IPD - In Patient Details<span class="{{$patients[0]->current_status == 'Admitted'?'badge text-sm fw-normal bg-danger-600 mx-1 text-white':'badge text-sm fw-normal bg-success-600 mx-1 text-white'}}">{{$patients[0]->current_status}}</span></h6>
          <div class="d-flex flex-wrap align-items-center gap-2">
-          <button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToEmergencyModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to Emergency</button>
-          <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->current_status == 'Discharged' || $patients[0]->type == 'IPD'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to IPD</button>
+          {{-- <button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToEmergencyModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to Emergency</button> --}}
+          @can('IPD Move To IPD')
+            <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->current_status == 'Discharged' || $patients[0]->type == 'IPD'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to IPD</button>
+          @endcan
+          @can('IPD Move To ICU')
           <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged' || $patients[0]->type == 'ICU'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
+          @endcan
           {{-- <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button> --}}
+          @can('IPD Discharge')
           <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} data-bs-toggle="modal" data-bs-target="#ipdDischargeModel" onclick="patientDischarge({{$patients[0]->id}})" > <i class="ri-thumb-up-line"></i> Discharge</button>
+          @endcan
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
         <!-- <div class="btns">
@@ -195,7 +201,9 @@
                     <div class="col-md-12 px-3">
                        <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Checkups</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-new-checkup" onclick="resetVisit()"> <i class="ri-add-line"></i> New Checkup</button>
+                        @can('IPD Visit Add')
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-new-checkup" onclick="resetVisit()"> <i class="ri-add-line"></i> New Checkup</button>
+                        @endcan
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="card basic-data-table">
@@ -238,7 +246,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Medication</h6>
+                        @can('IPD Medication Add')
                         <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#ipd-add-medication-dose" onclick="resetMedication();getVisitId(document.getElementById('patient_Id').value)"> <i class="ri-add-line"></i> Add Medication Dose</button>
+                        @endcan
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="table-responsive">
@@ -267,7 +277,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Lab Investigations</h6>
+                        @can('IPD Lab Add')
                         <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#ipd-add-lab" onclick="resetLabTest()"> <i class="ri-add-line"></i> Add Lab</button>
+                        @endcan
                       </div>
                       <div class="card basic-data-table">
                             <table class="table bordered-table mb-0 w-100" id="ipd-lab-reports-list" data-page-length='10'>
@@ -309,7 +321,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Charges</h6>
+                          @can('IPD Charge Add')
                           <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-add-charges" onclick="resetCharge()"> <i class="ri-add-line"></i> Add Charges</button>
+                          @endcan
                         </div>
                       <div class="table-responsive">
                         <table class="table  striped-table w-100" id="ipd-charges-list">
@@ -349,7 +363,9 @@
                       <div class="col-md-12 px-3">
                         <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Nurse Note</h6>
+                          @can('IPD Nurse Note Add')
                           <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-nurse-note" onclick="resetNurse()"> <i class="ri-add-line"></i> Add Nurse Note</button>
+                          @endcan
                           <!-- <button class="btn btn-primary-600  btn-sm fw-medium" ><i class="ri-add-line"></i> Add Nurse Note</button> -->
                         </div>
                       </div>
@@ -376,7 +392,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Vital History</h6>
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-add-vital-history" onclick="resetVital()"> <i class="ri-add-line"></i> Add Vital History</button>
+                        @can('IPD Vital Add')
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-add-vital-history" onclick="resetVital()"> <i class="ri-add-line"></i> Add Vital History</button>
+                        @endcan
                       </div>
                       <div class="table-responsive">
                         <table class="table striped-table w-100" id="ipdVital-list">
@@ -582,8 +600,12 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+            @can('IPD Lab Add')
             <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdLabSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+            @endcan
+            @can('IPD Lab Edit')
             <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdLabUpdate d-none" onclick="ipdLabUpdate(document.getElementById('ipdLabID').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+            @endcan
           </div>
       </form>
       </div>
@@ -649,8 +671,12 @@
         </div>
         <div class="modal-footer">
            <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdNurseNoteSubmit"> <i class="ri-checkbox-circle-line" oninput="validateField(this.id,'input')"></i> Save</button>
+          @can('IPD Nurse Note Add')
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdNurseNoteSubmit"> <i class="ri-checkbox-circle-line" oninput="validateField(this.id,'input')"></i> Save</button>
+          @endcan
+          @can('IPD Nurse Note Edit')
            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdNurseNoteUpdate d-none" onclick="ipdNurseNoteUpdate(document.getElementById('ipdNurseNoteId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+           @endcan
         </div>
       </form>
     </div>
@@ -910,8 +936,12 @@
         </div>
         <div class="modal-footer">
            <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+           @can('IPD Medication Add')
           <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdMedDoseSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          @endcan
+          @can('IPD Medication Edit')
           <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdMedDoseUpdate d-none" onclick="ipdMedDoseUpdate(document.getElementById('ipdMedDoseId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          @endcan
         </div>
       </form>
     </div>
@@ -954,8 +984,12 @@
       </div>
        <div class="modal-footer">
         <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        @can('IPD Vital Add')
         <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVItalSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+        @endcan
+        @can('IPD Vital Edit')
         <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVItalUpdate d-none" onclick="ipdVItalUpdate(document.getElementById('ipdVitalId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+        @endcan
       </div>
     </form>
     </div>
@@ -1189,8 +1223,12 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          @can('IPD Charge Add')
           <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdChargeSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          @endcan
+          @can('IPD Charge Edit')
           <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdChargeUpdate d-none" onclick="ipdChargeUpdate(document.getElementById('ipdChargeId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+          @endcan
         </div>
     </form>
     </div>
@@ -1327,9 +1365,13 @@
        </div>
       </div>
       <div class="modal-footer">
-         <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVisitSubmit"><i class="ri-checkbox-circle-line"></i> Submit</button>
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVisitUpdate d-none" onclick="ipdVisitUpdate(document.getElementById('ipdVisitId').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
+        <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        @can('IPD Visit Add')
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVisitSubmit"><i class="ri-checkbox-circle-line"></i> Submit</button>
+        @endcan
+        @can('IPD Visit Edit')
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVisitUpdate d-none" onclick="ipdVisitUpdate(document.getElementById('ipdVisitId').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
+        @endcan
       </div>
     </div>
   </form>

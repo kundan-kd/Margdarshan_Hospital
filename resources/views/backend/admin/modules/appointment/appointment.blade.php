@@ -16,7 +16,9 @@ Appointment
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
     <h6 class="fw-normal mb-0">Appointment</h6>
     <div class="btns">
+      @can('Book Appointment Add')
       <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"  data-bs-toggle="modal" data-bs-target="#add-appointment" onclick="resetAppointmentForm()"><i class="ri-add-box-line"></i> Create New</button>
+      @endcan
       <!-- <a  class="btn btn-warning-600  btn-sm fw-normal " href="#dataTable" download><i class="ri-file-pdf-2-line"></i> Export</a> -->
     </div>
   </div>
@@ -152,9 +154,12 @@ $ddate = date("d/m/yy");
         </div>
         <div class="modal-footer">
            <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+           @can('Book Appointment Add')
           <button type="submit" class="btn btn-primary-600  btn-sm fw-normal appointmentSubmitBtn">Submit</button>
-          <!-- <button type="button" class="btn btn-warning-600  btn-sm fw-normal appointmentSubmitBtn">Submit & Print</button> -->
+          @endcan
+          @can('Book Appointment Edit')
           <button type="button" class="btn btn-primary-600  btn-sm fw-normal appointmentUpdateBtn d-none" onclick="updateAppointment(document.getElementById('patientNameApptID').value)">Update</button>
+          @endcan
         </div>
       </form>
     </div>

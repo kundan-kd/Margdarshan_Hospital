@@ -71,6 +71,7 @@
         </a>
       </li>
       {{-- <li class="sidebar-menu-group-title">Application</li> --}}
+      @can('Appointment Menu View')
       <li class="dropdown mb-1">
         <a href="javascript:void(0)">
           <i class="ri-calendar-event-line"></i>
@@ -85,7 +86,33 @@
           </li>
         </ul>
       </li> 
-
+      @endcan
+      
+      @can('OPD Patient View')
+        <li class="mb-1">
+        <a href="{{route('opd-out.index')}}">
+          <i class="ri-stethoscope-line"></i>
+          <span>OPD-Out Patients</span>
+        </a>
+        </li>
+      @endcan
+      @can('OPD Patient View')
+      <li class="mb-1">
+        <a href="{{route('ipd-in.index')}}">
+          <i class="ri-stethoscope-line"></i>
+          <span>IPD-In Patients</span>
+        </a>
+      </li>
+      @endcan
+      @can('Emergency Patient View')
+      <li class="mb-1">
+        <a href="{{route('emergency.index')}}">
+          <i class="ri-hospital-line"></i>
+          <span>Emergency</span>
+        </a>
+      </li>
+      @endcan
+      @can('Pharmacy Menu View')
       <li class="dropdown mb-1">
         <a href="javascript:void(0)">
           <i class="ri-capsule-line"></i>
@@ -103,28 +130,8 @@
           </li>
         </ul>
       </li>
-      {{-- @can('OPD Patient View') --}}
-        <li class="mb-1">
-        <a href="{{route('opd-out.index')}}">
-          <i class="ri-stethoscope-line"></i>
-          <span>OPD-Out</span>
-        </a>
-        </li>
-      {{-- @endcan
-      @can('OPD Patient View') --}}
-      <li class="mb-1">
-        <a href="{{route('ipd-in.index')}}">
-          <i class="ri-stethoscope-line"></i>
-          <span>IPD-In Patients</span>
-        </a>
-      </li>
-      {{-- @endcan --}}
-      <li class="mb-1">
-        <a href="{{route('emergency.index')}}">
-          <i class="ri-hospital-line"></i>
-          <span>Emergency</span>
-        </a>
-      </li>
+      @endcan
+      @can('Master Menu View')
       <li class="dropdown mb-1">
         <a href="javascript:void(0)">
          <i class="ri-settings-3-line"></i>
@@ -185,15 +192,10 @@
           <li>
             <a href="{{route('user.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>User</a>
           </li>
-           
-           
-          
-           
         </ul>
       </li>
-      
- 
-    </ul>
+      @endcan
+     </ul>
   </div>
 </aside>
 
@@ -275,7 +277,10 @@
             <div class="py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
               <div>
                 <h6 class="text-lg text-primary-light fw-semibold mb-2">{{auth()->user()->name ?? ''}}</h6>
-                <span class="text-secondary-light fw-medium text-sm">Admin</span>
+                @php
+                 $user = auth()->user();
+                @endphp
+                <span class="text-secondary-light fw-medium text-sm">{{$user->userTypeData->name}}</span>
               </div>
               <button type="button" class="hover-text-danger">
                 <iconify-icon icon="radix-icons:cross-1" class="icon text-xl"></iconify-icon> 

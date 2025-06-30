@@ -83,9 +83,9 @@ class EmergencyController extends Controller
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="emergencyPatientEdit('.$row->id.');getBedDataEmergency('.$row->id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyPatientDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a> -->';
         })
         ->rawColumns(['patient_id','status','action'])
         ->make(true);
@@ -371,9 +371,9 @@ class EmergencyController extends Controller
                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="lucide:edit" onclick="emergencyVisitEdit('.$row->id.')"></iconify-icon>
                         </a>
-                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyVisitDelete('.$row->id.')"></iconify-icon>
-                        </a>';
+                        </a>-->';
             })
             ->rawColumns(['action'])       
             ->make(true);
@@ -482,9 +482,9 @@ class EmergencyController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="lucide:edit" onclick="emergencyMedDoseEdit('.$row->id.')"></iconify-icon>
                         </a>
-                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyMedDoseDelete('.$row->id.')"></iconify-icon>
-                        </a>';
+                        </a>-->';
             })
             ->rawColumns(['action'])       
             ->make(true);
@@ -591,9 +591,9 @@ class EmergencyController extends Controller
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="emergencyLabEdit('.$row->id.');getTestName('.$row->test_type_id.','.$row->test_name_id.');getTestDetails('.$row->test_name_id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyLabDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -688,9 +688,9 @@ class EmergencyController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="emergencyChargeEdit('.$row->id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyChargeDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -763,9 +763,9 @@ class EmergencyController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="emergencyNurseNoteEdit('.$row->id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyNurseNoteDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -836,9 +836,9 @@ class EmergencyController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="emergencyVitalEdit('.$row->id.')"></iconify-icon>
                     </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyVitalDelete('.$row->id.')"></iconify-icon>
-                    </a>';
+                    </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);

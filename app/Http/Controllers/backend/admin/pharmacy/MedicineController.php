@@ -75,6 +75,7 @@ class MedicineController extends Controller
     }
     
      public function medicineAdd(Request $request){
+       // dd($request->all());
         $validator = Validator::make($request->all(),[
         'category' => 'required',
         'company' => 'required',
@@ -83,7 +84,7 @@ class MedicineController extends Controller
         're_order_level' => 'required',
         'rack' => 'required',
         'name' => 'required',
-        'composition' => 'required',
+        'composition' => 'array|required',
         'taxes' => 'required',
         'box_pack' => 'required',
         'narration' => 'nullable',
@@ -99,7 +100,7 @@ class MedicineController extends Controller
         $medicines->unit_id = $request->unit;
         $medicines->re_ordering_level = $request->re_order_level;
         $medicines->rack = $request->rack;
-        $medicines->composition = $request->composition;
+        $medicines->composition = implode(",",$request->composition); //array to string conversion
         $medicines->taxes = $request->taxes;
         $medicines->box_packing = $request->box_pack;
         $medicines->narration = $request->narration;
@@ -122,7 +123,7 @@ class MedicineController extends Controller
         're_ordering_level'=>$request->re_order_level, 
         'rack'=>$request->rack, 
         'name'=>$request->name, 
-        'composition'=>$request->composition, 
+        'composition'=>implode(",",$request->composition), // array to string conversion
         'taxes'=>$request->taxes, 
         'box_packing'=>$request->box_pack, 
         'narration'=>$request->narration, 

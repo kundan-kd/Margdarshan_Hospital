@@ -147,6 +147,9 @@ function patientDischargeE(id){
 
     
 }
+// function dishargeEmergency(id){
+//      window.open('emergency-bills/' + id);
+// }
 $('#emergency-dischargeAmountForm').on('submit',function(e){
     e.preventDefault();
     let patient_id = $('#patient_Id').val();

@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
-   public function generateInvoice(){
+   public function generateInvoice($id){
+        // $payment_bills = PaymentBill::where('patient_id',)
         return view('backend.admin.modules.invoice.discharge-bill');
     }
 }

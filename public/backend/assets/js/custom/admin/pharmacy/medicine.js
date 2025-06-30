@@ -108,10 +108,10 @@ $('#createMed_form').on('submit', function(e) {
     let rack = $('#createMed_rack').val();
     let name = $('#createMed_name').val();
     //  let composition = $('#createMed_composition').val();
-     let composition = '';
-    // let composition_array = $('select[name="createMed_composition[]"]').map(function(){return $(this).val();}).get();
+    //  let composition = '';
+     let composition_array = $('select[name="createMed_composition[]"]').map(function(){return $(this).val();}).get();
     
-    console.log(composition_array);
+    // console.log(composition_array);
     let taxes = $('#createMed_taxes').val();
     let box_pack = $('#createMed_boxPacking').val();
     let narration = $('#createMed_narration').val();
@@ -122,7 +122,7 @@ $('#createMed_form').on('submit', function(e) {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         data:{
-            category:category,company:company,group:group,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition,taxes:taxes,box_pack:box_pack,narration:narration
+            category:category,company:company,group:group,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition_array,taxes:taxes,box_pack:box_pack,narration:narration
         },
         success:function(response){
         //   console.log(response);
@@ -160,6 +160,7 @@ function medicineEdit(id){
             let getData = response.data[0];
             console.log(getData);
            if(response.success){
+            const arrayValue = getData.composition.split(','); // [1, 2, 3]
             $('#medician-list-add').modal('show');
             $('#medician-list-addLabel').html('Update Medicine');
             $('.medicineAddBtn').addClass('d-none');
@@ -172,7 +173,7 @@ function medicineEdit(id){
             $('#createMed_reOrderingLevel').val(getData.re_ordering_level);
             $('#createMed_rack').val(getData.rack);
             $('#createMed_name').val(getData.name);
-            $('#createMed_composition').val(getData.composition);
+            $('#createMed_composition').val(arrayValue).trigger('change'); ;
             $('#createMed_taxes').val(getData.taxes);
             $('#createMed_boxPacking').val(getData.box_packing);
             $('#createMed_narration').val(getData.narration);

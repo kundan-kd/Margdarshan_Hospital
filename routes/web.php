@@ -423,7 +423,7 @@ Route::post('/emergency-vital-delete',[EmergencyController::class,'emergencyVita
 Route::post('/emergency-bill-view',[EmergencyController::class,'viewEmergencyBills'])->name('emergency.viewEmergencyBills');
 
 
-Route::get('/invoice',[InvoiceController::class,'generateInvoice']);
+Route::get('/emergency-bills/{id}',[InvoiceController::class,'generateInvoice']);
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
 

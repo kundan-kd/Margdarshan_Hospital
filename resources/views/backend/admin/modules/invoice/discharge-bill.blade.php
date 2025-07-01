@@ -39,10 +39,10 @@ Discharge Billing
           </div> --}}
         </div>
       </div>
-      <form action="" id="billPayment-Form">
+      <form action="" action="">
         <div class="card-body pharmacy-purchase-content pt-1">
              <div class="table-responsive scroll-sm">
-                    <h6 class="text-xl fw-normal">Payment Details</h6>
+                    <h6 class="text-xl fw-normal">Bill Details</h6>
                     <table class="table bordered-table text-sm">
                       <thead>
                         <tr>
@@ -95,12 +95,16 @@ Discharge Billing
                         <td class="border-0 text-end fs-6">₹ <span class="bill-totalPaidAmount">{{$received_amount ?? 0}}</span></td>
                       </tr>
                       <tr>
+                        <td class="border-0" colspan="2">Discount Amount (₹)</td>
+                        <td class="border-0 text-end fs-6">₹ <span class="bill-totalDiscountAmount">{{$discount_amount ?? 0}}</span></td>
+                      </tr>
+                      <tr>
                         <td class="border-0" colspan="2">Due Amount (₹)</td>
-                        <td class="border-0 text-end fs-6">₹ <span class="bill-totalDueAmount">{{$total_amount - $received_amount ?? 0}}</span></td>
+                        <td class="border-0 text-end fs-6">₹ <span class="bill-totalDueAmount">{{$total_amount - ($received_amount + $discount_amount) ?? 0}}</span></td>
                       </tr>
                       <tr>
                         <td colspan="2" class="border-0">
-                          <select id="billingAdd-paymentMode" class="form-select form-select-sm">
+                          <select id="billAdd-paymentMode" class="form-select form-select-sm" required>
                             <option value="">Select Payment Mode</option>
                             <option value="Cash">Cash</option>
                             <option value="UPI">UPI</option>
@@ -119,7 +123,9 @@ Discharge Billing
         </div>
         <div class=" pharmacy-footer card-footer border-top">
           <div class="text-end">
-                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddSubmitBtn" onclick="billAmountSubmit({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddSubmitBtn" onclick="billAmountSubmit({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+                <button type="button"class="btn btn-primary-600 btn-sm fw-normal mx-2 billPrintBtn {{(($total_amount - ($received_amount + $discount_amount)) <= 0) ? '' : 'd-none' }}"onclick="billPrint({{ $patient_id }})"><i class="ri-checkbox-circle-line"></i> Print</button>
+
                 <button class="btn btn-primary billingAddSpinnBtn d-none" type="button" disabled>
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     Please Wait...

@@ -291,7 +291,7 @@
         <div class="invoice-header">
             <div class="hospital-info">
                 <div>
-                    <div class="hospital-logo">🏥 MediCare General Hospital</div>
+                    <div class="hospital-logo">🏥 Margdarshan Hospital</div>
                     <div class="hospital-details">
                         123 Health Street, Medical District<br>
                         New York, NY 10001<br>

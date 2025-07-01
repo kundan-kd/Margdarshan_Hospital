@@ -434,7 +434,8 @@ Route::post('/emergency-bill-view',[EmergencyController::class,'viewEmergencyBil
 
 
 Route::get('/emergency-bills/{id}',[InvoiceController::class,'generateEmergencyBills']);
-Route::get('/invoice-bill-payment/{id}',[InvoiceController::class,'payBillAmount'])->name('invoice.payBillAmount');
+Route::post('/invoice-bill-payment',[InvoiceController::class,'payBillAmount'])->name('invoice.payBillAmount');
+Route::get('/discharge-bill-print/{id}',[InvoiceController::class,'dischargeBillPrint']);
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
 

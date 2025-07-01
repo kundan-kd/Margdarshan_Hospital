@@ -214,7 +214,6 @@ function processDischarge(id){
     });
 }
 function emergencyDischarge(id){
-    // console.log('hello');
      window.open('/emergency-bills/' + id);
 }
 function resetAdvance(){

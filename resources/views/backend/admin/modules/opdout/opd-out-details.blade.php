@@ -16,9 +16,9 @@
           @can('OPD Move To IPD')
             <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" onclick="#"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
           @endcan
-          @can('OPD Move To IPD')
+          {{-- @can('OPD Move To ICU')
           <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" onclick="#"> <i class="ri-stethoscope-line"></i></i> Move to ICU</button>
-          @endcan
+          @endcan --}}
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
           {{-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#out-patient-ipd"><i class="ri-stethoscope-line"></i> Move to IPD</button> --}}
           {{-- <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button> --}}
@@ -425,9 +425,7 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Advance Amount</h6>
-                          @can('OPD Charge Add')
                           <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-advance" onclick="resetAdvance()"> <i class="ri-add-line"></i> Add Amount</button>
-                          @endcan
                         </div>
                       <div class="table-responsive">
                         <table class="table  striped-table w-100" id="opd-out-advance-list">

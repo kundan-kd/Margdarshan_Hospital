@@ -144,9 +144,10 @@ class BillingController extends Controller
             if($request->totalNetAmount > 0){
             $payment_received = new PaymentBill();
             $payment_received->patient_id = $request->patientID;
-            $payment_received->type = 'Billing';
+            $payment_received->type = $billings->id;
+            $payment_received->type_id = 'Billing';
             $payment_received->amount_for = 'Medicine Billing';
-            $payment_received->title = 'Medicine Billing id: '.$billings->id;
+            $payment_received->title = 'Medicine Bill Amount';
             $payment_received->amount = $request->totalNetAmount;
             $payment_received->payment_mode = $request->paymentMode;
             $payment_received->save();
@@ -155,9 +156,10 @@ class BillingController extends Controller
             if($request->payAmount > 0){
             $payment_received = new PaymentReceived();
             $payment_received->patient_id = $request->patientID;
-            $payment_received->type = 'Billing';
+            $payment_received->type = $billings->id;
+            $payment_received->type_id = 'Billing';
             $payment_received->amount_for = 'Medicine Billing';
-            $payment_received->title = 'Medicine Billing id: '.$billings->id;
+            $payment_received->title = 'Medicine Billing Amount';
             $payment_received->amount = $request->payAmount;
             $payment_received->payment_mode = $request->paymentMode;
             $payment_received->save();

@@ -11,11 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_advances', function (Blueprint $table) {
+        Schema::create('patient_moves', function (Blueprint $table) {
             $table->id();
+            $table->string('type',20)->nullable();
             $table->integer('patient_id')->nullable();
-            $table->double('amount')->default(0);
-            $table->string('payment_mode',20)->nullable();
+            $table->integer('from_bed')->nullable();
+            $table->integer('to_bed')->nullable();
+            $table->integer('days')->nullable();
+            $table->double('charge')->nullable();
+            $table->text('desc')->nullable();
+            $table->string('move_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payment_advances');
+        Schema::dropIfExists('patient_moves');
     }
 };

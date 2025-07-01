@@ -24,6 +24,7 @@ use App\Models\User;
 use App\Models\Visit;
 use App\Models\Vital;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -105,6 +106,7 @@ class OpdoutController extends Controller
         return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds','icuAvailBeds'));
     }
     function moveToIpdStatus(Request $request){
+        $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
         $now = Carbon::now();
         $curr_status = Patient::where('id',$request->id)->get(['type']);
         $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
@@ -115,12 +117,40 @@ class OpdoutController extends Controller
             'type_change_date' => $now
         ]);
         if($update){
+            Appointment::where('patient_id',$request->id)->update([
+            'type' =>'IPD',
+            'bed_id' => $request->bed_id,
+            'type_change_date' => $now
+            ]);
+
             Bed::where('id',$request->bed_id)->update([
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $request->id,
                 'occupied_date' =>$now
 
             ]);
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "OPD";
+            $payment_bills->patient_id = $request->id;
+            $payment_bills->to_bed_id = $request->bed_id;
+            $payment_bills->amount_for = 'Bed Charge';
+            $payment_bills->title = 'Patient Moved to IPD';
+            $payment_bills->save();
+            $new_created_at = $payment_bills->created_at;
+
+            if ($previous_payment_bill) {
+                $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+               $created_at = new DateTime($previous_payment_bill->created_at);
+                $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
+
+                $interval = $created_at->diff($updated_at);
+                $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
+                $pre_bed_amount = $bed_amount * $occupied_days;
+                PaymentBill::where('id',$previous_payment_bill->id)->update([
+                    'amount' => $pre_bed_amount
+                ]);
+            } // amount add to previous bed type for billing
+
             $timelines = new Timeline();
             $timelines->type = "OPD";
             $timelines->patient_id = $request->id;
@@ -132,6 +162,7 @@ class OpdoutController extends Controller
         }
     }
     function moveToIcuStatus(Request $request){
+        $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
         $now = Carbon::now();
         $curr_status = Patient::where('id',$request->id)->get(['type']);
         $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
@@ -148,6 +179,30 @@ class OpdoutController extends Controller
                 'occupied_date' =>$now
 
             ]);
+
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "OPD";
+            $payment_bills->patient_id = $request->id;
+            $payment_bills->to_bed_id = $request->bed_id;
+            $payment_bills->amount_for = 'Bed Charge';
+            $payment_bills->title = 'Patient Moved to ICU';
+            $payment_bills->save();
+            $new_created_at = $payment_bills->created_at;
+
+            if ($previous_payment_bill) {
+                $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+                $created_at = new DateTime($previous_payment_bill->created_at);
+                $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
+
+                $interval = $created_at->diff($updated_at);
+                $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
+
+                $pre_bed_amount = $bed_amount * $occupied_days;
+                PaymentBill::where('id',$previous_payment_bill->id)->update([
+                    'amount' => $pre_bed_amount
+                ]);
+            } // amount add to previous bed type for billing
+
             $timelines = new Timeline();
             $timelines->type = "OPD";
             $timelines->patient_id = $request->id;
@@ -712,8 +767,10 @@ class OpdoutController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
-          $optoutAdvance = new PaymentAdvance();
+          $optoutAdvance = new PaymentReceived();
             $optoutAdvance->patient_id = $request->patientId;
+            $optoutAdvance->type = "OPD";
+            $optoutAdvance->amount_for = "Advance";
             $optoutAdvance->amount = $request->amount;
             $optoutAdvance->payment_mode = $request->pmode;
         if($optoutAdvance->save()){
@@ -731,7 +788,7 @@ class OpdoutController extends Controller
     }
     public function viewOpdOutAdvance(Request $request){
         if($request->ajax()){
-            $advance = PaymentAdvance::where('patient_id',$request->patient_id)->get();
+            $advance = PaymentReceived::where('patient_id',$request->patient_id)->where('amount_for','Advance')->get();
             return DataTables::of($advance)
             ->addColumn('created_at',function($row){
                 return $row->created_at;
@@ -752,11 +809,11 @@ class OpdoutController extends Controller
         }
     }
     public function getOpdOutAdvanceData(Request $request){
-        $getData = PaymentAdvance::where('id',$request->id)->get();
+        $getData = PaymentReceived::where('id',$request->id)->get();
         return response()->json(['success'=>'Advance data fetched','data'=>$getData],200);
     }
     public function opdOutAdvanceDataUpdate(Request $request){
-        $update = PaymentAdvance::where('id',$request->id)->update([
+        $update = PaymentReceived::where('id',$request->id)->update([
             'amount' => $request->amount,
             'payment_mode' => $request->pmode
         ]);

@@ -12,6 +12,7 @@ use App\Models\Medication;
 use App\Models\MedicineCategory;
 use App\Models\NurseNote;
 use App\Models\Patient;
+use App\Models\PaymentAdvance;
 use App\Models\PaymentBill;
 use App\Models\PaymentReceived;
 use App\Models\TestName;
@@ -21,6 +22,7 @@ use App\Models\User;
 use App\Models\Visit;
 use App\Models\Vital;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -141,7 +143,6 @@ class EmergencyController extends Controller
             $payment_bills->patient_id = $patient->id;
             $payment_bills->amount_for = 'Bed Charge';
             $payment_bills->title = 'Patient Addmitted to Emergency';
-            $payment_bills->amount = $bed_amount[0]->amount;
             $payment_bills->save();
             return response()->json(['success'=>'New IPD Patient added successfully'],201);
         }else{
@@ -209,6 +210,7 @@ class EmergencyController extends Controller
         return response()->json(['success'=>'Bed data fetched','data'=>$getData,'bedTypeName'=>$bedtypename],200);
     }
     function moveToIpdStatus(Request $request){
+        $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
         $now = Carbon::now();
         $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
         $curr_status = Patient::where('id',$request->id)->get(['type']);
@@ -233,6 +235,27 @@ class EmergencyController extends Controller
                 'occupied_date' => null,
                 'current_status' =>'vacant'
             ]);
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "EMERGENCY";
+            $payment_bills->patient_id = $request->id;
+            $payment_bills->to_bed_id = $request->bed_id;
+            $payment_bills->amount_for = 'Bed Charge';
+            $payment_bills->title = 'Patient Moved to IPD';
+            $payment_bills->save();
+            $new_created_at = $payment_bills->created_at;
+            if ($previous_payment_bill) {
+                $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+               $created_at = new DateTime($previous_payment_bill->created_at);
+                $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
+
+                $interval = $created_at->diff($updated_at);
+                $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
+                $pre_bed_amount = $bed_amount * $occupied_days;
+                PaymentBill::where('id',$previous_payment_bill->id)->update([
+                    'amount' => $pre_bed_amount
+                ]);
+            } // amount add to previous bed type for billing
+
             $timelines = new Timeline();
             $timelines->type = "IPD";
             $timelines->patient_id = $request->id;
@@ -244,6 +267,7 @@ class EmergencyController extends Controller
         }
     }
     function moveToIcuStatus(Request $request){
+        $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
         $now = Carbon::now();
         $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
         $curr_status = Patient::where('id',$request->id)->get(['type']);
@@ -268,6 +292,29 @@ class EmergencyController extends Controller
                 'occupied_date' => null,
                 'current_status' =>'vacant'
             ]);
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "EMERGENCY";
+            $payment_bills->patient_id = $request->id;
+            $payment_bills->to_bed_id = $request->bed_id;
+            $payment_bills->amount_for = 'Bed Charge';
+            $payment_bills->title = 'Patient Moved to ICU';
+            $payment_bills->save();
+            $new_created_at = $payment_bills->created_at;
+
+            if ($previous_payment_bill) {
+                $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+                $created_at = new DateTime($previous_payment_bill->created_at);
+                $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
+
+                $interval = $created_at->diff($updated_at);
+                $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
+
+                $pre_bed_amount = $bed_amount * $occupied_days;
+                PaymentBill::where('id',$previous_payment_bill->id)->update([
+                    'amount' => $pre_bed_amount
+                ]);
+            } // amount add to previous bed type for billing
+
             $timelines = new Timeline();
             $timelines->type = "EMERGENCY";
             $timelines->patient_id = $request->id;
@@ -899,6 +946,70 @@ class EmergencyController extends Controller
     public function emergencyVitalDataDelete(Request $request){
         Vital::where('id',$request->id)->delete();
         return response()->json(['success'=>'Vital deleted successfully'],200);
+    }
+     public function emergencyAdvanceSubmit(Request $request){
+         $validator = Validator::make($request->all(),[
+            'amount' => 'required',
+            'pmode' => 'required'
+        ]);
+        if($validator->fails()){
+            return response()->json(['error_validation'=>$validator->errors()->all()],200);
+        }
+          $optoutAdvance = new PaymentReceived();
+            $optoutAdvance->patient_id = $request->patientId;
+            $optoutAdvance->type = "EMERGENCY";
+            $optoutAdvance->amount_for = "Advance";
+            $optoutAdvance->amount = $request->amount;
+            $optoutAdvance->payment_mode = $request->pmode;
+        if($optoutAdvance->save()){
+            $timelines = new Timeline();
+             $timelines->type = "Emergency";
+             $timelines->patient_id = $request->patientId;
+             $timelines->title = "Advance";
+             $timelines->desc = "Advance Payment amount rs.".$request->amount." added";
+             $timelines->created_by = "Admin";
+             $timelines->save();
+            return response()->json(['success'=>'Advance added successfully'],200);
+        }else{
+            return response()->json(['error_success'=>'Advance not added']);
+        }
+    }
+    public function viewEmergencyAdvance(Request $request){
+        if($request->ajax()){
+            $advance = PaymentReceived::where('patient_id',$request->patient_id)->where('amount_for','Advance')->get();
+            return DataTables::of($advance)
+            ->addColumn('created_at',function($row){
+                return $row->created_at;
+            })
+            ->addColumn('amount',function($row){
+                return $row->amount;
+            })
+            ->addColumn('pmode',function($row){
+                return $row->payment_mode;
+            })
+            ->addColumn('action',function($row){
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
+                      <iconify-icon icon="lucide:edit" onclick="emergencyAdvanceEdit('.$row->id.')"></iconify-icon>
+                    </a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+    }
+    public function getEmergencyAdvanceData(Request $request){
+        $getData = PaymentReceived::where('id',$request->id)->get();
+        return response()->json(['success'=>'Advance data fetched','data'=>$getData],200);
+    }
+    public function emergencyAdvanceDataUpdate(Request $request){
+        $update = PaymentReceived::where('id',$request->id)->update([
+            'amount' => $request->amount,
+            'payment_mode' => $request->pmode
+        ]);
+        if($update){
+            return response()->json(['success'=>'Advance payment updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Advance payment data not updated']);
+        }
     }
     public function viewEmergencyBills(Request $request){
         if($request->ajax()){

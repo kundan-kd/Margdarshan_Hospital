@@ -247,4 +247,149 @@ function processDischarge(id){
         }
     });
 }
-
+function resetAdvance(){
+    $('#ipd-add-advanceLabel').html('Add Advance Amount');
+    $('#ipdAdvanceId').val('');
+    $('#ipdAdvance-amount').val('');
+    $('#ipdAdvance-pmode').val('');
+    $('.ipdAdvanceSubmit').removeClass('d-none');
+    $('.ipdAdvanceUpdate').addClass('d-none');
+}
+let patientId = $('#patient_Id').val();
+let table_advance = $('#ipd-advance-list').DataTable({
+    processing:true,
+    serverSide:true,
+    ajax:{
+        url:viewIpdAdvance,
+        type:"POST",
+        headers:{
+           'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        },
+        data: function(d){
+            d.patient_id = patientId;
+        },
+        error:function(xhr,thrown){
+            console.log(xhr.responseText);
+            alert('Error: '+thrown);
+        }
+    },
+    columns:[
+        {
+            data:'created_at',
+            name:'created_at'
+        },
+        {
+            data:'amount',
+            name:'amount'
+        },
+        {
+            data:'pmode',
+            name:'pmode'
+        },
+        {
+            data:'action',
+            name:'action',
+            orderable:false,
+            searchable:false
+        },
+    ]
+});
+$('#ipdAdvance-form').on('submit',function(e){
+    e.preventDefault();
+    let patient_id = $('#patient_Id').val();
+    let amount = validateField('ipdAdvance-amount', 'select');
+    let pmode = validateField('ipdAdvance-pmode', 'select');
+     if(amount === true && pmode === true){
+       let amount = $('#ipdAdvance-amount').val();
+       let pmode = $('#ipdAdvance-pmode').val();
+        $.ajax({
+            url:ipdAdvanceSubmit,
+            type:"POST",
+            data:{
+                patientId:patient_id,amount:amount,pmode:pmode
+            },
+            headers:{
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(response){
+                if(response.success){
+                    $('#ipd-add-advance').modal('hide');
+                    $('#ipdAdvance-form')[0].reset();
+                    $('#ipd-advance-list').DataTable().ajax.reload();
+                    toastSuccessAlert(response.success);
+                }else if(response.error_validation){
+                    console.log(response.error_validation);
+                    toastWarningAlert(response.error_validation);
+                }else{
+                    toastErrorAlert('Something went wrong, please try again');
+                }
+            },
+            error:function(xhr, status, error){
+                console.log(xhr.respnseText);
+                alert('An Error Occurred: '+error);
+            }
+            
+        });
+    }else{
+        console.log("Please fill all required fields");
+    } 
+});
+function ipdAdvanceEdit(id){
+    $.ajax({
+        url: getIpdAdvanceData,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:id},
+        success:function(response){
+            if(response.success){
+               let getData = response.data[0];
+                $('#ipd-add-advanceLabel').html('Edit Advance Amount');
+                $('.ipdAdvanceSubmit').addClass('d-none');
+                $('.ipdAdvanceUpdate').removeClass('d-none');
+                $('#ipd-add-advance').modal('show');
+                $('#ipdAdvanceId').val(id);
+                $('#ipdAdvance-amount').val(getData.amount);
+                $('#ipdAdvance-pmode').val(getData.payment_mode);
+            }
+        }
+    });
+}
+function ipdAdvanceUpdate(id){
+    let amount = validateField('ipdAdvance-amount', 'select');
+    let pmode = validateField('ipdAdvance-pmode', 'select');
+     if(amount === true && pmode === true){
+        let amount = $('#ipdAdvance-amount').val();
+       let pmode = $('#ipdAdvance-pmode').val();
+        $.ajax({
+            url:ipdAdvanceDataUpdate,
+            type:"POST",
+            data:{
+                id:id,amount:amount,pmode:pmode
+            },
+            headers:{
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(response){
+                if(response.success){
+                    $('#ipd-add-advance').modal('hide');
+                    $('#ipdAdvance-form')[0].reset();
+                    $('#ipd-advance-list').DataTable().ajax.reload();
+                    toastSuccessAlert(response.success);
+                }else if(response.error_validation){
+                    console.log(response.error_validation);
+                    toastWarningAlert(response.error_validation);
+                }else{
+                    toastErrorAlert('Something went wrong, please try again');
+                }
+            },
+            error:function(xhr, status, error){
+                console.log(xhr.respnseText);
+                alert('An Error Occurred: '+error);
+            }
+        });
+    }else{
+        console.log("Please fill all required fields");
+    }  
+}

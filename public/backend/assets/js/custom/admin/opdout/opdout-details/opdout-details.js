@@ -36,7 +36,7 @@ $('#opd-ipdRoomForm').on('submit',function(e){
                     if (response.success) {
                         Swal.fire("Moved", response.success, "success");
                         setTimeout(function(){
-                            window.open('/opd-out');
+                            window.open('/ipd-in');
                         },2500);
                     } else {
                         Swal.fire("Error!", "Error", "error");

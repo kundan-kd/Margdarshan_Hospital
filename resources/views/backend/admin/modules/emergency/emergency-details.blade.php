@@ -21,10 +21,11 @@
           @can('Emergency Move To ICU')
             <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="#"> <i class="ri-stethoscope-line"></i> Move to ICU</button>
           @endcan
-          {{-- <button class="btn btn-danger-600  btn-sm fw-normal d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#emergency-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button> --}}
-          {{-- <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button> --}}
-          @can('Emergency Discharge')
+          {{-- @can('Emergency Discharge')
             <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} data-bs-toggle="modal" data-bs-target="#emergencyDischargeModel" onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
+          @endcan --}}
+          @can('Emergency Discharge')
+            <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="emergencyDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
           @endcan
           {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
@@ -65,6 +66,9 @@
                   <li class="nav-item" role="presentation">
                     <button class="nav-link px-16 py-10 " id="pills-bills-tab-emergency" data-bs-toggle="pill" data-bs-target="#pills-bills-emergency" type="button" role="tab" aria-controls="pills-history-emergency" aria-selected="false">Bills</button>
                   </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link px-16 py-10 " id="pills-payment-tab" data-bs-toggle="pill" data-bs-target="#pills-payment" type="button" role="tab" aria-controls="pills-payment" aria-selected="false">Advance</button>
+                </li>
             </ul>
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="pills-Overview-emergency" role="tabpanel" aria-labelledby="Overview-tab-emergency" tabindex="0">
@@ -391,6 +395,31 @@
                                 </button>
                               </td>
                              </tr> --}}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="pills-payment" role="tabpanel" aria-labelledby="pills-payment-tab" tabindex="0">
+                  <div class="row">
+                    <div class="col-md-12 px-3">
+                      <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
+                          <h6 class="text-md fw-normal mb-0">Advance Amount</h6>
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-advance" onclick="resetAdvance()"> <i class="ri-add-line"></i> Add Amount</button>
+                        </div>
+                      <div class="table-responsive">
+                        <table class="table  striped-table w-100" id="emergency-advance-list">
+                          <thead>
+                             <tr>
+                              <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Amount</th>
+                              <th class="fw-medium">Payment Mode</th>
+                              <th class="fw-medium">Action</th>
+                             </tr>
+                          </thead>
+                          <tbody>
+                            
                           </tbody>
                         </table>
                       </div>
@@ -762,6 +791,46 @@
           @can('Emergency Charge Edit')
             <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyChargeUpdate d-none" onclick="emergencyChargeUpdate(document.getElementById('emergencyChargeId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
           @endcan
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- Add charges History end -->
+<!-- Add charges Start -->
+<div class="modal fade" id="emergency-add-advance" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="emergency-add-advanceLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header p-11 bg-primary-500">
+        <h6 class="modal-title fw-normal text-md text-white" id="emergency-add-advanceLabel"> Add Advance Amount</h6>
+        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="emergencyAdvance-form">
+        <div class="modal-body">
+          <div class="row">
+              <div class="col-md-6">
+                <input type="hidden" id="emergencyAdvanceId">
+                <label class="form-label fw-medium" for="emergencyAdvance-amount">Amount</label> <sup class="text-danger">*</sup>
+                  <input id="emergencyAdvance-amount" type="number" class="form-control form-control-sm" placeholder="Charge Name" oninput="validateField(this.id,'select')">
+                  <div class="emergencyAdvance-amount_errorCls d-none"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium" for="emergencyAdvance-pmode">Payment Mode</label> <sup class="text-danger">*</sup>
+                  <select id="emergencyAdvance-pmode" class="form-select form-select-sm " oninput="validateField(this.id,'select')">
+                    <option value="">Select</option>
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Card">Card</option>
+                    <option value="Internet Banking">Internet Banking</option>
+                  </select>
+                  <div class="emergencyAdvance-pmode_errorCls d-none"></div>
+              </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyAdvanceSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+            <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyAdvanceUpdate d-none" onclick="emergencyAdvanceUpdate(document.getElementById('emergencyAdvanceId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
         </div>
     </form>
     </div>
@@ -1299,6 +1368,12 @@
      const getEmergencyVitalData = "{{route('emergency-vital.getEmergencyVitalData')}}";
      const emergencyVitalDataUpdate = "{{route('emergency-vital.emergencyVitalDataUpdate')}}";
      const emergencyVitalDataDelete = "{{route('emergency-vital.emergencyVitalDataDelete')}}";
+
+       // emergencyAdvanceSubmit,view,edit  is in opdout-details.js page
+  const emergencyAdvanceSubmit = "{{route('emergency-advance.emergencyAdvanceSubmit')}}";
+  const viewEmergencyAdvance = "{{route('emergency-advance.viewEmergencyAdvance')}}";
+  const getEmergencyAdvanceData = "{{route('emergency-advance.getEmergencyAdvanceData')}}";
+  const emergencyAdvanceDataUpdate = "{{route('emergency-advance.emergencyAdvanceDataUpdate')}}";
 
      const viewEmergencyBills = "{{route('emergency.viewEmergencyBills')}}";
 </script>

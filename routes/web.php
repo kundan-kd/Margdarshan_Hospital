@@ -362,6 +362,11 @@ Route::post('/ipd-nurse-note-data',[IpdinController::class,'getIpdNurseNoteData'
 Route::post('/ipd-nurse-note-update',[IpdinController::class,'ipdNurseNoteDataUpdate'])->name('ipd-nurse.ipdNurseNoteDataUpdate');
 Route::post('/ipd-nurse-note-delete',[IpdinController::class,'ipdNurseDataDelete'])->name('ipd-nurse.ipdNurseDataDelete');
 
+Route::post('/ipd-advance-add',[IpdinController::class,'ipdAdvanceSubmit'])->name('ipd-advance.ipdAdvanceSubmit');
+Route::post('/ipd-advance-view',[IpdinController::class,'viewIpdAdvance'])->name('ipd-advance.viewIpdAdvance');
+Route::post('/ipd-advance-data',[IpdinController::class,'getIpdAdvanceData'])->name('ipd-advance.getIpdAdvanceData');
+Route::post('/ipd-advance-update',[IpdinController::class,'ipdAdvanceDataUpdate'])->name('ipd-advance.ipdAdvanceDataUpdate');
+
 Route::post('/ipd-bill-view',[IpdinController::class,'viewIpdBills'])->name('ipd.viewIpdBills');
 
 Route::get('/emergency',[EmergencyController::class,'index'])->name('emergency.index');
@@ -420,10 +425,16 @@ Route::post('/emergency-vital-data',[EmergencyController::class,'getEmergencyVit
 Route::post('/emergency-vital-update',[EmergencyController::class,'emergencyVitalDataUpdate'])->name('emergency-vital.emergencyVitalDataUpdate');
 Route::post('/emergency-vital-delete',[EmergencyController::class,'emergencyVitalDataDelete'])->name('emergency-vital.emergencyVitalDataDelete');
 
+Route::post('/emergency-advance-add',[EmergencyController::class,'emergencyAdvanceSubmit'])->name('emergency-advance.emergencyAdvanceSubmit');
+Route::post('/emergency-advance-view',[EmergencyController::class,'viewEmergencyAdvance'])->name('emergency-advance.viewEmergencyAdvance');
+Route::post('/emergency-advance-data',[EmergencyController::class,'getEmergencyAdvanceData'])->name('emergency-advance.getEmergencyAdvanceData');
+Route::post('/emergency-advance-update',[EmergencyController::class,'emergencyAdvanceDataUpdate'])->name('emergency-advance.emergencyAdvanceDataUpdate');
+
 Route::post('/emergency-bill-view',[EmergencyController::class,'viewEmergencyBills'])->name('emergency.viewEmergencyBills');
 
 
-Route::get('/emergency-bills/{id}',[InvoiceController::class,'generateInvoice']);
+Route::get('/emergency-bills/{id}',[InvoiceController::class,'generateEmergencyBills']);
+Route::get('/invoice-bill-payment/{id}',[InvoiceController::class,'payBillAmount'])->name('invoice.payBillAmount');
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
 

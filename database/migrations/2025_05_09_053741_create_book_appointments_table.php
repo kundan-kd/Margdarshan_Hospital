@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->string('type',20)->default('OPD');
+            $table->dateTime('type_change_date')->nullable();
             $table->integer('patient_id')->nullable();
             $table->string('patient_name',150)->nullable();
             $table->string('token',30)->nullable();
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->string('payment_mode',20)->nullable();
             $table->string('room_number',10)->nullable();
             $table->double('fee')->nullable();
+            $table->integer('bed_id')->nullable();
             $table->string('status',10)->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -156,7 +156,9 @@ $('#ipd-icuBedForm').on('submit',function(e){
     });
     }
 })
-
+function ipdDischarge(id){
+       window.open('/patient-discharge-bills/' + id);
+}
 function patientDischarge(id) {
     $.ajax({
         url: calculateDischargeAmount,
@@ -392,4 +394,5 @@ function ipdAdvanceUpdate(id){
     }else{
         console.log("Please fill all required fields");
     }  
+  
 }

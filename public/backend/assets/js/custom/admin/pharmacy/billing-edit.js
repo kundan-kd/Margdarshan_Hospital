@@ -198,6 +198,7 @@ function getBatchDetailsEdit(id,randB){
                     $("#billingEdit-tax" + randNum).val(getData.tax); 
                     $("#billingEdit-amount" + randNum).val(getData.amount); 
                     }
+                    getBillingAmountEdit(randNum);
                 }
             });
     }

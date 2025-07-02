@@ -17,8 +17,9 @@ return new class extends Migration
             $table->string('type',20)->nullable();
             $table->integer('type_id')->nullable();
             $table->string('amount_for',20)->nullable();
+            $table->integer('days')->nullable();
             $table->string('title',200)->nullable();
-            $table->double('amount')->nullable();
+            $table->double('amount')->default(0);
             $table->string('payment_mode',20)->nullable();
             $table->string('status')->nullable();
             $table->timestamps();

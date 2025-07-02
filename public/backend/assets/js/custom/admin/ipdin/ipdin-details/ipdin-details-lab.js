@@ -161,12 +161,12 @@ function ipdLabView(id){
         },
         data:{id:id},
         success:function(response){
-            console.log(response);
             if(response.success){
-                let getLabData = response.data.labData[0];
-                let getpatientData = response.data.patientData[0];
-                let getTestType = response.data.testType[0];
-                let getTestName = response.data.testName[0];
+                const lab = response.data.labData;
+                const patient = response.data.patientData;
+                const testType = response.data.testType;
+                const testName = response.data.testName;
+                const testReports = response.testReport;
                 let visit_lab_data = '';
                         visit_lab_data += ` <div class="row">
           <div class="col-md-12">
@@ -174,31 +174,31 @@ function ipdLabView(id){
                 <tbody>
                   <tr>
                       <th class="fw-medium">Bill No</th>
-                        <td>PATH0${getLabData.id}</td>
+                        <td>PATH0${lab.id}</td>
                       <th class="fw-medium">Patient</th>
-                      <td>${getpatientData.name}</td>
+                      <td>${patient.name}</td>
                   </tr>
                   <tr>
                     <th class="fw-medium">Test Type</th>
-                      <td>${getTestType.name}</td>
+                      <td>${testType.name}</td>
                       <th class="fw-medium">Test Name</th>
-                      <td>${getTestName.name}</td>
+                      <td>${testName.name}</td>
                   </tr>
                   <tr>     
                       <th class="fw-medium">Short Name</th>
-                      <td>${getTestName.s_name}</td>
+                      <td>${testName.s_name}</td>
                       <th class="fw-medium">Amount</th>
-                      <td>${getTestName.amount}</td>
+                      <td>${testName.amount}</td>
                   </tr>
                   <tr>           
                     <th class="fw-medium">Sample Collection</th>
-                      <td>${getLabData.created_at}</td>
+                      <td>${lab.created_at}</td>
                       <th class="fw-medium">Report Date</th>
-                      <td>${getLabData.report_days}</td>
+                      <td>${lab.report_days}</td>
                   </tr>
                   <tr>    
                       <th class="fw-medium">Test Method</th>
-                      <td>${getLabData.method}</td>    
+                      <td>${lab.method}</td>    
                   </tr>
                 </tbody>
             </table>
@@ -211,14 +211,26 @@ function ipdLabView(id){
                    <th class="fw-medium">Test Parameter Name</th>
                    <th class="fw-medium text-nowrap">Report Value</th>
                    <th class="fw-medium">Report Reference</th>
+                   <th>Download</th>
                  </tr>
                </thead>
                <tbody>
                 <tr>
                   <td></td>
-                  <td>${getLabData.test_parameter}</td>
-                  <td>${getLabData.test_ref_range}</td>
-                  <td>${getLabData.test_unit}</td>
+                  <td>${lab.test_parameter}</td>
+                  <td>${lab.test_ref_range}</td>
+                  <td>${lab.test_unit}</td>
+                   <td>`;
+                    if (testReports.length > 0) {
+                        testReports.forEach((report, index) => {
+                            visit_lab_data += `<a href="${report.report_file_url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="ri-file-download-line"></i> PDF
+                                </a>`;
+                            });
+                            } else {
+                            visit_lab_data += `<tr><td colspan="5" class="text-center text-muted">No reports available.</td></tr>`;
+                            }
+                            visit_lab_data += `</td>
                 </tr>
                </tbody>
         </table>`;   
@@ -304,6 +316,51 @@ function ipdLabUpdate(id){
         console.log("Please fill all required fields");
     }   
 }
+function uploadPdf(id){
+    $('#ipd-lab-report').modal('show');
+    $('#ipdLabIReportId').val(id);
+}
+$('#ipdLabReport-form').on('submit',function(e){
+    e.preventDefault();
+        let lab_id = $('#ipdLabIReportId').val();
+        let title = $('#ipdLabReport-title').val();
+        let lab_pdf = $('#ipdLabReport-file').prop('files')[0];
+        if (title == '') {
+        $('#ipdLabReport-title').focus();
+        } else {
+        let formData = new FormData();
+        formData.append('lab_id', lab_id);
+        formData.append('patient_id', patient_id);
+        formData.append('title', title);
+        formData.append('lab_pdf', lab_pdf);
+        $.ajax({
+            url: labReportIpdSubmit,
+            type: "post",
+            data: formData,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.success) {
+                    //  alert(response.success);
+                    $('#ipd-lab-report').modal('hide');
+                     $('#ipdLabReport-form')[0].reset();
+                    // $('#opd-lab-reports-list').DataTable().ajax.reload();
+                    toastSuccessAlert(response.success);
+                } else {
+                    toastErrorAlert(response.error_success);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("An error occurred: " + error);
+            }
+        });
+    }
+})
 function ipdLabDelete(id){
            Swal.fire({
         title: "Are you sure?",

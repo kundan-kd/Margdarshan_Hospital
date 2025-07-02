@@ -59,3 +59,6 @@ function billingEdit(id){
 function purchaseDetails(id) {
       window.open('billing-view/' + id, '_blank');
 }
+function printMedicineBill(id){
+    window.open('medicine-bill-print/'+id,'_blank');
+}

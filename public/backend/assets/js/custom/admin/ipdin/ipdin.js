@@ -211,6 +211,9 @@ $('#ipd-addPatientForm').on('submit',function(e){
             console.log("Please fill all required fields");
         }    
 });
+  function printBill(id){
+         window.open('/discharge-bill-print/' + id +'_blank');
+    }
 function ipdPatientEdit(id){
  $.ajax({
         url: getIpdPatientData,

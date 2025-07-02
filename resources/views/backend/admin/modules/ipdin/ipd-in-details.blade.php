@@ -15,23 +15,18 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">IPD - In Patient Details<span class="{{$patients[0]->current_status == 'Admitted'?'badge text-sm fw-normal bg-danger-600 mx-1 text-white':'badge text-sm fw-normal bg-success-600 mx-1 text-white'}}">{{$patients[0]->current_status}}</span></h6>
          <div class="d-flex flex-wrap align-items-center gap-2">
-          {{-- <button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToEmergencyModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to Emergency</button> --}}
           @can('IPD Move To IPD')
             <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->current_status == 'Discharged' || $patients[0]->type == 'IPD'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to IPD</button>
           @endcan
           @can('IPD Move To ICU')
           <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged' || $patients[0]->type == 'ICU'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
           @endcan
-          {{-- <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}}  onclick="patientDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button> --}}
           @can('IPD Discharge')
-          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} data-bs-toggle="modal" data-bs-target="#ipdDischargeModel" onclick="patientDischarge({{$patients[0]->id}})" > <i class="ri-thumb-up-line"></i> Discharge</button>
+          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="ipdDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
           @endcan
-          {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
         </div>
         <!-- <div class="btns">
-          <button class="btn btn-danger-600  btn-sm fw-medium"  data-bs-toggle="modal" data-bs-target="#in-patient-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button>
-          <button class="btn btn-success-600  btn-sm fw-medium"  data-bs-toggle="modal" data-bs-target="#in-patient-discharge"><i class="ri-thumb-up-line"></i> Discharge</button>
-          <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button> 
+                  <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button> 
       </div> -->
     </div>
       @php
@@ -522,27 +517,6 @@
 <!-- modal dr-log end -->
 
 
-
-<!-- lab-report start -->
-<div class="modal fade" id="ipd-lab-report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-lab-reportLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="ipd-lab-reportLabel">Report</h6>
-        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Report
-      </div>
-      <div class="modal-footer pt-2 pb-3 border-top-0">
-        <button type="button" class="btn btn-primary-600  btn-sm fw-medium">Save</button>
-        <button type="button" class="btn btn-lilac-600  btn-sm fw-medium">Save & Print</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- lab-report end -->
-
 <!-- Add add-lab Start -->
 <div class="modal fade" id="ipd-add-lab" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-add-labLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -910,7 +884,47 @@
   </div>
 </div>
 <!-- Edit lab-detail end -->
-
+<!-- Modal for Uploading Lab Report -->
+<div class="modal fade" id="ipd-lab-report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-lab-reportLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header p-11 bg-primary-500">
+        <h6 class="modal-title fw-normal text-md text-white" id="opd-add-labLabel">Add Test Report</h6>
+        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="ipdLabReport-form" enctype="multipart/form-data">
+        @csrf
+        <div class="modal-body">
+          <div class="row gy-3">
+            <div class="col-md-6">
+              <input type="hidden" id="ipdLabIReportId" name="report_id">
+              <label class="form-label fw-medium" for="ipdLabReport-title">Title <sup class="text-danger">*</sup></label>
+              <input id="ipdLabReport-title" name="title" type="text" class="form-control form-control-sm" placeholder="Report Title" required>
+              <div class="ipdLabReport-title_errorCls text-danger d-none"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-medium" for="ipdLabReport-file">Report (PDF) <sup class="text-danger">*</sup></label>
+              <input id="ipdLabReport-file" name="report_file" type="file" accept="application/pdf" class="form-control form-control-sm" required>
+              <div class="ipdLabReport-file_errorCls text-danger d-none"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          {{-- @can('OPD Lab Add') --}}
+            <button type="submit" class="btn btn-primary-600 btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          {{-- @endcan --}}
+        </div>
+      </form>
+      {{-- <div class="text-center m-2">
+        <a id="downloadPdfLink" href="#" class="btn btn-outline-secondary btn-sm" target="_blank" style="display: none//;">
+          <i class="ri-file-download-line"></i> Download
+        </a>
+      </div> --}}
+    </div>
+  </div>
+</div>
+<!-- Add add-lab end -->
 <!--  Add medication Start -->
  <div class="modal fade" id="ipd-add-medication-dose" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-add-medication-doseLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -1958,6 +1972,7 @@
   const getIpdAdvanceData = "{{route('ipd-advance.getIpdAdvanceData')}}";
   const ipdAdvanceDataUpdate = "{{route('ipd-advance.ipdAdvanceDataUpdate')}}";
 
+  const labReportIpdSubmit = "{{route('ipd-lab.labReportIpdSubmit')}}";
   const viewIpdBills = "{{route('ipd.viewIpdBills')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details.js')}}"></script>

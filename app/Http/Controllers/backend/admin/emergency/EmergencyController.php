@@ -8,6 +8,7 @@ use App\Models\Bed;
 use App\Models\BedType;
 use App\Models\Charge;
 use App\Models\LabInvestigation;
+use App\Models\LabReport;
 use App\Models\Medication;
 use App\Models\MedicineCategory;
 use App\Models\NurseNote;
@@ -326,19 +327,19 @@ class EmergencyController extends Controller
         }
     }
     public function patientDischargeStatusE(Request $request){
-        $update = Patient::where('id',$request->id)->update([
-            'current_status' =>'Discharged'
-        ]);
-        if($update){
-            $timelines = new Timeline();
-            $timelines->type = "EMERGENCY";
-            $timelines->patient_id = $request->id;
-            $timelines->title = "Discharged";
-            $timelines->desc = "Patient Discharged from Emergency";
-            $timelines->created_by = "Admin";
-            $timelines->save();
-            return response()->json(['success'=>'Successfully discharged from Emergency'],200);
-        }
+        // $update = Patient::where('id',$request->id)->update([
+        //     'current_status' =>'Discharged'
+        // ]);
+        // if($update){
+        //     $timelines = new Timeline();
+        //     $timelines->type = "EMERGENCY";
+        //     $timelines->patient_id = $request->id;
+        //     $timelines->title = "Discharged";
+        //     $timelines->desc = "Patient Discharged from Emergency";
+        //     $timelines->created_by = "Admin";
+        //     $timelines->save();
+        //     return response()->json(['success'=>'Successfully discharged from Emergency'],200);
+        // }
     }
     function calculateDischargeAmountEmergency(Request $request){
         $bill_amount = PaymentBill::where('patient_id',$request->id)->where('status',NULL)->sum('amount');
@@ -671,6 +672,9 @@ class EmergencyController extends Controller
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#emergency-lab-test-veiw" onclick="emergencyLabView('.$row->id.')">
                       <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
                     </a>
+                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <iconify-icon icon="mdi:file-upload-outline" onclick="uploadPdf('.$row->id.')"></iconify-icon>
+                    </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="emergencyLabEdit('.$row->id.');getTestName('.$row->test_type_id.','.$row->test_name_id.');getTestDetails('.$row->test_name_id.')"></iconify-icon>
                     </a>
@@ -683,17 +687,35 @@ class EmergencyController extends Controller
         }
     }
     public function getEmergencyLabData(Request $request){
-        $getLabData = LabInvestigation::where('id',$request->id)->get();
-        $patientData = Patient::where('id',$getLabData[0]->patient_id)->get();
-        $testType = TestType::where('id',$getLabData[0]->test_type_id)->get();
-        $testName = TestName::where('id',$getLabData[0]->test_name_id)->get();
-        $data = [
-               'labData' =>$getLabData, 
-               'patientData' =>$patientData, 
-               'testType' =>$testType, 
-               'testName' =>$testName, 
+    $lab = LabInvestigation::find($request->id);
+    if (!$lab) {
+        return response()->json(['success' => false, 'message' => 'Lab record not found'], 404);
+    }
+
+    $patient = Patient::find($lab->patient_id);
+    $testType = TestType::find($lab->test_type_id);
+    $testName = TestName::find($lab->test_name_id);
+
+    // Get all reports and build full URLs
+    $testReports = LabReport::where('lab_id', $lab->id)->get()->map(function ($report) {
+        return [
+            'test_parameter' => $report->test_parameter ?? '-',
+            'test_value' => $report->test_value ?? '-',
+            'test_reference' => $report->test_reference ?? '-',
+            'report_file_url' => asset('backend/uploads/lab_reports/' . $report->file_path),
         ];
-        return response()->json(['success'=>'emergency lab data fetched','data'=>$data],200);
+    });
+
+    return response()->json([
+        'success' => true,
+        'data' => [
+            'labData' => $lab,
+            'patientData' => $patient,
+            'testType' => $testType,
+            'testName' => $testName,
+        ],
+        'testReport' => $testReports,
+    ]);
     }
     public function getEmergencyLabDetails(Request $request){
          $getData = LabInvestigation::where('id',$request->id)->get();
@@ -1027,5 +1049,30 @@ class EmergencyController extends Controller
             ->rawColumns([''])
             ->make(true);
         }
+    }
+     public function labReportEmergencySubmit(Request $request){
+                $lab_file = $request->file('lab_pdf');
+                $labreports = new LabReport();
+                $labreports->patient_id = $request->patient_id;
+                $labreports->lab_id = $request->lab_id;
+                $labreports->title = $request->title;
+                
+                if ($lab_file) {
+                    // Define your file path and name
+                    $imageName =  $request->patient_id.'.'.$request->lab_id.'.'.time().'.'.$lab_file->getClientOriginalExtension();
+                    $destinationPath = public_path('/backend/uploads/lab_reports');
+                    
+                    // Move the file to the destination path
+                    $lab_file->move($destinationPath, $imageName);
+                    
+                    // Save the image path in your database
+                    $labreports->file_path = $imageName;
+                }
+                
+                if ($labreports->save()) {
+                    return response()->json(['success' => 'Lab report added successfully'], 200);
+                } else {
+                    return response()->json(['error_success' => 'Lab report not added'], 400);
+                }
     }
 }

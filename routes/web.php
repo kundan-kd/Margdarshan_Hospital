@@ -343,6 +343,7 @@ Route::post('/ipd-lab-test-data',[IpdinController::class,'getIpdLabData'])->name
 Route::post('/ipd-lab-test-edit',[IpdinController::class,'getIpdLabDetails'])->name('ipd-lab.getIpdLabDetails');
 Route::post('/ipd-lab-test-update',[IpdinController::class,'ipdLabUpdateData'])->name('ipd-lab.ipdLabUpdateData');
 Route::post('/ipd-lab-test-delete',[IpdinController::class,'ipdLabDataDelete'])->name('ipd-lab.ipdLabDataDelete');
+Route::post('/ipd-lab-report-add',[IpdinController::class,'labReportIpdSubmit'])->name('ipd-lab.labReportIpdSubmit');
 
 Route::post('/ipd-charge-add',[IpdinController::class,'ipdChargeSubmit'])->name('ipd-charge.ipdChargeSubmit');
 Route::post('/ipd-charge-view',[IpdinController::class,'viewIpdCharge'])->name('ipd-charge.viewIpdCharge');
@@ -406,6 +407,7 @@ Route::post('/emergency-lab-data',[EmergencyController::class,'getEmergencyLabDa
 Route::post('/emergency-lab-details',[EmergencyController::class,'getEmergencyLabDetails'])->name('emergency-lab.getEmergencyLabDetails');
 Route::post('/emergency-lab-update',[EmergencyController::class,'emergencyLabUpdateData'])->name('emergency-lab.emergencyLabUpdateData');
 Route::post('/emergency-lab-delete',[EmergencyController::class,'emergencyLabDataDelete'])->name('emergency-lab.emergencyLabDataDelete');
+Route::post('/emergency-lab-report-add',[EmergencyController::class,'labReportEmergencySubmit'])->name('emergency-lab.labReportEmergencySubmit');
 
 Route::post('/emergency-charge-add',[EmergencyController::class,'emergencyChargeSubmit'])->name('emergency-charge.emergencyChargeSubmit');
 Route::post('/emergency-charge-view',[EmergencyController::class,'viewEmergencyCharge'])->name('emergency-charge.viewEmergencyCharge');
@@ -433,9 +435,12 @@ Route::post('/emergency-advance-update',[EmergencyController::class,'emergencyAd
 Route::post('/emergency-bill-view',[EmergencyController::class,'viewEmergencyBills'])->name('emergency.viewEmergencyBills');
 
 
-Route::get('/emergency-bills/{id}',[InvoiceController::class,'generateEmergencyBills']);
+Route::get('/patient-discharge-bills/{id}',[InvoiceController::class,'generateEmergencyBills']);
 Route::post('/invoice-bill-payment',[InvoiceController::class,'payBillAmount'])->name('invoice.payBillAmount');
 Route::get('/discharge-bill-print/{id}',[InvoiceController::class,'dischargeBillPrint']);
+Route::post('/patient-discharge',[InvoiceController::class,'getPatientDischarge'])->name('invoice.getPatientDischarge');
+Route::post('/patient-invoice-add',[InvoiceController::class,'invoiceDataSubmit'])->name('invoice.invoiceDataSubmit');
+Route::get('/medicine-bill-print/{id}',[InvoiceController::class,'medicineBillPrint']);
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
 

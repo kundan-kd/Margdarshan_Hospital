@@ -214,7 +214,7 @@ function processDischarge(id){
     });
 }
 function emergencyDischarge(id){
-     window.open('/emergency-bills/' + id);
+     window.open('/patient-discharge-bills/' + id);
 }
 function resetAdvance(){
     $('#emergency-add-advanceLabel').html('Add Advance Amount');

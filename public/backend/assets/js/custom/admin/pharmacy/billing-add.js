@@ -95,7 +95,6 @@ function getBillingMedicine(id,randNum){
         },
         data:{id:id},
         success:function(response){
-            // console.log(response);
         let getData = response.data;
         let medicineDropdown1 = $("#billingAdd-name" + randNum); // Use the randNum to target the specific dropdown
         medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
@@ -119,7 +118,6 @@ function getBatchDetails(id,randB){
             },
             data:{id:medID},
             success:function(response){
-                console.log(response);
             let getData = response.data;
             let batchDropdown2 = $("#billingAdd-batch" + randB); // Use the randNum to target the specific dropdown
             batchDropdown2.find("option:not(:first)").remove(); // empity dropdown except first one
@@ -148,9 +146,10 @@ function getBatchExpiry(id,randE){
                 $("#billingAdd-salesPrice" + randE).val(getData.sales_price); 
                 $("#billingAdd-tax" + randE).val(getData.tax); 
             }
+             getBillingAmount(randE);
         }
     });
-    getBillingAmount(randE);
+   
 }
 function getBillingAmount(randA){
     let qty = parseFloat($("#billingAdd-qty" + randA).val());

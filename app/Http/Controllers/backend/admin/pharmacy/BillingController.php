@@ -59,9 +59,12 @@ class BillingController extends Controller
                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                          <iconify-icon icon="lucide:edit" onclick="billingEdit('.$row->id.')"></iconify-icon>
                          </a>
-                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                                <iconify-icon icon="mdi:file-upload-outline" onclick="printMedicineBill(' . $row->id . ')"></iconify-icon>
+                        </a>
+                         <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                          <iconify-icon icon="mingcute:delete-2-line" onclick="purchaseDelete('.$row->id.')"></iconify-icon>
-                         </a>';
+                         </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -144,8 +147,8 @@ class BillingController extends Controller
             if($request->totalNetAmount > 0){
             $payment_received = new PaymentBill();
             $payment_received->patient_id = $request->patientID;
-            $payment_received->type = $billings->id;
-            $payment_received->type_id = 'Billing';
+            $payment_received->type = 'Billing';
+            $payment_received->type_id = $billings->id;
             $payment_received->amount_for = 'Medicine Billing';
             $payment_received->title = 'Medicine Bill Amount';
             $payment_received->amount = $request->totalNetAmount;
@@ -156,8 +159,8 @@ class BillingController extends Controller
             if($request->payAmount > 0){
             $payment_received = new PaymentReceived();
             $payment_received->patient_id = $request->patientID;
-            $payment_received->type = $billings->id;
-            $payment_received->type_id = 'Billing';
+            $payment_received->type = 'Billing';
+            $payment_received->type_id = $billings->id;
             $payment_received->amount_for = 'Medicine Billing';
             $payment_received->title = 'Medicine Billing Amount';
             $payment_received->amount = $request->payAmount;
@@ -249,14 +252,11 @@ class BillingController extends Controller
     }
 
 
-    public function billingUpdateDatas(Request $request)
-    {
+    public function billingUpdateDatas(Request $request){
     try {
         $billing_id = $request->billing_id;
-
         // Set old billing items to inactive
         BillingItem::where('billing_id', $billing_id)->update(['status' => 0]);
-
         // Update or insert billing items
         $item_idd = [];
         foreach ($request->editID as $key => $item_id) {
@@ -276,28 +276,65 @@ class BillingController extends Controller
                 $billingItem->tax_amount = $request->taxAmount[$key] ?? null;
                 $billingItem->amount = $request->amount[$key];
                 $billingItem->status = 1; // Active record
-                $billingItem->save();
-            } else {  
-                // Update existing record
-                BillingItem::where('id', $item_id)
-                    ->where('billing_id', $billing_id)
-                    ->update([
-                        'category_id' => $request->category[$key],
-                        'name_id' => $request->name[$key],
-                        'batch_no' => $request->batchNo[$key],
-                        'expiry' => $request->expiry[$key],
-                        'qty' => $request->qty[$key],
-                        'sales_price' => $request->salesPrice[$key],
-                        'tax_per' => $request->taxPer[$key],
-                        'tax_amount' => $request->taxAmount[$key],
-                        'amount' => $request->amount[$key],
-                        'status' => 1
+                if($billingItem->save()){
+                    //update stock after sale
+                    $oldPurchaseItemStockOut = PurchaseItem::where('id', $request->batchNo[$key])->get(['stock_out']);
+                        PurchaseItem::where('id',$request->batchNo[$key])->update([
+                        'stock_out' => $request->qty[$key] + $oldPurchaseItemStockOut[0]->stock_out
                     ]);
+                    $oldMedicineStockOut = Medicine::where('id', $request->name[$key])->get(['stock_out']);
+                        medicine::where('id',$request->name[$key])->update([
+                        'stock_out' => $request->qty[$key] + $oldMedicineStockOut[0]->stock_out
+                    ]);
+                }
+            } else {
+            // Fetch old quantity from BillingItem
+            $oldPurchaseQty = BillingItem::where('id', $item_id)->value('qty');
+            // Update the billing item
+            BillingItem::where('id', $item_id)
+                ->where('billing_id', $billing_id)
+                ->update([
+                    'category_id' => $request->category[$key],
+                    'name_id' => $request->name[$key],
+                    'batch_no' => $request->batchNo[$key],
+                    'expiry' => $request->expiry[$key],
+                    'qty' => $request->qty[$key],
+                    'sales_price' => $request->salesPrice[$key],
+                    'tax_per' => $request->taxPer[$key],
+                    'tax_amount' => $request->taxAmount[$key],
+                    'amount' => $request->amount[$key],
+                    'status' => 1
+                ]);
+                    // New quantity from the request
+                    $newQty = $request->qty[$key];
+                    // Fetch medicine and purchase item
+                    $medicine = Medicine::find($request->name[$key]);
+                    $purchaseItem = PurchaseItem::find($item_id);
+
+                    if ($medicine && $purchaseItem) {
+                        $oldMedicineStock = $medicine->stock_out ?? 0;
+                        $oldPurchaseStock = $purchaseItem->stock_out ?? 0;
+
+                        if ($oldPurchaseQty > $newQty) {
+                            // Quantity reduced → subtract from stock_out
+                            $diff = $oldPurchaseQty - $newQty;
+                            $medicine->stock_out = max(0, $oldMedicineStock - $diff);
+                            $purchaseItem->stock_out = max(0, $oldPurchaseStock - $diff);
+                        } elseif ($newQty > $oldPurchaseQty) {
+                            // Quantity increased → add to stock_out
+                            $diff = $newQty - $oldPurchaseQty;
+                            $medicine->stock_out = $oldMedicineStock + $diff;
+                            $purchaseItem->stock_out = $oldPurchaseStock + $diff;
+                        }
+
+                        $medicine->save();
+                        $purchaseItem->save();
+                    }
             }
+            
         }
         $prev_paidAmount = Billing::where('id',$billing_id)->get(['paid_amount']);
-        $prev_dueAmount = Billing::where('id',$billing_id)->get(['due_amount']);
-        // Update Billing Information
+               // Update Billing Information
         Billing::where('id', $billing_id)->update([
             'bill_no' => $request->billNo,
             'patient_id' => $request->patientID,
@@ -310,32 +347,23 @@ class BillingController extends Controller
             'taxes' => $request->totalTaxAmount,
             'net_amount' => $request->totalNetAmount,
             'payment_mode' => $request->paymentMode,
-            'paid_amount' => $request->payAmount + $prev_paidAmount[0]->paid_amount,
-            'due_amount' =>  $prev_dueAmount[0]->due_amount - $request->payAmount
+            'paid_amount' => $request->payAmount + $prev_paidAmount[0]->paid_amount
         ]);
-
-        // Insert payment details
-        // $billingPayments = new BillingPayment();
-        // $billingPayments->billing_id = $billing_id;
-        // $billingPayments->payment_mode_id = $request->paymentMode;
-        // $billingPayments->amount = $request->payAmount;
-        // ----------------------------------------------------
-        
+        $paidAmount = Billing::where('id',$billing_id)->get(['paid_amount']);
+        Billing::where('id',$billing_id)->update([
+            'due_amount' =>  $request->totalNetAmount - $paidAmount[0]->paid_amount
+        ]);
         if($request->payAmount > 0){
             $payment_received = new PaymentReceived();
             $payment_received->patient_id = $request->patientID;
             $payment_received->type = 'Billing';
+            $payment_received->type_id = $billing_id;
             $payment_received->amount_for = 'Medicine Billing';
             $payment_received->title = 'Medicine Billing id: '.$billing_id;
             $payment_received->amount = $request->payAmount;
             $payment_received->payment_mode = $request->paymentMode;
             $payment_received->save();
         }
-// ----------------------------
-        // if (!$billingPayments->save()) {
-        //     throw new \Exception("Failed to insert billing payment record");
-        // }
-
         // Remove inactive records
         BillingItem::where('billing_id', $billing_id)->where('status', 0)->delete();
 

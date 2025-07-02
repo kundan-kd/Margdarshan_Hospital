@@ -455,7 +455,6 @@ function uploadPdf(id,patient_id){
     $('#opdOutLabIReportId').val(id);
 }
 
-
 $('#opdOutLabReport-form').on('submit',function(e){
     e.preventDefault();
         let lab_id = $('#opdOutLabIReportId').val();
@@ -497,8 +496,6 @@ $('#opdOutLabReport-form').on('submit',function(e){
             }
         });
     }
-
-
 })
 
   

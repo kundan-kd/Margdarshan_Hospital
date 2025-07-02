@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('patient_moves', function (Blueprint $table) {
+        Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('type',20)->nullable();
+            $table->string('type',30)->nullable();
             $table->integer('patient_id')->nullable();
-            $table->integer('from_bed')->nullable();
-            $table->integer('to_bed')->nullable();
-            $table->integer('days')->nullable();
-            $table->double('charge')->nullable();
-            $table->text('desc')->nullable();
-            $table->string('move_date')->nullable();
+            $table->double('amount')->default(0);
+            $table->double('discount')->default(0);
+            $table->double('paid_amount')->default(0);
+            $table->string('status')->nullable();
+            $table->integer('created_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('patient_moves');
+        Schema::dropIfExists('invoices');
     }
 };

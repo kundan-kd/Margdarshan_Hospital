@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Billing Invoice</title>
+    <title>Medicine Bill Invoice</title>
     <style>
         * {
             margin: 0;
@@ -65,10 +65,10 @@
         }
 
         .invoice-title {
-            font-size: 36px;
+            font-size: 20px;
             font-weight: bold;
             text-align: right;
-            margin-top: -10px;
+            margin-top: 7px;
         }
 
         .invoice-body {
@@ -303,7 +303,7 @@
                         Email: mdhpatna@gmail.com
                     </div>
                 </div>
-                <div class="invoice-title">INVOICE</div>
+                <div class="invoice-title">MEDICINE BILL</div>
             </div>
         </div>
 
@@ -325,10 +325,6 @@
                         <span>{{$patientData[0]->patient_id}}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Date of Birth:</span>
-                         <span>{{ date('d/m/Y', strtotime($patientData[0]->dob)) }}</span>
-                    </div>
-                    <div class="info-row">
                         <span class="info-label">Phone:</span>
                         <span>{{$patientData[0]->mobile}}</span>
                     </div>
@@ -342,24 +338,12 @@
                 <div class="billing-info">
                     <div class="section-title">Billing Information</div>
                     <div class="info-row">
-                        <span class="info-label">Invoice Number:</span>
-                        <span>MDINV0{{$invoice_data[0]->id}}</span>
+                        <span class="info-label">Bill Number:</span>
+                        <span>{{$billings[0]->bill_no}}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Invoice Date:</span>
-                        <span>{{ date('d/m/Y', strtotime($invoice_data[0]->created_at)) }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Admission Date:</span>
-                        <span>{{ date('d/m/Y', strtotime($patientData[0]->created_at)) }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Discharge Date:</span>
-                        <span>{{ date('d/m/Y', strtotime($invoice_data[0]->created_at)) }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Status:</span>
-                        <span class="status-badge status-pending">Discharged</span>
+                        <span>{{ date('d/m/Y', strtotime($billings[0]->created_at)) }}</span>
                     </div>
                 </div>
             </div>
@@ -369,21 +353,31 @@
                 <thead>
                     <tr>
                         <th>Sr.No.</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th class="text-center">Amount</th>
+                        <th>Medicine</th>
+                        <th>Batch</th>
+                        <th>Expiry</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                        <th>Tax(%)</th>
+                        <th class="text-end">Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     @php
                         $i = 1;
                         @endphp
-                        @foreach ( $payment_bills as $bills)
+                        @foreach ( $billing_items as $items)
                           <tr>
                             <td>{{$i}}</td>
-                            <td>{{$bills->amount_for}}</td>
-                            <td>{{$bills->title}}</td>
-                            <td>{{$bills->amount}}</td>
+                            <td>{{$items->medicineNameData->name}}</td>
+                            <td>{{$items->batchData->batch_no}}</td>
+                            <td>{{$items->expiry}}</td>
+                            <td>{{$items->qty}}</td>
+                            <td>{{$items->sales_price}}</td>
+                            <td>{{$items->amount}}</td>
+                            <td>{{$items->tax_per}}</td>
+                            <td style="text-align:right;">{{$items->amount + $items->tax_amount}}</td>
                         </tr>
                         @php
                           $i++
@@ -394,21 +388,29 @@
 
             <!-- Total Section -->
             <div class="total-section">
-                <div class="total-row">
+                {{-- <div class="total-row">
                     <span class="bill-detail">Subtotal:</span>
-                    <span class="amount">₹ {{$total_amount ?? 0}}</span>
+                    <span class="amount">₹ {{$billings[0]->total_amount}}</span>
                 </div>
                 <div class="total-row">
+                    <span class="bill-detail">Tax Amount:</span>
+                    <span class="amount">₹ {{$billings[0]->taxes}}</span>
+                </div> --}}
+                <div class="total-row">
+                    <span class="bill-detail">Net Amount:</span>
+                    <span class="amount">₹ {{round($billings[0]->net_amount)}}</span>
+                </div>
+                <div class="total-row" style="{{ $billings[0]->discount_amount > 0 ? '' : 'display:none;' }}">
                     <span class="bill-detail">Discount Amount:</span>
-                    <span class="amount">₹ {{$discount_amount ?? 0}}</span>
+                    <span class="amount">₹ {{round($billings[0]->discount_amount)}}</span>
                 </div>
                 <div class="total-row">
                     <span class="bill-detail">Paid Amount:</span>
-                    <span class="amount">₹ {{$received_amount ?? 0}}</span>
+                    <span class="amount">₹ {{round($billings[0]->paid_amount)}}</span>
                 </div>
                 <div class="total-row">
                     <span class="bill-detail">Due:</span>
-                    <span class="amount">₹ {{$total_amount - ($received_amount + $discount_amount) ?? 0}}</span>
+                    <span class="amount">₹ {{round($billings[0]->due_amount)}}</span>
                 </div>
             </div>
 

@@ -453,7 +453,47 @@
         </div>  
     </div>
   </div>
-
+<!-- Modal for Uploading Lab Report -->
+<div class="modal fade" id="emergency-lab-report" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="emergency-lab-reportLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header p-11 bg-primary-500">
+        <h6 class="modal-title fw-normal text-md text-white" id="emergency-add-labLabel">Add Test Report</h6>
+        <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="emergencyLabReport-form" enctype="multipart/form-data">
+        @csrf
+        <div class="modal-body">
+          <div class="row gy-3">
+            <div class="col-md-6">
+              <input type="hidden" id="emergencyLabIReportId" name="report_id">
+              <label class="form-label fw-medium" for="emergencyLabReport-title">Title <sup class="text-danger">*</sup></label>
+              <input id="emergencyLabReport-title" name="title" type="text" class="form-control form-control-sm" placeholder="Report Title" required>
+              <div class="emergencyLabReport-title_errorCls text-danger d-none"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-medium" for="ipdLabReport-file">Report (PDF) <sup class="text-danger">*</sup></label>
+              <input id="emergencyLabReport-file" name="report_file" type="file" accept="application/pdf" class="form-control form-control-sm" required>
+              <div class="emergencyLabReport-file_errorCls text-danger d-none"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+          {{-- @can('OPD Lab Add') --}}
+            <button type="submit" class="btn btn-primary-600 btn-sm fw-normal mx-2"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+          {{-- @endcan --}}
+        </div>
+      </form>
+      {{-- <div class="text-center m-2">
+        <a id="downloadPdfLink" href="#" class="btn btn-outline-secondary btn-sm" target="_blank" style="display: none//;">
+          <i class="ri-file-download-line"></i> Download
+        </a>
+      </div> --}}
+    </div>
+  </div>
+</div>
+<!-- Add add-lab end -->
 <!--  Add medication Start -->
  <div class="modal fade" id="emergency-add-medication-dose" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="emergency-add-medication-doseLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -1374,8 +1414,8 @@
   const viewEmergencyAdvance = "{{route('emergency-advance.viewEmergencyAdvance')}}";
   const getEmergencyAdvanceData = "{{route('emergency-advance.getEmergencyAdvanceData')}}";
   const emergencyAdvanceDataUpdate = "{{route('emergency-advance.emergencyAdvanceDataUpdate')}}";
-
-     const viewEmergencyBills = "{{route('emergency.viewEmergencyBills')}}";
+  const labReportEmergencySubmit = "{{route('emergency-lab.labReportEmergencySubmit')}}";
+  const viewEmergencyBills = "{{route('emergency.viewEmergencyBills')}}";
 </script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details.js')}}"></script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency-details/emergency-details-visit.js')}}"></script>

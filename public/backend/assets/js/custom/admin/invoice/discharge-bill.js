@@ -9,9 +9,9 @@ function getDiscountAmount(disPer){
     // }else{
     //     $('.billPrintBtn').addClass('d-none');
     // }
-    $('.bill-discountAmount').html(discount_amount);
-    $('.bill-totalNetAmount').html(net_amount);
-    $('.bill-totalDueAmount').html(due_amount);
+    $('.bill-discountAmount').html(round(discount_amount));
+    $('.bill-totalNetAmount').html(round(net_amount));
+    $('.bill-totalDueAmount').html(round(due_amount));
     let pay_amount = $('#billAdd-payAmount').val();
     checkPayAmount(pay_amount);
 }
@@ -128,6 +128,11 @@ function invoiceSubmit(id){
                 console.log(response);
                 
                 billPrint(id) //print bill
+                setTimeout(function(){
+                    const url = `/patient-discharge-bills/${id}`;
+  window.location.href = url;
+
+                },300);
             }
         });
 }

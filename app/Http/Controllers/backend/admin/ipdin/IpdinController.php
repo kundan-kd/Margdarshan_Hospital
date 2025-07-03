@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backend\admin\ipdin;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Bed;
+use App\Models\BedGroup;
 use App\Models\BedType;
 use App\Models\Charge;
 use App\Models\LabInvestigation;
@@ -25,7 +26,9 @@ use App\Models\Vital;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Picqer\Barcode\BarcodeGeneratorJPG;
 use Yajra\DataTables\Facades\DataTables;
 
 class IpdinController extends Controller
@@ -85,11 +88,7 @@ class IpdinController extends Controller
             return $row->known_allergies;
         })
         ->addColumn('status',function($row){
-            //   $ischecked = $row->status == 1 ? 'checked':'';
-            //     return '<div class="form-switch switch-primary">
-            //                     <input class="form-check-input" type="checkbox" role="switch" onclick="statusSwitch('.$row->id.')"'.$ischecked.'>
-            //                 </div>';
-             return 'Paid';    
+            return $row->current_status === 'Discharged'? '<span class="text-success">Discharged</span>': '<span class="text-danger">Admitted</span>';
         })
         ->addColumn('action', function($row) {
             $dischargeClass = ($row->current_status == 'Discharged') ? '' : 'd-none';
@@ -162,6 +161,18 @@ class IpdinController extends Controller
         if($patient->save()){
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
+            //generate bar code
+            $generator = new BarcodeGeneratorJPG();
+            $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
+            if ($barcode) {
+                   //generate barcode and store in storage/public/barcode
+                    $fileName = $patient->patient_id.'.' . time() . '.png';
+                     $path = public_path('backend/uploads/barcode/' . $fileName);
+                    file_put_contents($path, $barcode);
+                    $patient->barcode = $fileName; //store barcode name in database
+                    $patient->save();
+            } 
+            //generate bar code end
             Bed::where('id',$request->bedNumId)->update([
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $patient->id,
@@ -173,7 +184,7 @@ class IpdinController extends Controller
             $payment_bills->patient_id = $patient->id;
             $payment_bills->to_bed_id = $request->bedNumId;
             $payment_bills->amount_for = 'Bed Charge';
-            $payment_bills->title = 'Patient Addmitted to IPD';
+            $payment_bills->title = 'Patient Admitted to IPD';
             $payment_bills->save();
             return response()->json(['success'=>'New IPD Patient added successfully'],201);
         }else{
@@ -222,44 +233,14 @@ class IpdinController extends Controller
        Patient::where('id',$request->id)->delete();
         return response()->json(['success'=>'Patient data deleted successfully'],200);
     }
-     function moveToEmergencyStatus(Request $request){
-        $now = Carbon::now();
-        $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
-        $curr_status = Patient::where('id',$request->id)->get(['type']);
-        $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
-        $update = Patient::where('id',$request->id)->update([
-            'type' =>'EMERGENCY',
-            'bed_id' => $request->bed_id,
-            'previous_type'=>$curr_status[0]->type,
-            'type_change_date' => $now
-        ]);
-        if($update){
-            Bed::where('id',$request->bed_id)->update([
-                'current_status' => 'occupied',
-                'occupied_by_patient_id' => $request->id,
-                'occupied_date' =>$now
 
-            ]);
-            Bed::where('id', $previous_bed_data[0]->id)->update([
-                'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
-                'previous_occupied_date' => $previous_bed_data[0]->occupied_date,
-                'occupied_by_patient_id' => null,
-                'occupied_date' => null,
-                'current_status' =>'vacant'
-            ]);
-           
-            $timelines = new Timeline();
-            $timelines->type = "IPD";
-            $timelines->patient_id = $request->id;
-            $timelines->title = "Moved to Emergency";
-            $timelines->desc = "Moved to Emergency on bed ".$bed_name[0]->bed_no." from IPD";
-            $timelines->created_by = "Admin";
-            $timelines->save();
-            return response()->json(['success'=>'Successfully moved to Emergency'],200);
-        }
-    }
     function moveToIcuStatus(Request $request){
         $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
+        $last_bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->get(); // Get the actual amount value
+        $old_bed_priority = BedGroup::where('id', $last_bed_amount[0]->bed_group_id)->get();
+        $new_bed_amount = Bed::where('id',$request->bed_id)->get(); // Get the actual amount value
+        $new_bed_priority = BedGroup::where('id', $new_bed_amount[0]->bed_group_id)->get();
+        
         $now = Carbon::now();
         $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
         // dd($previous_bed_data);
@@ -304,10 +285,18 @@ class IpdinController extends Controller
                 $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
 
                 $pre_bed_amount = $bed_amount * $occupied_days;
-                PaymentBill::where('id',$previous_payment_bill->id)->update([
-                    'days' => $occupied_days,
-                    'amount' => $pre_bed_amount
-                ]);
+                
+                if($new_bed_priority[0]->priority < $old_bed_priority[0]->priority){
+                        $pre_bed_amount =  $new_bed_amount[0]->amount * $occupied_days;
+                      
+                    }else{
+                        $pre_bed_amount = $last_bed_amount[0]->amount * $occupied_days;
+                        
+                    }
+                    PaymentBill::where('id',$previous_payment_bill->id)->update([
+                        'days' => $occupied_days,
+                        'amount' => $pre_bed_amount
+                    ]);
             } // amount add to previous bed type for billing
 
             $timelines = new Timeline();
@@ -315,13 +304,20 @@ class IpdinController extends Controller
             $timelines->patient_id = $request->id;
             $timelines->title = "Moved to ICU";
             $timelines->desc = "Moved to ICU on bed ".$bed_name[0]->bed_no." from IPD";
-            $timelines->created_by = "Admin";
+            $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Successfully moved to ICU'],200);
         }
     }
     public function moveToIpdStatusFromIcu(Request $request){
         $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();// Get the most recent 'Bed Charge' payment bill for a specific patient
+        $last_bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->get(); // Get the actual amount value
+        $old_bed_priority = BedGroup::where('id', $last_bed_amount[0]->bed_group_id)->get();
+        $new_bed_amount = Bed::where('id',$request->bed_id)->get(); // Get the actual amount value
+        $new_bed_priority = BedGroup::where('id', $new_bed_amount[0]->bed_group_id)->get();
+
+
+        // dd($bed_amount,$old_bed_priority,$new_bed_amount, $new_bed_priority);
         $now = Carbon::now();
         $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
         $curr_status = Patient::where('id',$request->id)->get(['type']);
@@ -364,10 +360,19 @@ class IpdinController extends Controller
                 $interval = $created_at->diff($updated_at);
                 $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
                 $pre_bed_amount = $bed_amount * $occupied_days;
-                PaymentBill::where('id',$previous_payment_bill->id)->update([
-                    'days' => $occupied_days,
-                    'amount' => $pre_bed_amount
-                ]);
+               
+                    if($new_bed_priority[0]->priority < $old_bed_priority[0]->priority){
+                        $pre_bed_amount =  $new_bed_amount[0]->amount * $occupied_days;
+                      
+                    }else{
+                        $pre_bed_amount = $last_bed_amount[0]->amount * $occupied_days;
+                        
+                    }
+                    PaymentBill::where('id',$previous_payment_bill->id)->update([
+                        'days' => $occupied_days,
+                        'amount' => $pre_bed_amount
+                    ]);
+             
             } // amount add to previous bed type for billing
 
             $timelines = new Timeline();
@@ -375,7 +380,7 @@ class IpdinController extends Controller
             $timelines->patient_id = $request->id;
             $timelines->title = "Moved to IPD";
             $timelines->desc = "Moved to IPD on bed ".$bed_name[0]->bed_no." from ICU";
-            $timelines->created_by = "Admin";
+            $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Successfully moved to IPD'],200);
         }
@@ -412,7 +417,7 @@ class IpdinController extends Controller
             $timelines->patient_id = $request->id;
             $timelines->title = "Discharged";
             $timelines->desc = "Patient Discharged from IPD";
-            $timelines->created_by = "Admin";
+            $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Successfully discharged from IPD'],200);
         }
@@ -478,7 +483,7 @@ class IpdinController extends Controller
             $timelines->patient_id = $request->patientId;
             $timelines->title = "New Visit";
             $timelines->desc = "Appointment booked for ipd on ".$request->appointment_date;
-            $timelines->created_by = "Admin";
+            $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Patient Visit added successfully'],200);
         }else{
@@ -590,7 +595,7 @@ class IpdinController extends Controller
              $timelines->patient_id = $request->patientId;
              $timelines->title = "Medicine Dose";
              $timelines->desc = "Medicine dose adviced";
-             $timelines->created_by = "Admin";
+             $timelines->created_by = Auth::id();
              $timelines->save();
             return response()->json(['success' => 'Medicine dose added successfully'], 200);
         } else {
@@ -702,7 +707,7 @@ class IpdinController extends Controller
              $timelines->patient_id = $request->patientId;
              $timelines->title = "Lab Test";
              $timelines->desc = "Lab Test Created";
-             $timelines->created_by = "Admin";
+             $timelines->created_by = Auth::id();
              $timelines->save();
             return response()->json(['success'=>'Lab Test added successfully'],200);
         }else{
@@ -808,27 +813,20 @@ class IpdinController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
-        $ipdCharge = new Charge();
-            $ipdCharge->type = "IPD";
-            $ipdCharge->patient_id = $request->patientId;
-            $ipdCharge->name = $request->name;
-            $ipdCharge->amount = $request->amount;
-        if($ipdCharge->save()){
             $payment_bills = new PaymentBill();
             $payment_bills->type = "IPD";
             $payment_bills->patient_id = $request->patientId;
             $payment_bills->amount_for = 'Charge';
             $payment_bills->title = $request->name;
             $payment_bills->amount = $request->amount;
-            $payment_bills->save();
-            
+            if($payment_bills->save()){
             $timelines = new Timeline();
-             $timelines->type = "IPD";
-             $timelines->patient_id = $request->patientId;
-             $timelines->title = "Charges";
-             $timelines->desc = "Charges added for treatment or test";
-             $timelines->created_by = "Admin";
-             $timelines->save();
+            $timelines->type = "IPD";
+            $timelines->patient_id = $request->patientId;
+            $timelines->title = "Charges";
+            $timelines->desc = "Charges added for treatment or test";
+            $timelines->created_by = Auth::id();
+            $timelines->save();
             return response()->json(['success'=>'Charge added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Charge not added']);
@@ -836,13 +834,16 @@ class IpdinController extends Controller
     }
     public function viewIpdCharge(Request $request){
         if($request->ajax()){
-            $ipdCharges = Charge::where('patient_id',$request->patient_id)->get();
+            $ipdCharges = PaymentBill::where('patient_id',$request->patient_id)->get();
             return DataTables::of($ipdCharges)
             ->addColumn('created_at',function($row){
                 return $row->created_at;
             })
-            ->addColumn('name',function($row){
-                return $row->name;
+            ->addColumn('title',function($row){
+                return $row->amount_for;
+            })
+            ->addColumn('desc',function($row){
+                return $row->title;
             })
             ->addColumn('amount',function($row){
                 return $row->amount;
@@ -860,12 +861,12 @@ class IpdinController extends Controller
         }
     }
     public function getIpdChargeData(Request $request){
-        $getData = Charge::where('id',$request->id)->get();
+        $getData = PaymentBill::where('id',$request->id)->get();
         return response()->json(['success'=>'Charge data fetched','data'=>$getData],200);
     }
     public function ipdChargeDataUpdate(Request $request){
-         $update = Charge::where('id',$request->id)->update([
-            'name' => $request->name,
+         $update = PaymentBill::where('id',$request->id)->update([
+            'title' => $request->name,
             'amount' => $request->amount
         ]);
         if($update){
@@ -899,7 +900,7 @@ class IpdinController extends Controller
              $timelines->patient_id = $request->patientId;
              $timelines->title = "Vital";
              $timelines->desc = "Vital added of patient";
-             $timelines->created_by = "Admin";
+             $timelines->created_by = Auth::id();
              $timelines->save();
             return response()->json(['success'=>'VItal added successfully'],200);
         }else{
@@ -972,7 +973,7 @@ class IpdinController extends Controller
              $timelines->patient_id = $request->patientId;
              $timelines->title = "Nurse Note";
              $timelines->desc = "Nurse Note added of patient";
-             $timelines->created_by = "Admin";
+             $timelines->created_by = Auth::id();
              $timelines->save();
             return response()->json(['success'=>'Nurse note added successfully'],200);
         }else{
@@ -1047,7 +1048,7 @@ class IpdinController extends Controller
              $timelines->patient_id = $request->patientId;
              $timelines->title = "Advance";
              $timelines->desc = "Advance Payment amount rs.".$request->amount." added";
-             $timelines->created_by = "Admin";
+             $timelines->created_by = Auth::id();
              $timelines->save();
             return response()->json(['success'=>'Advance added successfully'],200);
         }else{
@@ -1091,47 +1092,39 @@ class IpdinController extends Controller
             return response()->json(['error_success'=>'Advance payment data not updated']);
         }
     }
-    public function viewIpdBills(Request $request){
-        if($request->ajax()){
-            $bills = PaymentBill::where('patient_id',$request->patient_id)->orderBy('created_at', 'desc')->get();
-            return DataTables::of($bills)
-            ->addColumn('created_at',function($row){
-                return $row->created_at;
-            })
-            ->addColumn('name',function($row){
-                return $row->amount_for;
-            })
-            ->addColumn('amount',function($row){
-                return $row->amount;
-            })
-            ->rawColumns([''])
-            ->make(true);
+    public function labReportIpdSubmit(Request $request){
+        $lab_file = $request->file('lab_pdf');
+        $labreports = new LabReport();
+        $labreports->patient_id = $request->patient_id;
+        $labreports->lab_id = $request->lab_id;
+        $labreports->title = $request->title;
+        
+        if ($lab_file) {
+            // Define your file path and name
+            $imageName =  $request->patient_id.'.'.$request->lab_id.'.'.time().'.'.$lab_file->getClientOriginalExtension();
+            $destinationPath = public_path('/backend/uploads/lab_reports');
+            
+            // Move the file to the destination path
+            $lab_file->move($destinationPath, $imageName);
+            
+            // Save the image path in your database
+            $labreports->file_path = $imageName;
+        }
+        
+        if ($labreports->save()) {
+            return response()->json(['success' => 'Lab report added successfully'], 200);
+        } else {
+            return response()->json(['error_success' => 'Lab report not added'], 400);
         }
     }
-        public function labReportIpdSubmit(Request $request){
-                $lab_file = $request->file('lab_pdf');
-                $labreports = new LabReport();
-                $labreports->patient_id = $request->patient_id;
-                $labreports->lab_id = $request->lab_id;
-                $labreports->title = $request->title;
-                
-                if ($lab_file) {
-                    // Define your file path and name
-                    $imageName =  $request->patient_id.'.'.$request->lab_id.'.'.time().'.'.$lab_file->getClientOriginalExtension();
-                    $destinationPath = public_path('/backend/uploads/lab_reports');
-                    
-                    // Move the file to the destination path
-                    $lab_file->move($destinationPath, $imageName);
-                    
-                    // Save the image path in your database
-                    $labreports->file_path = $imageName;
-                }
-                
-                if ($labreports->save()) {
-                    return response()->json(['success' => 'Lab report added successfully'], 200);
-                } else {
-                    return response()->json(['error_success' => 'Lab report not added'], 400);
-                }
+    public function ipdFindingSubmit(Request $request){
+        $update = Patient::where('id',$request->id)->update([
+            'description' => $request->desc
+        ]);
+        if($update){
+            return response()->json(['success'=>'Findings updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Findings data updated']);
+        }
     }
-   
 }

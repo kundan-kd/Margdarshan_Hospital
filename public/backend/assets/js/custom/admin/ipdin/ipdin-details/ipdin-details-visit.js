@@ -44,7 +44,7 @@ function checkIpdVisitPaidAmount(){
 $('#ipdVisit-modelForm').on('submit',function(e){
  e.preventDefault();
     let symptoms_check  = validateField('ipdVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('ipdVisit-previousMedIssue', 'input');
+    let previousMedIssue_check  = validateField('ipdVisit-previousMedIssue', 'select');
     let admissionDate_check  = validateField('ipdVisit-admissionDate', 'select');
     let oldPatient_check  = validateField('ipdVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('ipdVisit-consultDoctor', 'select');
@@ -280,7 +280,7 @@ function ipdVisitEdit(id){
 }
 function ipdVisitUpdate(id){
     let symptoms_check  = validateField('ipdVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('ipdVisit-previousMedIssue', 'input');
+    let previousMedIssue_check  = validateField('ipdVisit-previousMedIssue', 'select');
     let admissionDate_check  = validateField('ipdVisit-admissionDate', 'select');
     let oldPatient_check  = validateField('ipdVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('ipdVisit-consultDoctor', 'select');

@@ -42,7 +42,7 @@ function checkOpdVisitPaidAmount(){
 $('#opdOutVisit-modelForm').on('submit',function(e){
  e.preventDefault();
     let symptoms_check  = validateField('opdOutVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('opdOutVisit-previousMedIssue', 'input');
+    let previousMedIssue_check  = validateField('opdOutVisit-previousMedIssue', 'select');
     let oldPatient_check  = validateField('opdOutVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('opdOutVisit-consultDoctor', 'select');
     let charge_check = validateField('opdOutVisit-charge', 'amount');
@@ -273,7 +273,7 @@ function opdOutVisitEdit(id){
 }
 function opdOutVisitUpdate(id){
     let symptoms_check  = validateField('opdOutVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('opdOutVisit-previousMedIssue', 'input');
+    let previousMedIssue_check  = validateField('opdOutVisit-previousMedIssue', 'select');
     let oldPatient_check  = validateField('opdOutVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('opdOutVisit-consultDoctor', 'select');
     let charge_check = validateField('opdOutVisit-charge', 'amount');

@@ -28,8 +28,12 @@ let table_charge = $('#opd-out-charges-list').DataTable({
             name:'created_at'
         },
         {
-            data:'name',
-            name:'name'
+            data:'title',
+            name:'title'
+        },
+        {
+            data:'desc',
+            name:'desc'
         },
         {
             data:'amount',
@@ -98,7 +102,7 @@ function opdOutChargeEdit(id){
                 $('.opdOutChargeUpdate').removeClass('d-none');
                 $('#opd-add-charges').modal('show');
                 $('#opdOutChargeId').val(id);
-                $('#opdOutCharge-name').val(getData.name);
+                $('#opdOutCharge-name').val(getData.title);
                 $('#opdOutCharge-amount').val(getData.amount);
             }
         }

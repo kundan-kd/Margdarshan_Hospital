@@ -22,7 +22,7 @@
           <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged' || $patients[0]->type == 'ICU'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
           @endcan
           @can('IPD Discharge')
-          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="ipdDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
+          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="ipdDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
           @endcan
         </div>
         <!-- <div class="btns">
@@ -58,9 +58,6 @@
                     <button class="nav-link px-16 py-10 " id="pills-history-tab" data-bs-toggle="pill" data-bs-target="#pills-history" type="button" role="tab" aria-controls="pills-history" aria-selected="false">Vital History</button>
                   </li>
                   <li class="nav-item" role="presentation">
-                    <button class="nav-link px-16 py-10 " id="pills-bills-tab" data-bs-toggle="pill" data-bs-target="#pills-bills" type="button" role="tab" aria-controls="pills-bills" aria-selected="false">Bills</button>
-                  </li>
-                  <li class="nav-item" role="presentation">
                     <button class="nav-link px-16 py-10 " id="pills-payment-tab" data-bs-toggle="pill" data-bs-target="#pills-payment" type="button" role="tab" aria-controls="pills-payment" aria-selected="false">Advance</button>
                 </li>
             </ul>
@@ -93,7 +90,7 @@
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">Bar Code :</td>
-                                    <td> <img src="{{asset('backend/uploads/images/barcode.jpg')}}" style="width: 100px;"></td>
+                                    <td> <img src="{{asset('backend/uploads/barcode/'. $patients[0]->barcode)}}" style="width: 150px;height:50px;" alt="barcode"></td>
                                   </tr>
                                  </table>
                             </div>
@@ -102,13 +99,47 @@
                             @endphp --}}
                             <h6 class="text-md fw-medium mt-11 border-bottom pb-8">CONSULTANT DOCTOR</h6>
                             <div class="d-flex align-items-center">
-                              <p class="mb-0 mx-1">Finding :</p> 
-                              <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#ipd-add-finding">
+                              <p class="fw-medium mb-0 mx-1">Finding :</p> 
+                              <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#ipd-findings">
                                 <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-primary" data-bs-title="Finding">
                                   <i class="ri-add-line"></i>
                                 </div>
                               </button>
                             </div>
+                            <div>
+                               <p class="mb-0 mx-1">{{$patients[0]->description}}</p> 
+                            </div>
+                            <!-- Modal findings -->
+                            <div class="modal fade" id="ipd-findings" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-lab-reportLabel" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered modal-md">
+                                <div class="modal-content">
+                                  <div class="modal-header p-11 bg-primary-500">
+                                    <h6 class="modal-title fw-normal text-md text-white" id="ipd-add-labLabel">Add Fundings</h6>
+                                    <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <form action="" id="ipdFinding-form">
+                                    @csrf
+                                  <div class="modal-body">
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                      <input type="hidden" id="ipdFindingId">
+                                      <label class="form-label fw-medium" for="ipdFinding">Description </label><sup class="text-danger">*</sup>
+                                      <input id="ipdFinding" name="ipdFinding" class="form-control form-control-sm"  placeholder="Finding Description" style="resize: vertical; border: 1px solid #ced4da;" value="{{$patients[0]->description}}" oninput="validateField(this.id,'input')">
+                                      <div class="ipdFinding_errorCls d-none"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+                                  <button type="submit" class="btn btn-primary-600 btn-sm fw-normal mx-2">
+                                    <i class="ri-checkbox-circle-line"></i> Submit
+                                  </button>
+                                </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- Add findings end -->
                         </div>
                         <div class="col-md-7 p-3">
                             <div class="mb-5">
@@ -328,7 +359,8 @@
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
-                              <th class="fw-medium">Name</th>
+                              <th class="fw-medium">Title</th>
+                              <th class="fw-medium">Description</th>
                               <th class="fw-medium">Amount</th>
                               <th class="fw-medium">Action</th>
                              </tr>
@@ -443,30 +475,6 @@
                           </thead>
                           <tbody>
                             
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-             <div class="tab-pane fade" id="pills-bills" role="tabpanel" aria-labelledby="pills-bills-tab" tabindex="0">
-                  <div class="row">
-                    <div class="col-md-12 px-3">
-                      <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
-                        <h6 class="text-md fw-normal mb-0">Bills Created History</h6>
-                        
-                      </div>
-                      <div class="table-responsive">
-                        <table class="table striped-table w-100" id="ipdbill-list">
-                          <thead>
-                             <tr>
-                              <th class="fw-medium">Date</th>
-                              <th class="fw-medium">Title</th>
-                              <th class="fw-medium">Amount</th>
-                             </tr>
-                          </thead>
-                          <tbody>
-
                           </tbody>
                         </table>
                       </div>
@@ -1252,7 +1260,7 @@
           <div class="row">
               <div class="col-md-6">
                 <input type="hidden" id="ipdChargeId">
-                <label class="form-label fw-medium" for="ipdCharge-name">Name</label> <sup class="text-danger">*</sup>
+                <label class="form-label fw-medium" for="ipdCharge-name">Title</label> <sup class="text-danger">*</sup>
                   <input id="ipdCharge-name" type="text" class="form-control form-control-sm" placeholder="Charge Name" oninput="validateField(this.id,'input')">
                   <div class="ipdCharge-name_errorCls d-none"></div>
               </div>
@@ -1352,7 +1360,7 @@
              </div>
              <div class="col-md-6">
                <label class="form-label fw-medium" for="ipdVisit-previousMedIssue">Previous Medical Issue</label>
-               <textarea id="ipdVisit-previousMedIssue" class="form-control " rows="1" placeholder="Previous Medical Issue" oninput="validateField(this.id,'input')" value=""></textarea>
+               <textarea id="ipdVisit-previousMedIssue" class="form-control " rows="1" placeholder="Previous Medical Issue" oninput="validateField(this.id,'select')" value=""></textarea>
                 <div class="ipdVisit-previousMedIssue_errorCls d-none"></div>
              </div>
              <div class="col-md-12">
@@ -1918,6 +1926,7 @@
           dropdownParent: $('#ipd-nurse-note')
       });
     });
+  const ipdFindingSubmit = "{{route('ipd.ipdFindingSubmit')}}";
   const ipdVisitMedicineName = "{{route('common.getMedicineName')}}";
   const calculateDischargeAmount = "{{route('ipd.calculateDischargeAmount')}}";
   const submitRestIpdAmount = "{{route('ipd.submitRestIpdAmount')}}";
@@ -1925,6 +1934,7 @@
   const moveToEmergencyStatus = "{{route('ipd.moveToEmergencyStatus')}}";
   const moveToIcuStatus = "{{route('ipd.moveToIcuStatus')}}";
   const moveToIpdStatusFromIcu = "{{route('ipd.moveToIpdStatusFromIcu')}}";
+
   const ipdVisitSubmit = "{{route('ipd-visit.ipdVisitSubmit')}}";
   const viewIpdVisit = "{{route('ipd-visit.viewIpdVisit')}}";
   const getIpdVisitData = "{{route('ipd-visit.getIpdVisitData')}}";
@@ -1973,7 +1983,6 @@
   const ipdAdvanceDataUpdate = "{{route('ipd-advance.ipdAdvanceDataUpdate')}}";
 
   const labReportIpdSubmit = "{{route('ipd-lab.labReportIpdSubmit')}}";
-  const viewIpdBills = "{{route('ipd.viewIpdBills')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details.js')}}"></script>
 <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin-details/ipdin-details-visit.js')}}"></script>

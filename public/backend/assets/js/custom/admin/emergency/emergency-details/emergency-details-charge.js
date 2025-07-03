@@ -28,8 +28,12 @@ let table_charge = $('#emergancy-charges-list').DataTable({
             name:'created_at'
         },
         {
-            data:'name',
-            name:'name'
+            data:'title',
+            name:'title'
+        },
+        {
+            data:'desc',
+            name:'desc'
         },
         {
             data:'amount',
@@ -98,7 +102,7 @@ function emergencyChargeEdit(id){
                 $('.emergencyChargeUpdate').removeClass('d-none');
                 $('#emergency-add-charges').modal('show');
                 $('#emergencyChargeId').val(id);
-                $('#emergencyCharge-name').val(getData.name);
+                $('#emergencyCharge-name').val(getData.title);
                 $('#emergencyCharge-amount').val(getData.amount);
             }
         }

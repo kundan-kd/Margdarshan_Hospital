@@ -398,9 +398,9 @@
                     <span class="bill-detail">Subtotal:</span>
                     <span class="amount">₹ {{$total_amount ?? 0}}</span>
                 </div>
-                <div class="total-row">
+                <div class="total-row" style="{{ $invoice_data[0]->discount_amount > 0 ? '' : 'display:none;' }}">
                     <span class="bill-detail">Discount Amount:</span>
-                    <span class="amount">₹ {{$discount_amount ?? 0}}</span>
+                    <span class="amount">₹ {{round($invoice_data[0]->discount_amount)}}</span>
                 </div>
                 <div class="total-row">
                     <span class="bill-detail">Paid Amount:</span>

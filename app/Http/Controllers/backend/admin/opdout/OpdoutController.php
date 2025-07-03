@@ -26,6 +26,7 @@ use App\Models\Vital;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -156,7 +157,7 @@ class OpdoutController extends Controller
             $timelines->patient_id = $request->id;
             $timelines->title = "Moved to IPD";
             $timelines->desc = "Moved to IPD on bed ".$bed_name[0]->bed_no." from OPD";
-            $timelines->created_by = "Admin";
+            $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Successfully moved to IPD'],200);
         }
@@ -208,7 +209,7 @@ class OpdoutController extends Controller
             $timelines->patient_id = $request->id;
             $timelines->title = "Moved to ICU";
             $timelines->desc = "Moved to ICU on bed ".$bed_name[0]->bed_no." from OPD";
-            $timelines->created_by = "Admin";
+            $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Successfully moved to ICU'],200);
         }
@@ -272,7 +273,7 @@ class OpdoutController extends Controller
             $timelines->patient_id = $request->patientId;
             $timelines->title = "New Visit";
             $timelines->desc = "Appointment booked for opd on ".$request->appointment_date;
-            $timelines->created_by = "Admin";
+            $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Patient Visit added successfully'],200);
         }else{
@@ -383,7 +384,7 @@ class OpdoutController extends Controller
              $timelines->patient_id = $request->patientId;
              $timelines->title = "Medicine Dose";
              $timelines->desc = "Medicine dose adviced";
-             $timelines->created_by = "Admin";
+             $timelines->created_by = Auth::id();
              $timelines->save();
             return response()->json(['success' => 'Medicine dose added successfully'], 200);
         } else {
@@ -494,7 +495,7 @@ class OpdoutController extends Controller
              $timelines->patient_id = $request->patientId;
              $timelines->title = "Lab Test";
              $timelines->desc = "Lab Test Created";
-             $timelines->created_by = "Admin";
+             $timelines->created_by = Auth::id();
              $timelines->save();
             return response()->json(['success'=>'Lab Test added successfully'],200);
         }else{
@@ -616,26 +617,20 @@ class OpdoutController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
-        $optoutCharge = new Charge();
-            $optoutCharge->type = "OPD";
-            $optoutCharge->patient_id = $request->patientId;
-            $optoutCharge->name = $request->name;
-            $optoutCharge->amount = $request->amount;
-        if($optoutCharge->save()){
             $payment_bills = new PaymentBill();
-            $payment_bills->type = "IPD";
+            $payment_bills->type = "OPD";
             $payment_bills->patient_id = $request->patientId;
             $payment_bills->amount_for = 'Charge';
             $payment_bills->title = $request->name;
             $payment_bills->amount = $request->amount;
-            $payment_bills->save();
+        if($payment_bills->save()){
 
             $timelines = new Timeline();
             $timelines->type = "OPD";
             $timelines->patient_id = $request->patientId;
             $timelines->title = "Charges";
             $timelines->desc = "Charges added for treatment or test";
-            $timelines->created_by = "Admin";
+            $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Charge added successfully'],200);
         }else{
@@ -644,13 +639,16 @@ class OpdoutController extends Controller
     }
     public function viewOpdOutCharge(Request $request){
         if($request->ajax()){
-            $labTestDetails = Charge::where('patient_id',$request->patient_id)->get();
+            $labTestDetails = PaymentBill::where('patient_id',$request->patient_id)->get();
             return DataTables::of($labTestDetails)
             ->addColumn('created_at',function($row){
                 return $row->created_at;
             })
-            ->addColumn('name',function($row){
-                return $row->name;
+            ->addColumn('title',function($row){
+                return $row->amount_for;
+            })
+            ->addColumn('desc',function($row){
+                return $row->title;
             })
             ->addColumn('amount',function($row){
                 return $row->amount;
@@ -668,12 +666,12 @@ class OpdoutController extends Controller
         }
     }
     public function getOpdOutChargeData(Request $request){
-        $getData = Charge::where('id',$request->id)->get();
+        $getData = PaymentBill::where('id',$request->id)->get();
         return response()->json(['success'=>'Charge data fetched','data'=>$getData],200);
     }
     public function opdOutChargeDataUpdate(Request $request){
-         $update = Charge::where('id',$request->id)->update([
-            'name' => $request->name,
+         $update = PaymentBill::where('id',$request->id)->update([
+            'title' => $request->name,
             'amount' => $request->amount
         ]);
         if($update){
@@ -707,7 +705,7 @@ class OpdoutController extends Controller
              $timelines->patient_id = $request->patientId;
              $timelines->title = "Vital";
              $timelines->desc = "Vital added of patient";
-             $timelines->created_by = "Admin";
+             $timelines->created_by = Auth::id();
              $timelines->save();
             return response()->json(['success'=>'VItal added successfully'],200);
         }else{
@@ -779,7 +777,7 @@ class OpdoutController extends Controller
              $timelines->patient_id = $request->patientId;
              $timelines->title = "Advance";
              $timelines->desc = "Advance Payment amount rs.".$request->amount." added";
-             $timelines->created_by = "Admin";
+             $timelines->created_by = Auth::id();
              $timelines->save();
             return response()->json(['success'=>'Advance added successfully'],200);
         }else{
@@ -847,6 +845,16 @@ class OpdoutController extends Controller
                 } else {
                     return response()->json(['error_success' => 'Lab report not added'], 400);
                 }
+    }
+    public function opdOutFindingSubmit(Request $request){
+        $update = Patient::where('id',$request->id)->update([
+            'description' => $request->desc
+        ]);
+        if($update){
+            return response()->json(['success'=>'Findings updated successufuly'],200);
+        }else{
+            return response()->json(['error_success'=>'Findings data updated']);
+        }
     }
    
 }

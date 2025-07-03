@@ -7,7 +7,9 @@
 </style>
 @endsection
 @section('main-container')
-
+{{-- @php
+  dd(Storage::url('barcodes/' . $patients[0]->barcode));
+@endphp --}}
 <div class="dashboard-main-body">
   <input type="hidden" id="patient_Id" value="{{$patients[0]->id}}">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
@@ -67,6 +69,10 @@
                                     <td>{{$patients[0]->patient_id}}</td>
                                   </tr>
                                   <tr>
+                                    <td class="fw-medium">Name :</td>
+                                    <td>{{$patients[0]->name}}</td>
+                                  </tr>
+                                  <tr>
                                     <td class="fw-medium">Gender :</td>
                                     <td>{{$patients[0]->gender}}</td>
                                   </tr>
@@ -84,7 +90,7 @@
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">Bar Code :</td>
-                                    <td> <img src="{{asset('backend/uploads/images/barcode.jpg')}}" style="width: 100px;"></td>
+                                    <td> <img src="{{asset('backend/uploads/barcode/'. $patients[0]->barcode)}}" style="width: 150px;height:50px;" alt="barcode"></td>
                                   </tr>
                                  </table>
                             </div>
@@ -93,13 +99,47 @@
                             @endphp --}}
                             <h6 class="text-md fw-medium mt-11 border-bottom pb-8">CONSULTANT DOCTOR</h6>
                             <div class="d-flex align-items-center">
-                              <p class="mb-0 mx-1">Finding :</p> 
-                              <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#add-finding" onclick="generateBar({{$patients[0]->patient_id}})">
+                              <p class="fw-medium mb-0 mx-1">Finding :</p> 
+                              <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#opd-findings">
                                 <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-primary" data-bs-title="Finding">
                                   <i class="ri-add-line"></i>
                                 </div>
                               </button>
                             </div>
+                            <div>
+                               <p class="mb-0 mx-1">{{$patients[0]->description}}</p> 
+                            </div>
+                            <!-- Modal findings -->
+                            <div class="modal fade" id="opd-findings" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-lab-reportLabel" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered modal-md">
+                                <div class="modal-content">
+                                  <div class="modal-header p-11 bg-primary-500">
+                                    <h6 class="modal-title fw-normal text-md text-white" id="opd-add-labLabel">Add Fundings</h6>
+                                    <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <form action="" id="opdFinding-form">
+                                    @csrf
+                                  <div class="modal-body">
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                      <input type="hidden" id="opdFindingId">
+                                      <label class="form-label fw-medium" for="opdFinding">Description </label><sup class="text-danger">*</sup>
+                                      <input id="opdFinding" name="opdFinding" class="form-control form-control-sm"  placeholder="Finding Description" style="resize: vertical; border: 1px solid #ced4da;" value="{{$patients[0]->description}}" oninput="validateField(this.id,'input')">
+                                      <div class="opdFinding_errorCls d-none"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+                                  <button type="submit" class="btn btn-primary-600 btn-sm fw-normal mx-2">
+                                    <i class="ri-checkbox-circle-line"></i> Submit
+                                  </button>
+                                </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- Add findings end -->
                         </div>
                         <div class="col-md-7 p-3">
                             <div class="mb-5">
@@ -303,7 +343,8 @@
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
-                              <th class="fw-medium">Name</th>
+                              <th class="fw-medium">Title</th>
+                              <th class="fw-medium">Description</th>
                               <th class="fw-medium">Amount</th>
                               <th class="fw-medium">Action</th>
                              </tr>
@@ -833,7 +874,7 @@
              </div>
              <div class="col-md-6">
                <label class="form-label fw-medium" for="opdOutVisit-previousMedIssue">Previous Medical Issue</label>
-               <textarea id="opdOutVisit-previousMedIssue" class="form-control " rows="1" placeholder="Previous Medical Issue" oninput="validateField(this.id,'input')" value=""></textarea>
+               <textarea id="opdOutVisit-previousMedIssue" class="form-control " rows="1" placeholder="Previous Medical Issue" oninput="validateField(this.id,'select')" value=""></textarea>
                 <div class="opdOutVisit-previousMedIssue_errorCls d-none"></div>
              </div>
              <div class="col-md-12">
@@ -1099,6 +1140,7 @@ $('#opd-add-lab').on('shown.bs.modal', function () {
 });
   const ipdVisitMedicineNameOpd = "{{route('common.getMedicineName')}}";
 
+  const opdOutFindingSubmit = "{{route('opd-out.opdOutFindingSubmit')}}";
   const moveToIpdStatus = "{{route('opd-out.moveToIpdStatus')}}";
   const moveToIcuStatus = "{{route('opd-out.moveToIcuStatus')}}";
   const opdOutVisitMedicineName = "{{route('common.getMedicineName')}}";

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Picqer\Barcode\BarcodeGeneratorJPG;
 use Yajra\DataTables\Facades\DataTables;
 
 class PatientController extends Controller
@@ -101,6 +102,17 @@ class PatientController extends Controller
         if($patient->save()){
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
+            //generate bar code
+            $generator = new BarcodeGeneratorJPG();
+            $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
+            if ($barcode) {
+                   //generate barcode and store in storage/public/barcode
+                    $fileName = $patient->patient_id.'.' . time() . '.png';
+                     $path = public_path('backend/uploads/barcode/' . $fileName);
+                    file_put_contents($path, $barcode);
+                    $patient->barcode = $fileName; //store barcode name in database
+                    $patient->save();
+            }
             return response()->json(['success'=>'New Patient added successfully'],201);
         }else{
             return response()->json(['error_success'=>'Patient not added'],500);

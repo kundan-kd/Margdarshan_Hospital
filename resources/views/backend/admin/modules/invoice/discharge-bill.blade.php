@@ -112,12 +112,12 @@ Discharge Billing
                       </tr>
                       <tr>
                         <td class="border-0" colspan="2">Due Amount (₹)</td>
-                        <td class="border-0 text-end fs-6">₹ <span class="bill-totalDueAmount">{{$total_amount - ($received_amount + $discount_amount) ?? 0}}</span></td>
+                        <td class="border-0 text-end fs-6">₹ <span class="bill-totalDueAmount">{{round(($total_amount + $pre_bed_amount ?? 0) - ($received_amount + $discount_amount) ?? 0)}}</span></td>
                       </tr>
                       <tr>
                         <td colspan="2" class="border-0">
                            <label for="billAdd-paymentMode" style="display: none;">Payment Mode</label>
-                          <select id="billAdd-paymentMode" class="form-select form-select-sm" onchange="validateField(this.id,'select')">
+                          <select id="billAdd-paymentMode" class="form-select form-select-sm" onchange="validateField(this.id,'select')" {{$visibility}}>
                             <option value="">Select Payment Mode</option>
                             <option value="Cash">Cash</option>
                             <option value="UPI">UPI</option>
@@ -128,7 +128,7 @@ Discharge Billing
                       </td>
                         <td class="border-0">
                           <label for="billAdd-payAmount" style="display: none;">Pay Amount</label>
-                          <input id="billAdd-payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount" oninput="checkPayAmount(this.value);validateField(this.id,'select')">
+                          <input id="billAdd-payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount" oninput="checkPayAmount(this.value);validateField(this.id,'select')" {{$visibility}}>
                            <div class="billAdd-payAmount_errorCls d-none"></div>
                         </td>
                       </tr>
@@ -139,8 +139,8 @@ Discharge Billing
         </div>
         <div class=" pharmacy-footer card-footer border-top">
           <div class="text-end">
-                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddSubmitBtn" onclick="billAmountSubmit({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddDischargePrintBtn {{(($total_amount - ($received_amount + $discount_amount)) <= 0) ? '' : 'd-none' }}" {{$visibility}} onclick="billDischargeNPrint({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge & Print</button>
+                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddSubmitBtn" {{$visibility}} onclick="billAmountSubmit({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddDischargePrintBtn {{((($total_amount + $pre_bed_amount ?? 0) - ($received_amount + $discount_amount)) <= 0) ? '' : 'd-none' }}" {{$visibility}} onclick="billDischargeNPrint({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge & Print</button>
                 {{-- <button type="button"class="btn btn-primary-600 btn-sm fw-normal mx-2 billPrintBtn d-none"onclick="billPrint({{ $patient_id }})"><i class="ri-checkbox-circle-line"></i> Print</button> --}}
                 <button class="btn btn-primary billAddSpinnBtn d-none" type="button" disabled>
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>

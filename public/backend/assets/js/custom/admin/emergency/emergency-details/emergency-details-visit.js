@@ -44,7 +44,7 @@ function checkEmergencyVisitPaidAmount(){
 $('#emergencyVisit-form').on('submit',function(e){
  e.preventDefault();
     let symptoms_check  = validateField('emergencyVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('emergencyVisit-previousMedIssue', 'input');
+    let previousMedIssue_check  = validateField('emergencyVisit-previousMedIssue', 'select');
     let admissionDate_check  = validateField('emergencyVisit-admissionDate', 'select');
     let oldPatient_check  = validateField('emergencyVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('emergencyVisit-consultDoctor', 'select');
@@ -280,7 +280,7 @@ function emergencyVisitEdit(id){
 }
 function emergencyVisitUpdate(id){
     let symptoms_check  = validateField('emergencyVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('emergencyVisit-previousMedIssue', 'input');
+    let previousMedIssue_check  = validateField('emergencyVisit-previousMedIssue', 'select');
     let admissionDate_check  = validateField('emergencyVisit-admissionDate', 'select');
     let oldPatient_check  = validateField('emergencyVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('emergencyVisit-consultDoctor', 'select');

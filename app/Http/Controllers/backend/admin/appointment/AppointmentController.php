@@ -10,7 +10,9 @@ use App\Models\PaymentMode;
 use App\Models\RoomNumber;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 use Yajra\DataTables\Facades\DataTables;
 
 class AppointmentController extends Controller
@@ -89,6 +91,17 @@ class AppointmentController extends Controller
         if($patient->save()){
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
+            //generate bar code
+            $generator = new BarcodeGeneratorPNG();
+            $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
+            if ($barcode) {
+                   //generate barcode and store in storage/public/barcode
+                    $fileName = $patient->patient_id.'.' . time() . '.png';
+                     $path = public_path('backend/uploads/barcode/' . $fileName);
+                    file_put_contents($path, $barcode);
+                    $patient->barcode = $fileName; //store barcode name in database
+                    $patient->save();
+            }
             return response()->json(['success'=>'New Patient added successfully'],201);
         }else{
             return response()->json(['error_success'=>'Patient not added'],500);

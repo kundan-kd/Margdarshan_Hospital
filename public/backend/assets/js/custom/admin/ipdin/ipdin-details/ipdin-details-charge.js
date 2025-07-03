@@ -28,8 +28,12 @@ let table_charge = $('#ipd-charges-list').DataTable({
             name:'created_at'
         },
         {
-            data:'name',
-            name:'name'
+            data:'title',
+            name:'title'
+        },
+        {
+            data:'desc',
+            name:'desc'
         },
         {
             data:'amount',
@@ -98,7 +102,7 @@ function ipdChargeEdit(id){
                 $('.ipdChargeUpdate').removeClass('d-none');
                 $('#ipd-add-charges').modal('show');
                 $('#ipdChargeId').val(id);
-                $('#ipdCharge-name').val(getData.name);
+                $('#ipdCharge-name').val(getData.title);
                 $('#ipdCharge-amount').val(getData.amount);
             }
         }

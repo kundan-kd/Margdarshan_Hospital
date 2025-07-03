@@ -230,3 +230,39 @@ function opdOutAdvanceUpdate(id){
         console.log("Please fill all required fields");
     }  
 }
+$('#opdFinding-form').on('submit',function(e){
+    e.preventDefault();
+     let patient_id = $('#patient_Id').val();
+    let desc_check = validateField('opdFinding','input');
+    if(desc_check === true){
+         let desc = $('#opdFinding').val();
+        $.ajax({
+            url:opdOutFindingSubmit,
+            type:"POST",
+            data:{id:patient_id,desc:desc},
+            headers:{
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(response){
+                if(response.success){
+                    $('#opd-findings').modal('hide');
+                    $('#opdFinding-form')[0].reset();
+                    window.location.reload();
+                    // toastSuccessAlert(response.success);
+                }else if(response.error_validation){
+                    console.log(response.error_validation);
+                    toastWarningAlert(response.error_validation);
+                }else{
+                    toastErrorAlert('Something went wrong, please try again');
+                }
+            },
+            error:function(xhr, status, error){
+                console.log(xhr.respnseText);
+                alert('An Error Occurred: '+error);
+            }
+            
+        });
+    }else{
+        console.log('Please fill required field');
+    }
+});

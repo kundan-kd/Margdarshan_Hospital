@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('bed_groups', function (Blueprint $table) {
             $table->id();
             $table->string('name',50)->nullable();
+            $table->integer('priority')->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();
             $table->softDeletes();

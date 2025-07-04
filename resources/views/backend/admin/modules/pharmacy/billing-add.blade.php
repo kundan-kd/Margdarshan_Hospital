@@ -10,6 +10,9 @@ Billing-add
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">Create Billing</h6>
     </div>
+    @php
+    //  dd($categories);
+    @endphp
     <div class="pharmacy-purchase-wrapper card">
       <div class="card-header pb-4 border-bottom-0">
         <div class=" bg-neutral-100 d-flex align-items-center justify-content-between px-11">
@@ -82,7 +85,7 @@ Billing-add
                                     <select id="billingAdd-category0" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicine(this.value,0)" required>
                                         <option value="" selected>Select</option>
                                         @foreach ($categories as $category)
-                                        <option value="{{$category->id}}">{{$category->name}}</option>
+                                        <option value="{{$category['id']}}">{{$category['name']}}</option>
                                         @endforeach
                                     </select>
                                 </td>

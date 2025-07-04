@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\backend\admin\invoice;
 
 use App\Http\Controllers\Controller;
+use App\Models\Appointment;
 use App\Models\Bed;
 use App\Models\Billing;
 use App\Models\BillingItem;
@@ -114,5 +115,9 @@ class InvoiceController extends Controller
         $billings = Billing::where('id',$id)->get();
         $billing_items = BillingItem::where('billing_id',$id)->get();
         return view('backend.admin.modules.invoice.medicine-bill-invoice',compact('patient_id','billings','billing_items'));
+    }
+    public function appointmentBillPrint($id){
+        $appointments = Appointment::where('id',$id)->get();
+        return view('backend.admin.modules.invoice.appointment-invoice',compact('appointments'));
     }
 }

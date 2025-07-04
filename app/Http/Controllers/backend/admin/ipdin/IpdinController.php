@@ -240,7 +240,9 @@ class IpdinController extends Controller
         $old_bed_priority = BedGroup::where('id', $last_bed_amount[0]->bed_group_id)->get();
         $new_bed_amount = Bed::where('id',$request->bed_id)->get(); // Get the actual amount value
         $new_bed_priority = BedGroup::where('id', $new_bed_amount[0]->bed_group_id)->get();
-        
+
+
+
         $now = Carbon::now();
         $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
         // dd($previous_bed_data);
@@ -285,8 +287,8 @@ class IpdinController extends Controller
                 $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
 
                 $pre_bed_amount = $bed_amount * $occupied_days;
-                
-                if($new_bed_priority[0]->priority < $old_bed_priority[0]->priority){
+                        
+                   if(($interval->days ==0) && ($new_bed_priority[0]->priority < $old_bed_priority[0]->priority)){
                         $pre_bed_amount =  $new_bed_amount[0]->amount * $occupied_days;
                       
                     }else{
@@ -315,7 +317,6 @@ class IpdinController extends Controller
         $old_bed_priority = BedGroup::where('id', $last_bed_amount[0]->bed_group_id)->get();
         $new_bed_amount = Bed::where('id',$request->bed_id)->get(); // Get the actual amount value
         $new_bed_priority = BedGroup::where('id', $new_bed_amount[0]->bed_group_id)->get();
-
 
         // dd($bed_amount,$old_bed_priority,$new_bed_amount, $new_bed_priority);
         $now = Carbon::now();
@@ -354,14 +355,14 @@ class IpdinController extends Controller
 
             if ($previous_payment_bill) {
                 $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-               $created_at = new DateTime($previous_payment_bill->created_at);
+                $created_at = new DateTime($previous_payment_bill->created_at);
                 $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
 
                 $interval = $created_at->diff($updated_at);
                 $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
                 $pre_bed_amount = $bed_amount * $occupied_days;
                
-                    if($new_bed_priority[0]->priority < $old_bed_priority[0]->priority){
+                   if(($interval->days ==0) && ($new_bed_priority[0]->priority < $old_bed_priority[0]->priority)){
                         $pre_bed_amount =  $new_bed_amount[0]->amount * $occupied_days;
                       
                     }else{

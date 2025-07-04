@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Picqer\Barcode\BarcodeGeneratorJPG;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -61,6 +62,9 @@ class AppointmentController extends Controller
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="appointmentEdit('.$row->id.');getDoctorAdded('.$row->id.')"></iconify-icon>
                     </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <iconify-icon icon="mdi:file-upload-outline" onclick="printAppointmentBill(' . $row->id . ')"></iconify-icon>
+                    </a>
                     <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="appointmenttDelete('.$row->id.')"></iconify-icon>
                     </a>-->';
@@ -71,11 +75,17 @@ class AppointmentController extends Controller
     }
 
     public function addNewPatient(Request $request){
-        $validator = Validator::make($request->all(),[
+         $validator = Validator::make($request->all(),[
             'name' => 'required',
+            'guardian_name' => 'required',
             'gender' => 'nullable',
+            'bloodtype' => 'nullable',
+            'dob' => 'required',
+            'mstatus' => 'required',
             'mobile' => 'required',
-            'address' => 'required'
+            'address' => 'required',
+            'alt_mobile' => 'nullable',
+            'allergy' => 'nullable'
         ]);
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],422);
@@ -85,14 +95,20 @@ class AppointmentController extends Controller
         $patient = new Patient();
         $patient->type = "OPD";
         $patient->name = $request->name;
-        $patient->gender = $request->gender ?? NULL;
+        $patient->guardian_name = $request->guardian_name;
+        $patient->gender = $request->gender;
+        $patient->bloodtype = $request->bloodtype;
+        $patient->dob = $request->dob;
+        $patient->marital_status = $request->mstatus;
         $patient->mobile = $request->mobile;
+        $patient->alt_mobile = $request->alt_mobile;
+        $patient->known_allergies = $request->allergy;
         $patient->address = $request->address;
         if($patient->save()){
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
             //generate bar code
-            $generator = new BarcodeGeneratorPNG();
+            $generator = new BarcodeGeneratorJPG();
             $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
             if ($barcode) {
                    //generate barcode and store in storage/public/barcode

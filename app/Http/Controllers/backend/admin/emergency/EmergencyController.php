@@ -148,12 +148,13 @@ class EmergencyController extends Controller
                 'occupied_by_patient_id' => $patient->id,
                 'occupied_date' => $now 
             ]);
-            $bed_amount = Bed::where('id',$request->bedNumId)->get(['amount']);
+            // $bed_amount = Bed::where('id',$request->bedNumId)->get(['amount']);
             $payment_bills = new PaymentBill();
             $payment_bills->type = "EMERGENCY";
             $payment_bills->patient_id = $patient->id;
+            $payment_bills->to_bed_id = $request->bedNumId;
             $payment_bills->amount_for = 'Bed Charge';
-            $payment_bills->title = 'Patient Addmitted to Emergency';
+            $payment_bills->title = 'Patient Admitted to Emergency';
             $payment_bills->save();
             return response()->json(['success'=>'New IPD Patient added successfully'],201);
         }else{

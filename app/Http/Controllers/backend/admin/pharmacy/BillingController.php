@@ -71,7 +71,22 @@ class BillingController extends Controller
         }
     }
      public function billingAdd(){
-        $categories = MedicineCategory::where('status',1)->get();
+        $categories_data = MedicineCategory::where('status',1)->get();
+        $categories = [];
+        foreach($categories_data as $cat ){
+            $isCategoryMed = Medicine::where('category_id',$cat->id)->get(['stock_in','stock_out']);
+            // dd($isCategoryMed[0]->stock_in,$isCategoryMed[0]->stock_out);
+            if(sizeOf($isCategoryMed)>0){
+                $total = $isCategoryMed[0]->stock_in -  $isCategoryMed[0]->stock_out;
+                if($total > 0){
+                    $categories[] = [
+                    'id' => $cat->id,
+                    'name' => $cat->name,
+                ];
+            }
+            }
+        }
+        //  dd($medCategory);
         $doctors = User::where('usertype_id',2)->where('status',1)->get();
         $patients = Patient::where('status',1)->get(['id','patient_id','name']);
         $bloodtypes = BloodType::where('status',1)->get();

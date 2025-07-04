@@ -19,7 +19,7 @@
        <h6 class="fw-normal mb-0">OPD - Out Patient</h6>
      </div>
       <div class=" row my-3">
-        <div class="col-md-4">
+        <div class="col-md-2">
             <div class="d-flex justify-content-between ">
             <select id="opdoutDoctorId" class="select2-class form-select" onchange="getListFilter()">
                 <option value=""> Select Doctor</option>
@@ -27,14 +27,14 @@
                 <option value="{{$user->id}}">Dr. {{$user->name}}</option>
                 @endforeach
             </select>
-            <select id="opdoutRoomNum" class="select2-class form-select" onchange="getListFilter()">
+            {{-- <select id="opdoutRoomNum" class="select2-class form-select" onchange="getListFilter()">
                 <option value=""> Select Room</option>
                 @foreach ($users as $user)
                <option value="{{ $user->room_number }}">
             {{ $user->roomNumberData->room_num }}
         </option>
                 @endforeach
-            </select>
+            </select> --}}
         </div>
         </div>
         <div class="col-md-8 ">
@@ -51,7 +51,7 @@
         <table class="table bordered-table mb-0 w-100" id="opd-out-list-table" data-page-length='10'>
           <thead>
             <tr >
-              <th scope="col" class="fw-medium">Token no.</th>
+              <th scope="col" class="fw-medium">Patient ID</th>
               <th scope="col" class="fw-medium">Patient Name</th>
               <th scope="col" class="fw-medium">Doctor</th>
               <th scope="col" class="fw-medium">Room No.</th>

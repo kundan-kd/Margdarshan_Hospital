@@ -13,8 +13,6 @@ purchase-edit
     <div class="pharmacy-purchase-wrapper card">
       <div class="card-header pb-4 border-bottom-0">
         <div class="row bg-neutral-100 align-items-center mx-2">
-                 <!-- <div class="col-md-1"><label class="form-label fw-medium mb-0">Bill No :</label></div>
-                 <div class="col-md-2"><input class="form-control form-control-sm" type="number" placeholder="Bill No" ></div> -->
                 <div class="col-md-3 d-flex align-items-center">
                    <input type="hidden" id="purchaseEdit_purchase_id" value="{{$purchase[0]->id}}">
                     <span class="form-label fw-medium mb-0" style="width: 28%;">Bill No :</span>
@@ -62,18 +60,17 @@ purchase-edit
                               <th class="text-nowrap text-neutral-700">
                                   Sale Price
                               </th>
-                             
                               <th class="text-nowrap text-neutral-700">
                                   Qty
                               </th>
                               <th class="text-nowrap text-neutral-700">
                                   Purchase Rate
                               </th>
-                               <th class="text-nowrap text-neutral-700">
-                                  Tax
-                              </th>
                               <th class="text-nowrap text-neutral-700">
                                   Amount
+                              </th>
+                               <th class="text-nowrap text-neutral-700">
+                                  Tax (%)
                               </th>
                               <th class="text-nowrap text-neutral-700">
                                   
@@ -121,6 +118,9 @@ purchase-edit
                                   <input id="purchaseEdit_purchaseRate{{$purchaseItem->id}}" name="purchaseEdit_purchaseRate[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->purchase_rate}}" oninput="getAmountEdit({{$purchaseItem->id}})" required>
                               </td>
                               <td>
+                                  <input id="purchaseEdit_amount{{$purchaseItem->id}}" name="purchaseEdit_amount[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->amount}}" readonly>
+                              </td>
+                              <td>
                                   <input id="purchaseEdit_tax{{$purchaseItem->id}}" name="purchaseEdit_tax[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->tax}}" oninput="getTaxEdit({{$purchaseItem->id}})" required>
                               </td>
                               @php
@@ -128,17 +128,6 @@ purchase-edit
                               @endphp
                               <td style="display: none;">
                                   <input id="purchaseEdit_taxAmount{{$purchaseItem->id}}" name="purchaseEdit_taxAmount[]" type="text" class="form-control form-control-sm"value="{{$taxx}}">
-                              </td>
-                              <td>
-                                  <input id="purchaseEdit_amount{{$purchaseItem->id}}" name="purchaseEdit_amount[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->amount}}" readonly>
-                              </td>
-                               <td>
-                                  {{-- <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center" onclick="deleteRowEdit(this)">
-                                      <i class="ri-delete-bin-line"></i>
-                                  </button> --}}
-                                  {{-- <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center" onclick="deleteRowEdit(this,{{$purchaseItem->id}},{{$purchaseItem->amount}},{{$purchaseItem->tax}})">
-                                      <i class="ri-delete-bin-line"></i>
-                                  </button> --}}
                               </td>
                           </tr>
                           @endforeach
@@ -167,13 +156,6 @@ purchase-edit
                       <td class="border-0" colspan="2">Total</td>
                       <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_totalAmt">{{$purchase[0]->total_amount}}</span></td>
                     </tr>
-                    {{-- <tr>
-                      <td class="border-0 align-middle">Discount</td>
-                      <td class="border-0"><div class="d-flex align-items-center">
-                        <input id="purchaseEdit_discount" class="form-control form-control-sm discount-value-field" type="text" value="{{$purchase[0]->total_discount_per}}" placeholder="Discount" oninput="updateAmountEdit()"><span class="ms-1">%</span></div>
-                      </td>
-                      <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_discountAmt">{{$purchase[0]->total_discount}}</td>
-                    </tr> --}}
                     <tr>
                       <td class="border-0" colspan="2">Taxes</td>
                       <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_taxAmt">{{$purchase[0]->total_tax}}</span></td>
@@ -196,7 +178,7 @@ purchase-edit
                           <option value="">Payment Mode</option>
                           <option value="UPI">UPI</option>
                           <option value="Card">Card</option>
-                          <option value="Cash">Cash</option>
+                          <option selected value="Cash">Cash</option>
                           <option value="Other">Other</option>
                       </select></td>
                       <td class="border-0">

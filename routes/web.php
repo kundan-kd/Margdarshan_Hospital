@@ -440,6 +440,7 @@ Route::get('/discharge-bill-print/{id}',[InvoiceController::class,'dischargeBill
 Route::post('/patient-discharge',[InvoiceController::class,'getPatientDischarge'])->name('invoice.getPatientDischarge');
 Route::post('/patient-invoice-add',[InvoiceController::class,'invoiceDataSubmit'])->name('invoice.invoiceDataSubmit');
 Route::get('/medicine-bill-print/{id}',[InvoiceController::class,'medicineBillPrint']);
+Route::get('/appointment-bill-print/{id}',[InvoiceController::class,'appointmentBillPrint']);
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
    Route::get('/barcode', [CommonController::class, 'barCodeGenerate']);

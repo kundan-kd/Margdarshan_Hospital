@@ -139,7 +139,7 @@
         </a>
         <ul class="sidebar-submenu">
           <li>
-            <a href="{{route('bedgroup.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed/Room Group</a>
+            <a href="#"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed/Room Group</a>
           </li>
           <li>
             <a href="{{route('bedtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Type</a>

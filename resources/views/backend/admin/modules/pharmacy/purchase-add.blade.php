@@ -175,7 +175,7 @@ purchase-add
                             <option value="">Payment Mode</option>
                             <option value="Card">Card</option>
                             <option value="UPI">UPI</option>
-                            <option value="Cash">Cash</option>
+                            <option selected value="Cash">Cash</option>
                         </select></td>
                         <td class="border-0">
                             <input id="purchaseAdd_payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount" oninput="checkPayAmountPurchaseAdd(document.getElementsByClassName('purchaseAdd_netTotalAmt')[0].innerHTML,this.value)">

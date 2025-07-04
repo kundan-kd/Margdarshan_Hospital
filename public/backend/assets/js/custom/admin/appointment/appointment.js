@@ -363,6 +363,9 @@ function appointmentEdit(id){
         }
     });
 }
+function printAppointmentBill(id){
+     window.open('appointment-bill-print/'+id,'_blank');
+}
 
 function updateAppointment(id){
 let name = validateField('patientNameAppt', 'input');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Billing Invoice</title>
+    <title>Appointment Bill Invoice</title>
     <style>
         * {
             margin: 0;
@@ -65,10 +65,10 @@
         }
 
         .invoice-title {
-            font-size: 36px;
+            font-size: 20px;
             font-weight: bold;
             text-align: right;
-            margin-top: -10px;
+            margin-top: 7px;
         }
 
         .invoice-body {
@@ -302,7 +302,7 @@
                         Email: info@margdarshanhospital.com
                     </div>
                 </div>
-                <div class="invoice-title">INVOICE</div>
+                <div class="invoice-title">Appointment Invoice</div>
             </div>
         </div>
 
@@ -310,7 +310,9 @@
         <div class="invoice-body">
             <!-- Invoice Meta Information -->
             @php
-                 $patientData = \App\Models\Patient::where('id',$patient_id)->get();
+                 $patientData = \App\Models\Patient::where('id',$appointments[0]->patient_id)->get();
+                 $departmentData = \App\Models\Department::where('id',$appointments[0]->department_id)->get(['name']);
+                 $doctorData = \App\Models\User::where('id',$appointments[0]->doctor_id)->get(['name']);
             @endphp
             <div class="invoice-meta">
                 <div class="patient-info">
@@ -324,10 +326,6 @@
                         <span>{{$patientData[0]->patient_id}}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Date of Birth:</span>
-                         <span>{{ date('d/m/Y', strtotime($patientData[0]->dob)) }}</span>
-                    </div>
-                    <div class="info-row">
                         <span class="info-label">Phone:</span>
                         <span>{{$patientData[0]->mobile}}</span>
                     </div>
@@ -339,26 +337,14 @@
                 </div>
 
                 <div class="billing-info">
-                    <div class="section-title">Billing Information</div>
+                    <div class="section-title">Appointment Information</div>
                     <div class="info-row">
-                        <span class="info-label">Invoice Number:</span>
-                        <span>MDINV0{{$invoice_data[0]->id}}</span>
+                        <span class="info-label">Appointment Number:</span>
+                        <span>MDAP0{{$appointments[0]->id}}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Invoice Date:</span>
-                        <span>{{ date('d/m/Y', strtotime($invoice_data[0]->created_at)) }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Admission Date:</span>
-                        <span>{{ date('d/m/Y', strtotime($patientData[0]->created_at)) }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Discharge Date:</span>
-                        <span>{{ date('d/m/Y', strtotime($invoice_data[0]->created_at)) }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Status:</span>
-                        <span class="status-badge status-pending">Discharged</span>
+                        <span class="info-label">Bill Date:</span>
+                        <span>{{ date('d/m/Y', strtotime($appointments[0]->created_at)) }}</span>
                     </div>
                 </div>
             </div>
@@ -367,95 +353,30 @@
             <table class="services-table">
                 <thead>
                     <tr>
-                        <th>Sr.No.</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th class="text-center">Amount</th>
+                        <th>Appointment Date</th>
+                        <th>Department</th>
+                        <th>Doctor</th>
+                        <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @php
-                        $i = 1;
-                        @endphp
-                        @foreach ( $payment_bills as $bills)
-                          <tr>
-                            <td>{{$i}}</td>
-                            <td>{{$bills->amount_for}}</td>
-                            <td>{{$bills->title}}</td>
-                            <td>{{$bills->amount}}</td>
-                        </tr>
-                        @php
-                          $i++
-                        @endphp
-                        @endforeach
+                        <tr>
+                        <td>{{$appointments[0]->appointment_date}}</td>
+                        <td>{{$departmentData[0]->name}}</td>
+                        <td>{{$doctorData[0]->name}}</td>
+                        <td style="text-align:right;">{{$appointments[0]->fee}}</td>
+                    </tr>
+                      
                 </tbody>
             </table>
 
             <!-- Total Section -->
             <div class="total-section">
                 <div class="total-row">
-                    <span class="bill-detail">Subtotal:</span>
-                    <span class="amount">₹ {{$total_amount ?? 0}}</span>
-                </div>
-                <div class="total-row" style="{{ $invoice_data[0]->discount_amount > 0 ? '' : 'display:none;' }}">
-                    <span class="bill-detail">Discount Amount:</span>
-                    <span class="amount">₹ {{round($invoice_data[0]->discount_amount)}}</span>
-                </div>
-                <div class="total-row">
                     <span class="bill-detail">Paid Amount:</span>
-                    <span class="amount">₹ {{$received_amount ?? 0}}</span>
-                </div>
-                <div class="total-row">
-                    <span class="bill-detail">Due:</span>
-                    <span class="amount">₹ {{$total_amount - ($received_amount + $discount_amount) ?? 0}}</span>
+                    <span class="amount">₹ {{$appointments[0]->fee}}</span>
                 </div>
             </div>
-
-            {{-- <div class="payment-info">
-                <div class="payment-section">
-                    <div class="section-title">Insurance Information</div>
-                    <div class="info-row">
-                        <span class="info-label">Insurance Provider:</span>
-                        <span>Blue Cross Blue Shield</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Policy Number:</span>
-                        <span>BCBS-789456123</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Group Number:</span>
-                        <span>GRP-45789</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Claim Number:</span>
-                        <span>CLM-2024-556677</span>
-                    </div>
-                </div>
-
-                <div class="payment-section">
-                    <div class="section-title">Payment Instructions</div>
-                    <div class="info-row">
-                        <span class="info-label">Payment Due:</span>
-                        <span>July 31, 2025</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Payment Methods:</span>
-                        <span>Online, Phone, Mail</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Online Portal:</span>
-                        <span>www.medicarehospital.com/pay</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Phone:</span>
-                        <span>(555) 123-4567 Ext. 2</span>
-                    </div>
-                </div>
-            </div>
-           
-            <div class="urgent-notice">
-                <strong>Important:</strong> Payment is due within 30 days of the invoice date. Late payments may incur additional charges. If you have questions about this bill or need to set up a payment plan, please contact our billing department at (555) 123-4567 Ext. 2 or email billing@medicarehospital.com.
-            </div> --}}
         </div>
 
         <!-- Footer -->

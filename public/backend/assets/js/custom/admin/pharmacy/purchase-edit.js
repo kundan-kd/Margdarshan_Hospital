@@ -17,95 +17,89 @@ $(document).ready(function() {
     getDatePicker('.expiry-date'); 
     
 function addNewRowEdit(){
-    console.log('addNewRowEdit');
- let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
-  $.ajax({
-        url:getCategoryEditDatas,
-        type:"GET",
-        success:function(response){
+    let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
+        $.ajax({
+            url:getCategoryEditDatas,
+            type:"GET",
+            success:function(response){
             let getCategoryEditData = response.data;
-    let newRowDataEdit = `<tr class="fieldGroupCopy">
-        <td>
-         <input type="hidden" id="purchaseEdit_id${rand}" name="purchaseEdit_id[]" value="">
-            <select id="purchaseEdit_category${rand}" name="purchaseEdit_category[]" class="form-select form-select-sm select2Edit-cls" style="width: 100%;" onchange="getPurchaseMedicineEdit(this.value,${rand})" required>
-               <option value="" selected disabled>Select</option>`;
-                getCategoryEditData.forEach(element =>{
-                     newRowDataEdit += ` <option value="${element.id}">${element.name}</option>`;
-                     });
-            newRowDataEdit += ` </select>
-        </td>
-        <td>
-            <select id="purchaseEdit_name${rand}" name="purchaseEdit_name[]" class="form-select form-select-sm select2Edit-cls" style="width: 100%;" required>
-                <option value="" selected disabled>Select</option>
-            </select>
-        </td>
-        <td>
-            <input id="purchaseEdit_batch${rand}" name="purchaseEdit_batch[]" class="form-control form-control-sm" type="text" placeholder="Batch No" required>
-        </td>
-        <td>
-            <input id="purchaseEdit_expiry${rand}" name="purchaseEdit_expiry[]" class="form-control form-control-sm expiry-date${rand}" type="text" placeholder="Expiry Date" required>
-        </td>
-        <td>
-            <input id="purchaseEdit_mrp${rand}" name="purchaseEdit_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required>
-        </td>
-        <td>
-            <input id="purchaseEdit_salesPrice${rand}" name="purchaseEdit_salesPrice[]" class="form-control form-control-sm" type="number" placeholder="Sale Price" required>
-        </td>
-       
-        <td>
-            <input id="purchaseEdit_qty${rand}" name="purchaseEdit_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" oninput="getAmountEdit(${rand})" required>
-        </td>
-        <td>
-            <input id="purchaseEdit_purchaseRate${rand}" name="purchaseEdit_purchaseRate[]" class="form-control form-control-sm" type="number" placeholder="Purchase Rate" oninput="getAmountEdit(${rand})" required>
-        </td>
-         <td>
-            <input id="purchaseEdit_tax${rand}" name="purchaseEdit_tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" oninput="getTaxEdit(${rand})" required>
-        </td>
-        <td style="display: none;">
-            <input id="purchaseEdit_taxAmount${rand}" name="purchaseEdit_taxAmount[]" type="text" class="form-control form-control-sm">
-        </td>
-        <td>
-            <input id="purchaseEdit_amount${rand}" name="purchaseEdit_amount[]" class="form-control form-control-sm" type="number" placeholder="Amount" readonly>
-        </td>
-        <td>
-            <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowEdit(this)">
-                <i class="ri-close-line"></i>
-            </button>
-        </td>
-    </tr>`;
+            let newRowDataEdit = `<tr class="fieldGroupCopy">
+            <td>
+            <input type="hidden" id="purchaseEdit_id${rand}" name="purchaseEdit_id[]" value="">
+                <select id="purchaseEdit_category${rand}" name="purchaseEdit_category[]" class="form-select form-select-sm select2Edit-cls" style="width: 100%;"    onchange="getPurchaseMedicineEdit(this.value,${rand})" required>
+                <option value="" selected disabled>Select</option>`;
+                    getCategoryEditData.forEach(element =>{
+                        newRowDataEdit += ` <option value="${element.id}">${element.name}</option>`;
+                        });
+                newRowDataEdit += ` </select>
+            </td>
+            <td>
+                <select id="purchaseEdit_name${rand}" name="purchaseEdit_name[]" class="form-select form-select-sm select2Edit-cls" style="width: 100%;" required>
+                    <option value="" selected disabled>Select</option>
+                </select>
+            </td>
+            <td>
+                <input id="purchaseEdit_batch${rand}" name="purchaseEdit_batch[]" class="form-control form-control-sm" type="text" placeholder="Batch No" required>
+            </td>
+            <td>
+                <input id="purchaseEdit_expiry${rand}" name="purchaseEdit_expiry[]" class="form-control form-control-sm expiry-date${rand}" type="text" placeholder="Expiry Date" required>
+            </td>
+            <td>
+                <input id="purchaseEdit_mrp${rand}" name="purchaseEdit_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required>
+            </td>
+            <td>
+                <input id="purchaseEdit_salesPrice${rand}" name="purchaseEdit_salesPrice[]" class="form-control form-control-sm" type="number" placeholder="Sale Price" required>
+            </td>
+            <td>
+                <input id="purchaseEdit_qty${rand}" name="purchaseEdit_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" oninput="getAmountEdit(${rand})" required>
+            </td>
+            <td>
+                <input id="purchaseEdit_purchaseRate${rand}" name="purchaseEdit_purchaseRate[]" class="form-control form-control-sm" type="number" placeholder="Purchase Rate" oninput="getAmountEdit(${rand})" required>
+            </td>
+            <td>
+                <input id="purchaseEdit_amount${rand}" name="purchaseEdit_amount[]" class="form-control form-control-sm" type="number" placeholder="Amount" readonly>
+            </td>
+            <td>
+                <input id="purchaseEdit_tax${rand}" name="purchaseEdit_tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" oninput="getTaxEdit(${rand})" required>
+            </td>
+            <td style="display: none;">
+                <input id="purchaseEdit_taxAmount${rand}" name="purchaseEdit_taxAmount[]" type="text" class="form-control form-control-sm">
+            </td>
+            <td>
+                <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowEdit(this)">
+                    <i class="ri-close-line"></i>
+                </button>
+            </td>
+        </tr>`;
 
-    $('.newRowAppendEdit').parent().append(newRowDataEdit); // Append properly to tbody
-
-    // Reinitialize Select2 for newly added row
-    $('.select2Edit-cls').select2();
-    getDatePicker('.expiry-date'+ rand); 
-      }
+        $('.newRowAppendEdit').parent().append(newRowDataEdit); // Append properly to tbody
+        $('.select2Edit-cls').select2();// Reinitialize Select2 for newly added row
+        getDatePicker('.expiry-date'+ rand); 
+        }
     });
-
 }
  function removeRowEdit(x){
     x.closest("tr").remove(); // remove entire row with tr selector
-
+    updateAmountEdit();
 }
  
-
 function updateAmountEdit(){
     let totalAmount = $('input[name="purchaseEdit_amount[]"]').map(function(){return $(this).val();}).get();
     let sumTotalAmount = totalAmount.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
     $('.purchaseEdit_totalAmt').html(sumTotalAmount.toFixed(2));
-    
     let discountPer = parseFloat($('#purchaseEdit_discount').val()) || 0;
     let totalDiscountAmount = (sumTotalAmount * discountPer) / 100;
-     $('.purchaseEdit_discountAmt').html(totalDiscountAmount.toFixed(2));
-
+    $('.purchaseEdit_discountAmt').html(totalDiscountAmount.toFixed(2));
     let totalTaxAmount = $('input[name="purchaseEdit_taxAmount[]"]').map(function(){return $(this).val();}).get();
     let sumTotalTaxAmount = totalTaxAmount.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
     let taxfterDiscount = (sumTotalTaxAmount * discountPer) / 100;
     let totalTaxAfterDiscount = sumTotalTaxAmount - taxfterDiscount;
     $('.purchaseEdit_taxAmt').html(totalTaxAfterDiscount.toFixed(2));
-
     let netamount = sumTotalAmount - totalDiscountAmount + totalTaxAfterDiscount;
     $('.purchaseEdit_netTotalAmt').html(netamount.toFixed(2));
+    let paid_amount = parseFloat($('.purchaseEdit_paidAmt').html());
+    let due_amount = netamount - paid_amount;
+    $('.purchaseEdit_dueAmt').html(due_amount);
 }
 function getAmountEdit(randNum){
     let qty = parseFloat($('#purchaseEdit_qty' + randNum).val()) || 0; // Convert to number, default to 0 if invalid
@@ -196,8 +190,8 @@ $('#purchaseEdit_form').on('submit',function(e){
 });
 
 function deleteRowEdit(x){
- x.closest("tr").remove(); // remove entire row with tr selector
- updateAmountEdit();
+    x.closest("tr").remove(); // remove entire row with tr selector
+    updateAmountEdit();
 }
 
 function getPurchaseMedicineEdit(id,randNum) {

@@ -297,10 +297,9 @@
                 <div>
                     <div class="hospital-logo">Margdarshan Hospital</div>
                     <div class="hospital-details">
-                        Patna, Bihar<br>
-                        Pin: 800001<br>
-                        Phone: 9876543210<br>
-                        Email: mdhpatna@gmail.com
+                        G-86, Behind Manju Sinha Smriti Park,<br>Kankarbagh, Patna – 800020<br>
+                        Phone: +91 8210595186<br>
+                        Email: info@margdarshanhospital.com
                     </div>
                 </div>
                 <div class="invoice-title">MEDICINE BILL</div>
@@ -464,7 +463,7 @@
         <!-- Footer -->
         <div class="footer">
             <p><strong>Margdarsan Hospital</strong> | Licensed Healthcare Facility | Contact: 9876543210</p>
-            <p>For billing inquiries: mdhpatna@gmail.com</p>
+            <p>For billing inquiries: info@margdarshanhospital.com</p>
             <p>This is a computer-generated invoice. Please retain this document for your records.</p>
         </div>
     </div>

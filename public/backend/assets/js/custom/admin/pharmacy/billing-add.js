@@ -1,18 +1,3 @@
-  // Flat pickr or date picker js 
-    // function getDatePicker (receiveID) {
-    //     flatpickr(receiveID, {
-    //         dateFormat: "m/Y",
-    //         plugins: [
-    //                     new monthSelectPlugin({
-    //                         shorthand: true,  
-    //                         dateFormat: "m/Y",  
-    //                         altFormat: "F Y"    
-    //                     })
-    //                 ]
-    //     });
-    // }
-    // getDatePicker('.expiry-date'); 
-
 function addNewRowBilling() {
     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
       $.ajax({
@@ -20,7 +5,7 @@ function addNewRowBilling() {
         type:"GET",
         success:function(response){
             let getCategoryData = response.data;
-    let newRowDataBilling = `<tr class="fieldGroup">
+            let newRowDataBilling = `<tr class="fieldGroup">
                               <td>
                                   <select id="billingAdd-category${rand}" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicine(this.value,${rand})">
                                         <option value="" selected disabled>Select</option>`;
@@ -57,15 +42,16 @@ function addNewRowBilling() {
                               <td>
                                   <input id="billingAdd-salesPrice${rand}" name="billingAdd-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" readonly>
                               </td>
+                               <td>
+                                  <input id="billingAdd-amount${rand}" name="billingAdd-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
+                              </td>
                               <td>
                                   <input id="billingAdd-tax${rand}" name="billingAdd-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" readonly>
                               </td>
                                <td style="display: none;">
-                                  <input id="billingAdd-taxAmount${rand}" name="billingAdd-taxAmount[]" class="form-control form-control-sm" type="number" value="">
+                                  <input id="billingAdd-taxAmount${rand}" name="billingAdd-taxAmount[]" class="form-control form-control-sm" type="text">
                               </td>
-                              <td>
-                                  <input id="billingAdd-amount${rand}" name="billingAdd-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
-                              </td>
+                             
                               <td>
                                     <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowBilling(this)">
                                       <i class="ri-close-line"></i>
@@ -166,13 +152,13 @@ function getBillingAmount(randA){
         $("#billingAdd-qty"+randA).css("border-color","#d1d5db");
         $('.billingAddSubmitBtn').prop('disabled',false);
     }
-    let salesPrice = $("#billingAdd-salesPrice" + randA).val() ||0;
-    let tax = $("#billingAdd-tax" + randA).val() ||0;
+    let salesPrice = parseFloat($("#billingAdd-salesPrice" + randA).val()) || 0;
+    let tax = parseFloat($("#billingAdd-tax" + randA).val()) || 0;
     let amount = qty * salesPrice; // Calculate total amount before taxng tax
-    $('#billingAdd-amount'+randA).val(amount) ||0;
-    let currAmount = $('#billingAdd-amount'+randA).val() ||0;
+    $('#billingAdd-amount'+randA).val(amount) || 0;
+    let currAmount = parseFloat($('#billingAdd-amount'+randA).val()) || 0;
     let currTaxAmount = (currAmount * tax)/100;
-    $('#billingAdd-taxAmount'+randA).val(currTaxAmount) ||0;
+    $('#billingAdd-taxAmount'+randA).val(currTaxAmount) || 0;
     updateTotalBilling();
     }
 function updateTotalBilling() {
@@ -191,11 +177,11 @@ function updateTotalBilling() {
     let discountPer = parseFloat($('#billingAdd-discountPer').val()) || 0;
     if (discountPer > 0) {
         let discountAmount = (totalAmountSum * discountPer) / 100;
-        $('.billingAdd-discountAmount').html(discountAmount.toFixed(2));
+        $('.billingAdd-discountAmount').html(discountAmount.toFixed(2) || 0);
 
         let tax_after_discount = (totalTaxAmountSum * discountPer) / 100;
         let total_tax_after_discount = totalTaxAmountSum - tax_after_discount;
-        $('.billingAdd-totalTax').html(total_tax_after_discount.toFixed(2));
+        $('.billingAdd-totalTax').html(total_tax_after_discount.toFixed(2) || 0);
 
         let net_amount_after_discount = totalAmountSum - discountAmount + total_tax_after_discount;
         $('.billingAdd-totalNetAmount').html(Math.round(net_amount_after_discount) || 0);
@@ -222,15 +208,9 @@ $('#billingAdd-patientForm').on('submit',function(e){
     let patientAddess = validateField('billingAdd-patientAddess', 'input');
         if(patientName === true && patientMobile === true && patientAddess === true){    
             let name = $('#billingAdd-patientName').val();
-            // let guardian_name = $('#billingAdd-guardianName').val();
             let gender = $('input[name="billingAdd-patientGender"]:checked').val(); // Corrected na
-            // let bloodtype = $('#billingAdd-patientBloodType').val();
-            // let dob = $('#billingAdd-patientDOB').val();
-            // let mstatus = $('#billingAdd-patientMStatus').val();
             let mobile = $('#billingAdd-patientMobile').val();
             let address = $('#billingAdd-patientAddess').val();
-            // let alt_mobile = $('#billingAdd-patientAltMobile').val();
-            // let allergy = $('#billingAdd-patientAllergy').val();
             $.ajax({
                 url: billingAddNewPatient,
                 type:"POST",
@@ -277,7 +257,7 @@ $('#billingAdd-Form').on('submit',function(e){
   let qty = $('input[name="billingAdd-qty[]"]').map(function(){return $(this).val();}).get();
   let salesPrice = $('input[name="billingAdd-salesPrice[]"]').map(function(){return $(this).val();}).get();
   let taxPer = $('input[name="billingAdd-tax[]"]').map(function(){return $(this).val();}).get();
-  let taxAmount = $('input[name="billingAdd-taxAmount[]"]').map(function(){return $(this).val();}).get();
+  let taxAmount = $('input[name="billingAdd-taxAmount[]"]').map(function(){return $(this).val() || 0;}).get();
   let amount = $('input[name="billingAdd-amount[]"]').map(function(){return $(this).val();}).get();
 
    let billNo = $('.billingAdd-billNo').html();

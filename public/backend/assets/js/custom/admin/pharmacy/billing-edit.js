@@ -40,15 +40,16 @@ function addNewRowBillingEdit() {
                               <td>
                                   <input id="billingEdit-salesPrice${rand}" name="billingEdit-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" readonly>
                               </td>
+                               <td>
+                                  <input id="billingEdit-amount${rand}" name="billingEdit-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
+                              </td>
                               <td>
                                   <input id="billingEdit-tax${rand}" name="billingEdit-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" readonly>
                               </td>
                                <td style="display: none;">
-                                  <input id="billingEdit-taxAmount${rand}" name="billingEdit-taxAmount[]" class="form-control form-control-sm" type="number" value="">
+                                  <input id="billingEdit-taxAmount${rand}" name="billingEdit-taxAmount[]" class="form-control form-control-sm" type="text">
                               </td>
-                              <td>
-                                  <input id="billingEdit-amount${rand}" name="billingEdit-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
-                              </td>
+                             
                               <td>
                                     <button type="button" class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowBillingEdit(this)">
                                       <i class="ri-close-line"></i>
@@ -218,11 +219,11 @@ function getBillingAmountEdit(randQ){
         $('.billingEditSubmitBtn').prop('disabled',false);
 
     }
-    let salesPrice = $("#billingEdit-salesPrice" + randQ).val();
-    let tax = $("#billingEdit-tax" + randQ).val();
+    let salesPrice = parseFloat($("#billingEdit-salesPrice" + randQ).val()) || 0;
+    let tax = parseFloat($("#billingEdit-tax" + randQ).val()) || 0;
     let amount = qty * salesPrice; // Calculate total amount before taxng tax
     $('#billingEdit-amount'+randQ).val(amount);
-    let currAmount = $('#billingEdit-amount'+randQ).val();
+    let currAmount = parseFloat($('#billingEdit-amount'+randQ).val()) || 0;
     let currTaxAmount = (currAmount * tax)/100;
     $('#billingEdit-taxAmount'+randQ).val(currTaxAmount);
     updateTotalBillingEdit();
@@ -237,21 +238,24 @@ function updateTotalBillingEdit() {
     // Update the UI with total amounts
     $('.billingEdit-totalAmount').html(totalAmountSum.toFixed(2));
     $('.billingEdit-totalTax').html(totalTaxAmountSum.toFixed(2));
+    let paid_amount = parseFloat($('.billingEdit-totalPaidAmount').html() || 0);
     // Calculate net amount
     let totalNetAmount = totalAmountSum + totalTaxAmountSum;
-    $('.billingEdit-totalNetAmount').html(totalNetAmount.toFixed(2));
+    $('.billingEdit-totalNetAmount').html(Math.round(totalNetAmount) || 0);
+    $('.billingEdit-totalDueAmount').html(Math.round(totalNetAmount - paid_amount) || 0);
     // Calculate discount if applicable
     let discountPer = parseFloat($('#billingEdit-discountPer').val()) || 0;
     if (discountPer > 0) {
         let discountAmount = (totalAmountSum * discountPer) / 100;
-        $('.billingEdit-discountAmount').html(discountAmount.toFixed(2));
+        $('.billingEdit-discountAmount').html(discountAmount.toFixed(2) || 0);
 
         let tax_after_discount = (totalTaxAmountSum * discountPer) / 100;
         let total_tax_after_discount = totalTaxAmountSum - tax_after_discount;
-        $('.billingEdit-totalTax').html(total_tax_after_discount.toFixed(2));
+        $('.billingEdit-totalTax').html(total_tax_after_discount.toFixed(2) || 0);
 
         let net_amount_after_discount = totalAmountSum - discountAmount + total_tax_after_discount;
-        $('.billingEdit-totalNetAmount').html(net_amount_after_discount.toFixed(2));
+        $('.billingEdit-totalNetAmount').html(Math.round(net_amount_after_discount) || 0);
+        $('.billingEdit-totalDueAmount').html(Math.round(net_amount_after_discount - paid_amount) || 0);
     } else {
         // If no discount, ensure discount amount is reset
         $('.billingEdit-discountAmount').html('0.00');

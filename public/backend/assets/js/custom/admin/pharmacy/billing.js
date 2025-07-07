@@ -15,26 +15,21 @@ let table = $('#billing-list-table').DataTable({
     },
     columns:[
         {
-            data:'patient',
-            name:'patient'
-        },
-        {
             data:'created_at',
             name:'created_at'
+        },
+        {
+            data:'patient_id',
+            name:'patient_id'
+        },
+        {
+            data:'patient',
+            name:'patient'
         },
         {
             data:'bill_no',
             name:'bill_no'
         },
-         {
-            data:'discount',
-            name:'discount'
-        },
-        {
-            data:'total',
-            name:'total'
-        },
-       
         {
             data:'net_amount',
             name:'net_amount'
@@ -53,11 +48,12 @@ let table = $('#billing-list-table').DataTable({
 });
 
 function billingEdit(id){
- window.open('billing-edit-page/' + id, '_blank');
+    window.location.href = 'billing-edit-page/' + id;
 }
 
 function purchaseDetails(id) {
-      window.open('billing-view/' + id, '_blank');
+      window.location.href = 'billing-view/' + id;
+
 }
 function printMedicineBill(id){
     window.open('medicine-bill-print/'+id,'_blank');

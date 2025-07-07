@@ -19,7 +19,7 @@ Appointment
       @can('Book Appointment Add')
       <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2"  data-bs-toggle="modal" data-bs-target="#add-appointment" onclick="resetAppointmentForm()"><i class="ri-add-box-line"></i> Create New</button>
       @endcan
-      <!-- <a  class="btn btn-warning-600  btn-sm fw-normal " href="#dataTable" download><i class="ri-file-pdf-2-line"></i> Export</a> -->
+       <button><a class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-1" id="excelBtn"><i class="ri-file-excel-2-line"></i> Excel</a></button>
     </div>
   </div>
   <div class="card basic-data-table">
@@ -160,6 +160,9 @@ $ddate = date("d/m/yy");
           @can('Book Appointment Edit')
           <button type="button" class="btn btn-primary-600  btn-sm fw-normal appointmentUpdateBtn d-none" onclick="updateAppointment(document.getElementById('patientNameApptID').value)">Update</button>
           @endcan
+          <button class="btn btn-primary-600  btn-sm fw-normal appointmentSpinn d-none" type="button">
+            <span class="sr-only">please wait...</span>
+          </button>
         </div>
       </form>
     </div>
@@ -206,7 +209,7 @@ $ddate = date("d/m/yy");
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="patientBloodType">Blood Type</label>
-            <select class="form-select form-select-sm" id="patientBloodType" oninput="validateField(this.id,'select')">
+            <select class="form-select form-select-sm select2-cls" style="width:100%" id="patientBloodType" oninput="validateField(this.id,'select')">
               <option value="">Select</option>
               <option value="A+">A+</option>
               <option value="A-">A-</option>
@@ -226,7 +229,7 @@ $ddate = date("d/m/yy");
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="patientMStatus">Marital Status</label>
-            <select class="form-select form-select-sm" id="patientMStatus"  oninput="validateField(this.id,'select')">
+            <select class="form-select form-select-sm select2-cls" style="width:100%" id="patientMStatus"  oninput="validateField(this.id,'select')">
               <option value="">Select</option>
               <option value="Married">Married</option>
               <option value="UnMarried">UnMarried</option>
@@ -243,11 +246,11 @@ $ddate = date("d/m/yy");
             <input type="text" id="patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
             <div class="patientAddess_errorCls d-none"></div>
           </div>
-          <div class="col-6">
+          {{-- <div class="col-6">
             <label class="form-label fw-normal">Alt Phone</label>
             <input type="number" id="patientAltMobile" class="form-control form-control-sm" maxlength="10" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">
-          </div>
-          <div class="col-6">
+          </div> --}}
+          <div class="col-12">
             <label class="form-label fw-normal">Any Known Allergies</label>
             <input type="text" id="patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
           </div>
@@ -255,8 +258,10 @@ $ddate = date("d/m/yy");
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal" onclick="reopenAppointment()">Cancel</button>
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal">Submit</button>
-           <!-- <button type="button" class="btn btn-warning-600  btn-sm fw-normal">Save & Book Appointment</button>  -->
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal patientSubmit">Submit</button>
+           <button class="btn btn-primary-600  btn-sm fw-normal patientSpinn d-none" type="button">
+            <span class="sr-only">please wait...</span>
+          </button>
         </div>
       </form>
     </div>
@@ -288,6 +293,11 @@ $ddate = date("d/m/yy");
     dropdownParent: $('#add-appointment')
   });
 });
+ $('#add-patient').on('shown.bs.modal', function () {
+      $('.select2-cls').select2({
+          dropdownParent: $('#add-patient')
+      });
+    });
 
     // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
@@ -299,16 +309,5 @@ $ddate = date("d/m/yy");
     getDatePicker('#patientDOB'); 
 
 </script>
- <script>
-        // const itemSearchInput = document.getElementById('itemSearchInput');
-        // const searchItemDropdown = document.getElementById('searchItemDropdown');
 
-        // itemSearchInput.addEventListener('input', function () {
-        //     if (this.value.trim() !== '') {
-        //     searchItemDropdown.style.display = 'block';
-        //     } else {
-        //     searchItemDropdown.style.display = 'none';
-        //     }
-        // });
-    </script>
 @endsection

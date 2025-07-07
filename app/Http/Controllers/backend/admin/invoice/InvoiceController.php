@@ -111,8 +111,8 @@ class InvoiceController extends Controller
         $invoices->save();
     }
     public function medicineBillPrint($id){
-        $patient_id = $id;
         $billings = Billing::where('id',$id)->get();
+        $patient_id = $billings[0]->patient_id;
         $billing_items = BillingItem::where('billing_id',$id)->get();
         return view('backend.admin.modules.invoice.medicine-bill-invoice',compact('patient_id','billings','billing_items'));
     }

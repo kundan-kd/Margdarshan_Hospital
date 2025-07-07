@@ -14,9 +14,9 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
               <div>
                 <p class="fw-medium text-primary-light mb-1">Appointments</p>
-                <h6 class="mb-0">00</h6>
+                <h6 class="mb-0">{{$appointments}}</h6>
               </div>
-              <div class="w-50-px h-50-px bg-purple rounded-circle d-flex justify-content-center align-items-center">
+              <div class="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
                 <iconify-icon icon="gridicons:multiple-users" class="text-white text-2xl mb-0"></iconify-icon>
               </div>
            
@@ -30,9 +30,9 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
               <div>
                 <p class="fw-medium text-primary-light mb-1">OPD - Out Patient</p>
-                <h6 class="mb-0">00</h6>
+                <h6 class="mb-0">{{$opd_patients}}</h6>
               </div>
-              <div class="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
+              <div class="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
                 <iconify-icon icon="gridicons:multiple-users" class="text-white text-2xl mb-0"></iconify-icon>
               </div>
             </div>
@@ -45,7 +45,7 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
               <div>
                 <p class="fw-medium text-primary-light mb-1">IPD - In Patient</p>
-                <h6 class="mb-0">00</h6>
+                <h6 class="mb-0">{{$ipd_patients}}</h6>
               </div>
               <div class="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
                 <iconify-icon icon="gridicons:multiple-users" class="text-white text-2xl mb-0"></iconify-icon>
@@ -60,9 +60,24 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
               <div>
                 <p class="fw-medium text-primary-light mb-1">Emergency Patient</p>
-                <h6 class="mb-0">00</h6>
+                <h6 class="mb-0">{{$emergency_patients}}</h6>
               </div>
               <div class="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
+                <iconify-icon icon="gridicons:multiple-users" class="text-white text-2xl mb-0"></iconify-icon>
+              </div>
+            </div>
+          </div>
+        </div><!-- card end -->
+      </div>
+      <div class="col">
+        <div class="card shadow-none border bg-gradient-start-3 h-100">
+          <div class="card-body p-20">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <p class="fw-medium text-primary-light mb-1">Doctors</p>
+                <h6 class="mb-0">{{$doctors}}</h6>
+              </div>
+              <div class="w-50-px h-50-px bg-purple rounded-circle d-flex justify-content-center align-items-center">
                 <iconify-icon icon="gridicons:multiple-users" class="text-white text-2xl mb-0"></iconify-icon>
               </div>
             </div>
@@ -74,8 +89,8 @@
           <div class="card-body p-20">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
               <div>
-                <p class="fw-medium text-primary-light mb-1">Low Inventory</p>
-                <h6 class="mb-0">00</h6>
+                <p class="fw-medium text-primary-light mb-1">Total Income</p>
+                <h6 class="mb-0">₹ {{$total_income}}</h6>
               </div>
               <div class="w-50-px h-50-px bg-red rounded-circle d-flex justify-content-center align-items-center">
                 <iconify-icon icon="solar:wallet-bold" class="text-white text-2xl mb-0"></iconify-icon>

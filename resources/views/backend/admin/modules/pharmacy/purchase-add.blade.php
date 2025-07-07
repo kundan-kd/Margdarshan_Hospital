@@ -76,11 +76,12 @@ purchase-add
                                     Purchase Rate
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
-                                    Tax
-                                </th>
-                                <th class="text-nowrap text-neutral-700">
                                     Amount
                                 </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    Tax (%)
+                                </th>
+                                
                                 <th class="text-nowrap text-neutral-700">
                                     
                                 </th>
@@ -121,11 +122,12 @@ purchase-add
                                     <input id="purchaseAdd_purchaseRate0" name="purchaseAdd_purchaseRate[]" type="number" class="form-control form-control-sm" placeholder="Purchase Rate" oninput="getAmount(0)" required>
                                 </td>
                                 <td>
-                                    <input id="purchaseAdd_tax0" name="purchaseAdd_tax[]" type="number" class="form-control form-control-sm" placeholder="Tax" oninput="getTax(0)" required>
-                                </td>
-                                <td>
                                     <input id="purchaseAdd_amount0" name="purchaseAdd_amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
                                 </td>
+                                <td>
+                                    <input id="purchaseAdd_tax0" name="purchaseAdd_tax[]" type="number" class="form-control form-control-sm" placeholder="Tax" oninput="getTax(0)" required>
+                                </td>
+                                
                                 
                             </tr>
                             <!-- replica table start -->
@@ -189,8 +191,7 @@ purchase-add
         <div class=" pharmacy-footer card-footer border-top">
             <div class="text-end">
                 <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 purchaseAddSubmitBtn"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-                <button class="btn btn-primary purchaseAddSpinnBtn d-none" type="button" disabled>
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <button class="btn btn-primary-600  btn-sm fw-normal purchaseAddSpinnBtn d-none" type="button">
                     Please Wait...
                 </button>
             </div>

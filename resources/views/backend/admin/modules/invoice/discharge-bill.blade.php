@@ -142,8 +142,7 @@ Discharge Billing
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddSubmitBtn" {{$visibility}} onclick="billAmountSubmit({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Submit</button>
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddDischargePrintBtn {{((($total_amount + $pre_bed_amount ?? 0) - ($received_amount + $discount_amount)) <= 0) ? '' : 'd-none' }}" {{$visibility}} onclick="billDischargeNPrint({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge & Print</button>
                 {{-- <button type="button"class="btn btn-primary-600 btn-sm fw-normal mx-2 billPrintBtn d-none"onclick="billPrint({{ $patient_id }})"><i class="ri-checkbox-circle-line"></i> Print</button> --}}
-                <button class="btn btn-primary billAddSpinnBtn d-none" type="button" disabled>
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <button class="btn btn-primary-600  btn-sm fw-normal billAddSpinnBtn d-none" type="button" disabled>
                     Please Wait...
                 </button>
             </div>

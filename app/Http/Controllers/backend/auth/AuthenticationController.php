@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\backend\auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Appointment;
 use App\Models\EmailOtp;
+use App\Models\Patient;
+use App\Models\PaymentReceived;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -32,7 +35,13 @@ class AuthenticationController extends Controller
         }
     }
     public function dashboard(){
-        return view('backend.admin.modules.dashboard');
+         $appointments = Appointment::count();
+         $opd_patients = Patient::where('type','OPD')->count();
+         $ipd_patients = Patient::where('type','IPD')->count();
+         $emergency_patients = Patient::where('type','EMERGENCY')->count();
+         $doctors = User::where('usertype_id',2)->count();
+         $total_income = PaymentReceived::sum('amount') + PaymentReceived::sum('discount_amount');
+         return view('backend.admin.modules.dashboard',compact('appointments','opd_patients','ipd_patients','emergency_patients','doctors','total_income'));
     }
     public function sendotp(Request $request){
         if ($request->ajax()) {

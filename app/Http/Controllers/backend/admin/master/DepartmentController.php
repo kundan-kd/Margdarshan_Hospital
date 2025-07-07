@@ -64,7 +64,7 @@ class DepartmentController extends Controller
         return response()->json(['success'=>'Department fetched successfully','data'=>$getData],200);
     }
     public function updateDepartmentData(Request $request){
-        $check_department = Department::where('name',$request->department)->exists();
+        $check_department = Department::where('name',$request->department)->where('id', '!=', $request->id)->exists();
         if($check_department == false){
             Department::where('id',$request->id)->update([
                 'name' => $request->department

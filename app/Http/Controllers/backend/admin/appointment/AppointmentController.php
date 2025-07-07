@@ -10,7 +10,6 @@ use App\Models\PaymentMode;
 use App\Models\RoomNumber;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Picqer\Barcode\BarcodeGeneratorJPG;
 use Picqer\Barcode\BarcodeGeneratorPNG;
@@ -53,7 +52,7 @@ class AppointmentController extends Controller
             return $row->fee;
         })
         ->addColumn('status',function($row){
-            return $row->status;
+            return '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">'.$row->status.'</span>';
         })
         ->addColumn('action',function($row){
             return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -63,13 +62,13 @@ class AppointmentController extends Controller
                       <iconify-icon icon="lucide:edit" onclick="appointmentEdit('.$row->id.');getDoctorAdded('.$row->id.')"></iconify-icon>
                     </a>
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                        <iconify-icon icon="mdi:file-upload-outline" onclick="printAppointmentBill(' . $row->id . ')"></iconify-icon>
+                        <iconify-icon icon="mdi:file-download-outline" onclick="printAppointmentBill(' . $row->id . ')"></iconify-icon>
                     </a>
                     <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="appointmenttDelete('.$row->id.')"></iconify-icon>
                     </a>-->';
         })
-        ->rawColumns(['patient_id','action'])
+        ->rawColumns(['patient_id','status','action'])
         ->make(true);
      }
     }
@@ -108,7 +107,7 @@ class AppointmentController extends Controller
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
             //generate bar code
-            $generator = new BarcodeGeneratorJPG();
+            $generator = new BarcodeGeneratorPNG();
             $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
             if ($barcode) {
                    //generate barcode and store in storage/public/barcode

@@ -64,7 +64,7 @@ class BedtypeController extends Controller
         return response()->json(['success'=>'Bed Type data fetched successfully','data'=>$getData],200);
     }
     public function updateBedTypeData(Request $request){
-        $check_bedtype = BedType::where('name',$request->bedtype)->exists();
+        $check_bedtype = BedType::where('name',$request->bedtype)->where('id', '!=', $request->id)->exists();
         if($check_bedtype == false){
             BedType::where('id',$request->id)->update([
                 'name' => $request->bedtype

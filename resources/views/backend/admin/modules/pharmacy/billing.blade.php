@@ -16,12 +16,11 @@ Billing
         <table class="table bordered-table mb-0" id="billing-list-table" data-page-length='10'>
           <thead>
             <tr>
+              <th scope="col" class="fw-medium">Date & Time</th>
+              <th scope="col" class="fw-medium">Patient ID</th>
               <th scope="col" class="fw-medium">Patient Name</th>
-              <th scope="col" class="fw-medium">Billing Date & Time</th>
               <th scope="col" class="fw-medium">Bill No.</th>
-              <th scope="col" class="fw-medium">Discount</th>
-              <th scope="col" class="fw-medium">Total</th>
-              <th scope="col" class="fw-medium">Net Amount</th>
+              <th scope="col" class="fw-medium">Total Amount</th>
               <th scope="col" class="fw-medium">Paid Amount</th>
               <th scope="col" class="fw-medium">Action</th>
             </tr>

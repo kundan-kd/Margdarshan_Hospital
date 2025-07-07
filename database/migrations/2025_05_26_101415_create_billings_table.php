@@ -18,11 +18,11 @@ return new class extends Migration
             $table->string('bill_no',100)->nullable();
             $table->integer('res_doctor_id')->nullable();
             $table->string('out_doctor_name',100)->nullable();
-            $table->double('total_amount')->nullable();
-            $table->double('discount_per')->nullable();
-            $table->double('discount_amount')->nullable();
-            $table->double('taxes')->nullable();
-            $table->double('net_amount')->nullable();
+            $table->double('total_amount')->default(0);
+            $table->double('discount_per')->default(0);
+            $table->double('discount_amount')->default(0);
+            $table->double('taxes')->default(0);
+            $table->double('net_amount')->default(0);
             $table->double('paid_amount')->default(0);
             $table->double('due_amount')->default(0);
             $table->string('payment_mode',40)->nullable();

@@ -64,7 +64,7 @@ class BedgroupController extends Controller
         return response()->json(['success'=>'Bed Group data fetched successfully','data'=>$getData],200);
     }
     public function updateBedGroupData(Request $request){
-        $check_bedGroup = BedGroup::where('name',$request->bedGroup)->exists();
+        $check_bedGroup = BedGroup::where('name',$request->bedGroup)->where('id', '!=', $request->id)->exists();
         if($check_bedGroup == false){
             bedGroup::where('id',$request->id)->update([
                 'name' => $request->bedGroup

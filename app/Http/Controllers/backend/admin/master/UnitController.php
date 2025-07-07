@@ -70,7 +70,7 @@ class UnitController extends Controller
         return response()->json(['success'=>'Unit data fetched successfully','data'=>$getData],200);
     }
     public function updateUnitData(Request $request){
-        $check_unit = Unit::where('name',$request->unitname)->where('unit',$request->unit)->exists();
+        $check_unit = Unit::where('name',$request->unitname)->where('unit',$request->unit)->where('id', '!=', $request->id)->exists();
             if($check_unit == false){        Unit::where('id',$request->id)->update([
                 'name' => $request->unitname,
                 'unit' => $request->unit

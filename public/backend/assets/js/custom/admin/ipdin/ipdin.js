@@ -56,6 +56,12 @@ let table_patient = $('#ipd-in-patient-list').DataTable({
             searchable: true
         },
         {
+            data:'created_at',
+            name:'created_at',
+            orderable: false,
+            searchable: true
+        },
+        {
             data:'allergies',
             name:'allergies',
             orderable: false,
@@ -74,19 +80,26 @@ let table_patient = $('#ipd-in-patient-list').DataTable({
             searchable: true
         },
 
+    ],
+    dom: 'Blfrtip',
+    buttons: [
+        {
+            extend: 'excelHtml5',
+            title: 'IPD Patient List',
+            exportOptions: {
+                columns: [0,1,2,3,4,5,6,7,8,9,10]
+            },
+            className: 'd-none', // Hide the button using a Bootstrap utility class or custom CSS
+            attr: {
+                id: 'hiddenExcelBtn' // Give it an ID so we can trigger it
+            }
+        }
     ]
-    // ,
-    // dom: 'Bfrtip',
-    //     buttons: [
-    //         {
-    //             extend: 'excelHtml5',
-    //             title: 'IPD Patient List',
-    //             exportOptions: {
-    //                 columns: [0,1,2,3,4,5,6,7,8,9] // Excludes index 11 (action)
-    //             }
-    //         }
-    //     ]
 });
+$('#excelBtn').on('click', function () {
+    $('#hiddenExcelBtn').click(); // Trigger the hidden DataTables button
+});
+    
 function getPatientListFilter(){
     $('#ipd-in-patient-list').DataTable().ajax.reload();
 }
@@ -163,6 +176,7 @@ function getBedDetails(id){
 }
 $('#ipd-addPatientForm').on('submit',function(e){
      e.preventDefault();
+    let id = $('#ipdPatientId').val();
     let patientName  = validateField('ipd-patientName', 'input');
     let guardianName = validateField('ipd-guardianName', 'input');
     let patientBloodType = validateField('ipd-patientBloodType', 'select');
@@ -172,7 +186,8 @@ $('#ipd-addPatientForm').on('submit',function(e){
     let patientAddess = validateField('ipd-patientAddess', 'input');
     let bedNumId = validateField('ipd-patientBedNum', 'select');
         if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
-           
+            $('.ipdPatientSubmit').addClass('d-none'); 
+            $('.ipdPatientSpinn').removeClass('d-none'); 
             let name = $('#ipd-patientName').val();
             let guardian_name = $('#ipd-guardianName').val();
             let gender = $('input[name="ipd-patientGender"]:checked').val(); // Corrected na
@@ -184,29 +199,37 @@ $('#ipd-addPatientForm').on('submit',function(e){
             let alt_mobile = $('#ipd-patientAltMobile').val();
             let allergy = $('#ipd-patientAllergy').val();
             let bedNumId = $('#ipd-patientBedNum').val();
-            $.ajax({
-                url: addNewPatientIpd,
-                type:"POST",
-                headers:{
-                    'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-                },
-                data:{
-                name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
-                },
-                success:function(response){
-                    if(response.success){
-                        toastSuccessAlert('New IPD Patient added successfully');
-                        $('#ipd-add-patient').modal('hide');
-                        $('#ipd-in-patient-list').DataTable().ajax.reload();
-                    }else{
-                        console.log('error found');
+            if ($('.ipdPatientUpdate').is(':visible')) {
+            ipdPatientUpdate(id); // Trigger update function when update btn is active
+            } else {
+                $.ajax({
+                    url: addNewPatientIpd,
+                    type:"POST",
+                    headers:{
+                        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+                    },
+                    data:{
+                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
+                    },
+                    success:function(response){
+                        if(response.success){
+                            toastSuccessAlert('New IPD Patient added successfully');
+                            $('#ipd-add-patient').modal('hide');
+                            $('#ipd-in-patient-list').DataTable().ajax.reload();
+                            $('.ipdPatientSpinn').addClass('d-none'); 
+                            $('.ipdPatientSubmit').removeClass('d-none'); 
+                        }else{
+                            console.log('error found');
+                            $('.ipdPatientSpinn').addClass('d-none'); 
+                            $('.ipdPatientSubmit').removeClass('d-none'); 
+                        }
+                    },
+                    error:function(xhr, status, error){
+                        console.log(xhr.respnseText);
+                        alert('An error occurred: '+error);
                     }
-                },
-                error:function(xhr, status, error){
-                    console.log(xhr.respnseText);
-                    alert('An error occurred: '+error);
-                }
-            });
+                });
+            }
         }else{
             console.log("Please fill all required fields");
         }    
@@ -262,7 +285,8 @@ function ipdPatientUpdate(id){
     let patientAddess = validateField('ipd-patientAddess', 'input');
     let bedNumId = validateField('ipd-patientBedNum', 'select');
         if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
-           
+            $('.ipdPatientUpdate').addClass('d-none'); 
+            $('.ipdPatientSpinn').removeClass('d-none'); 
             let name = $('#ipd-patientName').val();
             let guardian_name = $('#ipd-guardianName').val();
             let gender = $('input[name="ipd-patientGender"]:checked').val(); // Corrected na
@@ -288,8 +312,12 @@ function ipdPatientUpdate(id){
                         toastSuccessAlert(response.success);
                         $('#ipd-add-patient').modal('hide');
                         $('#ipd-in-patient-list').DataTable().ajax.reload();
+                        $('.ipdPatientSpinn').addClass('d-none'); 
+                        $('.ipdPatientUpdate').removeClass('d-none'); 
                     }else{
-                       toastErrorAlert(response.error_success);
+                        toastErrorAlert(response.error_success);
+                        $('.ipdPatientSpinn').addClass('d-none'); 
+                        $('.ipdPatientUpdate').removeClass('d-none'); 
                     }
                 },
                 error:function(xhr, status, error){

@@ -99,12 +99,13 @@ function addNewRow() {
         <td>
             <input id="purchaseAdd_purchaseRate${rand}" name="purchaseAdd_purchaseRate[]" class="form-control form-control-sm" type="number" placeholder="Purchase Rate" oninput="getAmount(${rand})" required>
         </td>
-         <td>
-            <input id="purchaseAdd_tax${rand}" name="purchaseAdd_tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" oninput="getTax(${rand})" required>
-        </td>
         <td>
             <input id="purchaseAdd_amount${rand}" name="purchaseAdd_amount[]" class="form-control form-control-sm" type="number" placeholder="Amount" readonly>
         </td>
+         <td>
+            <input id="purchaseAdd_tax${rand}" name="purchaseAdd_tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" oninput="getTax(${rand})" required>
+        </td>
+        
         <td>
             <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRow(this)">
                 <i class="ri-close-line"></i>

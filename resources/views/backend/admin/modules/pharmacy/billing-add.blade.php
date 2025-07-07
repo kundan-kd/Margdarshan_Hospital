@@ -72,11 +72,12 @@ Billing-add
                                     Sales Price (₹)
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
-                                    Tax (%)
-                                </th>
-                                <th class="text-nowrap text-neutral-700">
                                     Amount (₹)
                                 </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    Tax (%)
+                                </th>
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -115,15 +116,16 @@ Billing-add
                                     <input id="billingAdd-salesPrice0" name="billingAdd-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" readonly>
                                 </td>
                                 <td>
+                                    <input id="billingAdd-amount0" name="billingAdd-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
+                                </td>
+                                <td>
                                     <input id="billingAdd-tax0" name="billingAdd-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" readonly>
                                 </td>
 
                                 <td style="display: none;">
-                                    <input id="billingAdd-taxAmount0" name="billingAdd-taxAmount[]" class="form-control form-control-sm" type="number" value="">
+                                    <input id="billingAdd-taxAmount0" name="billingAdd-taxAmount[]" class="form-control form-control-sm" type="text">
                                 </td>
-                                <td>
-                                    <input id="billingAdd-amount0" name="billingAdd-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
-                                </td>
+                                
                             </tr>
                             <!-- replica table end -->
                             <tr class="newRowAppendBilling">
@@ -195,9 +197,8 @@ Billing-add
         </div>
         <div class=" pharmacy-footer card-footer border-top">
           <div class="text-end">
-                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 billingAddSubmitBtn"> <i class="ri-checkbox-circle-line"></i>Submit</button>
-                <button class="btn btn-primary billingAddSpinnBtn d-none" type="button" disabled>
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 billingAddSubmitBtn"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+                <button class="btn btn-primary-600  btn-sm fw-normal billingAddSpinnBtn d-none" type="button">
                     Please Wait...
                 </button>
             </div>

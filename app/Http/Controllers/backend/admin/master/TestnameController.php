@@ -80,8 +80,8 @@ class TestnameController extends Controller
         return response()->json(['success'=>'Test Type data fetched successfully','data'=>$getData],200);
     }
     public function updateTestNameData(Request $request){
-        // $check_testname = TestName::where('test_type_id',$request->testType_id)->where('name',$request->testName)->exists();
-       // if($check_testname == false){
+        $check_testname = TestName::where('test_type_id',$request->testType_id)->where('name',$request->testName)->where('id', '!=', $request->id)->exists();
+       if($check_testname == false){
             TestName::where('id',$request->id)->update([
                 'test_type_id' => $request->testType_id,
                 'name' => $request->testName,
@@ -89,9 +89,9 @@ class TestnameController extends Controller
                 'amount' => $request->testAmount
             ]);
             return response()->json(['success' => 'Test Name updated successfully'],200);
-        // }else{
-        //     return response()->json(['already_found'=>'This Test Name configuration already found'],200);
-        // }
+        }else{
+            return response()->json(['already_found'=>'This Test Name configuration already found'],200);
+        }
     }
     public function statusUpdate(Request $request){
         $testtype_status = TestName::where('id',$request->id)->get(['status']);

@@ -65,7 +65,7 @@ class BloodtypeController extends Controller
         return response()->json(['success'=>'Blood Type data fetched successfully','data'=>$getData],200);
     }
     public function updateBloodTypeData(Request $request){
-        $check_bloodtype = BloodType::where('name',$request->bloodType)->exists();
+        $check_bloodtype = BloodType::where('name',$request->bloodType)->where('id', '!=', $request->id)->exists();
         if($check_bloodtype == false){
             BloodType::where('id',$request->id)->update([
                 'name' => $request->bloodType

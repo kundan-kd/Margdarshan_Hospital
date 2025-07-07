@@ -18,12 +18,6 @@
           @can('OPD Move To IPD')
             <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" onclick="#"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
           @endcan
-          {{-- @can('OPD Move To ICU')
-          <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" onclick="#"> <i class="ri-stethoscope-line"></i></i> Move to ICU</button>
-          @endcan --}}
-          {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
-          {{-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#out-patient-ipd"><i class="ri-stethoscope-line"></i> Move to IPD</button> --}}
-          {{-- <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line"></i> Export</button> --}}
       </div>
     </div>
     @php
@@ -90,7 +84,12 @@
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">Bar Code :</td>
-                                    <td> <img src="{{asset('backend/uploads/barcode/'. $patients[0]->barcode)}}" style="width: 150px;height:50px;" alt="barcode"></td>
+                                    <td> <img src="{{asset('backend/uploads/barcode/'. $patients[0]->barcode)}}" style="width: 150px;height:50px;" alt="barcode">
+                                    <a href="{{ asset('backend/uploads/barcode/' . $patients[0]->barcode) }}"
+                                        download="barcode_{{ $patients[0]->patient_id }}.png" class="mx-3">
+                                          <i class="ri-download-line"></i>
+                                      </a>
+                                    </td>
                                   </tr>
                                  </table>
                             </div>

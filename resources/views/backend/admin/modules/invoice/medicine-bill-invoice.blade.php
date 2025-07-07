@@ -317,19 +317,19 @@
                     <div class="section-title">Patient Information</div>
                     <div class="info-row">
                         <span class="info-label">Patient Name:</span>
-                        <span>{{$patientData[0]->name}}</span>
+                        <span>{{$patientData[0]->name ?? 'Cash'}}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Patient ID:</span>
-                        <span>{{$patientData[0]->patient_id}}</span>
+                        <span>{{$patientData[0]->patient_id ?? 'NA'}}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Phone:</span>
-                        <span>{{$patientData[0]->mobile}}</span>
+                        <span>{{$patientData[0]->mobile ?? 'xxxxxxxxxx'}}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Address:</span>
-                        <span>{{$patientData[0]->address}}</span>
+                        <span>{{$patientData[0]->address ?? 'xxxxxxxxxx'}}</span>
                     </div>
                     
                 </div>

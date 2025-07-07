@@ -18,6 +18,11 @@ purchase-edit
             <div class="col-md-9">
                 <table class="table  table-borderless table-sm payment-pharmacy-table">
                   <tbody>
+                    @php
+                    $compositionIds = explode(',', $medicines->composition);
+                    $compositionNames = \App\Models\Composition::whereIn('id', $compositionIds)->pluck('name')->toArray();
+                    $composition_list = implode(', ', $compositionNames);    
+                    @endphp
                 <tr>
                     <th class="fw-medium">Medicine Name</th>
                     <td>{{$medicines->name}}</td>
@@ -25,10 +30,10 @@ purchase-edit
                     <td>{{$medicines->categoryData->name}}</td>
                 </tr>
                 <tr>
-                   <th class="fw-medium">Medicine Company</th>
+                   <th class="fw-medium">Medicine Company</th>               
                     <td>{{$medicines->companyData->name}}</td>
                     <th class="fw-medium">Medicine Composition</th>
-                    <td>{{$medicines->composition}}</td>
+                    <td>{{$composition_list}}</td>
                 </tr>
                 <tr>     
                     <th class="fw-medium">Medicine Group</th>

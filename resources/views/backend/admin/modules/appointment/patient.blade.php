@@ -21,6 +21,7 @@ Patient
         @can('Appointment Patient Add')
               <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#patient-add-patient" onclick="resetPatientAddPatient()"> <i class="ri-add-line"></i> Add OPD Patient</a>
         @endcan
+              <a class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-1" id="excelBtn"><i class="ri-file-excel-2-line"></i> Excel</a>
           </div>
     </div>
     <div class="card-body">
@@ -29,15 +30,15 @@ Patient
           <tr>
             <th scope="col" class="fw-medium">Patient ID</th>
             <th scope="col" class="fw-medium">Name</th>
+            <th scope="col" class="fw-medium">Type</th>
             <th scope="col" class="fw-medium">Guardian</th>
             <th scope="col" class="fw-medium">Gender</th>
             <th scope="col" class="fw-medium">Blood Type</th>
             <th scope="col" class="fw-medium">DOB</th>
-            <th scope="col" class="fw-medium">Marital</th>
             <th scope="col" class="fw-medium">Phone</th>
-            <th scope="col" class="fw-medium">Alt Phone</th>
             <th scope="col" class="fw-medium">Address</th>
             <th scope="col" class="fw-medium">Allergies</th>
+            <th scope="col" class="fw-medium">Admitted</th>
             <th scope="col" class="fw-medium">Action</th>
           </tr>
         </thead>
@@ -126,11 +127,11 @@ Patient
             <input type="text" id="patient-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
             <div class="patient-patientAddess_errorCls d-none"></div>
           </div>
-          <div class="col-6">
+          {{-- <div class="col-6">
             <label class="form-label fw-normal">Alt Phone</label>
             <input type="number" id="patient-patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">
-          </div>
-          <div class="col-6">
+          </div> --}}
+          <div class="col-12">
             <label class="form-label fw-normal">Any Known Allergies</label>
             <input type="text" id="patient-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
           </div>
@@ -144,7 +145,9 @@ Patient
           @can('Appointment Patient Edit')
             <button type="button" class="btn btn-primary-600  btn-sm fw-normal patientAddPatientUpdate d-none" onclick="patientAddPatientUpdate(document.getElementById('patient-patientId').value)">Update</button>
           @endcan
-           <!-- <button type="button" class="btn btn-warning-600  btn-sm fw-normal">Save & Book Appointment</button>  -->
+           <button class="btn btn-primary-600  btn-sm fw-normal patientAddPatientSpinn d-none" type="button">
+            <span class="sr-only">please wait...</span>
+          </button>
         </div>
       </form>
     </div>
@@ -174,4 +177,5 @@ Patient
 </script>       
   {{-----------external js files added for page functions------------}}
 <script src="{{asset('backend/assets/js/custom/admin/appointment/patient.js')}}"></script>
+
 @endsection

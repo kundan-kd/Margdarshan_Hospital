@@ -65,7 +65,7 @@ class CompanyController extends Controller
         return response()->json(['success'=>'Company data fetched successfully','data'=>$getData],200);
     }
     public function updateCompanyData(Request $request){
-        $check_company = Company::where('name',$request->company)->exists();
+        $check_company = Company::where('name',$request->company)->where('id', '!=', $request->id)->exists();
         if($check_company == false){
             Company::where('id',$request->id)->update([
                 'name' => $request->company

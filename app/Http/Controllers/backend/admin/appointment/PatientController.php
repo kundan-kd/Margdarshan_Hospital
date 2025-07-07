@@ -7,6 +7,7 @@ use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Picqer\Barcode\BarcodeGeneratorJPG;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 use Yajra\DataTables\Facades\DataTables;
 
 class PatientController extends Controller
@@ -23,8 +24,11 @@ class PatientController extends Controller
         ->addColumn('patient_id',function($row){
             return $row->patient_id;
         })
-        ->addColumn('guardian_name',function($row){
-            return $row->guardian_name;
+        ->addColumn('name',function($row){
+            return $row->name;
+        })
+        ->addColumn('type',function($row){
+            return $row->type;
         })
         ->addColumn('gender',function($row){
             return $row->gender; //fetched through modal relationship
@@ -35,9 +39,7 @@ class PatientController extends Controller
         ->addColumn('dob',function($row){
             return $row->dob;
         })
-        ->addColumn('mstatus',function($row){
-            return $row->marital_status;
-        })
+       
         ->addColumn('mobile',function($row){
             return $row->mobile;
         })
@@ -49,6 +51,11 @@ class PatientController extends Controller
         })
         ->addColumn('allergies',function($row){
             return $row->known_allergies;
+        })
+        ->addColumn('created_at',function($row){
+            $date = new \DateTime($row->created_at);
+            $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
+            return $date->format('d-m-Y h:i A');
         })
         ->addColumn('action',function($row){
             return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -103,7 +110,7 @@ class PatientController extends Controller
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
             //generate bar code
-            $generator = new BarcodeGeneratorJPG();
+            $generator = new BarcodeGeneratorPNG();
             $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
             if ($barcode) {
                    //generate barcode and store in storage/public/barcode

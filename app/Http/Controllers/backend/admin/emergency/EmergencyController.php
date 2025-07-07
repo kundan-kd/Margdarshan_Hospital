@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\backend\admin\emergency;
 
 use App\Http\Controllers\Controller;
-use App\Models\Appointment;
 use App\Models\Bed;
 use App\Models\BedType;
 use App\Models\Charge;
@@ -13,7 +12,6 @@ use App\Models\Medication;
 use App\Models\MedicineCategory;
 use App\Models\NurseNote;
 use App\Models\Patient;
-use App\Models\PaymentAdvance;
 use App\Models\PaymentBill;
 use App\Models\PaymentReceived;
 use App\Models\TestName;
@@ -28,6 +26,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Picqer\Barcode\BarcodeGeneratorJPG;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 use Yajra\DataTables\Facades\DataTables;
 
 class EmergencyController extends Controller
@@ -37,7 +36,6 @@ class EmergencyController extends Controller
     }
      function emergencyDetails($id){
        $patients = Patient::where('id',$id)->get();
-        // $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
         $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
         $nurseData = User::where('status',1)->where('usertype_id',3)->get(['id','name','department_id']);
@@ -58,7 +56,7 @@ class EmergencyController extends Controller
              return '<a target="_blank" class="text-primary cursor-pointer" onclick="emergencyPatientUsingId('.$row->id.')">'.$row->patient_id.'</a>';
         })
         ->addColumn('bed_no',function($row){
-            return $row->bedData->bed_id ?? 'NA';
+            return $row->bedData->bed_no ?? 'NA'; //fetched through modal relationship
         })
         ->addColumn('gender',function($row){
             return $row->gender; //fetched through modal relationship
@@ -72,11 +70,16 @@ class EmergencyController extends Controller
         ->addColumn('mobile',function($row){
             return $row->mobile;
         })
+        ->addColumn('created_at',function($row){
+            $date = new \DateTime($row->created_at);
+            $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
+            return $date->format('d-m-Y h:i A');
+        })
         ->addColumn('allergies',function($row){
             return $row->known_allergies;
         })
-        ->addColumn('status',function($row){
-            return $row->current_status === 'Discharged'? '<span class="text-success">Discharged</span>': '<span class="text-danger">Admitted</span>';     
+        ->addColumn('status',function($row){ 
+           return $row->current_status === 'Discharged'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Discharged</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white" >Admitted</span>';    
         })
         ->addColumn('action',function($row){
             return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -132,7 +135,7 @@ class EmergencyController extends Controller
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
             //generate bar code
-            $generator = new BarcodeGeneratorJPG();
+            $generator = new BarcodeGeneratorPNG();
             $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
             if ($barcode) {
                    //generate barcode and store in storage/public/barcode
@@ -238,7 +241,6 @@ class EmergencyController extends Controller
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $request->id,
                 'occupied_date' =>$now
-
             ]);
             Bed::where('id', $previous_bed_data[0]->id)->update([
                 'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
@@ -257,17 +259,16 @@ class EmergencyController extends Controller
             $new_created_at = $payment_bills->created_at;
             if ($previous_payment_bill) {
                 $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-               $created_at = new DateTime($previous_payment_bill->created_at);
+                $created_at = new DateTime($previous_payment_bill->created_at);
                 $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
-
                 $interval = $created_at->diff($updated_at);
                 $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
                 $pre_bed_amount = $bed_amount * $occupied_days;
                 PaymentBill::where('id',$previous_payment_bill->id)->update([
+                    'days' => $occupied_days,
                     'amount' => $pre_bed_amount
                 ]);
             } // amount add to previous bed type for billing
-
             $timelines = new Timeline();
             $timelines->type = "IPD";
             $timelines->patient_id = $request->id;
@@ -295,7 +296,6 @@ class EmergencyController extends Controller
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $request->id,
                 'occupied_date' =>$now
-
             ]);
             Bed::where('id', $previous_bed_data[0]->id)->update([
                 'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
@@ -312,21 +312,18 @@ class EmergencyController extends Controller
             $payment_bills->title = 'Patient Moved to ICU';
             $payment_bills->save();
             $new_created_at = $payment_bills->created_at;
-
             if ($previous_payment_bill) {
                 $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
                 $created_at = new DateTime($previous_payment_bill->created_at);
                 $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
-
                 $interval = $created_at->diff($updated_at);
                 $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
-
                 $pre_bed_amount = $bed_amount * $occupied_days;
                 PaymentBill::where('id',$previous_payment_bill->id)->update([
+                    'days' => $occupied_days,
                     'amount' => $pre_bed_amount
                 ]);
             } // amount add to previous bed type for billing
-
             $timelines = new Timeline();
             $timelines->type = "EMERGENCY";
             $timelines->patient_id = $request->id;
@@ -338,19 +335,6 @@ class EmergencyController extends Controller
         }
     }
     public function patientDischargeStatusE(Request $request){
-        // $update = Patient::where('id',$request->id)->update([
-        //     'current_status' =>'Discharged'
-        // ]);
-        // if($update){
-        //     $timelines = new Timeline();
-        //     $timelines->type = "EMERGENCY";
-        //     $timelines->patient_id = $request->id;
-        //     $timelines->title = "Discharged";
-        //     $timelines->desc = "Patient Discharged from Emergency";
-        //     $timelines->created_by = "Admin";
-        //     $timelines->save();
-        //     return response()->json(['success'=>'Successfully discharged from Emergency'],200);
-        // }
     }
     function calculateDischargeAmountEmergency(Request $request){
         $bill_amount = PaymentBill::where('patient_id',$request->id)->where('status',NULL)->sum('amount');

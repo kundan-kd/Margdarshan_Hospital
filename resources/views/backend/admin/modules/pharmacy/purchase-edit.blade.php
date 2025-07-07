@@ -193,8 +193,7 @@ purchase-edit
       <div class=" pharmacy-footer card-footer border-top">
         <div class="text-end">
               <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 purchaseEditUpdateBtn"><i class="ri-checkbox-circle-line"></i> Update</button>
-              <button class="btn btn-primary purchaseEditSpinnBtn d-none" type="button" disabled>
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <button class="btn btn-primary-600  btn-sm fw-normal purchaseEditSpinnBtn d-none" type="button">
                     Please Wait...
               </button>
           </div>

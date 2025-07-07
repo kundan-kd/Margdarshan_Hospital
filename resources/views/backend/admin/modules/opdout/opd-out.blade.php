@@ -19,28 +19,28 @@
        <h6 class="fw-normal mb-0">OPD - Out Patient</h6>
      </div>
       <div class=" row my-3">
-        <div class="col-md-2">
+        <div class="col-md-4">
             <div class="d-flex justify-content-between ">
-            <select id="opdoutDoctorId" class="select2-class form-select" onchange="getListFilter()">
-                <option value=""> Select Doctor</option>
-                @foreach ($users as $user)
-                <option value="{{$user->id}}">Dr. {{$user->name}}</option>
-                @endforeach
-            </select>
-            {{-- <select id="opdoutRoomNum" class="select2-class form-select" onchange="getListFilter()">
-                <option value=""> Select Room</option>
-                @foreach ($users as $user)
-               <option value="{{ $user->room_number }}">
-            {{ $user->roomNumberData->room_num }}
-        </option>
-                @endforeach
+              <select id="opdoutDoctorId" class="select2-class form-select" onchange="getListFilter()">
+                  <option value=""> Select Doctor</option>
+                  @foreach ($users as $user)
+                  <option value="{{$user->id}}">Dr. {{$user->name}}</option>
+                  @endforeach
+              </select>
+              {{-- <select id="opdoutRoomNum" class="select2-class form-select" onchange="getListFilter()">
+                  <option value=""> Select Room</option>
+                  @foreach ($users as $user)
+                <option value="{{ $user->room_number }}">
+              {{ $user->roomNumberData->room_num }}
+              </option>
+                  @endforeach
             </select> --}}
+            </div>
         </div>
-        </div>
-        <div class="col-md-8 ">
+        <div class="col-md-8">
             <div class="d-flex flex-wrap align-items-center justify-content-end gap-2">
               {{-- <a href="opd-add-patient.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"> <i class="ri-add-line"></i> Add Patient</a> --}}
-              {{-- <a href="#" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</a> --}}
+             <a class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-1" id="excelBtn"><i class="ri-file-excel-2-line"></i> Excel</a>
             </div>
         </div>
        
@@ -53,12 +53,11 @@
             <tr >
               <th scope="col" class="fw-medium">Patient ID</th>
               <th scope="col" class="fw-medium">Patient Name</th>
+              <th scope="col" class="fw-medium">Gender</th>
+              <th scope="col" class="fw-medium">Phone</th>
               <th scope="col" class="fw-medium">Doctor</th>
               <th scope="col" class="fw-medium">Room No.</th>
               <th scope="col" class="fw-medium">Appointment Date</th>
-              <th scope="col" class="fw-medium">Phone</th>
-              <th scope="col" class="fw-medium">Gender</th>
-              <th scope="col" class="fw-medium">Status</th>
             </tr>
           </thead>
           <tbody>

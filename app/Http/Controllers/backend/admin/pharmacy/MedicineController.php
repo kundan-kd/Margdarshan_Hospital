@@ -38,7 +38,9 @@ class MedicineController extends Controller
                 return $row->companyData->name;
             })
             ->addColumn('composition',function($row){
-                return $row->composition;
+                $compositionIds = explode(',', $row->composition);
+                $compositionNames = \App\Models\Composition::whereIn('id', $compositionIds)->pluck('name')->toArray();
+                return implode('<br>', $compositionNames);
             })
             ->addColumn('group',function($row){
                 return $row->groupData->name;
@@ -69,7 +71,7 @@ class MedicineController extends Controller
                          <iconify-icon icon="mingcute:delete-2-line" onclick="medicineDelete('.$row->id.')"></iconify-icon>
                          </a>-->';
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['composition','action'])
             ->make(true);
         }
     }

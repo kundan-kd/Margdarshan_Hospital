@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\backend\admin\ipdin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Appointment;
 use App\Models\Bed;
 use App\Models\BedGroup;
 use App\Models\BedType;
@@ -14,7 +13,6 @@ use App\Models\Medication;
 use App\Models\MedicineCategory;
 use App\Models\NurseNote;
 use App\Models\Patient;
-use App\Models\PaymentAdvance;
 use App\Models\PaymentBill;
 use App\Models\PaymentReceived;
 use App\Models\TestName;
@@ -29,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Picqer\Barcode\BarcodeGeneratorJPG;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 use Yajra\DataTables\Facades\DataTables;
 
 class IpdinController extends Controller
@@ -41,7 +40,6 @@ class IpdinController extends Controller
     }
     public function ipdInDetails($id){
         $patients = Patient::where('id',$id)->get();
-        // $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
         $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
         $nurseData = User::where('status',1)->where('usertype_id',3)->get(['id','name','department_id']);
@@ -58,9 +56,9 @@ class IpdinController extends Controller
     public function viewPatients(Request $request){
         if($request->ajax()){
         if($request->patientType != null ){
-            $patients = Patient::where('type',$request->patientType)->get();
+            $patients = Patient::where('type',$request->patientType)->orWhere('current_status',$request->patientType)->get();
         }else{
-            $patients = Patient::where('type','IPD')->orWhere('type','ICU')->get();
+            $patients = Patient::where('type','IPD')->orWhere('type','ICU')->where('current_status','!=','Discharged')->get();
         }    
         return DataTables::of($patients)
         ->addColumn('patient_id',function($row){
@@ -84,11 +82,16 @@ class IpdinController extends Controller
         ->addColumn('mobile',function($row){
             return $row->mobile;
         })
+        ->addColumn('created_at',function($row){
+            $date = new \DateTime($row->created_at);
+            $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
+            return $date->format('d-m-Y h:i A');
+        })
         ->addColumn('allergies',function($row){
             return $row->known_allergies;
         })
         ->addColumn('status',function($row){
-            return $row->current_status === 'Discharged'? '<span class="text-success">Discharged</span>': '<span class="text-danger">Admitted</span>';
+            return $row->current_status === 'Discharged'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Discharged</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white" >Admitted</span>';   
         })
         ->addColumn('action', function($row) {
             $dischargeClass = ($row->current_status == 'Discharged') ? '' : 'd-none';
@@ -96,7 +99,7 @@ class IpdinController extends Controller
                     <iconify-icon icon="lucide:edit" onclick="ipdPatientEdit(' . $row->id . ');getBedData(' . $row->id . ')"></iconify-icon>
                 </a>
                 <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center ' . $dischargeClass . '">
-                    <iconify-icon icon="mdi:file-upload-outline" onclick="printBill(' . $row->id . ')"></iconify-icon>
+                    <iconify-icon icon="mdi:file-download-outline" onclick="printBill(' . $row->id . ')"></iconify-icon>
                 </a>
                 <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mingcute:delete-2-line" onclick="ipdpatientDelete(' . $row->id . ')"></iconify-icon>
@@ -162,7 +165,7 @@ class IpdinController extends Controller
             $patient->patient_id = "MHPT". $month.$year.$patient->id;
             $patient->save();
             //generate bar code
-            $generator = new BarcodeGeneratorJPG();
+            $generator = new BarcodeGeneratorPNG();
             $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
             if ($barcode) {
                    //generate barcode and store in storage/public/barcode
@@ -230,7 +233,7 @@ class IpdinController extends Controller
         }
     }
     public function ipdPatientDataDelete(Request $request){
-       Patient::where('id',$request->id)->delete();
+        Patient::where('id',$request->id)->delete();
         return response()->json(['success'=>'Patient data deleted successfully'],200);
     }
 
@@ -240,12 +243,8 @@ class IpdinController extends Controller
         $old_bed_priority = BedGroup::where('id', $last_bed_amount[0]->bed_group_id)->get();
         $new_bed_amount = Bed::where('id',$request->bed_id)->get(); // Get the actual amount value
         $new_bed_priority = BedGroup::where('id', $new_bed_amount[0]->bed_group_id)->get();
-
-
-
         $now = Carbon::now();
         $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
-        // dd($previous_bed_data);
         $curr_status = Patient::where('id',$request->id)->get(['type']);
         $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
         $update = Patient::where('id',$request->id)->update([
@@ -259,7 +258,6 @@ class IpdinController extends Controller
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $request->id,
                 'occupied_date' =>$now
-
             ]);
             Bed::where('id', $previous_bed_data[0]->id)->update([
                 'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
@@ -268,7 +266,6 @@ class IpdinController extends Controller
                 'occupied_date' => null,
                 'current_status' =>'vacant'
             ]);
-           
             $payment_bills = new PaymentBill();
             $payment_bills->type = "IPD";
             $payment_bills->patient_id = $request->id;
@@ -277,30 +274,24 @@ class IpdinController extends Controller
             $payment_bills->title = 'Patient Moved to ICU';
             $payment_bills->save();
             $new_created_at = $payment_bills->created_at;
-
             if ($previous_payment_bill) {
                 $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
                 $created_at = new DateTime($previous_payment_bill->created_at);
                 $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
-
                 $interval = $created_at->diff($updated_at);
                 $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
-
                 $pre_bed_amount = $bed_amount * $occupied_days;
-                        
-                   if(($interval->days ==0) && ($new_bed_priority[0]->priority < $old_bed_priority[0]->priority)){
+                //if same day IPD to ICU move then higher amount will be added
+                    if(($interval->days ==0) && ($new_bed_priority[0]->priority < $old_bed_priority[0]->priority)){
                         $pre_bed_amount =  $new_bed_amount[0]->amount * $occupied_days;
-                      
                     }else{
                         $pre_bed_amount = $last_bed_amount[0]->amount * $occupied_days;
-                        
                     }
                     PaymentBill::where('id',$previous_payment_bill->id)->update([
                         'days' => $occupied_days,
                         'amount' => $pre_bed_amount
                     ]);
             } // amount add to previous bed type for billing
-
             $timelines = new Timeline();
             $timelines->type = "IPD";
             $timelines->patient_id = $request->id;
@@ -317,8 +308,6 @@ class IpdinController extends Controller
         $old_bed_priority = BedGroup::where('id', $last_bed_amount[0]->bed_group_id)->get();
         $new_bed_amount = Bed::where('id',$request->bed_id)->get(); // Get the actual amount value
         $new_bed_priority = BedGroup::where('id', $new_bed_amount[0]->bed_group_id)->get();
-
-        // dd($bed_amount,$old_bed_priority,$new_bed_amount, $new_bed_priority);
         $now = Carbon::now();
         $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
         $curr_status = Patient::where('id',$request->id)->get(['type']);
@@ -334,7 +323,6 @@ class IpdinController extends Controller
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $request->id,
                 'occupied_date' =>$now
-
             ]);
             Bed::where('id', $previous_bed_data[0]->id)->update([
                 'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
@@ -343,7 +331,6 @@ class IpdinController extends Controller
                 'occupied_date' => null,
                 'current_status' =>'vacant'
             ]);
-
             $payment_bills = new PaymentBill();
             $payment_bills->type = "ICU";
             $payment_bills->patient_id = $request->id;
@@ -352,22 +339,18 @@ class IpdinController extends Controller
             $payment_bills->title = 'Patient Moved to IPD';
             $payment_bills->save();
             $new_created_at = $payment_bills->created_at;
-
             if ($previous_payment_bill) {
                 $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
                 $created_at = new DateTime($previous_payment_bill->created_at);
                 $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
-
                 $interval = $created_at->diff($updated_at);
                 $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
                 $pre_bed_amount = $bed_amount * $occupied_days;
-               
-                   if(($interval->days ==0) && ($new_bed_priority[0]->priority < $old_bed_priority[0]->priority)){
+               //if same day IPD to ICU move then higher amount will be added
+                    if(($interval->days ==0) && ($new_bed_priority[0]->priority < $old_bed_priority[0]->priority)){
                         $pre_bed_amount =  $new_bed_amount[0]->amount * $occupied_days;
-                      
                     }else{
                         $pre_bed_amount = $last_bed_amount[0]->amount * $occupied_days;
-                        
                     }
                     PaymentBill::where('id',$previous_payment_bill->id)->update([
                         'days' => $occupied_days,

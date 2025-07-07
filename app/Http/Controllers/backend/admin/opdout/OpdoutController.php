@@ -9,12 +9,8 @@ use App\Models\Charge;
 use App\Models\LabInvestigation;
 use App\Models\Medication;
 use App\Models\MedicineCategory;
-use App\Models\OpdoutLabtest;
-use App\Models\OpdoutMedicinedose;
-use App\Models\OpdoutVisit;
 use App\Models\LabReport;
 use App\Models\Patient;
-use App\Models\PaymentAdvance;
 use App\Models\PaymentBill;
 use App\Models\PaymentReceived;
 use App\Models\TestName;
@@ -58,6 +54,12 @@ class OpdoutController extends Controller
              ->addColumn('patient_name',function($row){
                 return $row->patient_data->name;
             })
+             ->addColumn('gender',function($row){
+                return $row->patient_data->gender;
+            })
+             ->addColumn('mobile',function($row){
+                return $row->patient_data->mobile; //fetched through modal relationship
+            })
             ->addColumn('doctor',function($row){
                 return "Dr. ".$row->user_data->name ?? '';
             })
@@ -67,15 +69,7 @@ class OpdoutController extends Controller
             ->addColumn('appointment_date',function($row){
                 return $row->appointment_date;
             })
-            ->addColumn('mobile',function($row){
-                return $row->patient_data->mobile; //fetched through modal relationship
-            })
-            ->addColumn('gender',function($row){
-                return $row->patient_data->gender;
-            })
-            ->addColumn('status',function($row){
-                return $row->status;
-            })
+           
             // ->addColumn('action',function($row){
             //    return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
             //             <iconify-icon icon="iconamoon:eye-light" onclick="medicineDetails('.$row->id.')"></iconify-icon>
@@ -537,23 +531,8 @@ class OpdoutController extends Controller
             ->make(true);
         }
     }
-    // public function getOpdOutLabData(Request $request){
-    //     $getLabData = LabInvestigation::where('id',$request->id)->get();
-    //     $patientData = Patient::where('id',$getLabData[0]->patient_id)->get();
-    //     $testType = TestType::where('id',$getLabData[0]->test_type_id)->get();
-    //     $testName = TestName::where('id',$getLabData[0]->test_name_id)->get();
-    //     $testReport = LabReport::where('lab_id',$request->id)->get(['file_path']);
-    //     $data = [
-    //            'labData' =>$getLabData, 
-    //            'patientData' =>$patientData, 
-    //            'testType' =>$testType, 
-    //            'testName' =>$testName, 
-    //            'testReport' =>$testReport, 
-    //     ];
-    //     return response()->json(['success'=>'opdout lab data fetched','data'=>$data],200);
-    // }
     public function getOpdOutLabData(Request $request)
-{
+    {
     $lab = LabInvestigation::find($request->id);
     if (!$lab) {
         return response()->json(['success' => false, 'message' => 'Lab record not found'], 404);

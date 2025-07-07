@@ -29,7 +29,12 @@ class PurchaseController extends Controller
             $purchase = Purchase::get();
             return DataTables::of($purchase)
             ->addColumn('created_at',function($row){
-                return $row->created_at;
+                $date = new \DateTime($row->created_at);
+                $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
+                return $date->format('d-m-Y h:i A');
+            })
+            ->addColumn('vendor',function($row){
+                return $row->vendorData->name;
             })
             ->addColumn('bill_no',function($row){
                 return $row->bill_no;
@@ -37,20 +42,8 @@ class PurchaseController extends Controller
             ->addColumn('net_amount',function($row){
                 return $row->net_amount;
             })
-            ->addColumn('discount',function($row){
-                return $row->total_discount;
-            })
-            ->addColumn('total',function($row){
-                return $row->total_amount;
-            })
             ->addColumn('paid_amount',function($row){
                 return $row->paid_amount;
-            })
-            ->addColumn('due',function($row){
-                return $row->due;
-            })
-            ->addColumn('naration',function($row){
-                return $row->naration;
             })
             ->addColumn('action',function($row){
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">

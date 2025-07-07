@@ -85,7 +85,7 @@ class VendorController extends Controller
         return response()->json(['success'=>'Vendor data fetched successfully','data'=>$getData],200);
     }
     public function updateVendorData(Request $request){
-        $check_vendor = Vendor::where('email',$request->email)->where('gst_number',$request->gst)->exists();
+        $check_vendor = Vendor::where('email',$request->email)->where('gst_number',$request->gst)->where('id', '!=', $request->id)->exists();
         if($check_vendor == false){
             Vendor::where('id',$request->id)->update([
                 'name' => $request->name,

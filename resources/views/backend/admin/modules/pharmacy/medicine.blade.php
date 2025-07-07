@@ -20,9 +20,8 @@ medicines
   <h6 class="fw-normal mb-0">Medicines</h6>
   <div class="btns">
     <a class="btn btn-primary-600  btn-sm fw-normal mx-2 createNewBtn" data-bs-toggle="modal" data-bs-target="#medician-list-add" onclick="resetMedicineAdd()"><i class="ri-add-line"></i>Add Medicine</a>
-    <a href="{{route('medicine.medicineLowInventory')}}" class="btn btn-primary-600  btn-sm fw-normal mx-2 inven"></i>Low Inventory</a>
-    {{-- <a class="btn btn-warning-600  btn-sm fw-normal "><i class="ri-download-line"></i> Import</a> --}}
-    {{-- <a class="btn btn-warning-600  btn-sm fw-normal "><i class="ri-file-pdf-2-line"></i> Export</a> --}}
+    <a href="{{route('medicine.medicineLowInventory')}}" class="btn btn-danger-600  btn-sm fw-normal mx-2 inven"></i>Low Inventory</a>
+    <a class="btn btn-warning-600 fw-normal  btn-sm" id="excelBtn"><i class="ri-file-excel-2-line"></i> Excel</a>
   </div>
 </div>
     

@@ -14,6 +14,7 @@ let table = $('#patient-table').DataTable({
         }
     },
     columns:[
+       
         {
             data:'patient_id',
             name:'patient_id'
@@ -21,6 +22,10 @@ let table = $('#patient-table').DataTable({
         {
             data:'name',
             name:'name'
+        },
+         {
+            data:'type',
+            name:'type'
         },
         {
             data:'guardian_name',
@@ -45,19 +50,9 @@ let table = $('#patient-table').DataTable({
             searchable: true
         },
         {
-            data:'mstatus',
-            name:'mstatus'
-        },
-        {
             data:'mobile',
             name:'mobile',
             orderable: false,
-            searchable: true
-        },
-        {
-            data:'alt_mobile',
-            name:'alt_mobile',
-            orderable: false,   
             searchable: true
         },
         {
@@ -73,6 +68,10 @@ let table = $('#patient-table').DataTable({
             searchable: true
         },
         {
+            data:'created_at',
+            name:'created_at'
+        },
+        {
             data:'action',
             name:'action',
             orderable: false,
@@ -80,17 +79,25 @@ let table = $('#patient-table').DataTable({
         }
 
     ],
-    dom: 'Bfrtip',
-        buttons: [
-            {
-                extend: 'excelHtml5',
-                title: 'OPD Patient List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6,7,8,9,10] // Excludes index 11 (action)
-                }
+ dom: 'Blfrtip',
+    buttons: [
+        {
+            extend: 'excelHtml5',
+            title: 'All Patient List',
+            exportOptions: {
+                columns: [0,1,2,3,4,5,6,7,8,9,10]
+            },
+            className: 'd-none', // Hide the button using a Bootstrap utility class or custom CSS
+            attr: {
+                id: 'hiddenExcelBtn' // Give it an ID so we can trigger it
             }
-        ]
+        }
+    ]
 });
+$('#excelBtn').on('click', function () {
+    $('#hiddenExcelBtn').click(); // Trigger the hidden DataTables button
+});
+
 function resetPatientAddPatient(){
     $('#patient-addPatientForm')[0].reset();
     $('#patient-add-appointmentLabel').html('Add Patient');
@@ -108,6 +115,7 @@ function resetPatientAddPatient(){
 
 $('#patient-addPatientForm').on('submit',function(e){
      e.preventDefault();
+    let id = $('#patient-patientId').val(); 
     let patientName  = validateField('patient-patientName', 'input');
     let guardianName = validateField('patient-guardianName', 'input');
     // let patientGender = validateField('patientGender', 'radio');
@@ -117,7 +125,8 @@ $('#patient-addPatientForm').on('submit',function(e){
     let patientMobile = validateField('patient-patientMobile', 'mobile');
     let patientAddess = validateField('patient-patientAddess', 'input');
         if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
-           
+            $('.patientAddPatientSubmit').addClass('d-none'); 
+            $('.patientAddPatientSpinn').removeClass('d-none');
             let name = $('#patient-patientName').val();
             let guardian_name = $('#patient-guardianName').val();
             let gender = $('input[name="patient-patientGender"]:checked').val(); // Corrected na
@@ -128,29 +137,35 @@ $('#patient-addPatientForm').on('submit',function(e){
             let address = $('#patient-patientAddess').val();
             let alt_mobile = $('#patient-patientAltMobile').val();
             let allergy = $('#patient-patientAllergy').val();
-            $.ajax({
-                url: patientAddNewPatient,
-                type:"POST",
-                headers:{
-                    'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-                },
-                data:{
-                name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
-                },
-                success:function(response){
-                    if(response.success){
-                        toastSuccessAlert('New Patient added successfully');
-                        $('#patient-add-patient').modal('hide');
-                        $('#patient-table').DataTable().ajax.reload();
-                    }else{
-                        console.log('error found');
+            if ($('.patientAddPatientUpdate').is(':visible')) {
+            patientAddPatientUpdate(id); // Trigger update function when update btn is active
+            } else {
+                $.ajax({
+                    url: patientAddNewPatient,
+                    type:"POST",
+                    headers:{
+                        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+                    },
+                    data:{
+                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
+                    },
+                    success:function(response){
+                        if(response.success){
+                            toastSuccessAlert('New Patient added successfully');
+                            $('#patient-add-patient').modal('hide');
+                            $('#patient-table').DataTable().ajax.reload();
+                            $('.patientAddPatientSpinn').addClass('d-none'); 
+                            $('.patientAddPatientSubmit').removeClass('d-none'); 
+                        }else{
+                            console.log('error found');
+                        }
+                    },
+                    error:function(xhr, status, error){
+                        console.log(xhr.respnseText);
+                        alert('An error occurred: '+error);
                     }
-                },
-                error:function(xhr, status, error){
-                    console.log(xhr.respnseText);
-                    alert('An error occurred: '+error);
-                }
-            });
+                });
+            }
         }else{
             console.log("Please fill all required fields");
         }    
@@ -192,16 +207,16 @@ function patientNewEdit(id){
     });
 }
 function patientAddPatientUpdate(id){
-      let patientName  = validateField('patient-patientName', 'input');
+    let patientName  = validateField('patient-patientName', 'input');
     let guardianName = validateField('patient-guardianName', 'input');
-    // let patientGender = validateField('patientGender', 'radio');
     let patientBloodType = validateField('patient-patientBloodType', 'select');
     let patientDOB = validateField('patient-patientDOB', 'select');
     let patientMStatus = validateField('patient-patientMStatus', 'select');     
     let patientMobile = validateField('patient-patientMobile', 'mobile');
     let patientAddess = validateField('patient-patientAddess', 'input');
         if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
-           
+            $('.patientAddPatientUpdate').addClass('d-none'); 
+            $('.patientAddPatientSpinn').removeClass('d-none'); 
             let name = $('#patient-patientName').val();
             let guardian_name = $('#patient-guardianName').val();
             let gender = $('input[name="patient-patientGender"]:checked').val(); // Corrected na
@@ -226,8 +241,12 @@ function patientAddPatientUpdate(id){
                         toastSuccessAlert('New Patient added successfully');
                         $('#patient-add-patient').modal('hide');
                         $('#patient-table').DataTable().ajax.reload();
+                        $('.patientAddPatientSpinn').addClass('d-none'); 
+                        $('.patientAddPatientUpdate').removeClass('d-none'); 
                     }else{
                         console.log('error found');
+                        $('.patientAddPatientSpinn').addClass('d-none'); 
+                        $('.patientAddPatientUpdate').removeClass('d-none'); 
                     }
                 },
                 error:function(xhr, status, error){

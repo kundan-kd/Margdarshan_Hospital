@@ -64,7 +64,7 @@ class TesttypeController extends Controller
         return response()->json(['success'=>'Test Type data fetched successfully','data'=>$getData],200);
     }
     public function updateTestTypeData(Request $request){
-        $check_testtype = TestType::where('name',$request->testtype)->exists();
+        $check_testtype = TestType::where('name',$request->testtype)->where('id', '!=', $request->id)->exists();
         if($check_testtype == false){
             testType::where('id',$request->id)->update([
                 'name' => $request->testtype

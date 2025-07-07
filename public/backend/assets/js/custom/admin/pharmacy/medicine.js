@@ -59,7 +59,24 @@ let table = $('#medicine-create-table').DataTable({
             orderable: false,
             searchable: false
         }
-     ]
+     ],
+    dom: 'Blfrtip',
+    buttons: [
+        {
+            extend: 'excelHtml5',
+            title: 'Medicines List',
+            exportOptions: {
+                columns: [0,1,2,3,4,5,6,7,8,9]
+            },
+            className: 'd-none', // Hide the button using a Bootstrap utility class or custom CSS
+            attr: {
+                id: 'hiddenExcelBtn' // Give it an ID so we can trigger it
+            }
+        }
+    ]
+});
+$('#excelBtn').on('click', function () {
+    $('#hiddenExcelBtn').click(); // Trigger the hidden DataTables button
 });
 
 $('.createNewBtn').on('click',function(e){

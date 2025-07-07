@@ -64,7 +64,7 @@ class PaymentmodeController extends Controller
         return response()->json(['success'=>'Payment Mode fetched successfully','data'=>$getData],200);
     }
     public function updatePaymentModeData(Request $request){
-        $check_pmode = PaymentMode::where('name',$request->paymentmode)->exists();
+        $check_pmode = PaymentMode::where('name',$request->paymentmode)->where('id', '!=', $request->id)->exists();
         if($check_pmode == false){
             PaymentMode::where('id',$request->id)->update([
                 'name' => $request->paymentmode

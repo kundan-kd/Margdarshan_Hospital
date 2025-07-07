@@ -20,7 +20,7 @@
             @can('IPD Patient Add')
               <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1 ipd-add-patientLabel" data-bs-toggle="modal" data-bs-target="#ipd-add-patient" onclick="resetAddPatient();getBedData()"> <i class="ri-add-line"></i> Add IPD Patient</a>
             @endcan  
-              <!--<button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button>-->
+            <a class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-1" id="excelBtn"><i class="ri-file-excel-2-line"></i> Excel</a>
           </div>
      </div>
       <div class=" row my-3">
@@ -30,6 +30,7 @@
                 <option value=""> Select Patient Type</option>
                 <option value="IPD">IPD</option>
                 <option value="ICU">ICU</option>
+                <option value="Discharged">Discharged</option>
             </select>
         </div>
         </div>
@@ -47,6 +48,7 @@
               <th scope="col" class="fw-medium">Blood Type</th>
               <th scope="col" class="fw-medium">DOB</th>
               <th scope="col" class="fw-medium">Phone</th>
+              <th scope="col" class="fw-medium">Admitted On</th>
               <th scope="col" class="fw-medium">Allergies</th>
               <th scope="col" class="fw-medium">Status</th>
               <th scope="col" class="fw-medium">Action</th>
@@ -241,14 +243,10 @@
             <input type="text" id="ipd-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
             <div class="ipd-patientAddess_errorCls d-none"></div>
           </div>
-          <div class="col-6">
+          {{-- <div class="col-6">
             <label class="form-label fw-normal">Alt Phone</label>
             <input type="number" id="ipd-patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal">Any Known Allergies</label>
-            <input type="text" id="ipd-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
-          </div>
+          </div> --}}
           <div class="col-6">
             <label class="form-label fw-normal" for="ipd-patientBedNum">Bed Number</label>
             <select class="form-select form-select-sm select2-cls" id="ipd-patientBedNum" style="width: 100%" onchange="getBedDetails(this.value)" oninput="validateField(this.id,'select')">
@@ -268,6 +266,10 @@
             <label class="form-label fw-normal">Bed Charge</label>
             <input type="text" id="ipd-patientBedCharge"  class="form-control form-control-sm" placeholder="Bed Charge" readonly>
           </div>
+          <div class="col-12">
+            <label class="form-label fw-normal">Any Known Allergies</label>
+            <input type="text" id="ipd-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
+          </div>
         </div>
         </div>
         <div class="modal-footer">
@@ -278,6 +280,9 @@
           @can('IPD Patient Edit')
           <button type="button" class="btn btn-primary-600  btn-sm fw-normal ipdPatientUpdate d-none" onclick="ipdPatientUpdate(document.getElementById('ipdPatientId').value)">Update</button>
           @endcan
+          <button class="btn btn-primary-600  btn-sm fw-normal ipdPatientSpinn d-none" type="button">
+            <span class="sr-only">please wait...</span>
+          </button>
         </div>
       </form>
     </div>

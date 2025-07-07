@@ -64,7 +64,7 @@ class UsertypeController extends Controller
         return response()->json(['success'=>'User Type data fetched successfully','data'=>$getData],200);
     }
     public function updateUserTypeData(Request $request){
-        $check_usertype = UserType::where('name',$request->usertype)->exists();
+        $check_usertype = UserType::where('name',$request->usertype)->where('id', '!=', $request->id)->exists();
         if($check_usertype == false){
             UserType::where('id',$request->id)->update([
                 'name' => $request->usertype

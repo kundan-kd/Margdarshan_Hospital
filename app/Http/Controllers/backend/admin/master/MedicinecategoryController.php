@@ -65,7 +65,7 @@ class MedicinecategoryController extends Controller
         return response()->json(['success'=>'Medicine Category fetched successfully','data'=>$getData],200);
     }
     public function updateMedicineCategoryData(Request $request){
-        $check_medCat = MedicineCategory::where('name',$request->category)->exists();
+        $check_medCat = MedicineCategory::where('name',$request->category)->where('id', '!=', $request->id)->exists();
         if($check_medCat == false){
             MedicineCategory::where('id',$request->id)->update([
                 'name' => $request->category

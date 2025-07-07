@@ -20,14 +20,29 @@ let table_opd_patients = $('#opd-out-list-table').DataTable({
     columns: [
         { data: 'token', name: 'token' },
         { data: 'patient_name', name: 'patient_name' },
+        { data: 'gender', name: 'gender' },
+        { data: 'mobile', name: 'mobile' },
         { data: 'doctor', name: 'doctor' },
         { data: 'room_no', name: 'room_no' },
-        { data: 'appointment_date', name: 'appointment_date' },
-        { data: 'mobile', name: 'mobile' },
-        { data: 'gender', name: 'gender' },
-        { data: 'status', name: 'status' }
-        // { data: 'action', name: 'action' }
+        { data: 'appointment_date', name: 'appointment_date' }
+    ],
+     dom: 'Blfrtip',
+    buttons: [
+        {
+            extend: 'excelHtml5',
+            title: 'OPD Patient List',
+            exportOptions: {
+                columns: [0,1,2,3,4,5,6]
+            },
+            className: 'd-none', // Hide the button using a Bootstrap utility class or custom CSS
+            attr: {
+                id: 'hiddenExcelBtn' // Give it an ID so we can trigger it
+            }
+        }
     ]
+});
+$('#excelBtn').on('click', function () {
+    $('#hiddenExcelBtn').click(); // Trigger the hidden DataTables button
 });
 
 function getListFilter(){

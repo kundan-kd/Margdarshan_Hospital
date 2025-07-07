@@ -19,6 +19,10 @@ let table = $('#purchase-list-table').DataTable({
             name:'created_at'
         },
         {
+            data:'vendor',
+            name:'vendor'
+        },
+        {
             data:'bill_no',
             name:'bill_no'
         },
@@ -27,24 +31,8 @@ let table = $('#purchase-list-table').DataTable({
             name:'net_amount'
         },
         {
-            data:'discount',
-            name:'discount'
-        },
-        {
-            data:'total',
-            name:'total'
-        },
-        {
             data:'paid_amount',
             name:'paid_amount'
-        },
-        {
-            data:'due',
-            name:'due'
-        },
-        {
-            data:'naration',
-            name:'naration'
         },
         {
             data:'action',
@@ -56,7 +44,7 @@ let table = $('#purchase-list-table').DataTable({
 });
 
 function purchaseEdit(id){
-     window.open('purchase-edit/' + id, '_blank');
+     window.location.href = 'purchase-edit/' + id;
 }
 
 function purchaseDelete(id){
@@ -93,7 +81,5 @@ function purchaseDelete(id){
     });
 }
 function purchaseDetails(id) {
-      window.open('purchase-view/' + id, '_blank');
-    // let url = pruchaseViewIndex.replace(':id', id); // Replace placeholder with actual ID
-    // window.open(url, '_blank'); // Open page in new tab
+      window.location.href = 'purchase-view/' + id;
 }

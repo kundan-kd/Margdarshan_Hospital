@@ -49,6 +49,12 @@ let table_patient_emergency = $('#emergency-patient-list').DataTable({
             searchable: true
         },
         {
+            data:'created_at',
+            name:'created_at',
+            orderable: false,
+            searchable: true
+        },
+        {
             data:'allergies',
             name:'allergies',
             orderable: false,
@@ -67,24 +73,25 @@ let table_patient_emergency = $('#emergency-patient-list').DataTable({
             searchable: true
         },
     ],
-    dom: 'Bfrtip',
-        buttons: [
-            {
-                extend: 'excelHtml5',
-                title: 'Emergency Patient List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6,7,8] // Excludes index 11 (action)
-                }
+   dom: 'Blfrtip',
+    buttons: [
+        {
+            extend: 'excelHtml5',
+            title: 'Emergency Patient List',
+            exportOptions: {
+                columns: [0,1,2,3,4,5,6,7,8,9]
+            },
+            className: 'd-none', // Hide the button using a Bootstrap utility class or custom CSS
+            attr: {
+                id: 'hiddenExcelBtn' // Give it an ID so we can trigger it
             }
-        ]
+        }
+    ]
+});
+$('#excelBtn').on('click', function () {
+    $('#hiddenExcelBtn').click(); // Trigger the hidden DataTables button
 });
 
-// function resetPatient(){
-//     $('#emergency-add-patientLabel').html('Add Patient');
-//     $('#emergencyPatientId').val('');
-//     $('.emergencyPatientUpdate').addClass('d-none');
-//     $('.emergencyPatientSubmit').removeClass('d-none');
-// }
 function resetAddPatient(){
     $('#emergency-addPatientForm')[0].reset();
     $('#emergencyPatientId').val('');
@@ -157,9 +164,9 @@ function getBedDetails(id){
 }
 $('#emergency-addPatientForm').on('submit',function(e){
      e.preventDefault();
+    let id = $('#emergencyPatientId').val(); 
     let patientName  = validateField('emergency-patientName', 'input');
     let guardianName = validateField('emergency-guardianName', 'input');
-    // let patientGender = validateField('patientGender', 'radio');
     let patientBloodType = validateField('emergency-patientBloodType', 'select');
     let patientDOB = validateField('emergency-patientDOB', 'select');
     let patientMStatus = validateField('emergency-patientMStatus', 'select');     
@@ -168,7 +175,8 @@ $('#emergency-addPatientForm').on('submit',function(e){
     let bedNumId = validateField('emergency-patientBedNum', 'select');
 
         if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
-           
+            $('.emergencyPatientSubmit').addClass('d-none'); 
+            $('.emergencyPatientSpinn').removeClass('d-none'); 
             let name = $('#emergency-patientName').val();
             let guardian_name = $('#emergency-guardianName').val();
             let gender = $('input[name="emergency-patientGender"]:checked').val(); // Corrected na
@@ -179,30 +187,38 @@ $('#emergency-addPatientForm').on('submit',function(e){
             let address = $('#emergency-patientAddess').val();
             let alt_mobile = $('#emergency-patientAltMobile').val();
             let allergy = $('#emergency-patientAllergy').val();
-             let bedNumId = $('#emergency-patientBedNum').val();
-            $.ajax({
-                url: addPatient,
-                type:"POST",
-                headers:{
-                    'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-                },
-                data:{
-                name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
-                },
-                success:function(response){
-                    if(response.success){
-                        toastSuccessAlert('New emergency Patient added successfully');
-                        $('#emergency-add-patient').modal('hide');
-                        $('#emergency-patient-list').DataTable().ajax.reload();
-                    }else{
-                        console.log('error found');
+            let bedNumId = $('#emergency-patientBedNum').val();
+            if ($('.emergencyPatientUpdate').is(':visible')) {
+            emergencyPatientUpdate(id); // Trigger update function when update btn is active
+            } else {
+                $.ajax({
+                    url: addPatient,
+                    type:"POST",
+                    headers:{
+                        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+                    },
+                    data:{
+                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
+                    },
+                    success:function(response){
+                        if(response.success){
+                            toastSuccessAlert('New emergency Patient added successfully');
+                            $('#emergency-add-patient').modal('hide');
+                            $('#emergency-patient-list').DataTable().ajax.reload();
+                            $('.emergencyPatientSpinn').addClass('d-none'); 
+                            $('.emergencyPatientSubmit').removeClass('d-none'); 
+                        }else{
+                            console.log('error found');
+                            $('.emergencyPatientSpinn').addClass('d-none'); 
+                            $('.emergencyPatientSubmit').removeClass('d-none'); 
+                        }
+                    },
+                    error:function(xhr, status, error){
+                        console.log(xhr.respnseText);
+                        alert('An error occurred: '+error);
                     }
-                },
-                error:function(xhr, status, error){
-                    console.log(xhr.respnseText);
-                    alert('An error occurred: '+error);
-                }
-            });
+                });
+            }
         }else{
             console.log("Please fill all required fields");
         }    
@@ -256,7 +272,8 @@ function emergencyPatientUpdate(id){
         let bedNumId = validateField('emergency-patientBedNum', 'select');
 
         if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
-           
+            $('.emergencyPatientUpdate').addClass('d-none'); 
+            $('.emergencyPatientSpinn').removeClass('d-none'); 
             let name = $('#emergency-patientName').val();
             let guardian_name = $('#emergency-guardianName').val();
             let gender = $('input[name="emergency-patientGender"]:checked').val(); // Corrected na
@@ -282,9 +299,13 @@ function emergencyPatientUpdate(id){
                     if(response.success){
                         toastSuccessAlert(response.success);
                         $('#emergency-add-patient').modal('hide');
-                         $('#emergency-patient-list').DataTable().ajax.reload();
+                        $('#emergency-patient-list').DataTable().ajax.reload();
+                        $('.emergencyPatientSpinn').addClass('d-none'); 
+                        $('.emergencyPatientUpdate').removeClass('d-none'); 
                     }else{
-                       toastErrorAlert(response.error_success);
+                        toastErrorAlert(response.error_success);
+                        $('.emergencyPatientSpinn').addClass('d-none'); 
+                        $('.emergencyPatientUpdate').removeClass('d-none');
                     }
                 },
                 error:function(xhr, status, error){

@@ -29,20 +29,19 @@ class BillingController extends Controller
         if($request->ajax()){
             $purchase = Billing::get();
             return DataTables::of($purchase)
+            ->addColumn('created_at',function($row){
+                $date = new \DateTime($row->created_at);
+                $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
+                return $date->format('d-m-Y h:i A');
+            })
+            ->addColumn('patient_id',function($row){
+                return $row->patientData->patient_id ?? 'NA';
+            })
             ->addColumn('patient',function($row){
                 return $row->patientData->name ??'Cash';
             })
-            ->addColumn('created_at',function($row){
-                return $row->created_at;
-            })
             ->addColumn('bill_no',function($row){
                 return $row->bill_no;
-            })
-            ->addColumn('discount',function($row){
-                return $row->discount_amount ?? 0;
-            })
-            ->addColumn('total',function($row){
-                return $row->total_amount ?? 0;
             })
             ->addColumn('net_amount',function($row){
                 return $row->net_amount ?? 0;
@@ -60,7 +59,7 @@ class BillingController extends Controller
                          <iconify-icon icon="lucide:edit" onclick="billingEdit('.$row->id.')"></iconify-icon>
                          </a>
                          <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                                <iconify-icon icon="mdi:file-upload-outline" onclick="printMedicineBill(' . $row->id . ')"></iconify-icon>
+                                <iconify-icon icon="mdi:file-download-outline" onclick="printMedicineBill(' . $row->id . ')"></iconify-icon>
                         </a>
                          <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                          <iconify-icon icon="mingcute:delete-2-line" onclick="purchaseDelete('.$row->id.')"></iconify-icon>

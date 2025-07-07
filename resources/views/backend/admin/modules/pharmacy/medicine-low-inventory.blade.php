@@ -9,6 +9,7 @@ Low Inv. Medicine
   <h6 class="fw-normal mb-0">Low Inventory Medicines</h6>
    <div class="btns">
     <a href="{{route('medicine.index')}}" class="btn btn-primary-600  btn-sm fw-normal mx-2 inven"></i>Medicines</a>
+        <a class="btn btn-warning-600 fw-normal  btn-sm" id="excelBtn"><i class="ri-file-excel-2-line"></i> Excel</a>
   </div>
 </div>
     
@@ -84,7 +85,24 @@ Low Inv. Medicine
             data:'stock',
             name:'stock'
         }
-     ]
+     ],
+    dom: 'Blfrtip',
+    buttons: [
+        {
+            extend: 'excelHtml5',
+            title: 'Medicines Low Inventory List',
+            exportOptions: {
+                columns: [0,1,2,3,4,5,6,7]
+            },
+            className: 'd-none', // Hide the button using a Bootstrap utility class or custom CSS
+            attr: {
+                id: 'hiddenExcelBtn' // Give it an ID so we can trigger it
+            }
+        }
+    ]
+});
+$('#excelBtn').on('click', function () {
+    $('#hiddenExcelBtn').click(); // Trigger the hidden DataTables button
 });
 </script>
  {{-----------external js files added for page functions------------}}

@@ -21,12 +21,8 @@
     @can('Emergency Patient Add')
           <a href="add-emergency-patient.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-patient" onclick= "resetAddPatient();getBedDataEmergency()"> <i class="ri-add-line"></i> Add Emergency Patient</a>
     @endcan      
-          {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
-        </div>
-  <!-- <div class="btns">
-    <a class="btn btn-primary-600  btn-sm fw-normal mx-2" href="./emergency-detail.html"><i class="ri-add-line"></i> Create New</a>
-    <a class="btn btn-warning-600  btn-sm fw-normal "><i class="ri-file-pdf-2-line"></i> Export</a>
-  </div> -->
+        <a class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-1" id="excelBtn"><i class="ri-file-excel-2-line"></i> Excel</a>  
+    </div>
 </div>
     
     <div class="card basic-data-table">
@@ -41,6 +37,7 @@
               <th scope="col" class="fw-medium">Blood Type</th>
               <th scope="col" class="fw-medium">DOB</th>
               <th scope="col" class="fw-medium">Phone</th>
+              <th scope="col" class="fw-medium">Admitted On</th>
               <th scope="col" class="fw-medium">Allergies</th>
               <th scope="col" class="fw-medium">Status</th>
               <th scope="col" class="fw-medium">Action</th>
@@ -156,14 +153,10 @@
             <input type="text" id="emergency-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
             <div class="emergency-patientAddess_errorCls d-none"></div>
           </div>
-          <div class="col-6">
+          {{-- <div class="col-6">
             <label class="form-label fw-normal">Alt Phone</label>
             <input type="number" id="emergency-patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal">Any Known Allergies</label>
-            <input type="text" id="emergency-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
-          </div>
+          </div> --}}
             <div class="col-6">
             <label class="form-label fw-normal" for="emergency-patientBedNum">Bed Number</label>
             <select class="form-select form-select-sm select2-cls" id="emergency-patientBedNum" style="width: 100%" onchange="getBedDetails(this.value)" oninput="validateField(this.id,'select')">
@@ -183,6 +176,10 @@
             <label class="form-label fw-normal">Bed Charge</label>
             <input type="text" id="emergency-patientBedCharge"  class="form-control form-control-sm" placeholder="Bed Charge" readonly>
           </div>
+          <div class="col-12">
+            <label class="form-label fw-normal">Any Known Allergies</label>
+            <input type="text" id="emergency-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
+          </div>
         </div>
         </div>
         <div class="modal-footer">
@@ -193,7 +190,9 @@
           @can('Emergency Patient Edit')
           <button type="button" class="btn btn-primary-600  btn-sm fw-normal emergencyPatientUpdate" onclick="emergencyPatientUpdate(document.getElementById('emergencyPatientId').value)">Update</button>
           @endcan
-           <!-- <button type="button" class="btn btn-warning-600  btn-sm fw-normal">Save & Book Appointment</button>  -->
+          <button class="btn btn-primary-600  btn-sm fw-normal emergencyPatientSpinn d-none" type="button">
+            <span class="sr-only">please wait...</span>
+          </button>
         </div>
       </form>
     </div>

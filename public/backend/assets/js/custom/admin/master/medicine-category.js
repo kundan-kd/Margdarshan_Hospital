@@ -131,7 +131,7 @@ function medicineCategoryUpdate(id){
                     $('#medicineCategoryForm').removeClass('was-validated');
                     $('#medicineCategoryForm')[0].reset();
                     $('#medicineCategory-table').DataTable().ajax.reload();
-                    toastSuccessAlert('Modicine Category updated successfully');
+                    toastSuccessAlert('Medicine Category updated successfully');
                 } else if(response.already_found) {
                     toastErrorAlert(response.already_found);    
                 } else {

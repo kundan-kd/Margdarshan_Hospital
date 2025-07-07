@@ -64,10 +64,15 @@ class RoomtypeController extends Controller
         return response()->json(['success'=>'Room Type data fetched successfully','data'=>$getData],200);
     }
     public function updateRoomTypeData(Request $request){
+        $room_check = RoomType::where('name',$request->roomtype)->where('id', '!=', $request->id)->exists();
+        if($room_check == false){
             RoomType::where('id',$request->id)->update([
                 'name' => $request->roomtype
             ]);
             return response()->json(['success' => 'Room Type updated successfully'],200);
+        }else{
+            return response()->json(['already_found' => 'Room Type already exists'],200);
+        }    
     }
     public function statusUpdate(Request $request){
         $roomtype_status = RoomType::where('id',$request->id)->get(['status']);

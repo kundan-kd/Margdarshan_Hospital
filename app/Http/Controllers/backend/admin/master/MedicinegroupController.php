@@ -65,7 +65,7 @@ class MedicinegroupController extends Controller
         return response()->json(['success'=>'Medicine Group fetched successfully','data'=>$getData],200);
     }
     public function updateMedicineGroupData(Request $request){
-        $check_medGroyp = MedicineGroup::where('name',$request->group)->exists();
+        $check_medGroyp = MedicineGroup::where('name',$request->group)->where('id', '!=', $request->id)->exists();
         if($check_medGroyp == false){
             MedicineGroup::where('id',$request->id)->update([
                 'name' => $request->group

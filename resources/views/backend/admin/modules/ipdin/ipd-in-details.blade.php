@@ -90,7 +90,12 @@
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">Bar Code :</td>
-                                    <td> <img src="{{asset('backend/uploads/barcode/'. $patients[0]->barcode)}}" style="width: 150px;height:50px;" alt="barcode"></td>
+                                    <td> <img src="{{asset('backend/uploads/barcode/'. $patients[0]->barcode)}}" style="width: 150px;height:50px;" alt="barcode">
+                                      <a href="{{ asset('backend/uploads/barcode/' . $patients[0]->barcode) }}"
+                                        download="barcode_{{ $patients[0]->patient_id }}.png" class="mx-3">
+                                          <i class="ri-download-line"></i>
+                                      </a>
+                                    </td>
                                   </tr>
                                  </table>
                             </div>

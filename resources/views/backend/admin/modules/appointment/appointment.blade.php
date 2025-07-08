@@ -69,15 +69,13 @@ $ddate = date("d/m/yy");
                   <label class="form-label fw-normal w-100" for="itemSearchInput">Search Patient</label>
                    <div class="input-group">
                       <span class="input-group-text text-muted"><i class="ri-search-line"></i></span>
-                      <input id="itemSearchInput" class="form-control form-control-sm" type="text" placeholder="Search item" oninput="getPatientData(this.value)">
-                       
+                      <input id="itemSearchInput" class="form-control form-control-sm" type="text" placeholder="Search item" oninput="getPatientData(this.value)">                       
                   </div>
                    <div class="d-block position-relative" style="z-index :99;">
                     <ul id="searchItemDropdown" class="search-item list-group position-absolute w-100 rounded-0 patient-name-list d-none">
-                      <div class="patient-name">
-                         <!-- dropdown list of patients appended here using js -->
-                      </div>
+                      <!-- dropdown list of patients appended here using JS -->
                     </ul>
+
                   </div>
                 </div>
               <div class="patient-notfound d-none"></div>
@@ -126,12 +124,8 @@ $ddate = date("d/m/yy");
               </select>
               <div class="doctorAppt_errorCls d-none"></div>
             </div>
-            <div class="col-6">
-              <label class="form-label fw-normal" for="dateAppt">Appointment Date</label>
-              <input type="date" id="dateAppt" class="form-control form-control-sm" placeholder="DD-MM-YYYY" oninput="validateField(this.id,'select')">
-               <div class="dateAppt_errorCls d-none"></div>
-            </div>
-            <div class="col-6">
+            
+            {{-- <div class="col-6">
               <label class="form-label fw-normal" for="paymentModeAppt">Payment Mode</label>
               <select id="paymentModeAppt" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" >
                 <option value="">Payment Mode</option>
@@ -140,7 +134,7 @@ $ddate = date("d/m/yy");
                 @endforeach
               </select>
               <div class="paymentModeAppt_errorCls d-none"></div>
-            </div>
+            </div> --}}
             <div class="col-6">
               <label class="form-label fw-normal ">Room No</label>
               <input type="hidden" id="roomNumApptId" style="display:none;">
@@ -149,6 +143,11 @@ $ddate = date("d/m/yy");
             <div class="col-6">
               <label class="form-label fw-normal ">Fee</label>
               <input type="text" id="opd_fee" class="form-control form-control-sm" placeholder="Doctor Fee" readonly>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-normal" for="dateAppt">Appointment Date</label>
+              <input type="date" id="dateAppt" class="form-control form-control-sm" placeholder="DD-MM-YYYY" oninput="validateField(this.id,'select')">
+               <div class="dateAppt_errorCls d-none"></div>
             </div>
         </div>
         </div>

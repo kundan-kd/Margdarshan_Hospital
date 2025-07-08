@@ -159,43 +159,83 @@ function resetAddPatient(){
     $('.patientMobile_errorCls').addClass('d-none');
     $('.patientAddess_errorCls').addClass('d-none');
 }
-
 function getPatientData(x) {
-    validateField('itemSearchInput','input');
-    let nameLength = x.length;
-    if(nameLength < 3){
+    validateField('itemSearchInput', 'input');
+    const nameLength = x.length;
+
+    if (nameLength < 3) {
         $('.patient-name-list').addClass('d-none');
         $('#patientNameAppt').val('');
-    }else{
+        $('.patient-name-list').empty();
+    } else {
         $('.patient-name-list').removeClass('d-none');
-         $('.patient-name').empty();
+        $('.patient-name-list').empty();
+
         $.ajax({
-            url: searchPatient, // Ensure this is a valid endpoint
+            url: searchPatient,
             type: "POST",
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             data: { name: x },
             success: function(response) {
-                let getData = response.data;
-               
-                if(getData == null || getData == ''){
-                     $('.patient-name').append(` <li class="list-group-item">No Data Found!</li>`);
-                }else{
-                        getData.forEach(element => {
-                        $('.patient-name').append(` <li class="list-group-item" data-patient-id=${element.id}>${element.name} (${element.patient_id})</li>`);
+                const getData = response.data;
+
+                if (!getData || getData.length === 0) {
+                    $('.patient-name-list').append(`<li class="list-group-item">No Data Found!</li>`);
+                } else {
+                    const addedIds = new Set();
+                    getData.forEach(element => {
+                        if (!addedIds.has(element.id)) {
+                            $('.patient-name-list').append(
+                                `<li class="list-group-item" data-patient-id="${element.id}">${element.name} (${element.patient_id})</li>`
+                            );
+                            addedIds.add(element.id);
+                        }
                     });
                 }
-             
             }
         });
     }
 }
+
+// function getPatientData(x) {
+//     validateField('itemSearchInput','input');
+//     let nameLength = x.length;
+//     if(nameLength < 3){
+//         $('.patient-name-list').addClass('d-none');
+//         $('#patientNameAppt').val('');
+//     }else{
+//         $('.patient-name-list').removeClass('d-none');
+//          $('.patient-name').empty();
+//         $.ajax({
+//             url: searchPatient, // Ensure this is a valid endpoint
+//             type: "POST",
+//             headers: {
+//                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//             },
+//             data: { name: x },
+//             success: function(response) {
+//                 let getData = response.data;
+               
+//                 if(getData == null || getData == ''){
+//                      $('.patient-name').append(` <li class="list-group-item">No Data Found!</li>`);
+//                 }else{
+//                         getData.forEach(element => {
+//                         $('.patient-name').append(` <li class="list-group-item" data-patient-id=${element.id}>${element.name} (${element.patient_id})</li>`);
+//                     });
+//                 }
+             
+//             }
+//         });
+//     }
+// }
 // run function getPatientDetails on click of patient name list
-$(document).on('click', '.patient-name li', function() {
+$(document).on('click', '.patient-name-list li', function() {
     let patientId = $(this).data('patient-id'); // Get the clicked patient's ID
     if(patientId != undefined){
-      getPatientDetails(patientId); // Pass the ID to the function
+        $('#itemSearchInput').val('');
+        getPatientDetails(patientId); // Pass the ID to the function
     }
 });
 
@@ -214,6 +254,7 @@ function getPatientDetails(id){
                 $('#patientNameAppt').val(getData.name);
                 $('#patientNameApptID').val(getData.id); //appended patient id for insert in book appointment table
                 $('.patient-name-list').addClass('d-none');
+                $('#itemSearchInput').val(getData.name+ ' ('+getData.patient_id+')');
             }
         
         }
@@ -306,9 +347,9 @@ $('#appointmentForm').on('submit',function(e){
   let itemSearchInput = validateField('itemSearchInput', 'input');
   let depertmentAppt = validateField('departmentAppt', 'select');
   let doctorAppt = validateField('doctorAppt', 'select');
-  let paymentModeAppt = validateField('paymentModeAppt', 'select');
+//   let paymentModeAppt = validateField('paymentModeAppt', 'select');
   let dateAppt = validateField('dateAppt', 'select');
-  if(itemSearchInput === true && depertmentAppt === true && doctorAppt === true && paymentModeAppt && true && dateAppt === true){
+  if(itemSearchInput === true && depertmentAppt === true && doctorAppt === true && true && dateAppt === true){
     $('.appointmentSubmitBtn').addClass('d-none'); 
     $('.appointmentSpinn').removeClass('d-none');
     let patientID = $('#patientNameApptID').val();
@@ -316,7 +357,7 @@ $('#appointmentForm').on('submit',function(e){
     let departmentID = $('#departmentAppt').val();
     let doctorID = $('#doctorAppt').val();
     let date = $('#dateAppt').val();
-    let pmode = $('#paymentModeAppt').val();
+    // let pmode = $('#paymentModeAppt').val();
     let rnum = $('#roomNumApptId').val();
     let fee = $('#opd_fee').val();
     if ($('.appointmentUpdateBtn').is(':visible')) {
@@ -329,7 +370,7 @@ $('#appointmentForm').on('submit',function(e){
                         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                     },
                     data:{
-                        patientID:patientID,name:name,departmentID:departmentID,doctorID:doctorID,date:date,pmode:pmode,rnum:rnum,fee:fee
+                        patientID:patientID,name:name,departmentID:departmentID,doctorID:doctorID,date:date,rnum:rnum,fee:fee
                     },
                     success:function(response){
                         if(response.success){
@@ -384,7 +425,7 @@ function appointmentEdit(id){
                 $('.departmentAppt_errorCls').addClass('d-none');
                 $('.doctorAppt_errorCls').addClass('d-none');
                 $('.dateAppt_errorCls').addClass('d-none');
-                $('.paymentModeAppt_errorCls').addClass('d-none');
+                // $('.paymentModeAppt_errorCls').addClass('d-none');
                 $('#patient-search').val(getData.patient_name);
                 $('#searchPatientID').val(getData.patient_name);
                 $('#patientNameAppt').val(getData.patient_name);
@@ -406,9 +447,9 @@ function updateAppointment(id){
 let name = validateField('patientNameAppt', 'input');
 let depertmentAppt = validateField('departmentAppt', 'select');
   let doctorAppt = validateField('doctorAppt', 'select');
-  let paymentModeAppt = validateField('paymentModeAppt', 'select');
+//   let paymentModeAppt = validateField('paymentModeAppt', 'select');
   let dateAppt = validateField('dateAppt', 'select');
-  if(name === true && depertmentAppt === true && doctorAppt === true && paymentModeAppt && true && dateAppt === true){
+  if(name === true && depertmentAppt === true && doctorAppt === true && true && dateAppt === true){
       $('.appointmentUpdateBtn').addClass('d-none');
       $('.appointmentSpinn').removeClass('d-none');
     let patientsearch = $('#patient-search').val();
@@ -417,13 +458,13 @@ let depertmentAppt = validateField('departmentAppt', 'select');
     let departmentID = $('#departmentAppt').val();
     let doctorID = $('#doctorAppt').val();
     let aDate = $('#dateAppt').val();
-    let pmode = $('#paymentModeAppt').val();
+    // let pmode = $('#paymentModeAppt').val();
   
         $.ajax({
             url: updateAppointmentData,
             type: "post",
             data: {
-                id:id,name:name,departmentID:departmentID,doctorID:doctorID,aDate:aDate,pmode:pmode
+                id:id,name:name,departmentID:departmentID,doctorID:doctorID,aDate:aDate
             },
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

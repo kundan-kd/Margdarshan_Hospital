@@ -125,6 +125,7 @@ class AppointmentController extends Controller
     public function searchPatient(Request $request){
         $getData = Patient::where('name','LIKE',"%{$request->name}%")
                             ->orWhere('patient_id', 'LIKE', "%{$request->name}%")
+                            ->orWhere('mobile','LIKE',"%{$request->name}%")
                             ->get(['id','patient_id','name']);
         return response()->json(['success'=>'Patient data fetched successfully','data'=>$getData],200);
     }
@@ -160,7 +161,7 @@ class AppointmentController extends Controller
             'departmentID' => 'required',
             'doctorID' => 'required',
             'date' => 'required',
-            'pmode' => 'required',
+            // 'pmode' => 'required',
             'rnum' => 'required',
         ]);
         if($validator->fails()){
@@ -175,7 +176,7 @@ class AppointmentController extends Controller
         $appointment->department_id = $request->departmentID;
         $appointment->doctor_id = $request->doctorID;
         $appointment->appointment_date = $request->date;
-        $appointment->payment_mode = $request->pmode;
+        // $appointment->payment_mode = $request->pmode;
         $appointment->room_number = $request->rnum;
         $appointment->fee = $request->fee;
         $appointment->status = "Paid";
@@ -196,8 +197,8 @@ class AppointmentController extends Controller
             'patient_name' => $request->name,
             'department_id' => $request->departmentID,
             'doctor_id' => $request->doctorID,
-            'appointment_date' => $request->aDate,
-            'payment_mode' => $request->pmode
+            'appointment_date' => $request->aDate
+            // 'payment_mode' => $request->pmode
         ]);
        return response()->json(['success' => 'Appointment updated successfully'],200);
     }

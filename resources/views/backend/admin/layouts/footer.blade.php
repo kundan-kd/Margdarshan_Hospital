@@ -4,7 +4,7 @@
         <p class="mb-0">© 2025 Margdarshan Hospital. All Rights Reserved.</p>
       </div>
       <div class="col-auto">
-        <p class="mb-0">Curated by <a href="https://knack.media/" target="_blank"><span style="color:#487fff;">Knack Media</span></a> x Techie Squad.</p>
+        <p class="mb-0">Curated by <a href="https://knack.media/" target="_blank"><span style="color:#487fff;">Knack Media</span></a></p>
       </div>
     </div>
   </footer>

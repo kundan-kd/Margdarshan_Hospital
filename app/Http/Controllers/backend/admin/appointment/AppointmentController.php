@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Department;
 use App\Models\Patient;
+use App\Models\PaymentBill;
 use App\Models\PaymentMode;
+use App\Models\PaymentReceived;
 use App\Models\RoomNumber;
 use App\Models\User;
+use App\Models\Visit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Picqer\Barcode\BarcodeGeneratorJPG;
@@ -51,24 +54,31 @@ class AppointmentController extends Controller
         ->addColumn('fee',function($row){
             return $row->fee;
         })
+        ->addColumn('paid_status',function($row){
+            return $row->paid_status === 'Paid'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Paid</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white" >Unpaid</span>';  
+        })
         ->addColumn('status',function($row){
-            return '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">'.$row->status.'</span>';
+            return $row->status === 'Visited'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Visited</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white" >Pending</span>'; 
         })
-        ->addColumn('action',function($row){
-            return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                    </a> -->
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="lucide:edit" onclick="appointmentEdit('.$row->id.');getDoctorAdded('.$row->id.')"></iconify-icon>
-                    </a>
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                        <iconify-icon icon="mdi:file-download-outline" onclick="printAppointmentBill(' . $row->id . ')"></iconify-icon>
-                    </a>
-                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="mingcute:delete-2-line" onclick="appointmenttDelete('.$row->id.')"></iconify-icon>
-                    </a>-->';
+       ->addColumn('action', function($row) {
+            $check_invoice = $row->paid_status == 'UnPaid' ? 'd-none' : '';
+            $check_payment = $row->paid_status == 'Paid' ? 'd-none' : '';
+            $check_visit = $row->status == 'Visited' ? 'd-none' : '';
+            return '
+                <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center '.$check_invoice.'">
+                    <iconify-icon icon="mdi:file-download-outline" onclick="printAppointmentBill(' . $row->id . ')"></iconify-icon>
+                </a>
+                <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_payment.'">
+                    <iconify-icon icon="lucide:edit" onclick="appointmentEdit(' . $row->id . ')" ></iconify-icon>
+                </a>
+                <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
+                    <iconify-icon icon="lucide:calendar" onclick="visitEdit(' . $row->id . ')" ></iconify-icon>
+                </a>
+                <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <iconify-icon icon="mingcute:delete-2-line" onclick="deleteReason(' . $row->id . ')"></iconify-icon>
+                </a>';
         })
-        ->rawColumns(['patient_id','status','action'])
+        ->rawColumns(['patient_id','paid_status','status','action'])
         ->make(true);
      }
     }
@@ -179,10 +189,18 @@ class AppointmentController extends Controller
         // $appointment->payment_mode = $request->pmode;
         $appointment->room_number = $request->rnum;
         $appointment->fee = $request->fee;
-        $appointment->status = "Paid";
+        $appointment->paid_status = "UnPaid";
         if($appointment->save()){
             $appointment->token = "MHAP". $month.$year.$appointment->id;
             $appointment->save();
+            $payment_bills = new PaymentBill();
+            $payment_bills->type = "OPD";
+            $payment_bills->type_id = $appointment->id;
+            $payment_bills->patient_id = $request->patientID;
+            $payment_bills->amount_for = 'OPD Consultant';
+            $payment_bills->title = 'OPD Appointment Fee';
+            $payment_bills->amount = $request->fee;
+            $payment_bills->save();
             return response()->json(['success'=>'Appointment booked successfully'],200);
         }else{
             return response()->json(['error_success'=>'Appointment not booked'],500);
@@ -193,18 +211,60 @@ class AppointmentController extends Controller
         return response()->json(['success'=>'Appointment details fetched successfully','data'=>$getData],200);
     }
     public function updateAppointmentData(Request $request){
-        Appointment::where('id',$request->id)->update([
-            'patient_name' => $request->name,
-            'department_id' => $request->departmentID,
-            'doctor_id' => $request->doctorID,
-            'appointment_date' => $request->aDate
-            // 'payment_mode' => $request->pmode
+        $appointment_data = Appointment::where('id',$request->id)->get(['id','patient_id','fee']);
+        $update = Appointment::where('id',$request->id)->update([
+            'paid_amount' => $request->pay_amount,
+            'payment_mode' => $request->payment_mode,
+            'paid_status' => "Paid"
         ]);
-       return response()->json(['success' => 'Appointment updated successfully'],200);
+        if($update){
+            if($request->pay_amount > 0){
+                $payment_received = new PaymentReceived();
+                $payment_received->patient_id = $appointment_data[0]->patient_id;
+                $payment_received->type = 'OPD';
+                $payment_received->type_id = $appointment_data[0]->id;
+                $payment_received->amount_for = 'OPD Consultant';
+                $payment_received->title = 'OPD Appointment Fee';
+                $payment_received->amount =  $appointment_data[0]->fee;
+                $payment_received->payment_mode =  $request->payment_mode;
+                $payment_received->save();
+            }
+            return response()->json(['success' => 'Appointment updated successfully'],200);
+        }else{
+            return response()->json(['error_success' => 'Appointment not updated']);
+        }
+    }
+    public function updateVisitData(Request $request){
+        $appointment_data = Appointment::where('id',$request->id)->get(['id','patient_id','fee','appointment_date']);
+        $update = Appointment::where('id',$request->id)->update([
+            'status' => "Visited"
+        ]);
+        if($update){
+            $visits = new Visit();
+            $visits->type = "OPD";
+            $visits->patient_id = $appointment_data[0]->patient_id;
+            $visits->appointment_id = $appointment_data[0]->id;
+            $visits->appointment_date = $appointment_data[0]->appointment_date;
+            $visits->visited_date = $request->visit_date;
+            $visits->paid_amount = $appointment_data[0]->fee;
+            $visits->save();
+            return response()->json(['success' => 'Visits updated successfully'],200);
+        }else{
+            return response()->json(['error_success' => 'Visits not updated']);
+        }
     }
     public function deleteAppointmentData(Request $request){
-        Appointment::where('id',$request->id)->delete();
-        return response()->json(['success' => 'Appointment Deleted Successfully'],200);
+        $update = Appointment::where('id',$request->id)->update([
+            'reason_for_delete' => $request->reason,
+            'status' => 'Deleted'
+        ]);
+        if($update){
+            Appointment::where('id',$request->id)->delete();
+            return response()->json(['success' => 'Appointment cancelled successfully'],200);
+        }else{
+            return response()->json(['error_success' => 'Appointment not cancelled']);
+
+        }
     }
 }
 

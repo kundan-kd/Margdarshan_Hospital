@@ -26,6 +26,7 @@ return new class extends Migration
             $table->double('paid_amount')->default(0);
             $table->double('due_amount')->default(0);
             $table->string('payment_mode',40)->nullable();
+            $table->double('return_amount')->default(0);
             $table->text('naration')->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();

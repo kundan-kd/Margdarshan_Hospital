@@ -47,10 +47,12 @@ let table = $('#appointment-book-table').DataTable({
             name:'fee'
         },
         {
+            data:'paid_status',
+            name:'paid_status'
+        },
+        {
             data:'status',
-            name:'status',
-            orderable: false,
-            searchable: false
+            name:'status'
         },
         {
             data:'action',
@@ -341,6 +343,9 @@ function getDoctor(){
 function opdPatientUsingId(id){
      window.open('opd-out-details/' + id, '_blank');
 }
+function printAppointmentBill(id){
+     window.open('appointment-bill-print/'+id,'_blank');
+}
 $('#appointmentForm').on('submit',function(e){
   e.preventDefault();
   let id = $('#patientNameApptID').val();
@@ -405,7 +410,41 @@ $('#appointmentForm').on('submit',function(e){
     }
 });
 
-function appointmentEdit(id){
+// function appointmentEdit(id){
+//     $.ajax({
+//         url: getAppointmentData,
+//         type:"POST",
+//         headers:{
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//         },
+//         data:{id:id},
+//         success:function(response){
+//             if(response.success){
+//                 getData = response.data[0];
+//                 $('#add-appointment').modal('show');
+//                 $('#patientNameApptID').val(id);
+//                 $('#add-appointmentLabel').html('Edit Appointment');
+//                 $('.appointmentSubmitBtn').addClass('d-none');
+//                 $('.appointmentUpdateBtn').removeClass('d-none');
+//                 $('.itemSearchInput_errorCls').addClass('d-none');
+//                 $('.departmentAppt_errorCls').addClass('d-none');
+//                 $('.doctorAppt_errorCls').addClass('d-none');
+//                 $('.dateAppt_errorCls').addClass('d-none');
+//                 // $('.paymentModeAppt_errorCls').addClass('d-none');
+//                 $('#patient-search').val(getData.patient_name);
+//                 $('#searchPatientID').val(getData.patient_name);
+//                 $('#patientNameAppt').val(getData.patient_name);
+//                 $('#departmentAppt').val(getData.department_id).trigger('change');
+//                 // $('#doctorAppt').val(getData.doctor_id).trigger('change');
+//                 $('#dateAppt').val(getData.appointment_date);
+//                 $('#paymentModeAppt').val(getData.payment_mode).trigger('change');
+//                 // $('#roomNumAppt').val(getData.room_number);
+//                 // $('#opd_fee').val(getData.fee);
+//             }
+//         }
+//     });
+// }
+function appointmentEdit(id){ 
     $.ajax({
         url: getAppointmentData,
         type:"POST",
@@ -416,72 +455,77 @@ function appointmentEdit(id){
         success:function(response){
             if(response.success){
                 getData = response.data[0];
-                $('#add-appointment').modal('show');
-                $('#patientNameApptID').val(id);
-                $('#add-appointmentLabel').html('Edit Appointment');
-                $('.appointmentSubmitBtn').addClass('d-none');
-                $('.appointmentUpdateBtn').removeClass('d-none');
-                $('.itemSearchInput_errorCls').addClass('d-none');
-                $('.departmentAppt_errorCls').addClass('d-none');
-                $('.doctorAppt_errorCls').addClass('d-none');
-                $('.dateAppt_errorCls').addClass('d-none');
-                // $('.paymentModeAppt_errorCls').addClass('d-none');
-                $('#patient-search').val(getData.patient_name);
-                $('#searchPatientID').val(getData.patient_name);
-                $('#patientNameAppt').val(getData.patient_name);
-                $('#departmentAppt').val(getData.department_id).trigger('change');
-                // $('#doctorAppt').val(getData.doctor_id).trigger('change');
-                $('#dateAppt').val(getData.appointment_date);
-                $('#paymentModeAppt').val(getData.payment_mode).trigger('change');
-                // $('#roomNumAppt').val(getData.room_number);
-                // $('#opd_fee').val(getData.fee);
+                $('#appointment-edit-modal').modal('show');
+                $('#apptEdit_id').val(id);
+                $('#apptEditPaymentAmt').val(getData.fee);
             }
         }
     });
 }
-function printAppointmentBill(id){
-     window.open('appointment-bill-print/'+id,'_blank');
-}
 
-function updateAppointment(id){
-let name = validateField('patientNameAppt', 'input');
-let depertmentAppt = validateField('departmentAppt', 'select');
-  let doctorAppt = validateField('doctorAppt', 'select');
-//   let paymentModeAppt = validateField('paymentModeAppt', 'select');
-  let dateAppt = validateField('dateAppt', 'select');
-  if(name === true && depertmentAppt === true && doctorAppt === true && true && dateAppt === true){
-      $('.appointmentUpdateBtn').addClass('d-none');
-      $('.appointmentSpinn').removeClass('d-none');
-    let patientsearch = $('#patient-search').val();
-    let patientsearchGet = $('#searchPatientID').val();
-    let name = $('#patientNameAppt').val();
-    let departmentID = $('#departmentAppt').val();
-    let doctorID = $('#doctorAppt').val();
-    let aDate = $('#dateAppt').val();
-    // let pmode = $('#paymentModeAppt').val();
-  
+function updatePayment(id){
+let pay_amount = $('#apptEditPaymentAmt').val();
+let payment_mode = $('#apptEditPaymentMode').val();
+$('.apptEditSubmit').addClass('d-none')
+$('.apptEditSpinn').removeClass('d-none');
         $.ajax({
             url: updateAppointmentData,
-            type: "post",
+            type: "POST",
             data: {
-                id:id,name:name,departmentID:departmentID,doctorID:doctorID,aDate:aDate
+                id:id,pay_amount:pay_amount,payment_mode:payment_mode
             },
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response) {
                 if (response.success) {
-                    $('#add-appointment').modal('hide');
-                    $('#appointmentForm')[0].reset();
-                    $('#appointmentForm').removeClass('was-validated');
-                    toastSuccessAlert('Appointment Updated successfully');
+                    $('#appointment-edit-modal').modal('hide');
+                    toastSuccessAlert(response.success);
                     $('#appointment-book-table').DataTable().ajax.reload();
-                    $('.appointmentSpinn').addClass('d-none');
-                    $('.appointmentUpdateBtn').removeClass('d-none');
+                    $('.apptEditSpinn').addClass('d-none');
+                    $('.apptEditSubmit').removeClass('d-none')
                 } else {
-                    alert("error");
-                    $('.appointmentSpinn').addClass('d-none');
-                    $('.appointmentUpdateBtn').removeClass('d-none');
+                    toastErrorAlert(response.error_success);
+                    $('.apptEditSpinn').addClass('d-none');
+                    $('.apptEditSubmit').removeClass('d-none')
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("An error occurred: " + error);
+            }
+        });
+}
+function visitEdit(id){
+    $('#appointment-visit-modal').modal('show');
+    $('#apptVisit_id').val(id);
+}
+function updateVisit(id){
+    let visit_date_check = validateField('apptVisitDate', 'select');
+    if(visit_date_check == true){
+    let visit_date = $('#apptVisitDate').val();
+    $('.apptVisitSubmit').addClass('d-none')
+    $('.apptVisitSpinn').removeClass('d-none');
+        $.ajax({
+            url: updateAppointmentVisitData,
+            type: "POST",
+            data: {
+                id:id,visit_date:visit_date
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#appointment-visit-modal').modal('hide');
+                    toastSuccessAlert(response.success);
+                    $('#appointment-book-table').DataTable().ajax.reload();
+                    $('.apptVisitSpinn').addClass('d-none');
+                    $('.apptVisitSubmit').removeClass('d-none')
+                } else {
+                    toastErrorAlert(response.error_success);
+                    $('.apptVisitSpinn').addClass('d-none');
+                    $('.apptVisitSubmit').removeClass('d-none')
                 }
             },
             error: function(xhr, status, error) {
@@ -490,48 +534,42 @@ let depertmentAppt = validateField('departmentAppt', 'select');
             }
         });
     }else{
-        console.log("Please fill all required fields");
+        console.log('Please fill mandatory fields');
     }
 }
-function appointmenttDelete(id){
-    Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-        customClass: {
-            title: 'swal-title-custom',
-            popup: 'swal-popup-custom',
-            content: 'swal-content-custom'
+
+function deleteReason(id){
+    $('#appointment-delete-modal').modal('show');
+    $('#appt_id').val(id);
+}
+function reasonSubmitDelete(id){
+     let reason = $('#apptdeleteReason').val();
+     if(reason == ''){
+         $('#apptdeleteReason').focus();
+     }else{
+        $.ajax({
+        url: deleteAppointmentData,
+        type: "POST",
+        data: {
+            id: id,reason:reason
+        },
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            if (response.success) {
+                $('#appointment-delete-modal').modal('hide');
+                $('#appointment-book-table').DataTable().ajax.reload();
+                toastSuccessAlert(response.success);
+            } else {
+                toastErrorAlert(reason.error_success);
             }
-        
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: deleteAppointmentData,
-                type: "POST",
-                data: {
-                    id: id
-                },
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire("Deleted!", response.success, "success");
-                        $('#appointment-book-table').DataTable().ajax.reload();
-                    } else {
-                        Swal.fire("Error!", "Error", "error");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                    Swal.fire("Error!", "An error occurred: " + error, "error");
-                }
-            });
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            Swal.fire("Error!", "An error occurred: " + error, "error");
         }
-    });
+        });
+     }
+     
 }

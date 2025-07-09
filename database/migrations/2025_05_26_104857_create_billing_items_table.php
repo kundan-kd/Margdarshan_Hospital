@@ -24,6 +24,8 @@ return new class extends Migration
             $table->double('tax_per')->nullable();
             $table->double('tax_amount')->nullable();
             $table->double('amount')->nullable();
+            $table->integer('return_qty')->default(0);
+            $table->double('return_amount')->default(0);
             $table->integer('status')->default(1);
             $table->timestamps();
             $table->softDeletes();

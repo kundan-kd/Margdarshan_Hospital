@@ -187,7 +187,7 @@ class IpdinController extends Controller
             $payment_bills->patient_id = $patient->id;
             $payment_bills->to_bed_id = $request->bedNumId;
             $payment_bills->amount_for = 'Bed Charge';
-            $payment_bills->title = 'Patient Admitted to IPD';
+            $payment_bills->title = 'Patient Admitted to IPD';  // amount is updated here when move to other dept or discharge
             $payment_bills->save();
             return response()->json(['success'=>'New IPD Patient added successfully'],201);
         }else{

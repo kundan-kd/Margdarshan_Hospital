@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('type',30)->nullable();
             $table->integer('patient_id')->nullable();
+            $table->integer('appointment_id')->nullable();
             $table->string('symptoms',100)->nullable();
             $table->text('previous_med_issue')->nullable();
             $table->string('appointment_date',30)->nullable();
+            $table->string('visited_date',30)->nullable();
             $table->string('old_patient',11)->nullable();
             $table->integer('consult_doctor')->nullable();
             $table->double('charge')->nullable();

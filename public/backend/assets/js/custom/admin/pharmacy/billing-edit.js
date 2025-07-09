@@ -31,7 +31,6 @@ function addNewRowBillingEdit() {
                                       <input id="billingEdit-expiry${rand}" name="billingEdit-expiry[]" class="form-control radius-8 bg-base expiry-date"  type="text" placeholder="00/00/0000" readonly>
                                   </div>
                               </td>
-                              <td>
                                   <input id="billingEdit-qty${rand}" name="billingEdit-qty[]" name="billingEdit-name" class="form-control form-control-sm" type="number" placeholder="Quantity" oninput="getBillingAmountEdit(${rand})">
                               </td>
                               <td>
@@ -48,6 +47,9 @@ function addNewRowBillingEdit() {
                               </td>
                                <td style="display: none;">
                                   <input id="billingEdit-taxAmount${rand}" name="billingEdit-taxAmount[]" class="form-control form-control-sm" type="text">
+                              </td>
+                               <td style="display: none;">
+                                  <input id="billingEdit-returnAmount${rand}" name="billingEdit-returnAmount[]" class="form-control form-control-sm" type="text">
                               </td>
                              
                               <td>
@@ -203,26 +205,38 @@ function getBatchDetailsEdit(id,randB){
                 }
             });
     }
-function getBillingAmountEdit(randQ){
+function getBillingAmountEdit(prevQty,randQ){
     let qty = parseFloat($("#billingEdit-qty" + randQ).val());
-    if(qty <= 0){
-        qty = 0;
-    }
-    let avlQty =  parseFloat($("#billingEdit-avlQty" + randQ).val()); 
-    if(qty > avlQty){
+    if(qty > prevQty){
         $("#billingEdit-qty"+randQ).css({"border-color": "#ef4a00","border-width": "1px","border-style": "solid"});
         $('.billingEditSubmitBtn').prop('disabled',true);
-         toastErrorAlert('Stock quantity exceeded limit.');
+         toastErrorAlert('Quantity exceeded limit.');
          return;
     }else{
          $("#billingEdit-qty"+randQ).css("border-color","#d1d5db");
         $('.billingEditSubmitBtn').prop('disabled',false);
-
     }
+    if(qty <= 0){
+        qty = 0;
+    }
+    // console.log(preQty,qty);
+    // let avlQty =  parseFloat($("#billingEdit-avlQty" + randQ).val()); 
+    // if(qty > avlQty){
+    //     $("#billingEdit-qty"+randQ).css({"border-color": "#ef4a00","border-width": "1px","border-style": "solid"});
+    //     $('.billingEditSubmitBtn').prop('disabled',true);
+    //      toastErrorAlert('Stock quantity exceeded limit.');
+    //      return;
+    // }else{
+    //      $("#billingEdit-qty"+randQ).css("border-color","#d1d5db");
+    //     $('.billingEditSubmitBtn').prop('disabled',false);
+    // }
     let salesPrice = parseFloat($("#billingEdit-salesPrice" + randQ).val()) || 0;
     let tax = parseFloat($("#billingEdit-tax" + randQ).val()) || 0;
     let amount = qty * salesPrice; // Calculate total amount before taxng tax
     $('#billingEdit-amount'+randQ).val(amount);
+    let returnQty = prevQty - qty;
+    let returnAmt = returnQty * salesPrice;
+    $('#billingEdit-returnAmount'+randQ).val(returnAmt);
     let currAmount = parseFloat($('#billingEdit-amount'+randQ).val()) || 0;
     let currTaxAmount = (currAmount * tax)/100;
     $('#billingEdit-taxAmount'+randQ).val(currTaxAmount);

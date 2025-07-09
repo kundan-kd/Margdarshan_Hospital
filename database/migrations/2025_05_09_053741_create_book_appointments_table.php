@@ -24,8 +24,11 @@ return new class extends Migration
             $table->string('payment_mode',20)->nullable();
             $table->string('room_number',10)->nullable();
             $table->double('fee')->nullable();
+            $table->double('paid_amount')->default(0);
             $table->integer('bed_id')->nullable();
-            $table->string('status',10)->nullable();
+            $table->string('paid_status',10)->default('UnPaid');
+            $table->text('reason_for_delete')->nullable();
+            $table->string('status')->default('pending');
             $table->timestamps();
             $table->softDeletes();
         });

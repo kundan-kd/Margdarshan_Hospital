@@ -38,7 +38,8 @@ Appointment
             <th scope="col" class="fw-medium">Gender</th>
             <th scope="col" class="fw-medium">Doctor</th>
             <th scope="col" class="fw-medium">Fee</th>
-            <th scope="col" class="fw-medium">Status</th>
+            <th scope="col" class="fw-medium">Payment Status</th>
+            <th scope="col" class="fw-medium">Visit Status</th>
             <th scope="col" class="fw-medium">Action</th>
           </tr>
         </thead>
@@ -69,7 +70,7 @@ $ddate = date("d/m/yy");
                   <label class="form-label fw-normal w-100" for="itemSearchInput">Search Patient</label>
                    <div class="input-group">
                       <span class="input-group-text text-muted"><i class="ri-search-line"></i></span>
-                      <input id="itemSearchInput" class="form-control form-control-sm" type="text" placeholder="Search item" oninput="getPatientData(this.value)">                       
+                      <input id="itemSearchInput" class="form-control form-control-sm" type="text" placeholder="Search Patient" oninput="getPatientData(this.value)">                       
                   </div>
                    <div class="d-block position-relative" style="z-index :99;">
                     <ul id="searchItemDropdown" class="search-item list-group position-absolute w-100 rounded-0 patient-name-list d-none">
@@ -156,9 +157,9 @@ $ddate = date("d/m/yy");
            @can('Book Appointment Add')
           <button type="submit" class="btn btn-primary-600  btn-sm fw-normal appointmentSubmitBtn">Submit</button>
           @endcan
-          @can('Book Appointment Edit')
+          {{-- @can('Book Appointment Edit')
           <button type="button" class="btn btn-primary-600  btn-sm fw-normal appointmentUpdateBtn d-none" onclick="updateAppointment(document.getElementById('patientNameApptID').value)">Update</button>
-          @endcan
+          @endcan --}}
           <button class="btn btn-primary-600  btn-sm fw-normal appointmentSpinn d-none" type="button">
             <span class="sr-only">please wait...</span>
           </button>
@@ -168,7 +169,7 @@ $ddate = date("d/m/yy");
   </div>
 </div>
   <!-- modal 1 end -->
-  <!-- modal2 start -->
+  <!-- modal patient add start -->
 <div class="modal fade" id="add-patient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-appointmentLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0">
@@ -266,7 +267,133 @@ $ddate = date("d/m/yy");
     </div>
   </div>
 </div>
-  <!-- modal 2 end -->
+  <!-- modal patient add end -->
+
+    <!-- paid amount modal start -->
+  <div class="modal fade" id="appointment-edit-modal" tabindex="-1" role="dialog" aria-labelledby="appointment-edit-modal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white bedtype-title">Make Payment</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+               <form action="" id="apptEdit-form" class="needs-validation" novalidate="">
+                @csrf
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <input type="hidden" id="apptEdit_id">
+                    <label class="form-label" for="apptEditPaymentAmt">Fee Amount</label>
+                    <input class="form-control form-control-sm" id="apptEditPaymentAmt"
+                        placeholder="Enter Reason" style="background-image: none;" readonly>
+                    <div class="invalid-feedback">
+                        Enter Reason For Cancel
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label" for="apptEditPaymentMode">Payment Mode</label>
+                    <select class="form-control form-control-sm" id="apptEditPaymentMode" type="text"
+                        placeholder="Enter Reason" style="background-image: none;">
+                        <option value="">Select</option>
+                        @foreach ($paymentmodes as $pmode)
+                            <option value="{{$pmode->id}}">{{$pmode->name}}</option>
+                        @endforeach
+                    </select>
+                    <div class="invalid-feedback">
+                        Enter Reason For Cancel
+                    </div>
+                  </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary btn-sm apptEditSubmit" type="button" onclick="updatePayment(document.getElementById('apptEdit_id').value)">Submit</button>
+                        <button class="btn btn-primary-600  btn-sm fw-normal apptEditSpinn d-none" type="button">
+                          <span class="sr-only">please wait...</span>
+                        </button>
+                    </div>
+             </form>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- paid amount model end-->
+     <!-- paid amount modal start -->
+     @php
+        $ddate = date('d-m-Y');
+     @endphp
+  <div class="modal fade" id="appointment-visit-modal" tabindex="-1" role="dialog" aria-labelledby="appointment-visit-modal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white bedtype-title">Visit Appointment</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+               {{-- <form action="" id="apptEdit-form" class="needs-validation" novalidate="">
+                @csrf --}}
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <input type="hidden" id="apptVisit_id">
+                    <label class="form-label" for="apptVisitDate">Visit Date</label>
+                    <input type="date" id="apptVisitDate" class="form-control form-control-sm" placeholder="DD-MM-YYYY" oninput="validateField(this.id,'select')">
+                    <div class="apptVisitDate_errorCls d-none"></div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary btn-sm apptVisitSubmit" type="button" onclick="updateVisit(document.getElementById('apptVisit_id').value)">Submit</button>
+                        <button class="btn btn-primary-600  btn-sm fw-normal apptVisitSpinn d-none" type="button">
+                          <span class="sr-only">please wait...</span>
+                        </button>
+                    </div>
+             {{-- </form> --}}
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- paid amount model end-->
+  <!-- delete reason modal start -->
+  <div class="modal fade" id="appointment-delete-modal" tabindex="-1" role="dialog" aria-labelledby="appointment-delete-modal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white bedtype-title">Add Reason For Appointment Cancel</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+              {{-- <form action="" id="reason-form" class="needs-validation" novalidate="">
+                @csrf --}}
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <label class="form-label" for="apptdeleteReason">Reason</label>
+                    <input type="hidden" id="appt_id">
+                    <input class="form-control form-control-sm" id="apptdeleteReason" type="text"
+                        placeholder="Enter Reason" style="background-image: none;" required>
+                    <div class="invalid-feedback">
+                        Enter Reason For Cancel
+                    </div>
+                </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary btn-sm reasonSubmit" type="submit" onclick="reasonSubmitDelete(document.getElementById('appt_id').value)">Submit</button>
+                    </div>
+              {{-- </form> --}}
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- delete reason model end-->
 @endsection
 @section('extra-js')
 <script>
@@ -281,6 +408,7 @@ $ddate = date("d/m/yy");
   const getDoctorList = "{{route('appointment-booking.getDoctorList')}}";
   const getDoctorAddedData = "{{route('appointment-booking.getDoctorAddedData')}}";
   const getDoctorData = "{{route('appointment-booking.getDoctorData')}}";
+  const updateAppointmentVisitData = "{{route('appointment-booking.updateAppointmentVisitData')}}";
 
 </script>
   {{-----------external js files added for page functions------------}}
@@ -306,6 +434,7 @@ $ddate = date("d/m/yy");
     }
     getDatePicker('#dateAppt'); 
     getDatePicker('#patientDOB'); 
+    getDatePicker('#apptVisitDate'); 
 
 </script>
 

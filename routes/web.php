@@ -257,6 +257,7 @@ Route::get('/billing-edit-name-details',[BillingController::class,'getBillingNam
 Route::post('/billing-update',[BillingController::class,'billingUpdateDatas'])->name('billing-Edit.billingEditDatas');
 Route::post('/billing-data',[BillingController::class,'getBillingData'])->name('billing-Edit.getBillingData');
 Route::get('/billing-view/{id}',[BillingController::class,'billingViewIndex']);
+Route::get('/billing-sale-return/{id}',[BillingController::class,'billingSaleReturnView']);
 
 Route::get('/opd-out',[OpdoutController::class,'index'])->name('opd-out.index');
 Route::post('/opd-out-view',[OpdoutController::class,'viewOpdOut'])->name('opd-out.viewOpdOut');

@@ -358,21 +358,14 @@ class EmergencyController extends Controller
             }
     }
     public function emergencyVisitSubmit(Request $request){
-            $validator = Validator::make($request->all(),[
+             $validator = Validator::make($request->all(),[
                 'patientId' => 'required',
-                'symptoms' => 'nullable',
-                'previousMedIssue' => 'nullable',
-                'note' => 'nullable',
-                'appointment_date' => 'nullable',
-                'oldPatient' => 'nullable',
                 'consultDoctor' => 'nullable',
                 'charge' => 'required',
                 'discount' => 'nullable',
                 'taxPer' => 'nullable',
                 'amount' => 'required',
-                'paymentMode' => 'nullable',
-                'refNum' => 'nullable',
-                'paidAmount' => 'nullable'
+                'desc' => 'nullable'
         ]);
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
@@ -380,68 +373,50 @@ class EmergencyController extends Controller
         $optoutVisit = new Visit();
         $optoutVisit->type = "EMERGENCY";
         $optoutVisit->patient_id = $request->patientId;
-        $optoutVisit->symptoms = $request->symptoms;
-        $optoutVisit->previous_med_issue = $request->previousMedIssue;
-        $optoutVisit->note = $request->note;
-        $optoutVisit->appointment_date = $request->appointment_date;
-        $optoutVisit->old_patient = $request->oldPatient;
         $optoutVisit->consult_doctor = $request->consultDoctor;
         $optoutVisit->charge = $request->charge;
         $optoutVisit->discount = $request->discount;
         $optoutVisit->tax_per = $request->taxPer;
         $optoutVisit->amount = $request->amount;
-        $optoutVisit->payment_mode = $request->paymentMode;
-        $optoutVisit->ref_num = $request->refNum;
-        $optoutVisit->paid_amount = $request->paidAmount;
+        $optoutVisit->note = $request->desc;
 
         if($optoutVisit->save()){
             $payment_bills = new PaymentBill();
             $payment_bills->type = "EMERGENCY";
             $payment_bills->patient_id = $request->patientId;
-            $payment_bills->amount_for = 'Visit';
-            $payment_bills->title = 'New Visit';
+            $payment_bills->amount_for = 'Emergency Visit';
+            $payment_bills->title = 'Doctor New Visit';
             $payment_bills->amount = $request->amount;
             $payment_bills->save();
 
-            if($request->paidAmount > 0){
-                $payment_received = new PaymentReceived();
-                $payment_received->patient_id = $request->patientId;
-                $payment_received->type = 'EMERGENCY';
-                $payment_received->amount_for = 'Visit';
-                $payment_received->title = 'New Visit';
-                $payment_received->amount = $request->paidAmount;
-                $payment_received->save();
-            }   
             $timelines = new Timeline();
             $timelines->type = "EMERGENCY";
             $timelines->patient_id = $request->patientId;
-            $timelines->title = "New Visit";
-            $timelines->desc = "Appointment booked for emergency on ".$request->appointment_date;
+            $timelines->title = "Emergency Visit";
+            $timelines->desc = "Doctor visited to Emergency Patient at ".$optoutVisit->created_at;
             $timelines->created_by = Auth::id();
             $timelines->save();
-            return response()->json(['success'=>'Emergency Visit added successfully'],200);
+            return response()->json(['success'=>'Doctor Visit added successfully'],200);
         }else{
-            return response()->json(['error_success'=>'Emergency visit not added']);
+            return response()->json(['error_success'=>'visit not added']);
         }
+
     }
     public function viewEmergencyVisit(Request $request){
-        if($request->ajax()){
-            $emergencyVisit = Visit::where('patient_id',$request->patient_id)->get();
-            return DataTables::of($emergencyVisit)
+          if($request->ajax()){
+            $opdoutVisit = Visit::where('patient_id',$request->patient_id)->get();
+            return DataTables::of($opdoutVisit)
             ->addColumn('visit_id',function($row){
                 return 'MDVI0'.$row->id; //fetched through modal relationship
             })
-            ->addColumn('appointment_date',function($row){
-                return $row->appointment_date; //fetched through modal relationship
+            ->addColumn('visit_date',function($row){
+                return $row->created_at; //fetched through modal relationship
             })
             ->addColumn('doctor',function($row){
                 return 'Dr. '.$row->doctorData->name;
             })
-            ->addColumn('symptons',function($row){
-                return $row->symptoms;
-            })
-            ->addColumn('status',function($row){
-                return $row->status;
+            ->addColumn('desc',function($row){
+                return $row->note;
             })
             ->addColumn('action',function($row){
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#emergency-visit-view" onclick="emergencyVisitViewData('.$row->id.')">
@@ -451,7 +426,7 @@ class EmergencyController extends Controller
                         <iconify-icon icon="lucide:edit" onclick="emergencyVisitEdit('.$row->id.')"></iconify-icon>
                         </a>
                         <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                        <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyVisitDelete('.$row->id.')"></iconify-icon>
+                        <iconify-icon icon="mingcute:delete-2-line" onclick="ipdVisitDelete('.$row->id.')"></iconify-icon>
                         </a>-->';
             })
             ->rawColumns(['action'])       
@@ -468,26 +443,18 @@ class EmergencyController extends Controller
         return response()->json(['success'=>'Emergency visit data fetched','data'=>$getData],200);
     }
     public function emergencyVisitDataUpdate(Request $request){
-        $previous_paid_amount = Visit::where('id',$request->id)->get(['paid_amount']);
          $update = Visit::where('id',$request->id)->update([
-            'symptoms' => $request->symptoms,
-            'previous_med_issue' => $request->previousMedIssue,
-            'note' => $request->note,
-            'appointment_date' => $request->appointment_date,
-            'old_patient'=> $request->oldPatient,
             'consult_doctor' => $request->consultDoctor,
             'charge' => $request->charge,
             'discount' => $request->discount,
             'tax_per' => $request->taxPer,
             'amount' => $request->amount,
-            'payment_mode' => $request->paymentMode,
-            'ref_num' => $request->refNum,
-            'paid_amount' => $request->paidAmount + $previous_paid_amount[0]->paid_amount
+            'note' => $request->desc
         ]);
         if($update){
-            return response()->json(['success'=>'Emergency data updated successufuly'],200);
+            return response()->json(['success'=>'Visit data updated successufuly'],200);
         }else{
-            return response()->json(['error_success'=>'Emergency data not updated']);
+            return response()->json(['error_success'=>'Visit data not updated']);
         }
     }
     public function emergencyVisitDataDelete(Request $request){

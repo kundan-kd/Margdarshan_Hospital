@@ -236,7 +236,7 @@
                        <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Checkups</h6>
                         @can('IPD Visit Add')
-                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-new-checkup" onclick="resetVisit()"> <i class="ri-add-line"></i> New Checkup</button>
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-new-checkup" onclick="resetVisit()"> <i class="ri-add-line"></i> Add Doctor Visit</button>
                         @endcan
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
@@ -245,10 +245,9 @@
                           <thead>
                              <tr>
                               <th class="fw-medium ">Visit ID</th>
-                              <th class="fw-medium ">Appointment Date</th>
+                              <th class="fw-medium ">Visit Date & Time</th>
                               <th class="fw-medium ">Consultant</th>
-                              <th class="fw-medium ">Symptoms</th>
-                              <th class="fw-medium ">Status</th>
+                              <th class="fw-medium ">Notes</th>
                               <th class="fw-medium ">Action</th>
                              </tr>
                           </thead>
@@ -1332,66 +1331,19 @@
 <!-- Add advance History end -->
 <!--  opd new checkup Start -->
  <div class="modal fade" id="ipd-new-checkup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ipd-new-checkupLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="ipd-new-checkupLabel">Patient Details</h6>
+        <h6 class="modal-title fw-normal text-md text-white" id="ipd-new-checkupLabel">IPD Visit Details</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form action="" id="ipdVisit-modelForm">
       <div class="modal-body">
         <div class="row">
-        <div class="col-md-6 pt-3">
+          <input type="hidden" id="ipdVisit-patientId" value="{{$patients[0]->id}}">
+          <input type="hidden" id="ipdVisitId">
+        <div class="col-12 pt-3">
           <div class="row gy-3">
-             <div class="col-md-12">
-              <input type="hidden" id="ipdVisitId">
-                <table class="table table-borderless pharmacy-bill-detail-table w-75 ">
-                     <tbody>
-                      <input type="hidden" id="ipdVisit-patientId" value="{{$patients[0]->id}}">
-                      <tr>
-                       <th class="fw-medium">Patient Name</th>
-                       <td class="text-neutral-700">{{$patients[0]->name}}</td>
-                     </tr>
-                     <tr>
-                       <th class="fw-medium">Gender</th>
-                       <td class="text-neutral-700">{{$patients[0]->gender}}</td>
-                     </tr>
-                  </tbody></table>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium" for="ipdVisit-symptoms">Symptoms</label>
-                <input type="text" id="ipdVisit-symptoms" class="form-control form-control-sm" placeholder="Symptoms" value="" oninput="validateField(this.id,'input')">
-                <div class="ipdVisit-symptoms_errorCls d-none"></div>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium" for="ipdVisit-previousMedIssue">Previous Medical Issue</label>
-               <textarea id="ipdVisit-previousMedIssue" class="form-control " rows="1" placeholder="Previous Medical Issue" oninput="validateField(this.id,'select')" value=""></textarea>
-                <div class="ipdVisit-previousMedIssue_errorCls d-none"></div>
-             </div>
-             <div class="col-md-12">
-               <label class="form-label fw-medium">Note</label>
-               <textarea  id="ipdVisit-note" class="form-control " rows="2" placeholder="Note" value=""></textarea>
-             </div>
-          </div>
-        </div>
-        <div class="col-md-6 bg-info-50 pt-3">
-          <div class="row gy-3">
-            <div class="col-md-6">
-              <label class="form-label fw-medium" for="ipdVisit-admissionDate">Appointment Date</label> <sup class="text-danger">*</sup>
-              <div class=" position-relative">
-                    <input id="ipdVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" placeholder="DD/MM/YYYY" type="date" value="{{ $curr_date}}" oninput="validateField(this.id,'select')">
-                </div>
-                <div class="ipdVisit-admissionDate_errorCls d-none"></div>
-            </div>
-            <div class="col-md-6">
-               <label class="form-label fw-medium" for="ipdVisit-oldPatient">Old Patient</label> <sup class="text-danger">*</sup>
-              <select id="ipdVisit-oldPatient" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
-                 <option value="">Select</option>
-                 <option value="1">Yes</option>
-                 <option value="0">No</option>
-              </select>
-               <div class="ipdVisit-oldPatient_errorCls d-none"></div>
-            </div>
             <div class="col-md-6">
               <label class="form-label fw-medium" for="ipdVisit-consultDoctor"> Consultant Doctor</label> <sup class="text-danger">*</sup>
                <select id="ipdVisit-consultDoctor" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
@@ -1414,46 +1366,17 @@
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium" for="ipdVisit-tax"> Tax</label>% 
-               <input id="ipdVisit-tax" type="number" class="form-control form-control-sm" placeholder="Discount" value=""  oninput="calculateAmount()">
+               <input id="ipdVisit-tax" type="number" class="form-control form-control-sm" placeholder="Tax" value=""  oninput="calculateAmount()">
                 <div class="ipdVisit-tax_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium" for="ipdVisit-amount"> Amount</label>(₹) <sup class="text-danger">*</sup>
                <input id="ipdVisit-amount" type="number" class="form-control form-control-sm" placeholder="Amount" value="" readonly>
-                <div class="ipdVisit-amount_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-             <label class="form-label fw-medium" for="ipdVisit-paymentMode"> Payment Mode</label> <sup class="text-danger">*</sup>
-               <select id="ipdVisit-paymentMode" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
-                <option value="">Select</option>
-                <option value="cash">Cash</option>
-                <option value="upi">UPI</option>
-                <option value="card">Card</option>
-                <option value="cheque">Cheque</option>
-                <option value="other">Other</option>
-              </select>
-               <div class="ipdVisit-paymentMode_errorCls d-none"></div>
+              <label class="form-label fw-medium" for="ipdVisit-desc"> Description</label>
+               <input id="ipdVisit-desc" type="text" class="form-control form-control-sm" placeholder="Enter Doctor Suggestions">
             </div>
-            {{-- <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
-              <label class="form-label fw-medium ">Reference Number</label>
-              <input id="ipdVisit-refNum" type="number" class="form-control form-control-sm" placeholder=" Enter payment reference number">
-            </div> --}}
-            <div class="col-md-6 mb-3">
-             <label class="form-label fw-medium" for="ipdVisit-paidAmount">Pay Amount</label> <sup class="text-danger">*</sup>
-               <input id="ipdVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkIpdVisitPaidAmount()">
-                <div class="ipdVisit-paidAmount_errorCls d-none"></div>
-            </div>
-            <div class="col-md-6 mb-3 ipdVisit-AlreadypaidAmountCls d-none">
-             <label class="form-label fw-medium" for="ipdVisit-paidAmount">Paid Amount</label> 
-               <input id="ipdVisit-AlreadypaidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount" readonly>
-            </div>
-            <!-- <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Live Consultation</label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
-                 <option value="1">Yes</option>
-              </select>
-            </div> -->
           </div>
         </div>
        </div>

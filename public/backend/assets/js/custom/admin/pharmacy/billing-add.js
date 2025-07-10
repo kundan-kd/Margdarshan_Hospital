@@ -173,6 +173,7 @@ function updateTotalBilling() {
     // Calculate net amount
     let totalNetAmount = totalAmountSum + totalTaxAmountSum;
     $('.billingAdd-totalNetAmount').html(Math.round(totalNetAmount) || 0);
+    $('#billingAdd-payAmount').val(Math.round(totalNetAmount) || 0);
     // Calculate discount if applicable
     let discountPer = parseFloat($('#billingAdd-discountPer').val()) || 0;
     if (discountPer > 0) {
@@ -185,6 +186,7 @@ function updateTotalBilling() {
 
         let net_amount_after_discount = totalAmountSum - discountAmount + total_tax_after_discount;
         $('.billingAdd-totalNetAmount').html(Math.round(net_amount_after_discount) || 0);
+        $('#billingAdd-payAmount').val(Math.round(net_amount_after_discount) || 0);
     } else {
         // If no discount, ensure discount amount is reset
         $('.billingAdd-discountAmount').html('0.00');
@@ -241,59 +243,60 @@ $('#billingAdd-patientForm').on('submit',function(e){
         }    
 });
 
+
 $('#billingAdd-Form').on('submit',function(e){
   e.preventDefault();
- 
-  let patientIDCheck  = validateField('billingAdd-patient', 'select');
-  if(patientIDCheck == false){
-    return;
-  }
-  $('.billingAddSubmitBtn').addClass('d-none');
-  $('.billingAddSpinnBtn').removeClass('d-none');
-  let category = $('select[name="billingAdd-category[]"]').map(function(){return $(this).val();}).get();
-  let name = $('select[name="billingAdd-name[]"]').map(function(){return $(this).val();}).get();
-  let batchNo = $('select[name="billingAdd-batch[]"]').map(function(){return $(this).val();}).get();
-  let expiry = $('input[name="billingAdd-expiry[]"]').map(function(){return $(this).val();}).get();
-  let qty = $('input[name="billingAdd-qty[]"]').map(function(){return $(this).val();}).get();
-  let salesPrice = $('input[name="billingAdd-salesPrice[]"]').map(function(){return $(this).val();}).get();
-  let taxPer = $('input[name="billingAdd-tax[]"]').map(function(){return $(this).val();}).get();
-  let taxAmount = $('input[name="billingAdd-taxAmount[]"]').map(function(){return $(this).val() || 0;}).get();
-  let amount = $('input[name="billingAdd-amount[]"]').map(function(){return $(this).val();}).get();
-
-   let billNo = $('.billingAdd-billNo').html();
-  let patientID = $('#billingAdd-patient').val();
-  let resDoctor = $('#billingAdd-resDoctor').val();
-  let outDoctor = $('#billingAdd-outDoctor').val();
-  let notes = $('#billingAdd-note').val();
-  let totalAmount = parseFloat($('.billingAdd-totalAmount').html());
-  let discountPer = $('#billingAdd-discountPer').val();
-  let totalDiscountAmount = parseFloat($('.billingAdd-discountAmount').html());
-  let totalTaxAmount = parseFloat($('.billingAdd-totalTax').html());
-  let totalNetAmount = parseFloat($('.billingAdd-totalNetAmount').html());
-  let paymentMode = $('#billingAdd-paymentMode').val();
-  let payAmount = $('#billingAdd-payAmount').val();
-  let dueAmount = totalNetAmount - payAmount;
-  dueAmount = dueAmount.toFixed(2);
-  $.ajax({
-    url:billingAddDatas,
-    type:"POST",
-    headers:{
-        'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-    },
-    data:{
-        category:category,name:name,batchNo:batchNo,expiry:expiry,qty:qty,salesPrice:salesPrice,taxPer:taxPer,taxAmount:taxAmount,amount:amount,billNo:billNo,patientID:patientID,resDoctor:resDoctor,outDoctor:outDoctor,notes:notes,totalAmount:totalAmount,discountPer:discountPer,totalDiscountAmount:totalDiscountAmount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
-    },
-    success:function(response){
-        if(response.success){
-             toastSuccessAlert('Billings done successfully');
-             setTimeout(function(){
-                window.location = '/billing';
-             },1500);
-        }else{
-             toastErrorAlert('something error found');
-             $('.billingAddSubmitBtn').removeClass('d-none');
-            $('.billingAddSpinnBtn').addClass('d-none');
-        }
+    let patientIDCheck  = validateField('billingAdd-patient', 'select');
+    let payment_mode  = validateField('billingAdd-paymentMode', 'select');
+    if(patientIDCheck == true && payment_mode == true){
+        let category = $('select[name="billingAdd-category[]"]').map(function(){return $(this).val();}).get();
+        let name = $('select[name="billingAdd-name[]"]').map(function(){return $(this).val();}).get();
+        let batchNo = $('select[name="billingAdd-batch[]"]').map(function(){return $(this).val();}).get();
+        let expiry = $('input[name="billingAdd-expiry[]"]').map(function(){return $(this).val();}).get();
+        let qty = $('input[name="billingAdd-qty[]"]').map(function(){return $(this).val();}).get();
+        let salesPrice = $('input[name="billingAdd-salesPrice[]"]').map(function(){return $(this).val();}).get();
+        let taxPer = $('input[name="billingAdd-tax[]"]').map(function(){return $(this).val();}).get();
+        let taxAmount = $('input[name="billingAdd-taxAmount[]"]').map(function(){return $(this).val() || 0;}).get();
+        let amount = $('input[name="billingAdd-amount[]"]').map(function(){return $(this).val();}).get();
+        let billNo = $('.billingAdd-billNo').html();
+        let patientID = $('#billingAdd-patient').val();
+        let resDoctor = $('#billingAdd-resDoctor').val();
+        let outDoctor = $('#billingAdd-outDoctor').val();
+        let notes = $('#billingAdd-note').val();
+        let totalAmount = parseFloat($('.billingAdd-totalAmount').html());
+        let discountPer = $('#billingAdd-discountPer').val();
+        let totalDiscountAmount = parseFloat($('.billingAdd-discountAmount').html());
+        let totalTaxAmount = parseFloat($('.billingAdd-totalTax').html());
+        let totalNetAmount = parseFloat($('.billingAdd-totalNetAmount').html());
+        let paymentMode = $('#billingAdd-paymentMode').val();
+        let payAmount = $('#billingAdd-payAmount').val();
+        let dueAmount = totalNetAmount - payAmount;
+        dueAmount = dueAmount.toFixed(2);
+            $('.billingAddSubmitBtn').addClass('d-none');
+        $('.billingAddSpinnBtn').removeClass('d-none');
+        $.ajax({
+            url:billingAddDatas,
+            type:"POST",
+            headers:{
+                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            data:{
+                category:category,name:name,batchNo:batchNo,expiry:expiry,qty:qty,salesPrice:salesPrice,taxPer:taxPer,taxAmount:taxAmount,amount:amount,billNo:billNo,patientID:patientID,resDoctor:resDoctor,outDoctor:outDoctor,notes:notes,totalAmount:totalAmount,discountPer:discountPer,totalDiscountAmount:totalDiscountAmount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
+            },
+            success:function(response){
+                if(response.success){
+                    toastSuccessAlert('Billings done successfully');
+                    setTimeout(function(){
+                        window.location = '/billing';
+                    },1500);
+                }else{
+                    toastErrorAlert('something error found');
+                    $('.billingAddSubmitBtn').removeClass('d-none');
+                    $('.billingAddSpinnBtn').addClass('d-none');
+                }
+            }
+        });
+    }else{
+        console.log('Please fill all required fields');
     }
-  });
 });

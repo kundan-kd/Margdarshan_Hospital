@@ -235,7 +235,7 @@ class AppointmentController extends Controller
         }
     }
     public function updateVisitData(Request $request){
-        $appointment_data = Appointment::where('id',$request->id)->get(['id','patient_id','fee','appointment_date']);
+        $appointment_data = Appointment::where('id',$request->id)->get(['id','patient_id','fee','appointment_date','doctor_id']);
         $update = Appointment::where('id',$request->id)->update([
             'status' => "Visited"
         ]);
@@ -244,6 +244,7 @@ class AppointmentController extends Controller
             $visits->type = "OPD";
             $visits->patient_id = $appointment_data[0]->patient_id;
             $visits->appointment_id = $appointment_data[0]->id;
+            $visits->consult_doctor = $appointment_data[0]->doctor_id;
             $visits->appointment_date = $appointment_data[0]->appointment_date;
             $visits->visited_date = $request->visit_date;
             $visits->paid_amount = $appointment_data[0]->fee;

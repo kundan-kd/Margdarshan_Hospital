@@ -41,45 +41,31 @@ function checkEmergencyVisitPaidAmount(){
          $('.emergencyVisitUpdate').prop('disabled', false);
     }
 }
-$('#emergencyVisit-form').on('submit',function(e){
+$('#emergencyVisit-modelForm').on('submit',function(e){
  e.preventDefault();
-    let symptoms_check  = validateField('emergencyVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('emergencyVisit-previousMedIssue', 'select');
-    let admissionDate_check  = validateField('emergencyVisit-admissionDate', 'select');
-    let oldPatient_check  = validateField('emergencyVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('emergencyVisit-consultDoctor', 'select');
     let charge_check = validateField('emergencyVisit-charge', 'amount');
-    let amount_check = validateField('emergencyVisit-amount', 'amount');
-    let paymentMode_check = validateField('emergencyVisit-paymentMode', 'select');
-    let paidAmount_check = validateField('emergencyVisit-paidAmount', 'amount');
-    if(symptoms_check === true && previousMedIssue_check === true && admissionDate_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true  && amount_check === true && paymentMode_check === true && paidAmount_check === true){ 
+    if(consultDoctor_check === true && charge_check === true){ 
         let patientId = $('#patient_Id').val();
-        let symptoms = $('#emergencyVisit-symptoms').val();
-        let previousMedIssue = $('#emergencyVisit-previousMedIssue').val();
-        let note = $('#emergencyVisit-note').val();
-        let appointment_date = $('#emergencyVisit-admissionDate').val();
-        let oldPatient = $('#emergencyVisit-oldPatient').val();
         let consultDoctor = $('#emergencyVisit-consultDoctor').val();
         let charge = $('#emergencyVisit-charge').val();
         let discount = $('#emergencyVisit-discount').val();
         let taxPer = $('#emergencyVisit-tax').val();
         let amount = $('#emergencyVisit-amount').val();
-        let paymentMode = $('#emergencyVisit-paymentMode').val();
-        let refNum = $('#emergencyVisit-emergencyVisit-refNum').val();
-        let paidAmount = $('#emergencyVisit-paidAmount').val();
+        let desc = $('#emergencyVisit-desc').val();
         $.ajax({
             url:emergencyVisitSubmit,
             type:"POST",
             data:{
-                patientId:patientId,symptoms:symptoms,previousMedIssue:previousMedIssue,note:note,appointment_date:appointment_date,oldPatient:oldPatient,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,paymentMode:paymentMode,refNum:refNum,paidAmount:paidAmount
+                patientId:patientId,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,desc:desc
             },
             headers:{
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success:function(response){
                 if(response.success){
                     $('#emergency-new-checkup').modal('hide');
-                    $('#emergencyVisit-form')[0].reset();
+                    $('#emergencyVisit-modelForm')[0].reset();
                      $('#emergency-visit-list').DataTable().ajax.reload();
                     toastSuccessAlert(response.success);
                 }else if(response.error_validation){
@@ -118,36 +104,24 @@ let table_emergency_visit = $('#emergency-visit-list').DataTable({
             alert('Error: '+thrown);
         }
     },
-    columns:[
+   columns:[
         {
             data:'visit_id',
-            name:'visit_id',
-            orderable: false,
-            searchable: true
+            name:'visit_id'
         },
         {
-            data:'appointment_date',
-            name:'appointment_date',
-            orderable: false,
-            searchable: true
+            data:'visit_date',
+            name:'visit_date'
         },
         {
             data:'doctor',
-            name:'doctor',
-            orderable: true,
-            searchable: true
+            name:'doctor'
         },
         {
-            data:'symptons',
-            name:'symptons',
-            orderable: true,
-            searchable: true
-        },
-         {
-            data:'status',
-            name:'status',
-            orderable: true,
-            searchable: true
+            data:'desc',
+            name:'desc',
+            orderable: false,
+            searchable: false
         },
         {
             data:'action',
@@ -155,7 +129,6 @@ let table_emergency_visit = $('#emergency-visit-list').DataTable({
             orderable: false,
             searchable: true
         },
-
     ]
 });
 function emergencyVisitViewData(id){
@@ -175,7 +148,7 @@ function emergencyVisitViewData(id){
                         visit_view_data += `<div class="row">
                             <div class="col-md-12">
                                 <table class="table  table-borderless table-sm payment-pharmacy-table">
-                                <tbody>
+                               <tbody>
                                 <tr>
                                     <th class="fw-medium">Patient ID</th>
                                     <td>${patientData.patient_id}</td>
@@ -185,27 +158,16 @@ function emergencyVisitViewData(id){
                                 <tr>
                                     <th class="fw-medium">Patient Name</th>
                                     <td>${patientData.name}</td>
-                                    <th class="fw-medium">Appointment Date</th>
-                                    <td>${visitData.appointment_date}</td>
-                                </tr>
-                                <tr>
-                                <th class="fw-medium">Guardian Name</th>
-                                    <td>${patientData.guardian_name}</td>
-                                    <th class="fw-medium">Symptons</th>
-                                    <td>${visitData.symptoms}</td>
+                                     <th class="fw-medium">Guardian Name</th>
+                                <td>${patientData.guardian_name}</td>
                                 </tr>
                                 <tr>
                                 <th class="fw-medium">Gender</th>
                                     <td>${patientData.gender}</td>
-                                    <th class="fw-medium">Previous Health Issue</th>
-                                    <td>${visitData.previousMedIssue}</td>
-                                </tr>
-                                <tr>           
-                                <th class="fw-medium">DOB</th>
+                                     <th class="fw-medium">DOB</th>
                                     <td>${patientData.dob}</td>
-                                    <th class="fw-medium">Old Patient</th>
-                                    <td>${visitData.oldPatient}</td>
                                 </tr>
+                               
                                 <tr>     
                                     <th class="fw-medium">Phone</th>
                                     <td>${patientData.mobile}</td>
@@ -216,12 +178,11 @@ function emergencyVisitViewData(id){
                                 <tr>    
                                     <th class="fw-medium">Blood Type</th>
                                     <td>${patientData.bloodtype}</td>   
-                                     <th class="fw-medium">Known Allergies</th>
-                                    <td>${visitData.known_allergies}</td>  
-                                </tr>
-                                <tr>         
                                     <th class="fw-medium">Marital Status</th>
                                     <td>${patientData.marital_status}</td> 
+                                </tr>
+                                <tr>         
+                                    
                                     <th class="fw-medium">Notes</th>
                                     <td>${visitData.note}</td>    
                                 </tr>
@@ -254,23 +215,14 @@ function emergencyVisitEdit(id){
             // console.log(response);
             if(response.success){
                let visitData = response.data.emergencyVisitData[0];
-                $('#emergency-new-checkup').modal('show');
+               $('#emergency-new-checkup').modal('show');
                 $('#emergencyVisitId').val(id);
-                $('#emergencyVisit-symptoms').val(visitData.symptoms);
-                $('#emergencyVisit-previousMedIssue').val(visitData.previous_med_issue);
-                $('#emergencyVisit-note').val(visitData.note);
-                $('#emergencyVisit-admissionDate').val(visitData.appointment_date);
-                $('#emergencyVisit-oldPatient').val(visitData.old_patient);
-                $('emergencyVisit-reference').val(visitData.appointment_date);
-                $('#emergencyVisit-consultDoctor').val(visitData.consult_doctor);
-                $('#emergencyVisit-charge').val(visitData.charge);
-                $('#emergencyVisit-discount').val(visitData.discount);
-                $('#emergencyVisit-tax').val(visitData.tax_per);
-                $('#emergencyVisit-amount').val(visitData.amount);
-                $('#emergencyVisit-paymentMode').val(visitData.payment_mode);
-                $('#emergencyVisit-refNum').val(visitData.ref_num);
-                $('#emergencyVisit-paidAmount').val('');
-                $('#emergencyVisit-AlreadypaidAmount').val(visitData.paid_amount);
+                $('#emergencyVisit-consultDoctor').val(visitData.consult_doctor).prop('disabled',true);
+                $('#emergencyVisit-charge').val(visitData.charge).prop('disabled',true);;
+                $('#emergencyVisit-discount').val(visitData.discount).prop('disabled',true);;
+                $('#emergencyVisit-tax').val(visitData.tax_per).prop('disabled',true);;
+                $('#emergencyVisit-amount').val(visitData.amount).prop('disabled',true);;
+                $('#emergencyVisit-desc').val(visitData.note);
                 $('.emergencyVisitSubmit').addClass('d-none');
                 $('.emergencyVisitUpdate').removeClass('d-none');
                 $('.emergencyVisit-AlreadypaidAmountCls').removeClass('d-none');
@@ -279,34 +231,20 @@ function emergencyVisitEdit(id){
     });
 }
 function emergencyVisitUpdate(id){
-    let symptoms_check  = validateField('emergencyVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('emergencyVisit-previousMedIssue', 'select');
-    let admissionDate_check  = validateField('emergencyVisit-admissionDate', 'select');
-    let oldPatient_check  = validateField('emergencyVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('emergencyVisit-consultDoctor', 'select');
     let charge_check = validateField('emergencyVisit-charge', 'amount');
-    let amount_check = validateField('emergencyVisit-amount', 'amount');
-    let paymentMode_check = validateField('emergencyVisit-paymentMode', 'select');
-    // let paidAmount_check = validateField('emergencyVisit-paidAmount', 'amount');
-    if(symptoms_check === true && previousMedIssue_check === true && admissionDate_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true && amount_check === true && paymentMode_check === true ){  
-        let symptoms = $('#emergencyVisit-symptoms').val();
-        let previousMedIssue = $('#emergencyVisit-previousMedIssue').val();
-        let note = $('#emergencyVisit-note').val();
-        let appointment_date = $('#emergencyVisit-admissionDate').val();
-        let oldPatient = $('#emergencyVisit-oldPatient').val();
+    if(consultDoctor_check === true && charge_check === true){  
         let consultDoctor = $('#emergencyVisit-consultDoctor').val();
         let charge = $('#emergencyVisit-charge').val();
         let discount = $('#emergencyVisit-discount').val();
         let taxPer = $('#emergencyVisit-tax').val();
         let amount = $('#emergencyVisit-amount').val();
-        let paymentMode = $('#emergencyVisit-paymentMode').val();
-        let refNum = $('#emergencyVisit-emergencyVisit-refNum').val();
-        let paidAmount = $('#emergencyVisit-paidAmount').val() || 0;
+        let desc = $('#emergencyVisit-desc').val();
         $.ajax({
             url:emergencyVisitDataUpdate,
             type:"POST",
             data:{
-               id:id,symptoms:symptoms,previousMedIssue:previousMedIssue,note:note,appointment_date:appointment_date,oldPatient:oldPatient,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,paymentMode:paymentMode,refNum:refNum,paidAmount:paidAmount
+               id:id,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,desc:desc
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -332,7 +270,7 @@ function emergencyVisitUpdate(id){
         });
     }else{
         console.log("Please fill all required fields");
-    }    
+    } 
 }
 function emergencyVisitDelete(id){
    Swal.fire({

@@ -14,8 +14,10 @@ use App\Models\PaymentBill;
 use App\Models\PaymentMode;
 use App\Models\PurchaseItem;
 use App\Models\PaymentReceived;
+use App\Models\SaleReturn;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -50,20 +52,22 @@ class BillingController extends Controller
                 return $row->paid_amount ?? 0;
             })
             ->addColumn('action',function($row){
-
-                // $encryptedId = Crypt::encryptString($row->id);
-                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                $viewSaleReturn = $row->return_amount <= 0 ?'d-none':'';
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" title="View Purchase Details">
                         <iconify-icon icon="iconamoon:eye-light" onclick="purchaseDetails('.$row->id.')"></iconify-icon>
                         </a>
-                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center" title="Sale Return">
                          <iconify-icon icon="lucide:edit" onclick="billingEdit('.$row->id.')"></iconify-icon>
-                         </a>
-                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                                <iconify-icon icon="mdi:file-download-outline" onclick="printMedicineBill(' . $row->id . ')"></iconify-icon>
                         </a>
-                         <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" title="View Medicine Bill">
+                            <iconify-icon icon="mdi:file-download-outline" onclick="printMedicineBill(' . $row->id . ')"></iconify-icon>
+                        </a>
+                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center '.$viewSaleReturn.'" title="View Sale Return">
+                            <iconify-icon icon="lucide:edit" onclick="saleReturnView(' . $row->id . ')"></iconify-icon>
+                        </a>
+                        <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                          <iconify-icon icon="mingcute:delete-2-line" onclick="purchaseDelete('.$row->id.')"></iconify-icon>
-                         </a>-->';
+                        </a>-->';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -264,122 +268,110 @@ class BillingController extends Controller
         $getData = Billing::where('id',$request->id)->get();
         return response()->json(['success'=>'Billing data fetched','data'=>$getData],200);
     }
+    public function billingSaleReturnView($id){
+        $billings = Billing::where('id',$id)->get();
+        $billingItems = BillingItem::where('billing_id',$id)->get();
+        $categories = MedicineCategory::where('status',1)->get();
+        $doctors = User::where('usertype_id',2)->where('status',1)->get();
+        $patients = Patient::where('status',1)->get(['id','patient_id','name']);
+        $bloodtypes = BloodType::where('status',1)->get();
+        $paymentmodes = PaymentMode::where('status',1)->get();
+        return view('backend.admin.modules.pharmacy.billing-sale-return',compact('billings','billingItems','categories','doctors','patients','bloodtypes','paymentmodes'));
+    }
+// public function billingUpdateDatas(Request $request)
+// {
+//     try {
+//         $billing_id = $request->billing_id;
 
+//         foreach ($request->editID as $key => $item_id) {
+//             $newQty = $request->qty[$key];
+//             $returnAmount = $request->return_amount[$key];
+
+//             // Fetch old billing item
+//             $billingItem = BillingItem::find($item_id);
+//             if (!$billingItem) continue;
+
+//             $oldQty = $billingItem->qty;
+
+//             // Update BillingItem with new quantity and return amount
+//             $billingItem->qty = $newQty;
+//             $billingItem->return_amount = $returnAmount; // Ensure this column exists
+//             $billingItem->amount -= $returnAmount; // Reduce total amount if applicable
+//             $billingItem->save();
+
+//             // Update stock in Medicine and PurchaseItem
+//             $medicine = Medicine::find($billingItem->name_id);
+//             $purchaseItem = PurchaseItem::find($billingItem->batch_no);
+
+//             if ($medicine && $purchaseItem) {
+//                 $diffQty = $oldQty - $newQty; // Return quantity
+//                 if ($diffQty > 0) {
+//                     $medicine->stock_out = max(0, $medicine->stock_out - $diffQty);
+//                     $purchaseItem->stock_out = max(0, $purchaseItem->stock_out - $diffQty);
+//                     $medicine->save();
+//                     $purchaseItem->save();
+//                 }
+//             }
+//         }
+
+//         // Recalculate billing values
+//         $updatedItems = BillingItem::where('billing_id', $billing_id)->get();
+
+//         $totalAmount = $updatedItems->sum('amount');
+//         $totalReturn = $updatedItems->sum('return_amount');
+//         $netAmount = $totalAmount - $totalReturn;
+
+//         // Update Billing record
+//         Billing::where('id', $billing_id)->update([
+//             'total_amount' => $totalAmount,
+//             'net_amount' => $netAmount,
+//             'due_amount' => $netAmount, // Adjust according to payments if needed
+//         ]);
+
+//         return response()->json(['success' => true, 'message' => 'Sale return updated successfully']);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Something went wrong during sale return update',
+//             'error' => $e->getMessage()
+//         ]);
+//     }
+// }
 
     public function billingUpdateDatas(Request $request){
+    // dd($request->all());
     try {
         $billing_id = $request->billing_id;
-        // Set old billing items to inactive
-        BillingItem::where('billing_id', $billing_id)->update(['status' => 0]);
-        // Update or insert billing items
-        $item_idd = [];
         foreach ($request->editID as $key => $item_id) {
-            array_push($item_idd, $item_id);
-
-            if (empty($item_id)) {  
-                // Insert new record
-                $billingItem = new BillingItem();
-                $billingItem->billing_id = $billing_id;
-                $billingItem->category_id = $request->category[$key];
-                $billingItem->name_id = $request->name[$key];
-                $billingItem->batch_no = $request->batchNo[$key];
-                $billingItem->expiry = $request->expiry[$key];
-                $billingItem->qty = $request->qty[$key];
-                $billingItem->sales_price = $request->salesPrice[$key];
-                $billingItem->tax_per = $request->taxPer[$key];
-                $billingItem->tax_amount = $request->taxAmount[$key] ?? null;
-                $billingItem->amount = $request->amount[$key];
-                $billingItem->status = 1; // Active record
-                if($billingItem->save()){
-                    //update stock after sale
-                    $oldPurchaseItemStockOut = PurchaseItem::where('id', $request->batchNo[$key])->get(['stock_out']);
-                        PurchaseItem::where('id',$request->batchNo[$key])->update([
-                        'stock_out' => $request->qty[$key] + $oldPurchaseItemStockOut[0]->stock_out
-                    ]);
-                    $oldMedicineStockOut = Medicine::where('id', $request->name[$key])->get(['stock_out']);
-                        medicine::where('id',$request->name[$key])->update([
-                        'stock_out' => $request->qty[$key] + $oldMedicineStockOut[0]->stock_out
-                    ]);
-                }
-            } else {
-            // Fetch old quantity from BillingItem
-            $oldPurchaseQty = BillingItem::where('id', $item_id)->value('qty');
-            // Update the billing item
-            BillingItem::where('id', $item_id)
-                ->where('billing_id', $billing_id)
-                ->update([
-                    'category_id' => $request->category[$key],
-                    'name_id' => $request->name[$key],
-                    'batch_no' => $request->batchNo[$key],
-                    'expiry' => $request->expiry[$key],
-                    'qty' => $request->qty[$key],
-                    'sales_price' => $request->salesPrice[$key],
-                    'tax_per' => $request->taxPer[$key],
-                    'tax_amount' => $request->taxAmount[$key],
-                    'amount' => $request->amount[$key],
-                    'status' => 1
-                ]);
-                    // New quantity from the request
-                    $newQty = $request->qty[$key];
-                    // Fetch medicine and purchase item
-                    $medicine = Medicine::find($request->name[$key]);
-                    $purchaseItem = PurchaseItem::find($item_id);
-
-                    if ($medicine && $purchaseItem) {
-                        $oldMedicineStock = $medicine->stock_out ?? 0;
-                        $oldPurchaseStock = $purchaseItem->stock_out ?? 0;
-
-                        if ($oldPurchaseQty > $newQty) {
-                            // Quantity reduced → subtract from stock_out
-                            $diff = $oldPurchaseQty - $newQty;
-                            $medicine->stock_out = max(0, $oldMedicineStock - $diff);
-                            $purchaseItem->stock_out = max(0, $oldPurchaseStock - $diff);
-                        } elseif ($newQty > $oldPurchaseQty) {
-                            // Quantity increased → add to stock_out
-                            $diff = $newQty - $oldPurchaseQty;
-                            $medicine->stock_out = $oldMedicineStock + $diff;
-                            $purchaseItem->stock_out = $oldPurchaseStock + $diff;
-                        }
-
-                        $medicine->save();
-                        $purchaseItem->save();
-                    }
-            }
+            // $oldPurchaseQty = BillingItem::where('id', $item_id)->value('qty');
+            // $returnQty = $oldPurchaseQty - $request->qty[$key];
             
+            // Update the billing item
+            $prevBillingItem = BillingItem::where('id', $item_id)->where('billing_id', $billing_id)->get(['return_qty','return_amount']);
+            BillingItem::where('id', $item_id)->where('billing_id', $billing_id)->update([
+                    'return_qty' => $prevBillingItem[0]->return_qty + $request->returnQty[$key],
+                    'return_amount' => $prevBillingItem[0]->return_amount + $request->return_amount[$key] ?? 0
+                ]);
+            $prevPurchaseItem = PurchaseItem::where('id',$request->batchID[$key])->get(['return_qty']);
+            PurchaseItem::where('id',$request->batchID[$key])->update([
+                'return_qty' => $prevPurchaseItem[0]->return_qty + $request->returnQty[$key]
+            ]);
+            $prevMedicine = Medicine::where('id',$request->name[$key])->get(['return_qty']);
+            Medicine::where('id',$request->name[$key])->update([
+                'return_qty' => $prevMedicine[0]->return_qty + $request->returnQty[$key]
+            ]);  
         }
-        $prev_paidAmount = Billing::where('id',$billing_id)->get(['paid_amount']);
-               // Update Billing Information
+        $prevBilling = Billing::where('id', $billing_id)->get(['return_amount']);
         Billing::where('id', $billing_id)->update([
-            'bill_no' => $request->billNo,
-            'patient_id' => $request->patientID,
-            'res_doctor_id' => $request->resDoctor,
-            'out_doctor_name' => $request->outDoctor,
-            'naration' => $request->notes,
-            'total_amount' => $request->totalAmount,
-            'discount_per' => $request->discountPer,
-            'discount_amount' => $request->totalDiscountAmount,
-            'taxes' => $request->totalTaxAmount,
-            'net_amount' => $request->totalNetAmount,
-            'payment_mode' => $request->paymentMode,
-            'paid_amount' => $request->payAmount + $prev_paidAmount[0]->paid_amount
+            'return_amount' => $prevBilling[0]->return_amount + $request->total_return_amount ?? 0,
         ]);
-        $paidAmount = Billing::where('id',$billing_id)->get(['paid_amount']);
-        Billing::where('id',$billing_id)->update([
-            'due_amount' =>  $request->totalNetAmount - $paidAmount[0]->paid_amount
-        ]);
-        if($request->payAmount > 0){
-            $payment_received = new PaymentReceived();
-            $payment_received->patient_id = $request->patientID;
-            $payment_received->type = 'Billing';
-            $payment_received->type_id = $billing_id;
-            $payment_received->amount_for = 'Medicine Billing';
-            $payment_received->title = 'Medicine Billing id: '.$billing_id;
-            $payment_received->amount = $request->payAmount;
-            $payment_received->payment_mode = $request->paymentMode;
-            $payment_received->save();
-        }
-        // Remove inactive records
-        BillingItem::where('billing_id', $billing_id)->where('status', 0)->delete();
+
+            $sale_returns = new SaleReturn();
+            $sale_returns->type = "Billing"; 
+            $sale_returns->type_id = $billing_id; 
+            $sale_returns->return_amount = $request->total_return_amount ?? 0; 
+            $sale_returns->created_by = Auth::id();
+            $sale_returns->save();
 
         return response()->json(['success' => true, 'message' => 'Billing updated successfully']);
     } catch (\Exception $e) {

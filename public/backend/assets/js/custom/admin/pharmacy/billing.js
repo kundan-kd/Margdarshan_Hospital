@@ -50,6 +50,9 @@ let table = $('#billing-list-table').DataTable({
 function billingEdit(id){
     window.location.href = 'billing-edit-page/' + id;
 }
+function saleReturnView(id){
+    window.location.href = 'billing-sale-return/' + id;
+}
 
 function purchaseDetails(id) {
       window.location.href = 'billing-view/' + id;

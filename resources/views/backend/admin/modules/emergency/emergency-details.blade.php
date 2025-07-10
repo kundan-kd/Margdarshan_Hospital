@@ -245,7 +245,7 @@
                        <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Checkups</h6>
                         @can('Emergency Visit Add')
-                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-new-checkup"> <i class="ri-add-line"></i> New Checkup</button>
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-new-checkup"> <i class="ri-add-line"></i> Add Doctor Visit</button>
                         @endcan
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#emergency-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
@@ -253,16 +253,15 @@
                             <table class="table bordered-table mb-0 w-100" id="emergency-visit-list" data-page-length='10'>
                           <thead>
                              <tr>
-                              <th class="fw-medium ">Emergency Id</th>
-                              <th class="fw-medium ">Appointment Date</th>
+                              <th class="fw-medium ">Visit ID</th>
+                              <th class="fw-medium ">Visit Date & Time</th>
                               <th class="fw-medium ">Consultant</th>
-                              <th class="fw-medium ">Reference</th>
-                              <th class="fw-medium ">Symptoms</th>
+                              <th class="fw-medium ">Notes</th>
                               <th class="fw-medium ">Action</th>
                              </tr>
                           </thead>
                           <tbody>
-                             <tr>
+                             {{-- <tr>
                               <td>EM4456879</td>
                               <td>05/23/2025 12:53 PM</td>
                               <td>Dr. Niraj Kumar</td>
@@ -279,7 +278,7 @@
                                     <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
                                   </button>
                                 </td>
-                             </tr>
+                             </tr> --}}
                           </tbody>
                         </table>
                       </div>
@@ -1070,68 +1069,21 @@
   </div>
 </div>
 <!-- Add vital History end -->
-<!--  opd new checkup Start -->
+<!--  Emergency new checkup Start -->
  <div class="modal fade" id="emergency-new-checkup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="emergency-new-checkupLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="emergency-new-checkupLabel">Patient Details</h6>
+        <h6 class="modal-title fw-normal text-md text-white" id="emergency-new-checkupLabel">Emergency Visit Details</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="" id="emergencyVisit-form">
+      <form action="" id="emergencyVisit-modelForm">
       <div class="modal-body">
         <div class="row">
-        <div class="col-md-6 pt-3">
+          <input type="hidden" id="emergencyVisit-patientId" value="{{$patients[0]->id}}">
+          <input type="hidden" id="emergencyVisitId">
+        <div class="col-12 pt-3">
           <div class="row gy-3">
-             <div class="col-md-12">
-              <input type="hidden" id="emergencyVisitId">
-                <table class="table table-borderless pharmacy-bill-detail-table w-75 ">
-                     <tbody>
-                      <input type="hidden" id="emergencyVisit-patientId" value="{{$patients[0]->id}}">
-                      <tr>
-                       <th class="fw-medium">Patient Name</th>
-                       <td class="text-neutral-700">{{$patients[0]->name}}</td>
-                     </tr>
-                     <tr>
-                       <th class="fw-medium">Gender</th>
-                       <td class="text-neutral-700">{{$patients[0]->gender}}</td>
-                     </tr>
-                  </tbody></table>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium" for="emergencyVisit-symptoms">Symptoms</label>
-                <input type="text" id="emergencyVisit-symptoms" class="form-control form-control-sm" placeholder="Symptoms" value="" oninput="validateField(this.id,'input')">
-                <div class="emergencyVisit-symptoms_errorCls d-none"></div>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium" for="emergencyVisit-previousMedIssue">Previous Medical Issue</label>
-               <textarea id="emergencyVisit-previousMedIssue" class="form-control " rows="1" placeholder="Previous Medical Issue" oninput="validateField(this.id,'select')" value=""></textarea>
-                <div class="emergencyVisit-previousMedIssue_errorCls d-none"></div>
-             </div>
-             <div class="col-md-12">
-               <label class="form-label fw-medium">Note</label>
-               <textarea  id="emergencyVisit-note" class="form-control " rows="2" placeholder="Note" value=""></textarea>
-             </div>
-          </div>
-        </div>
-        <div class="col-md-6 bg-info-50 pt-3">
-          <div class="row gy-3">
-            <div class="col-md-6">
-              <label class="form-label fw-medium" for="emergencyVisit-admissionDate">Appointment Date</label> <sup class="text-danger">*</sup>
-              <div class=" position-relative">
-                    <input id="emergencyVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="date" placeholder="DD/MM/YYYY" value="{{ $curr_date}}" oninput="validateField(this.id,'select')">
-                </div>
-                <div class="emergencyVisit-admissionDate_errorCls d-none"></div>
-            </div>
-            <div class="col-md-6">
-               <label class="form-label fw-medium" for="emergencyVisit-oldPatient">Old Patient</label> <sup class="text-danger">*</sup>
-              <select id="emergencyVisit-oldPatient" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
-                 <option value="">Select</option>
-                 <option value="1">Yes</option>
-                 <option value="0">No</option>
-              </select>
-               <div class="emergencyVisit-oldPatient_errorCls d-none"></div>
-            </div>
             <div class="col-md-6">
               <label class="form-label fw-medium" for="emergencyVisit-consultDoctor"> Consultant Doctor</label> <sup class="text-danger">*</sup>
                <select id="emergencyVisit-consultDoctor" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
@@ -1154,61 +1106,32 @@
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium" for="emergencyVisit-tax"> Tax</label>% 
-               <input id="emergencyVisit-tax" type="number" class="form-control form-control-sm" placeholder="Discount" value=""  oninput="calculateAmount()">
+               <input id="emergencyVisit-tax" type="number" class="form-control form-control-sm" placeholder="Tax" value=""  oninput="calculateAmount()">
                 <div class="emergencyVisit-tax_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-medium" for="emergencyVisit-amount"> Amount</label>(₹) <sup class="text-danger">*</sup>
                <input id="emergencyVisit-amount" type="number" class="form-control form-control-sm" placeholder="Amount" value="" readonly>
-                <div class="emergencyVisit-amount_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-             <label class="form-label fw-medium" for="emergencyVisit-paymentMode"> Payment Mode</label> <sup class="text-danger">*</sup>
-               <select id="emergencyVisit-paymentMode" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
-                <option value="">Select</option>
-                <option value="cash">Cash</option>
-                <option value="upi">UPI</option>
-                <option value="card">Card</option>
-                <option value="cheque">Cheque</option>
-                <option value="other">Other</option>
-              </select>
-               <div class="emergencyVisit-paymentMode_errorCls d-none"></div>
+              <label class="form-label fw-medium" for="emergencyVisit-desc"> Description</label>
+               <input id="emergencyVisit-desc" type="text" class="form-control form-control-sm" placeholder="Enter Doctor Suggestions">
             </div>
-            {{-- <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
-              <label class="form-label fw-medium ">Reference Number</label>
-              <input id="emergencyVisit-refNum" type="number" class="form-control form-control-sm" placeholder=" Enter payment reference number">
-            </div> --}}
-            <div class="col-md-6 mb-3">
-             <label class="form-label fw-medium" for="emergencyVisit-paidAmount">Pay Amount</label> <sup class="text-danger">*</sup>
-               <input id="emergencyVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkEmergencyVisitPaidAmount()">
-                <div class="emergencyVisit-paidAmount_errorCls d-none"></div>
-            </div>
-            <div class="col-md-6 mb-3 emergencyVisit-AlreadypaidAmountCls d-none">
-             <label class="form-label fw-medium" for="ipdVisit-paidAmount">Paid Amount</label> 
-               <input id="emergencyVisit-AlreadypaidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount" readonly>
-            </div>
-            <!-- <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Live Consultation</label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
-                 <option value="1">Yes</option>
-              </select>
-            </div> -->
           </div>
         </div>
        </div>
       </div>
       <div class="modal-footer">
-         <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
         @can('Emergency Visit Add')
           <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyVisitSubmit"><i class="ri-checkbox-circle-line"></i> Submit</button>
         @endcan
         @can('Emergency Visit Edit')
-        <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyVisitUpdate d-none" onclick="emergencyVisitUpdate(document.getElementById('emergencyVisitId').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyVisitUpdate d-none" onclick="emergencyVisitUpdate(document.getElementById('emergencyVisitId').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
         @endcan
       </div>
-    </form>
     </div>
+  </form>
   </div>
 </div>
 <!-- opd new checkup end -->

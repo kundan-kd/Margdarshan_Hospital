@@ -23,6 +23,7 @@ return new class extends Migration
             $table->double('tax')->default(0);
             $table->double('qty')->default(0);
             $table->integer('stock_out')->default(0);
+            $table->integer('return_qty')->default(0);
             $table->double('purchase_rate')->default(0);
             $table->double('amount')->default(0);
             $table->double('tax_amount')->default(0);

@@ -43,38 +43,24 @@ function checkIpdVisitPaidAmount(){
 }
 $('#ipdVisit-modelForm').on('submit',function(e){
  e.preventDefault();
-    let symptoms_check  = validateField('ipdVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('ipdVisit-previousMedIssue', 'select');
-    let admissionDate_check  = validateField('ipdVisit-admissionDate', 'select');
-    let oldPatient_check  = validateField('ipdVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('ipdVisit-consultDoctor', 'select');
     let charge_check = validateField('ipdVisit-charge', 'amount');
-    let amount_check = validateField('ipdVisit-amount', 'amount');
-    let paymentMode_check = validateField('ipdVisit-paymentMode', 'select');
-    let paidAmount_check = validateField('ipdVisit-paidAmount', 'amount');
-    if(symptoms_check === true && previousMedIssue_check === true && admissionDate_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true  && amount_check === true && paymentMode_check === true && paidAmount_check === true){ 
+    if(consultDoctor_check === true && charge_check === true){ 
         let patientId = $('#patient_Id').val();
-        let symptoms = $('#ipdVisit-symptoms').val();
-        let previousMedIssue = $('#ipdVisit-previousMedIssue').val();
-        let note = $('#ipdVisit-note').val();
-        let appointment_date = $('#ipdVisit-admissionDate').val();
-        let oldPatient = $('#ipdVisit-oldPatient').val();
         let consultDoctor = $('#ipdVisit-consultDoctor').val();
         let charge = $('#ipdVisit-charge').val();
         let discount = $('#ipdVisit-discount').val();
         let taxPer = $('#ipdVisit-tax').val();
         let amount = $('#ipdVisit-amount').val();
-        let paymentMode = $('#ipdVisit-paymentMode').val();
-        let refNum = $('#ipdVisit-ipdVisit-refNum').val();
-        let paidAmount = $('#ipdVisit-paidAmount').val();
+        let desc = $('#ipdVisit-desc').val();
         $.ajax({
             url:ipdVisitSubmit,
             type:"POST",
             data:{
-                patientId:patientId,symptoms:symptoms,previousMedIssue:previousMedIssue,note:note,appointment_date:appointment_date,oldPatient:oldPatient,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,paymentMode:paymentMode,refNum:refNum,paidAmount:paidAmount
+                patientId:patientId,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,desc:desc
             },
             headers:{
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success:function(response){
                 if(response.success){
@@ -121,33 +107,21 @@ let table_visit = $('#ipd-in-visit-list').DataTable({
     columns:[
         {
             data:'visit_id',
-            name:'visit_id',
-            orderable: false,
-            searchable: true
+            name:'visit_id'
         },
         {
-            data:'appointment_date',
-            name:'appointment_date',
-            orderable: false,
-            searchable: true
+            data:'visit_date',
+            name:'visit_date'
         },
         {
             data:'doctor',
-            name:'doctor',
-            orderable: true,
-            searchable: true
+            name:'doctor'
         },
         {
-            data:'symptons',
-            name:'symptons',
-            orderable: true,
-            searchable: true
-        },
-         {
-            data:'status',
-            name:'status',
-            orderable: true,
-            searchable: true
+            data:'desc',
+            name:'desc',
+            orderable: false,
+            searchable: false
         },
         {
             data:'action',
@@ -155,7 +129,6 @@ let table_visit = $('#ipd-in-visit-list').DataTable({
             orderable: false,
             searchable: true
         },
-
     ]
 });
 function ipdVisitViewData(id){
@@ -167,7 +140,6 @@ function ipdVisitViewData(id){
         },
         data:{id:id},
         success:function(response){
-            console.log(response);
             if(response.success){
                 let patientData = response.data.ipdVisitPatientData[0];
                 let visitData = response.data.ipdVisitData[0];
@@ -185,27 +157,16 @@ function ipdVisitViewData(id){
                                 <tr>
                                     <th class="fw-medium">Patient Name</th>
                                     <td>${patientData.name}</td>
-                                    <th class="fw-medium">Appointment Date</th>
-                                    <td>${visitData.appointment_date}</td>
-                                </tr>
-                                <tr>
-                                <th class="fw-medium">Guardian Name</th>
-                                    <td>${patientData.guardian_name}</td>
-                                    <th class="fw-medium">Symptons</th>
-                                    <td>${visitData.symptoms}</td>
+                                     <th class="fw-medium">Guardian Name</th>
+                                <td>${patientData.guardian_name}</td>
                                 </tr>
                                 <tr>
                                 <th class="fw-medium">Gender</th>
                                     <td>${patientData.gender}</td>
-                                    <th class="fw-medium">Previous Health Issue</th>
-                                    <td>${visitData.previousMedIssue}</td>
-                                </tr>
-                                <tr>           
-                                <th class="fw-medium">DOB</th>
+                                     <th class="fw-medium">DOB</th>
                                     <td>${patientData.dob}</td>
-                                    <th class="fw-medium">Old Patient</th>
-                                    <td>${visitData.oldPatient}</td>
                                 </tr>
+                               
                                 <tr>     
                                     <th class="fw-medium">Phone</th>
                                     <td>${patientData.mobile}</td>
@@ -216,12 +177,11 @@ function ipdVisitViewData(id){
                                 <tr>    
                                     <th class="fw-medium">Blood Type</th>
                                     <td>${patientData.bloodtype}</td>   
-                                     <th class="fw-medium">Known Allergies</th>
-                                    <td>${visitData.known_allergies}</td>  
-                                </tr>
-                                <tr>         
                                     <th class="fw-medium">Marital Status</th>
                                     <td>${patientData.marital_status}</td> 
+                                </tr>
+                                <tr>         
+                                    
                                     <th class="fw-medium">Notes</th>
                                     <td>${visitData.note}</td>    
                                 </tr>
@@ -251,26 +211,16 @@ function ipdVisitEdit(id){
         },
         data:{id:id},
         success:function(response){
-            console.log(response);
             if(response.success){
                let visitData = response.data.ipdVisitData[0];
                 $('#ipd-new-checkup').modal('show');
                 $('#ipdVisitId').val(id);
-                $('#ipdVisit-symptoms').val(visitData.symptoms);
-                $('#ipdVisit-previousMedIssue').val(visitData.previous_med_issue);
-                $('#ipdVisit-note').val(visitData.note);
-                $('#ipdVisit-admissionDate').val(visitData.appointment_date);
-                $('#ipdVisit-oldPatient').val(visitData.old_patient);
-                $('ipdVisit-reference').val(visitData.appointment_date);
-                $('#ipdVisit-consultDoctor').val(visitData.consult_doctor);
-                $('#ipdVisit-charge').val(visitData.charge);
-                $('#ipdVisit-discount').val(visitData.discount);
-                $('#ipdVisit-tax').val(visitData.tax_per);
-                $('#ipdVisit-amount').val(visitData.amount);
-                $('#ipdVisit-paymentMode').val(visitData.payment_mode);
-                $('#ipdVisit-refNum').val(visitData.ref_num);
-                $('#ipdVisit-paidAmount').val('');
-                $('#ipdVisit-AlreadypaidAmount').val(visitData.paid_amount);
+                $('#ipdVisit-consultDoctor').val(visitData.consult_doctor).prop('disabled',true);
+                $('#ipdVisit-charge').val(visitData.charge).prop('disabled',true);;
+                $('#ipdVisit-discount').val(visitData.discount).prop('disabled',true);;
+                $('#ipdVisit-tax').val(visitData.tax_per).prop('disabled',true);;
+                $('#ipdVisit-amount').val(visitData.amount).prop('disabled',true);;
+                $('#ipdVisit-desc').val(visitData.note);
                 $('.ipdVisitSubmit').addClass('d-none');
                 $('.ipdVisitUpdate').removeClass('d-none');
                 $('.ipdVisit-AlreadypaidAmountCls').removeClass('d-none');
@@ -279,34 +229,20 @@ function ipdVisitEdit(id){
     });
 }
 function ipdVisitUpdate(id){
-    let symptoms_check  = validateField('ipdVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('ipdVisit-previousMedIssue', 'select');
-    let admissionDate_check  = validateField('ipdVisit-admissionDate', 'select');
-    let oldPatient_check  = validateField('ipdVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('ipdVisit-consultDoctor', 'select');
     let charge_check = validateField('ipdVisit-charge', 'amount');
-    let amount_check = validateField('ipdVisit-amount', 'amount');
-    let paymentMode_check = validateField('ipdVisit-paymentMode', 'select');
-    // let paidAmount_check = validateField('ipdVisit-paidAmount', 'amount');
-    if(symptoms_check === true && previousMedIssue_check === true && admissionDate_check == true && oldPatient_check === true && consultDoctor_check === true && charge_check === true && amount_check === true && paymentMode_check === true ){  
-        let symptoms = $('#ipdVisit-symptoms').val();
-        let previousMedIssue = $('#ipdVisit-previousMedIssue').val();
-        let note = $('#ipdVisit-note').val();
-        let appointment_date = $('#ipdVisit-admissionDate').val();
-        let oldPatient = $('#ipdVisit-oldPatient').val();
+    if(consultDoctor_check === true && charge_check === true){  
         let consultDoctor = $('#ipdVisit-consultDoctor').val();
         let charge = $('#ipdVisit-charge').val();
         let discount = $('#ipdVisit-discount').val();
         let taxPer = $('#ipdVisit-tax').val();
         let amount = $('#ipdVisit-amount').val();
-        let paymentMode = $('#ipdVisit-paymentMode').val();
-        let refNum = $('#ipdVisit-ipdVisit-refNum').val();
-        let paidAmount = $('#ipdVisit-paidAmount').val() || 0;
+        let desc = $('#ipdVisit-desc').val();
         $.ajax({
             url:ipdVisitDataUpdate,
             type:"POST",
             data:{
-               id:id,symptoms:symptoms,previousMedIssue:previousMedIssue,note:note,appointment_date:appointment_date,oldPatient:oldPatient,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,paymentMode:paymentMode,refNum:refNum,paidAmount:paidAmount
+               id:id,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,desc:desc
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -332,7 +268,7 @@ function ipdVisitUpdate(id){
         });
     }else{
         console.log("Please fill all required fields");
-    }    
+    } 
 }
 function ipdVisitDelete(id){
    Swal.fire({

@@ -181,14 +181,17 @@ Billing-add
                       </tr>
                       <tr>
                         <td colspan="2" class="border-0">
-                          <select id="billingAdd-paymentMode" class="form-select form-select-sm select2-cls">
+                          <label for="billingAdd-paymentMode" style="display: none;">Payment Mode</label>
+                          <select id="billingAdd-paymentMode" class="form-select form-select-sm select2-cls" onchange="validateField(this.id, 'select')">
                             <option value="">Select Payment Mode</option>
                           @foreach ($paymentmodes as $paymentmode)
                               <option value="{{$paymentmode->id}}">{{$paymentmode->name}}</option>
                           @endforeach
-                        </select></td>
+                        </select>
+                         <div class="billingAdd-paymentMode_errorCls d-none"></div>
+                      </td>
                         <td class="border-0">
-                          <input id="billingAdd-payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount">
+                          <input id="billingAdd-payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount" readonly>
                         </td>
                       </tr>
                     </table>

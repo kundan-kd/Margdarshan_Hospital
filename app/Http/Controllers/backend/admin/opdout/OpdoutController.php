@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Bed;
 use App\Models\Charge;
+use App\Models\Department;
 use App\Models\LabInvestigation;
 use App\Models\Medication;
 use App\Models\MedicineCategory;
@@ -90,6 +91,7 @@ class OpdoutController extends Controller
         $patients = Patient::where('id',$id)->get();
         $appointments = Appointment::where('patient_id',$patients[0]->id)->get();
         $medicineCategory = MedicineCategory::where('status',1)->get();
+        $departments = Department::where('status', 1) ->where('name', '!=', 'Admin')->get();
         $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
         $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
         $medicationData = Medication::where('patient_id',$patients[0]->id)->get();
@@ -98,7 +100,7 @@ class OpdoutController extends Controller
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
         $ipdAvailBeds = Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get();
         $icuAvailBeds = Bed::where('bed_group_id',4)->where('current_status','vacant')->where('status',1)->get();
-        return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds','icuAvailBeds'));
+        return view('backend.admin.modules.opdout.opd-out-details',compact('patients','appointments','medicineCategory','departments','doctorData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds','icuAvailBeds'));
     }
     function moveToIpdStatus(Request $request){
         $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
@@ -109,7 +111,8 @@ class OpdoutController extends Controller
             'type' =>'IPD',
             'bed_id' => $request->bed_id,
             'previous_type'=>$curr_status[0]->type,
-            'type_change_date' => $now
+            'type_change_date' => $now,
+            'current_statuts' => "Admitted"
         ]);
         if($update){
             Appointment::where('patient_id',$request->id)->update([
@@ -122,7 +125,6 @@ class OpdoutController extends Controller
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $request->id,
                 'occupied_date' =>$now
-
             ]);
             $payment_bills = new PaymentBill();
             $payment_bills->type = "OPD";
@@ -132,7 +134,6 @@ class OpdoutController extends Controller
             $payment_bills->title = 'Patient Moved to IPD';
             $payment_bills->save();
             $new_created_at = $payment_bills->created_at;
-
             if ($previous_payment_bill) {
                 $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
                $created_at = new DateTime($previous_payment_bill->created_at);
@@ -211,19 +212,13 @@ class OpdoutController extends Controller
     function opdOutVisitSubmit(Request $request){
         $validator = Validator::make($request->all(),[
                 'patientId' => 'required',
-                'symptoms' => 'nullable',
-                'previousMedIssue' => 'nullable',
-                'note' => 'nullable',
-                'appointment_date' => 'nullable',
-                'oldPatient' => 'nullable',
                 'consultDoctor' => 'nullable',
                 'charge' => 'required',
                 'discount' => 'nullable',
                 'taxPer' => 'nullable',
                 'amount' => 'required',
-                'paymentMode' => 'nullable',
-                'refNum' => 'nullable',
-                'paidAmount' => 'nullable'
+                'visit' => 'nullable',
+                'desc' => 'nullable'
         ]);
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
@@ -231,42 +226,27 @@ class OpdoutController extends Controller
         $optoutVisit = new Visit();
         $optoutVisit->type = "OPD";
         $optoutVisit->patient_id = $request->patientId;
-        $optoutVisit->symptoms = $request->symptoms;
-        $optoutVisit->previous_med_issue = $request->previousMedIssue;
-        $optoutVisit->note = $request->note;
-        $optoutVisit->appointment_date = $request->appointment_date;
-        $optoutVisit->old_patient = $request->oldPatient;
         $optoutVisit->consult_doctor = $request->consultDoctor;
         $optoutVisit->charge = $request->charge;
         $optoutVisit->discount = $request->discount;
         $optoutVisit->tax_per = $request->taxPer;
         $optoutVisit->amount = $request->amount;
-        $optoutVisit->payment_mode = $request->paymentMode;
-        $optoutVisit->ref_num = $request->refNum;
-        $optoutVisit->paid_amount = $request->paidAmount;
+        $optoutVisit->visited_Date = $request->visit;
+        $optoutVisit->note = $request->desc;
         if($optoutVisit->save()){
             $payment_bills = new PaymentBill();
             $payment_bills->type = "OPD";
             $payment_bills->patient_id = $request->patientId;
             $payment_bills->amount_for = 'Visit';
-            $payment_bills->title = 'New Visit';
+            $payment_bills->title = 'Patient New Visit';
             $payment_bills->amount = $request->amount;
             $payment_bills->save();
-             
-            if($request->paidAmount > 0){
-                $payment_received = new PaymentReceived();
-                $payment_received->patient_id = $request->patientId;
-                $payment_received->type = 'OPD';
-                $payment_received->amount_for = 'Visit';
-                $payment_received->title = 'New Visit';
-                $payment_received->amount = $request->paidAmount;
-                $payment_received->save();
-            }
+
             $timelines = new Timeline();
             $timelines->type = "OPD";
             $timelines->patient_id = $request->patientId;
             $timelines->title = "New Visit";
-            $timelines->desc = "Appointment booked for opd on ".$request->appointment_date;
+            $timelines->desc = "Patient Visited to OPD";
             $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Patient Visit added successfully'],200);
@@ -283,13 +263,16 @@ class OpdoutController extends Controller
                 return 'MDVI0'.$row->id; //fetched through modal relationship
             })
             ->addColumn('appointment_date',function($row){
-                return $row->appointment_date; //fetched through modal relationship
+                return $row->appointment_date ?? 'NA'; //fetched through modal relationship
+            })
+            ->addColumn('visit_date',function($row){
+                return $row->visited_date; //fetched through modal relationship
             })
             ->addColumn('doctor',function($row){
                 return 'Dr. '.$row->doctorData->name;
             })
-            ->addColumn('symptons',function($row){
-                return $row->symptoms;
+            ->addColumn('paid_amount',function($row){
+                return $row->paid_amount ?? '0';
             })
             ->addColumn('status',function($row){
                 return $row->status;
@@ -298,7 +281,7 @@ class OpdoutController extends Controller
             ->addColumn('action',function($row){
                 return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#opd-out-visit-view" onclick="opdOutVisitViewData('.$row->id.')">
                         <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                        </a> 
+                        </a>
                         <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                         <iconify-icon icon="lucide:edit" onclick="opdOutVisitEdit('.$row->id.')"></iconify-icon>
                         </a>-->

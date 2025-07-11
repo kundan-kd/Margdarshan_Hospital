@@ -13,6 +13,7 @@ function resetVisit(){
     $('#opdOutVisit-paymentMode').val('');
     $('#opdOutVisit-refNum').val('');
     $('#opdOutVisit-paidAmount').val('');
+    $('.edit-hide').removeClass('d-none');
     $('.opdOutVisitSubmit').removeClass('d-none');
     $('.opdOutVisitUpdate').addClass('d-none');
 }
@@ -41,34 +42,23 @@ function checkOpdVisitPaidAmount(){
 }
 $('#opdOutVisit-modelForm').on('submit',function(e){
  e.preventDefault();
-    let symptoms_check  = validateField('opdOutVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('opdOutVisit-previousMedIssue', 'select');
-    let oldPatient_check  = validateField('opdOutVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('opdOutVisit-consultDoctor', 'select');
     let charge_check = validateField('opdOutVisit-charge', 'amount');
-    let amount_check = validateField('opdOutVisit-amount', 'amount');
-    let paymentMode_check = validateField('opdOutVisit-paymentMode', 'select');
-    let paidAmount_check = validateField('opdOutVisit-paidAmount', 'amount');
-    if(symptoms_check === true && previousMedIssue_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true  && amount_check === true && paymentMode_check === true && paidAmount_check === true){ 
+    let visit_check = validateField('opdOutVisit-visitDate', 'select');
+    if(consultDoctor_check === true && charge_check === true  && visit_check === true){ 
         let patientId = $('#patient_Id').val();
-        let symptoms = $('#opdOutVisit-symptoms').val();
-        let previousMedIssue = $('#opdOutVisit-previousMedIssue').val();
-        let note = $('#opdOutVisit-note').val();
-        let appointment_date = $('#opdOutVisit-admissionDate').val();
-        let oldPatient = $('#opdOutVisit-oldPatient').val();
         let consultDoctor = $('#opdOutVisit-consultDoctor').val();
         let charge = $('#opdOutVisit-charge').val();
         let discount = $('#opdOutVisit-discount').val();
         let taxPer = $('#opdOutVisit-tax').val();
         let amount = $('#opdOutVisit-amount').val();
-        let paymentMode = $('#opdOutVisit-paymentMode').val();
-        let refNum = $('#opdOutVisit-opdOutVisit-refNum').val();
-        let paidAmount = $('#opdOutVisit-paidAmount').val();
+        let visit = $('#opdOutVisit-visitDate').val();
+        let desc = $('#opdOutVisit-desc').val();
         $.ajax({
             url:opdOutVisitSubmit,
             type:"POST",
             data:{
-                patientId:patientId,symptoms:symptoms,previousMedIssue:previousMedIssue,note:note,appointment_date:appointment_date,oldPatient:oldPatient,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,paymentMode:paymentMode,refNum:refNum,paidAmount:paidAmount
+                patientId:patientId,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,visit:visit,desc:desc
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -118,40 +108,24 @@ let table_visit = $('#opd-out-visit-list').DataTable({
     columns:[
         {
             data:'visit_id',
-            name:'visit_id',
-            orderable: false,
-            searchable: true
+            name:'visit_id'
         },
         {
             data:'appointment_date',
-            name:'appointment_date',
-            orderable: false,
-            searchable: true
+            name:'appointment_date'
+        },
+        {
+            data:'visit_date',
+            name:'visit_date'
         },
         {
             data:'doctor',
-            name:'doctor',
-            orderable: true,
-            searchable: true
+            name:'doctor'
         },
         {
-            data:'symptons',
-            name:'symptons',
-            orderable: true,
-            searchable: true
-        },
-         {
-            data:'status',
-            name:'status',
-            orderable: true,
-            searchable: true
-        },
-        {
-            data:'action',
-            name:'action',
-            orderable: false,
-            searchable: true
-        },
+            data:'paid_amount',
+            name:'paid_amount'
+        }
 
     ]
 });
@@ -251,20 +225,10 @@ function opdOutVisitEdit(id){
                let visitData = response.data.outVisitData[0];
                 $('#opd-new-checkup').modal('show');
                 $('#opdOutVisitId').val(id);
-                $('#opdOutVisit-symptoms').val(visitData.symptoms);
-                $('#opdOutVisit-previousMedIssue').val(visitData.previousMedIssue);
-                $('#opdOutVisit-note').val(visitData.note);
-                $('#opdOutVisit-admissionDate').val(visitData.appointment_date);
-                $('#opdOutVisit-oldPatient').val(visitData.oldPatient);
-                $('opdOutVisit-reference').val(visitData.appointment_date);
                 $('#opdOutVisit-consultDoctor').val(visitData.consultDoctor);
-                $('#opdOutVisit-charge').val(visitData.charge);
-                $('#opdOutVisit-discount').val(visitData.discount);
-                $('#opdOutVisit-tax').val(visitData.taxPer);
-                $('#opdOutVisit-amount').val(visitData.amount);
-                $('#opdOutVisit-paymentMode').val(visitData.paymentMode);
-                $('#opdOutVisit-refNum').val(visitData.refNum);
-                $('#opdOutVisit-paidAmount').val(visitData.paidAmount);
+                $('#opdOutVisit-visit').val(visitData.visited_date);
+                $('#opdOutVisit-desc').val(visitData.note);
+                $('.edit-hide').addClass('d-none1');
                 $('.opdOutVisitSubmit').addClass('d-none');
                 $('.opdOutVisitUpdate').removeClass('d-none');
             }
@@ -272,34 +236,17 @@ function opdOutVisitEdit(id){
     });
 }
 function opdOutVisitUpdate(id){
-    let symptoms_check  = validateField('opdOutVisit-symptoms', 'input');
-    let previousMedIssue_check  = validateField('opdOutVisit-previousMedIssue', 'select');
-    let oldPatient_check  = validateField('opdOutVisit-oldPatient', 'select');
     let consultDoctor_check = validateField('opdOutVisit-consultDoctor', 'select');
-    let charge_check = validateField('opdOutVisit-charge', 'amount');
-    let tax_check = validateField('opdOutVisit-tax', 'amount');
-    let amount_check = validateField('opdOutVisit-amount', 'amount');
-    let paymentMode_check = validateField('opdOutVisit-paymentMode', 'select');
-    let paidAmount_check = validateField('opdOutVisit-paidAmount', 'amount');
-    if(symptoms_check === true && previousMedIssue_check === true && oldPatient_check === true && consultDoctor_check === true && charge_check === true && tax_check === true && amount_check === true && paymentMode_check === true && paidAmount_check === true){  
-        let symptoms = $('#opdOutVisit-symptoms').val();
-        let previousMedIssue = $('#opdOutVisit-previousMedIssue').val();
-        let note = $('#opdOutVisit-note').val();
-        let appointment_date = $('#opdOutVisit-admissionDate').val();
-        let oldPatient = $('#opdOutVisit-oldPatient').val();
+    let visit_check = validateField('opdOutVisit-visitDate', 'select');
+    if(consultDoctor_check === true && visit_check === true ){  
         let consultDoctor = $('#opdOutVisit-consultDoctor').val();
-        let charge = $('#opdOutVisit-charge').val();
-        let discount = $('#opdOutVisit-discount').val();
-        let taxPer = $('#opdOutVisit-tax').val();
-        let amount = $('#opdOutVisit-amount').val();
-        let paymentMode = $('#opdOutVisit-paymentMode').val();
-        let refNum = $('#opdOutVisit-opdOutVisit-refNum').val();
-        let paidAmount = $('#opdOutVisit-paidAmount').val();
+        let visit = $('#opdOutVisit-opdOutVisit-visitDate').val();
+        let desc = $('#opdOutVisit-desc').val();
         $.ajax({
             url:opdOutVisitDataUpdate,
             type:"POST",
             data:{
-               id:id,symptoms:symptoms,previousMedIssue:previousMedIssue,note:note,appointment_date:appointment_date,oldPatient:oldPatient,consultDoctor:consultDoctor,charge:charge,discount:discount,taxPer:taxPer,amount:amount,paymentMode:paymentMode,refNum:refNum,paidAmount:paidAmount
+               id:id,consultDoctor:consultDoctor,visit:visit,desc:desc
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

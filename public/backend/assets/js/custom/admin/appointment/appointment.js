@@ -183,7 +183,7 @@ function getPatientData(x) {
             success: function(response) {
                 const getData = response.data;
 
-                if (!getData || getData.length === 0) {
+                if (!getData || getData.length === 0) { 
                     $('.patient-name-list').append(`<li class="list-group-item">No Data Found!</li>`);
                 } else {
                     const addedIds = new Set();

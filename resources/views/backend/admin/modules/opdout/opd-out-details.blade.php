@@ -229,9 +229,9 @@
                     <div class="col-md-12 px-3">
                        <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Checkups</h6>
-                        @can('OPD Visit Add')
+                        {{-- @can('OPD Visit Add')
                         <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"       data-bs-toggle="modal" data-bs-target="#opd-new-checkup" onclick="resetVisit()"> <i class="ri-add-line"></i> New Checkup</button>
-                        @endcan
+                        @endcan --}}
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
                       <div class="basic-data-table">
@@ -240,10 +240,9 @@
                              <tr>
                               <th class="fw-medium ">Visit ID</th>
                               <th class="fw-medium ">Appointment Date</th>
-                              <th class="fw-medium ">Consultant</th>
-                              <th class="fw-medium ">Symptoms</th>
-                              <th class="fw-medium ">Status</th>
-                              <th class="fw-medium ">Action</th>
+                              <th class="fw-medium ">Visited Date</th>
+                              <th class="fw-medium ">Consultant Doctor</th>
+                              <th class="fw-medium ">Paid Amount</th>
                              </tr>
                           </thead>
                           <tbody>
@@ -837,71 +836,24 @@
   </div>
 </div>
 <!-- Add medication end -->
-
 <!--  opd new checkup Start -->
  <div class="modal fade" id="opd-new-checkup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-new-checkupLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header p-11 bg-primary-500">
-        <h6 class="modal-title fw-normal text-md text-white" id="opd-new-checkupLabel">Patient Details</h6>
+        <h6 class="modal-title fw-normal text-md text-white" id="opd-new-checkupLabel">OPD Visit Details</h6>
         <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form action="" id="opdOutVisit-modelForm">
       <div class="modal-body">
         <div class="row">
-        <div class="col-md-6 pt-3">
+          <input type="hidden" id="opdOutVisit-patientId" value="{{$patients[0]->id}}">
+          <input type="hidden" id="opdOutVisitId">
+        <div class="col-12 pt-3">
           <div class="row gy-3">
-             <div class="col-md-12">
-              <input type="hidden" id="opdOutVisitId">
-                <table class="table table-borderless pharmacy-bill-detail-table w-75 ">
-                     <tbody>
-                      <input type="hidden" id="opdOutVisit-patientId" value="{{$patients[0]->id}}">
-                      <tr>
-                       <th class="fw-medium">Patient Name</th>
-                       <td class="text-neutral-700">{{$patients[0]->name}}</td>
-                     </tr>
-                     <tr>
-                       <th class="fw-medium">Gender</th>
-                       <td class="text-neutral-700">{{$patients[0]->gender}}</td>
-                     </tr>
-                  </tbody></table>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium" for="opdOutVisit-symptoms">Symptoms</label>
-                <input type="text" id="opdOutVisit-symptoms" class="form-control form-control-sm" placeholder="Symptoms" value="" oninput="validateField(this.id,'input')">
-                <div class="opdOutVisit-symptoms_errorCls d-none"></div>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-medium" for="opdOutVisit-previousMedIssue">Previous Medical Issue</label>
-               <textarea id="opdOutVisit-previousMedIssue" class="form-control " rows="1" placeholder="Previous Medical Issue" oninput="validateField(this.id,'select')" value=""></textarea>
-                <div class="opdOutVisit-previousMedIssue_errorCls d-none"></div>
-             </div>
-             <div class="col-md-12">
-               <label class="form-label fw-medium">Note</label>
-               <textarea  id="opdOutVisit-note" class="form-control " rows="2" placeholder="Note" value=""></textarea>
-             </div>
-          </div>
-        </div>
-        <div class="col-md-6 bg-info-50 pt-3">
-          <div class="row gy-3">
-            <div class="col-md-6">
-              <label class="form-label fw-medium" for="opdOutVisit-admissionDate">Appointment Date</label>
-              <div class=" position-relative">
-                    <input id="opdOutVisit-admissionDate" class="form-control radius-8 bg-base opd-add-admission-date flatpickr-input active" type="date" placeholder="DD/MM/YYYY" value="{{ $curr_date}}">
-                </div>
-            </div>
-            <div class="col-md-6">
-               <label class="form-label fw-medium" for="opdOutVisit-oldPatient">Old Patient</label>
-              <select id="opdOutVisit-oldPatient" class="form-select form-select-sm select2" oninput="validateField(this.id,'select')">
-                 <option value="">Select</option>
-                 <option value="1">Yes</option>
-                 <option value="0">No</option>
-              </select>
-               <div class="opdOutVisit-oldPatient_errorCls d-none"></div>
-            </div>
             <div class="col-md-6">
               <label class="form-label fw-medium" for="opdOutVisit-consultDoctor"> Consultant Doctor</label> <sup class="text-danger">*</sup>
-               <select id="opdOutVisit-consultDoctor" class="form-select form-select-sm select2" oninput="validateField(this.id,'select')">
+               <select id="opdOutVisit-consultDoctor" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
                       <option value="">Select</option>
                       @foreach ($doctorData as $doctorName)
                       <option value="{{$doctorName->id}}">{{$doctorName->name}}</option>
@@ -909,68 +861,45 @@
               </select>
                <div class="opdOutVisit-consultDoctor_errorCls d-none"></div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 edit-hide">
               <label class="form-label fw-medium" for="opdOutVisit-charge"> Applied Charge</label>(₹) <sup class="text-danger">*</sup>
                <input id="opdOutVisit-charge" type="number" class="form-control form-control-sm" placeholder="Applied Charge" value="" oninput="validateField(this.id,'amount');calculateAmount()">
                 <div class="opdOutVisit-charge_errorCls d-none"></div>
             </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium" for="opdOutVisit-discount"> Discount</label>% <sup class="text-danger">*</sup>
+            <div class="col-md-6 edit-hide">
+              <label class="form-label fw-medium" for="opdOutVisit-discount"> Discount</label>% 
                <input id="opdOutVisit-discount" type="number" class="form-control form-control-sm" placeholder="Discount" value="" oninput="calculateAmount()">
                 <div class="opdOutVisit-discount_errorCls d-none"></div>
             </div>
-            <div class="col-md-6">
-              <label class="form-label fw-medium" for="opdOutVisit-tax"> Tax</label>% <sup class="text-danger">*</sup>
-               <input id="opdOutVisit-tax" type="number" class="form-control form-control-sm" placeholder="Discount" value=""  oninput="calculateAmount()">
+            <div class="col-md-6 edit-hide">
+              <label class="form-label fw-medium" for="opdOutVisit-tax"> Tax</label>% 
+               <input id="opdOutVisit-tax" type="number" class="form-control form-control-sm" placeholder="Tax" value=""  oninput="calculateAmount()">
                 <div class="opdOutVisit-tax_errorCls d-none"></div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 edit-hide">
               <label class="form-label fw-medium" for="opdOutVisit-amount"> Amount</label>(₹) <sup class="text-danger">*</sup>
                <input id="opdOutVisit-amount" type="number" class="form-control form-control-sm" placeholder="Amount" value="" readonly>
-                <div class="opdOutVisit-amount_errorCls d-none"></div>
             </div>
             <div class="col-md-6">
-             <label class="form-label fw-medium" for="opdOutVisit-paymentMode"> Payment Mode</label> <sup class="text-danger">*</sup>
-               <select id="opdOutVisit-paymentMode" class="form-select form-select-sm" oninput="validateField(this.id,'select')">
-                <option value="cash">Cash</option>
-                <option value="upi">UPI</option>
-                <option value="card">Card</option>
-                <option value="cheque">Cheque</option>
-                <option value="other">Other</option>
-              </select>
-               <div class="opdOutVisit-paymentMode_errorCls d-none"></div>
+              <label class="form-label fw-medium" for="opdOutVisit-visitDate"> Visit Date</label> <sup class="text-danger">*</sup>
+               <input id="opdOutVisit-visitDate" type="text" class="form-control form-control-sm" placeholder="DD/MM/YYYY" oninput="validateField(this.id,'select')">
+                 <div class="opdOutVisit-visitDate_errorCls d-none"></div>
             </div>
-            {{-- <div class="col-md-6 mb-3" style="display: none1;" id="upi-reference-no">
-              <label class="form-label fw-medium ">Reference Number</label>
-              <input id="opdOutVisit-refNum" type="number" class="form-control form-control-sm" placeholder=" Enter payment reference number">
-            </div> --}}
-            <div class="col-md-6 mb-3">
-             <label class="form-label fw-medium" for="opdOutVisit-paidAmount">Pay Amount</label> <sup class="text-danger">*</sup>
-               <input id="opdOutVisit-paidAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkOpdVisitPaidAmount()">
-                <div class="opdOutVisit-paidAmount_errorCls d-none"></div>
+            <div class="col-md-12">
+              <label class="form-label fw-medium" for="opdOutVisit-desc"> Description</label>
+               <input id="opdOutVisit-desc" type="text" class="form-control form-control-sm" placeholder="Enter Doctor Suggestions">
             </div>
-            <div class="col-md-6 mb-3 opdOutVisit-AlreadypaidAmountCls d-none">
-             <label class="form-label fw-medium" for="opdOutVisit-paidAmount">Paid Amount</label> 
-               <input id="opdOutVisit-AlreadypaidAmount" type="number" class="form-control form-control-sm" placeholder="Paid Amount" readonly>
-            </div>
-            <!-- <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium"> Live Consultation</label>
-               <select class="form-select form-select-sm select2" >
-                 <option selected>No</option>
-                 <option value="1">Yes</option>
-              </select>
-            </div> -->
           </div>
         </div>
        </div>
       </div>
       <div class="modal-footer">
-         <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
         @can('OPD Visit Add')
-          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutVisitSubmit"><i class="ri-checkbox-circle-line"></i> Submit</button>
+          <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVisitSubmit"><i class="ri-checkbox-circle-line"></i> Submit</button>
         @endcan
         @can('OPD Visit Edit')
-          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutVisitUpdate d-none" onclick="opdOutVisitUpdate(document.getElementById('opdOutVisitId').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
+          <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 ipdVisitUpdate d-none" onclick="opdOutVisitUpdate(document.getElementById('opdOutVisitId').value)"><i class="ri-checkbox-circle-line"></i> Update</button>
         @endcan
       </div>
     </div>
@@ -1124,6 +1053,7 @@
     }
     getDatePicker('#opdOutVital-date'); 
     getDatePicker('#opdOutVisit-admissionDate'); 
+    getDatePicker('#opdOutVisit-visitDate'); 
     // Flat pickr or date picker js 
 
 $('#opd-add-medication-dose').on('shown.bs.modal', function () {
@@ -1135,6 +1065,11 @@ $('#opd-add-medication-dose').on('shown.bs.modal', function () {
 $('#opd-add-lab').on('shown.bs.modal', function () {
     $('.select2-cls').select2({
         dropdownParent: $('#opd-add-lab')
+    });
+});
+$('#opd-new-checkup').on('shown.bs.modal', function () {
+    $('.select2-cls').select2({
+        dropdownParent: $('#opd-new-checkup')
     });
 });
   const ipdVisitMedicineNameOpd = "{{route('common.getMedicineName')}}";

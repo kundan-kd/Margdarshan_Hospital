@@ -96,7 +96,7 @@
         </a>
         </li>
       @endcan
-      @can('OPD Patient View')
+      @can('IPD Patient View')
       <li class="mb-1">
         <a href="{{route('ipd-in.index')}}">
           <i class="ri-stethoscope-line"></i>
@@ -188,6 +188,9 @@
           </li> --}}
           <li>
             <a href="{{route('department.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Department</a>
+          </li>
+          <li>
+            <a href="{{route('team.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Sales Team</a>
           </li>
           <li>
             <a href="{{route('user.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>User</a>

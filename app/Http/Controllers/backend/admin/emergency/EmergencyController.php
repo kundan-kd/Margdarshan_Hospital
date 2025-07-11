@@ -97,6 +97,13 @@ class EmergencyController extends Controller
         }
     }
     public function addPatient(Request $request){
+        if($request->id != ''){
+            $oldPatientId = Patient::where('id',$request->id)->get(['patient_id']);
+            $prevPatient = Patient::where('patient_id',$oldPatientId[0]->patient_id)->latest('id')->first();
+            if($prevPatient->current_status == "Admitted"){
+                return response()->json(['previous_admitted'=>'Kindly discharge this patient from '.$prevPatient->type.' before adding new']);
+            }
+        }
          $validator = Validator::make($request->all(),[
             'name' => 'required',
             'guardian_name' => 'required',
@@ -132,20 +139,27 @@ class EmergencyController extends Controller
 
         $patient->current_status = "Admitted";
         if($patient->save()){
-            $patient->patient_id = "MHPT". $month.$year.$patient->id;
-            $patient->save();
-            //generate bar code
-            $generator = new BarcodeGeneratorPNG();
-            $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
-            if ($barcode) {
-                   //generate barcode and store in storage/public/barcode
-                    $fileName = $patient->patient_id.'.' . time() . '.png';
-                     $path = public_path('backend/uploads/barcode/' . $fileName);
-                    file_put_contents($path, $barcode);
-                    $patient->barcode = $fileName; //store barcode name in database
-                    $patient->save();
-            } 
-            //generate bar code end
+            if($request->id != ''){
+                $oldPatientId = Patient::where('id',$request->id)->get(['patient_id','barcode']);
+                $patient->patient_id = $oldPatientId[0]->patient_id;
+                $patient->barcode = $oldPatientId[0]->barcode;
+                $patient->save();
+            }else{
+                $patient->patient_id = "MHPT". $month.$year.$patient->id;
+                $patient->save();
+                //generate bar code
+                $generator = new BarcodeGeneratorPNG();
+                $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
+                if ($barcode) {
+                    //generate barcode and store in storage/public/barcode
+                        $fileName = $patient->patient_id.'.' . time() . '.png';
+                        $path = public_path('backend/uploads/barcode/' . $fileName);
+                        file_put_contents($path, $barcode);
+                        $patient->barcode = $fileName; //store barcode name in database
+                        $patient->save();
+                } 
+                //generate bar code end
+            }
             Bed::where('id',$request->bedNumId)->update([
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $patient->id,
@@ -159,9 +173,9 @@ class EmergencyController extends Controller
             $payment_bills->amount_for = 'Bed Charge';
             $payment_bills->title = 'Patient Admitted to Emergency';
             $payment_bills->save();
-            return response()->json(['success'=>'New IPD Patient added successfully'],201);
+            return response()->json(['success'=>'New Emergency Patient added successfully'],201);
         }else{
-            return response()->json(['error_success'=>'IPD Patient not added'],500);
+            return response()->json(['error_success'=>'Emergency Patient not added'],500);
         }
     }
     public function getEmergencyPatientData(Request $request){

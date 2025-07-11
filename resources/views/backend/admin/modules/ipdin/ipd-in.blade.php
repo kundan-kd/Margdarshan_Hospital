@@ -175,7 +175,17 @@
       </div>
       <form action="" id="ipd-addPatientForm">
         <div class="modal-body">
-            <div class="row gy-3">
+          <div class="row gy-3">
+          <div class="col-6">
+            <label class="form-label fw-normal" for="ipd-patientMobile">Phone</label>
+            <input type="number" id="ipd-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile');getPatientDetails(this.value)">
+              <div class="d-block position-relative" style="z-index :99;">
+                    <ul class="search-item list-group position-absolute w-100 rounded-0 patient-data-list">
+                      <!-- dropdown list of patients appended here using JS -->
+                    </ul>
+              </div>
+            <div class="ipd-patientMobile_errorCls d-none"></div>
+          </div>
           <div class="col-6">
             <input type="hidden" id="ipdPatientId">
             <label class="form-label fw-normal" for="ipd-patientName">Patient Name</label>
@@ -233,11 +243,7 @@
             </select>
             <div class="ipd-patientMStatus_errorCls d-none"></div>
           </div>
-          <div class="col-6">
-            <label class="form-label fw-normal" for="ipd-patientMobile">Phone</label>
-            <input type="number" id="ipd-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile')">
-            <div class="ipd-patientMobile_errorCls d-none"></div>
-          </div>
+          
           <div class="col-6">
             <label class="form-label fw-normal" for="ipd-patientAddess">Address</label>
             <input type="text" id="ipd-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
@@ -312,8 +318,9 @@
   const ipdPatientDataDelete = "{{route('ipd-ipdPatientDataDelete')}}"; 
   const getBedDetailsIpd = "{{route('ipd-getBedDetailsIpd')}}"; 
   const getBedDataIpd = "{{route('ipd-getBedDataIpd')}}"; 
-  
 
+  const getPatientDataUsingMobile = "{{route('common.getPatientData')}}"; 
+  const fillPatientData = "{{route('common.fillPatientData')}}"; 
   
 </script>
   <script src="{{asset('backend/assets/js/custom/admin/ipdin/ipdin.js')}}"></script>

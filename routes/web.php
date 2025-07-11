@@ -48,6 +48,8 @@ Route::post('/verify-otp',[AuthenticationController::class,'verifyotp'])->name('
 Route::post('/update-password',[AuthenticationController::class,'updatepass'])->name('auth.new-pass-update');
 Route::get('/logout',[AuthenticationController::class,'logout'])->name('auth.logout');
 Route::get('/setup-roles', [AuthenticationController::class, 'setupRoles']);
+Route::get('/clear-cache', [AuthenticationController::class, 'clearAll']);
+
 
 Route::middleware(['prevent-back'])->group(function () {
 Route::get('/my-dashboard',[AuthenticationController::class,'dashboard'])->name('auth.dashboard');
@@ -445,7 +447,10 @@ Route::get('/medicine-bill-print/{id}',[InvoiceController::class,'medicineBillPr
 Route::get('/appointment-bill-print/{id}',[InvoiceController::class,'appointmentBillPrint']);
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
-   Route::get('/barcode', [CommonController::class, 'barCodeGenerate']);
+Route::get('/barcode', [CommonController::class, 'barCodeGenerate']);
+Route::post('/common-patient-data',[CommonController::class,'getPatientData'])->name('common.getPatientData');
+Route::post('/common-patient-data-fill',[CommonController::class,'fillPatientData'])->name('common.fillPatientData');
+
 
 
 

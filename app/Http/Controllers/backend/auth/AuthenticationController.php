@@ -10,6 +10,7 @@ use App\Models\PaymentReceived;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -141,6 +142,14 @@ class AuthenticationController extends Controller
     $editor->givePermissionTo($edit);
 
     return 'Roles and permissions created!';
-}
+   }
+   public function clearAll(){
+      Artisan::call('view:clear');
+      Artisan::call('route:clear');
+      Artisan::call('cache:clear');
+      Artisan::call('config:clear');
+      return response()->json(['success' => 'All caches cleared successfully!']);
+   }
+
 
 }

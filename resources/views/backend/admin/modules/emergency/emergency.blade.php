@@ -85,7 +85,17 @@
       </div>
       <form action="" id="emergency-addPatientForm">
         <div class="modal-body">
-            <div class="row gy-3">
+          <div class="row gy-3">
+          <div class="col-6">
+            <label class="form-label fw-normal" for="emergency-patientMobile">Phone</label>
+            <input type="number" id="emergency-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile');getPatientDetails(this.value)">
+            <div class="d-block position-relative" style="z-index :99;">
+                    <ul class="search-item list-group position-absolute w-100 rounded-0 patient-data-list">
+                      <!-- dropdown list of patients appended here using JS -->
+                    </ul>
+              </div>
+            <div class="emergency-patientMobile_errorCls d-none"></div>
+          </div>
           <div class="col-6">
             <input type="hidden" id="emergencyPatientId">
             <label class="form-label fw-normal" for="emergency-patientName">Patient Name</label>
@@ -143,11 +153,7 @@
             </select>
             <div class="emergency-patientMStatus_errorCls d-none"></div>
           </div>
-          <div class="col-6">
-            <label class="form-label fw-normal" for="emergency-patientMobile">Phone</label>
-            <input type="number" id="emergency-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile')">
-            <div class="emergency-patientMobile_errorCls d-none"></div>
-          </div>
+          
           <div class="col-6">
             <label class="form-label fw-normal" for="emergency-patientAddess">Address</label>
             <input type="text" id="emergency-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
@@ -222,6 +228,8 @@
   const getBedDatasEmergency = "{{route('emergency-getBedDatasEmergency')}}"; 
   const getBedDetailsEmergency = "{{route('emergency-getBedDetailsEmergency')}}"; 
 
+  const getPatientDataUsingMobile = "{{route('common.getPatientData')}}"; 
+  const fillPatientData = "{{route('common.fillPatientData')}}"; 
   
 </script>
   <script src="{{asset('backend/assets/js/custom/admin/emergency/emergency.js')}}"></script>

@@ -118,23 +118,6 @@ View Sale Return
             <hr class="mb-3">
             <div class="row">
                 <div class="col-md-6">
-                  <div class="row ">
-                        <div class="col-md-6 mb-3">
-                          <label class="form-label fw-medium">Res Doctor</label>
-                          <select id="billingEdit-resDoctor" class="form-select form-select-sm select2-cls  w-100" disabled>
-                              <option value="" selected>Select</option>
-                            @foreach ($doctors as $doctor)
-                                <option value="{{$doctor->id}}"{{$doctor->id == $doctors[0]->id ? 'selected':''}}>{{$doctor->name}}</option>
-                            @endforeach
-                          </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <label class="form-label fw-medium">Out Doctor Name</label>
-                          <input id="billingEdit-outDoctor" type="text" class="form-control form-control-sm" value="{{$billings[0]->out_doctor_name ?? ''}}" disabled>
-                        </div>
-                    </div>
-                    <label class="form-label fw-medium">Note</label>
-                    <textarea id="billingEdit-note" class="form-control " rows="4" cols="50" placeholder="Note" disabled>{{$billings[0]->naration ?? ''}}</textarea>
                 </div>
                 <div class="col-md-4 offset-2">
                     <table class="table table-sm">

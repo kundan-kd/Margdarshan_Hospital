@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backend\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Medication;
 use App\Models\Medicine;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
@@ -24,6 +25,14 @@ public function barCodeGenerate()
     return response($barcode)
         ->header('Content-Type', 'image/png');
 }
+public function getPatientData(Request $request){
+    $getData = Patient::where('mobile',$request->mobile)->get();
+    return response()->json(['success'=>'Patient data found','data'=>$getData],200);
+}
+public function fillPatientData(Request $request){
+    $getData = Patient::where('id',$request->id)->get();
+    return response()->json(['success'=>'Patient detail found','data'=>$getData],200);
 
+}
     
 }

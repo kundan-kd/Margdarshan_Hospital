@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
+            $table->string('name',30)->nullable();
+            $table->integer('status')->default(1);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

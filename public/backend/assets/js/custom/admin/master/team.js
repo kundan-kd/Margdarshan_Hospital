@@ -5,7 +5,7 @@ let table = $('#team-table').DataTable({
     processing: true,
     serverSide: true,
     ajax:{
-        url:viewteams,
+        url:viewTeams,
         type:"POST",
         headers:{
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
@@ -39,7 +39,7 @@ let table = $('#team-table').DataTable({
 
 $('.team-add').on('click',function(e){
     e.preventDefault();
-    $('.team-title').html('Add User Type');
+    $('.team-title').html('Add Team');
     $('#teamID').val('');
     $('#teamName').val('');
     $('.addTeamUpdate').addClass('d-none');
@@ -90,7 +90,7 @@ $('#addTeamForm').on('submit',function(e){
 // ------team update starts ----
 function teamEdit(id){
 $.ajax({
-    url: getteamData,
+    url: getTeamData,
     type:"POST",
     headers:{
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -101,7 +101,7 @@ $.ajax({
         if(response.success){
             getData = response.data[0];
             // console.log(getData);
-            $('.team-title').html('Update User Type');
+            $('.team-title').html('Edit Team');
             $('#teamID').val(getData.id);
             $('#teamName').val(getData.name);
             $('.addTeamSubmit').addClass('d-none');
@@ -174,46 +174,6 @@ function statusSwitch(id){
         error: function(xhr, status, error) {
             console.error(xhr.responseText);
             alert("An error occurred: " + error);
-        }
-    });
-}
-
-function teamDelete(id){
-    Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-        customClass: {
-            title: 'swal-title-custom'
-          }        
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: deleteteamData,
-                type: "POST",
-                data: {
-                    id: id
-                },
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire("Deleted!", response.success, "success");
-                        $('#team-table').DataTable().ajax.reload();
-                    } else {
-                        Swal.fire("Error!", "Error", "error");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                    Swal.fire("Error!", "An error occurred: " + error, "error");
-                }
-            });
         }
     });
 }

@@ -19,6 +19,7 @@ use App\Http\Controllers\backend\admin\master\MedicinegroupController;
 use App\Http\Controllers\backend\admin\master\PaymentmodeController;
 use App\Http\Controllers\backend\admin\master\RoomnumberController;
 use App\Http\Controllers\backend\admin\master\RoomtypeController;
+use App\Http\Controllers\backend\admin\master\TeamController;
 use App\Http\Controllers\backend\admin\master\TestnameController;
 use App\Http\Controllers\backend\admin\master\TesttypeController;
 use App\Http\Controllers\backend\admin\master\UnitController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\backend\admin\opdout\OpdoutController;
 use App\Http\Controllers\backend\admin\pharmacy\BillingController;
 use App\Http\Controllers\backend\admin\pharmacy\MedicineController;
 use App\Http\Controllers\backend\admin\pharmacy\PurchaseController;
+use App\Http\Controllers\backend\admin\sales\LeadController;
 use App\Http\Middleware\RedirectIfNotAuthenticated;
 use App\Models\Company;
 use App\Models\Composition;
@@ -244,6 +246,13 @@ Route::post('/composition-update',[CompositionController::class,'updateCompositi
 Route::post('/composition-status-update',[CompositionController::class,'statusUpdate'])->name('composition.statusUpdate');
 Route::post('/composition-delete',[CompositionController::class,'deleteCompositionData'])->name('composition.deleteCompositionData');
 
+Route::get('/team',[TeamController::class,'index'])->name('team.index');
+Route::post('/team-view',[TeamController::class,'viewTeams'])->name('team.viewTeams');
+Route::post('/team-add',[TeamController::class,'addTeam'])->name('team.addTeam');
+Route::post('/team-data',[TeamController::class,'getTeamData'])->name('team.getTeamData');
+Route::post('/team-update',[TeamController::class,'updateTeamData'])->name('team.updateTeamData');
+Route::post('/team-status-update',[TeamController::class,'statusUpdate'])->name('team.statusUpdate');
+
 Route::get('/billing',[BillingController::class,'index'])->name('billing.index');
 Route::get('/billing-view',[BillingController::class,'billingView'])->name('billing.billingView');
 Route::get('/billing-add',[BillingController::class,'billingAdd'])->name('billing.billingAdd');
@@ -451,7 +460,12 @@ Route::get('/barcode', [CommonController::class, 'barCodeGenerate']);
 Route::post('/common-patient-data',[CommonController::class,'getPatientData'])->name('common.getPatientData');
 Route::post('/common-patient-data-fill',[CommonController::class,'fillPatientData'])->name('common.fillPatientData');
 
-
+Route::get('/process-center-lead',[LeadController::class,'lead'])->name('sales.lead');
+Route::post('/process-center-lead-add',[LeadController::class,'addLead'])->name('sales.addLead');
+Route::get('/process-center-bulk-lead',[LeadController::class,'bulkLead'])->name('sales.bulkLead');
+Route::post('/process-center-bulk-lead-add',[LeadController::class,'addBulkLead'])->name('sales.addBulkLead');
+Route::get('/process-center-lead-center',[LeadController::class,'leadCenter'])->name('sales.leadCenter');
+Route::post('/process-center-lead-center-view',[LeadController::class,'viewLeads'])->name('sales.viewLeads');
 
 
 });

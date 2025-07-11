@@ -149,11 +149,11 @@
                         <div class="col-md-7 p-3">
                             <div class="mb-5">
                               <h6 class="text-md fw-medium">VISITS</h6>
-                                <div class="table-responsive table-height">
+                                <div class="table-responsive table-height" style="max-height: 250px; overflow-y: auto;">
                                   <table class="table striped-table border-0 mb-0 table-sm">
                                     <thead>
                                        <tr>
-                                        <th class="fw-medium">Appointment Date</th>
+                                        <th class="fw-medium">Visit Date & Time</th>
                                         <th class="fw-medium">Consultant</th>
                                        </tr>
                                     </thead>
@@ -163,7 +163,7 @@
                                         $doctor_name = app\Models\User::where('id',$visit->consult_doctor)->get(['name']);
                                       @endphp
                                         <tr>
-                                        <td>{{$visit->appointment_date}}</td>
+                                        <td>{{$visit->created_at}}</td>
                                         <td>{{$doctor_name[0]->name}}</td>
                                        </tr>
                                       @endforeach
@@ -173,7 +173,7 @@
                             </div>
                             <div class="mb-5">
                               <h6 class="text-md fw-medium">MEDICATION</h6>
-                                <div class="table-responsive table-height">
+                                <div class="table-responsive table-height" style="max-height: 250px; overflow-y: auto;">
                                   <table class="table table striped-table border-0 mb-0 table-sm">
                                     <thead>
                                        <tr>
@@ -202,7 +202,7 @@
                               </div>
                               <div class="mb-5">
                                 <h6 class="text-md fw-medium">LAB INVESTIGATIONS</h6>
-                                <div class="table-responsive table-height">
+                                <div class="table-responsive table-height" style="max-height: 250px; overflow-y: auto;">
                                   <table class="table striped-table border-0 mb-0 table-sm">
                                     <thead>
                                        <tr>

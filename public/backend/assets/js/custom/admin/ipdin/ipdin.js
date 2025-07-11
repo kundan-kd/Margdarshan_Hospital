@@ -149,29 +149,31 @@ function getBedData(id){
     });
 }
 function getBedDetails(id){
-    $.ajax({
-        url:getBedDetailsIpd,
-        type:"POST",
-        headers:{
-            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-        },
-        data:{id:id},
-        success:function(response){
-            if(response.success){
-                let getData = response.data[0];
-                let bedtype = response.bedTypeName[0];
-                $('#ipd-patientBedType').val(bedtype.name);
-                $('#ipd-patientBedFloor').val(getData.floor);
-                $('#ipd-patientBedCharge').val(getData.amount);
-            }else{
-                console.log('error found');
+    if(id != ''){
+        $.ajax({
+            url:getBedDetailsIpd,
+            type:"POST",
+            headers:{
+                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            data:{id:id},
+            success:function(response){
+                if(response.success){
+                    let getData = response.data[0];
+                    let bedtype = response.bedTypeName[0];
+                    $('#ipd-patientBedType').val(bedtype.name);
+                    $('#ipd-patientBedFloor').val(getData.floor);
+                    $('#ipd-patientBedCharge').val(getData.amount);
+                }else{
+                    console.log('error found');
+                }
+            },
+            error:function(xhr, status, error){
+                console.log(xhr.respnseText);
+                alert('An error occurred: '+error);
             }
-        },
-        error:function(xhr, status, error){
-            console.log(xhr.respnseText);
-            alert('An error occurred: '+error);
-        }
-    });
+        });
+    }
 
 }
 function getPatientDetails(mobile){

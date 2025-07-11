@@ -7,7 +7,7 @@ Team
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
     <h6 class="fw-normal mb-0">Team</h6>
     <div class="btns">
-      <a class="btn btn-primary-600  btn-sm fw-normal team-add" data-bs-toggle="modal" data-bs-target="#addteamModel"><i class="ri-add-line "></i> Add Team</a>
+      <a class="btn btn-primary-600  btn-sm fw-normal team-add" data-bs-toggle="modal" data-bs-target="#addTeamModel"><i class="ri-add-line "></i> Add Team</a>
     </div>
   </div>
      <!-- user type modal start -->
@@ -70,12 +70,11 @@ Team
 @endsection
 @section('extra-js')
 <script>
-    const viewteams = "{{route('team.viewTeams')}}";
-    const addteam = "{{route('team.addTeam')}}";
+    const viewTeams = "{{route('team.viewTeams')}}";
+    const addTeam = "{{route('team.addTeam')}}";
     const getTeamData = "{{route('team.getTeamData')}}";
     const updateTeamData = "{{route('team.updateTeamData')}}";
     const statusUpdate = "{{route('team.statusUpdate')}}";
-    const deleteTeamData = "{{route('team.deleteTeamData')}}";
 </script>
   {{-----------external js files added for page functions------------}}
   <script src="{{asset('backend/assets/js/custom/admin/master/team.js')}}"></script>

@@ -131,6 +131,26 @@
         </ul>
       </li>
       @endcan
+
+      <li class="dropdown mb-1">
+        <a href="javascript:void(0)">
+          <i class="ri-capsule-line"></i>
+          <span>Process Center</span> 
+        </a>
+        <ul class="sidebar-submenu">
+          <li>
+            <a href="{{route('sales.lead')}}"><i class="ri-bill-line"></i>Lead Add</a>
+          </li>
+          <li>
+            <a href="{{route('sales.bulkLead')}}"><i class="ri-bill-line"></i>Bulk Lead Add</a>
+          </li>
+          <li>
+            <a href="{{route('sales.leadCenter')}}"><i class="ri-bill-line"></i>Lead Center</a>
+          </li>
+          
+        </ul>
+      </li>
+
       @can('Master Menu View')
       <li class="dropdown mb-1">
         <a href="javascript:void(0)">

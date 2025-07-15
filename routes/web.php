@@ -460,12 +460,29 @@ Route::get('/barcode', [CommonController::class, 'barCodeGenerate']);
 Route::post('/common-patient-data',[CommonController::class,'getPatientData'])->name('common.getPatientData');
 Route::post('/common-patient-data-fill',[CommonController::class,'fillPatientData'])->name('common.fillPatientData');
 
+Route::get('/process-center-analytics',[LeadController::class,'analytics'])->name('sales.analytics');
 Route::get('/process-center-lead',[LeadController::class,'lead'])->name('sales.lead');
 Route::post('/process-center-lead-add',[LeadController::class,'addLead'])->name('sales.addLead');
 Route::get('/process-center-bulk-lead',[LeadController::class,'bulkLead'])->name('sales.bulkLead');
 Route::post('/process-center-bulk-lead-add',[LeadController::class,'addBulkLead'])->name('sales.addBulkLead');
 Route::get('/process-center-lead-center',[LeadController::class,'leadCenter'])->name('sales.leadCenter');
-Route::post('/process-center-lead-center-view',[LeadController::class,'viewLeads'])->name('sales.viewLeads');
+Route::post('/process-center-lead-center-view',[LeadController::class,'viewSingleAssignLeads'])->name('sales.viewSingleAssignLeads');
+Route::post('/process-center-single-lead-assign',[LeadController::class,'assignSingleLead'])->name('sales.assignSingleLead');
+Route::get('/process-center-lead-center-bulk',[LeadController::class,'bulkLeadAssignPage'])->name('sales.bulkLeadAssignPage');
+Route::post('/process-center-lead-center-bulk-view',[LeadController::class,'viewBulkAssignLeads'])->name('sales.viewBulkAssignLeads');
+Route::post('/process-center-bulk-lead-assign',[LeadController::class,'assignBulkLeads'])->name('sales.assignBulkLeads');
+Route::post('/process-center-lead-trash',[LeadController::class,'trashLeadData'])->name('sales.trashLeadData');
+
+Route::get('/process-center-process-desk',[LeadController::class,'processDesk'])->name('sales.processDesk');
+Route::post('/process-center-process-desk-view',[LeadController::class,'viewProcessDeskLeads'])->name('sales.viewProcessDeskLeads');
+Route::post('/process-center-process-desk-naration-add',[LeadController::class,'narationAdd'])->name('sales.narationAdd');
+Route::post('/process-center-process-desk-naration-data',[LeadController::class,'getNarationData'])->name('sales.getNarationData');
+Route::post('/process-center-process-desk-transfer-lead',[LeadController::class,'tranferToDataSubmit'])->name('sales.tranferToDataSubmit');
+Route::post('/process-center-process-desk-followup-date',[LeadController::class,'followupDateSubmit'])->name('sales.followupDateSubmit');
+
+Route::get('/process-center-lead-trash',[LeadController::class,'trash'])->name('sales.trash');
+Route::post('/process-center-lead-trash-view',[LeadController::class,'viewTrashLead'])->name('sales.viewTrashLead');
+Route::post('/process-center-lead-trash-restore',[LeadController::class,'restoreLeadData'])->name('sales.restoreLeadData');
 
 
 });

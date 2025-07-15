@@ -19,42 +19,42 @@ Lead Add
         <div class="card-body">
             <form action="" id="lead-addForm" class="needs-validation" novalidate>
                 <div class="row gy-3 mt-2">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label fw-medium"> Name</label>
                         <input type="text" id="lead-name" class="form-control form-control-sm" placeholder="Name" required>
                         <div class="invalid-feedback">
                             Enter Name
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label fw-medium">Mobile No</label>
-                        <input type="number" id="lead-mobile" class="form-control form-control-sm" placeholder="Mobile No" required>
+                        <input type="number" id="lead-mobile" class="form-control form-control-sm" placeholder="Mobile No" oninput="this.value=this.value.slice(0,10)" required>
                         <div class="invalid-feedback">
                             Enter Mobile No.
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label fw-medium">Lead Source</label>
                         <input type="text" id="lead-source" class="form-control form-control-sm" placeholder="Lead Source" required>
                         <div class="invalid-feedback">
                             Enter Lead Source
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label fw-medium">Address</label>
                         <input type="text" id="lead-address" class="form-control form-control-sm" placeholder="Address" required>
                         <div class="invalid-feedback">
                             Enter Address
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label fw-medium">City</label>
                         <input type="text" id="lead-city" class="form-control form-control-sm" placeholder="City" required>
                         <div class="invalid-feedback">
                             Enter City
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label fw-medium">State</label>
                         <select name="state" id="lead-state" class="form-control form-control-sm" required>
                             <option value="">Select State</option>
@@ -100,14 +100,14 @@ Lead Add
                             Select State
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label fw-medium">Pin</label>
-                        <input type="number" id="lead-pin" class="form-control form-control-sm" placeholder="Pin" required>
+                        <input type="number" id="lead-pin" class="form-control form-control-sm" placeholder="Pin" oninput="this.value=this.value.slice(0,6)" required>
                         <div class="invalid-feedback">
                             Enter Pin
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    {{-- <div class="col-md-6">
                         <label class="form-label fw-medium">Lead For Team</label>
                         <select id="lead-team" class="form-select form-select-sm" required>
                             <option value="">Choose Team</option>
@@ -118,7 +118,7 @@ Lead Add
                         <div class="invalid-feedback">
                             Select Team
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-md-12 d-flex justify-content-end">
                         <button type="submit" class="btn btn-primary-600  btn-sm fw-medium m-2 leadSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
                         <button class="btn btn-primary-600  btn-sm fw-medium leadSpinn d-none" type="button">

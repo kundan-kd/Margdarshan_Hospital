@@ -70,12 +70,18 @@ $('.user-add').on('click',function(e){
     });
 function checkOPD(){
     let userType = $('#user-userType').val();
-    if( userType == 2){
-        $('.opd-cls').removeClass('d-none');
-    }else{
+    if(userType == 7){
+        $('.sales-cls').removeClass('d-none');
         $('.opd-cls').addClass('d-none');
     }
-    opdRoomData();
+    else if( userType == 2){
+        opdRoomData();
+        $('.opd-cls').removeClass('d-none');
+        $('.sales-cls').addClass('d-none');
+    }else{
+        $('.opd-cls').addClass('d-none');
+        $('.sales-cls').addClass('d-none');
+    }
 }
 function opdRoomData(id){
     $.ajax({
@@ -88,7 +94,6 @@ function opdRoomData(id){
             id:id
         },
         success:function(response){
-            console.log(response);
             if(response.success){
                 $('#user-opdRoom').empty();
                 $('#user-opdRoom').append('<option value="">Select OPD Room</option>');
@@ -126,6 +131,7 @@ $('#addUser-form').on('submit',function(e){
     let userType = $('#user-userType').val();
     let fee = $('#user-fee').val();
     let opdRoom = $('#user-opdRoom').val();
+    let salesTeam = $('#user-salesTeam').val();
     let bloodType = $('#user-bloodType').val();
     let name = $('#user-name').val();
     let fname = $('#user-fname').val();
@@ -151,7 +157,7 @@ $('#addUser-form').on('submit',function(e){
                     headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    data:{departmentID:departmentID,userType:userType,fee:fee,opdRoom:opdRoom,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
+                    data:{departmentID:departmentID,userType:userType,fee:fee,opdRoom:opdRoom,salesTeam:salesTeam,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
                     success:function(response){
                         if(response.success){
                             $('#add-user').modal('hide');
@@ -187,11 +193,9 @@ function userEdit(id){
         },
         data:{id:id},
         success:function(response){
-          //  console.log(response);
             if(response.success){
                 getData = response.data[0];
                 getRoom = response.roomData[0];
-             //   console.log(getRoom);
                 $('.user-title').html('Update User');
                 $('#userId').val(getData.id);
                 $('#user-departmentId').val(getData.department_id);
@@ -199,6 +203,7 @@ function userEdit(id){
                 $('#user-bloodType').val(getData.bloodtype_id);
                 $('#user-opdRoom').val(getData.room_number);
                 $('#user-fee').val(getData.fee);
+                $('#user-salesTeam').val(getData.sales_team_id);
                 $('#user-name').val(getData.name);
                 $('#user-fname').val(getData.fname);
                 $('#user-mname').val(getData.mname);
@@ -215,12 +220,13 @@ function userEdit(id){
                 $('.userAddUpdate').removeClass('d-none');  
                 if(getData.usertype_id == 2){
                     $('.opd-cls').removeClass('d-none');
-                    // $('#user-opdRoom').append('<option value="">Newwwww</option>');
-                    
-                    // $('#user-opdRoom').append('<option value="'+getRoom.id+'">'+getRoom.room_num+'</option>');
-                    // $('#user-opdRoom').trigger('change'); // Notify Select2 of the update
+                    $('.sales-cls').addClass('d-none');
+                }else if(getData.usertype_id == 7){  
+                    $('.sales-cls').removeClass('d-none');
+                    $('.opd-cls').addClass('d-none');
                 }else{
                     $('.opd-cls').addClass('d-none');
+                    $('.sales-cls').addClass('d-none');
                 }
             }
         }
@@ -233,6 +239,7 @@ function userAddUpdate() {
     let userType = $('#user-userType').val();
     let bloodType = $('#user-bloodType').val();
     let fee = $('#user-fee').val();
+    let salesTeam = $('#user-salesTeam').val();
     let opdRoom = $('#user-opdRoom').val();
     let name = $('#user-name').val();
     let fname = $('#user-fname').val();
@@ -256,7 +263,7 @@ function userAddUpdate() {
             headers:{
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            data:{id:id,departmentID:departmentID,userType:userType,fee:fee,opdRoom:opdRoom,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
+            data:{id:id,departmentID:departmentID,userType:userType,fee:fee,salesTeam:salesTeam,opdRoom:opdRoom,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
             success:function(response){
                 if(response.success){
                     $('#add-user').modal('hide');

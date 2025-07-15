@@ -42,6 +42,15 @@ User
                 </select>            
               <div class="user-departmentId_errorCls d-none"></div>
             </div>
+            <div class="col-6 sales-cls d-none">
+              <label class="form-label fw-normal" for="user-salesTeam">Sales Team</label>
+              <select class="form-select form-select-sm select2-cls" id="user-salesTeam" style="width: 100%">
+                  <option value="">Select</option>
+                  @foreach ($salesTeams as $salesT)
+                  <option value="{{$salesT->id}}">{{$salesT->name}}</option>
+                  @endforeach
+              </select>    
+            </div>
             <div class="col-6 opd-cls d-none">
               <label class="form-label fw-normal" for="user-fee">Doctor Fee</label>
               <input type="text" id="user-fee" class="form-control form-control-sm" placeholder="Enter Doctor Fee">

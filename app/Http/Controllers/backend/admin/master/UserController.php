@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BloodType;
 use App\Models\Department;
 use App\Models\RoomNumber;
+use App\Models\Team;
 use App\Models\User;
 use App\Models\UserType;
 use Illuminate\Http\Request;
@@ -20,8 +21,9 @@ class UserController extends Controller
     $departments = Department::where('status', 1)->get();
     $userTypes = UserType::where('status', 1)->get();
     $bloodTypes = BloodType::where('status', 1)->get();
+    $salesTeams = Team::where('status', 1)->get();
     $opd_rooms = RoomNumber::where('status', 1)->where('current_status','vacant')->where('roomtype_id', 1)->get();
-    return view('backend.admin.modules.master.user', compact('departments', 'userTypes', 'bloodTypes','opd_rooms'));
+    return view('backend.admin.modules.master.user', compact('departments', 'userTypes', 'bloodTypes','opd_rooms','salesTeams'));
     }
     public function viewUsers(Request $request){
           if($request->ajax()){
@@ -78,6 +80,7 @@ class UserController extends Controller
                     'bloodType' => 'required',
                     'fee' => 'nullable',
                     'opdRoom' => 'nullable',
+                    'salesTeam' => 'nullable',
                     'name' => 'required',
                     'fname' => 'required',
                     'mname' => 'required',
@@ -101,6 +104,7 @@ class UserController extends Controller
                 $user->bloodtype_id = $request->bloodType;
                 $user->fee = $request->fee ?? 0; // Default to 0 if fee is not provided
                 $user->room_number = $request->opdRoom ?? null; // Default to null if opdRoom is not provided
+                $user->sales_team_id = $request->salesTeam;
                 $user->name = $request->name;
                 $user->fname = $request->fname;
                 $user->mname = $request->mname;
@@ -116,7 +120,7 @@ class UserController extends Controller
                     $user->staff_id = "MHST". $month.$year.$user->id;
                     $user->save();
                     $user_type_name = UserType::where('id',$request->userType)->pluck('name');
-                    $user->assignRole($user_type_name[0]);
+                    $user->assignRole($user_type_name[0]); // assign roles for permission manage (@can --- @endcan)
                     RoomNumber::where('id',$request->opdRoom)->update([
                         'current_status' => 'occupied',
                         'occupied_by' => 'doctor',
@@ -152,6 +156,7 @@ class UserController extends Controller
                 'fee' => $request->fee ?? 0,
                 'room_number' => $request->opdRoom ?? null,
                 'name' => $request->name,
+                'sales_team_id' => $request->salesTeam,
                 'fname' => $request->fname,
                 'mname' => $request->mname,
                 'dob' => $request->dob,

@@ -29,7 +29,7 @@ Bulk Lead Add
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-medium">Mobile No</label>
-                        <input type="number" id="lead-mobileAppend" class="form-control form-control-sm" placeholder="Mobile No" required>
+                        <input type="number" id="lead-mobileAppend" class="form-control form-control-sm" placeholder="Mobile No" oninput="this.value=this.value.slice(0,10)" required>
                         <div class="invalid-feedback">
                             Enter Mobile No.
                         </div>
@@ -103,22 +103,9 @@ Bulk Lead Add
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-medium">Pin</label>
-                        <input type="number" id="lead-pinAppend" class="form-control form-control-sm" placeholder="Pin" required>
+                        <input type="number" id="lead-pinAppend" class="form-control form-control-sm" placeholder="Pin" oninput="this.value=this.value.slice(0,6)" required>
                         <div class="invalid-feedback">
                             Enter Pin
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-medium">Lead For Team</label>
-                        <select id="lead-teamAppend" class="form-select form-select-sm" required>
-                            <option value="">Choose Team</option>
-                            <option value="Team">Team</option>
-                            {{-- @foreach ($teams as $team)
-                            <option value="{{$team->id}}">{{$team->name}}</option>
-                            @endforeach --}}
-                        </select>
-                        <div class="invalid-feedback">
-                            Select Team
                         </div>
                     </div>
                     <div class="col-md-12 d-flex justify-content-end">
@@ -139,7 +126,6 @@ Bulk Lead Add
                           <th scope="col">State</th>
                           <th scope="col">City</th>
                           <th scope="col" >Pin</th>
-                          <th scope="col">Team</th>
                           <th scope="col">Action</th>
                         </tr>
                       </thead>
@@ -160,30 +146,6 @@ Bulk Lead Add
     </div>
   </div>
 
-  <!-- modal bill-details start -->
-     <div class="modal fade" id="assign-team" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="assign-teamLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content">
-          <div class="modal-header p-11 bg-primary-600 ">
-            <h6 class="modal-title fw-normal text-md text-white" id="assign-teamLabel">Assign team</h6>
-            <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close" ></button>
-          </div>
-          <div class="modal-body">
-             <label class="form-label fw-medium">Select team</label>
-             <select class="form-select form-select-sm">
-                  <option selected="">Select Team Member</option>
-                  <option value="">Team A</option>
-                  <option value="1">Team B</option>   
-              </select>
-              <div class="text-end">
-                 <button type="button" class="btn btn-primary-600  btn-sm fw-medium m-2 mt-3"> <i class="ri-checkbox-circle-line"></i> Assign</button>
-                 
-              </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  <!-- modal bill-details end -->
  @endsection
 @section('extra-js')
 <script>

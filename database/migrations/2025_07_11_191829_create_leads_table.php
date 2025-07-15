@@ -21,6 +21,14 @@ return new class extends Migration
             $table->string('state',50)->nullable();
             $table->integer('pin')->nullable();
             $table->string('team',50)->nullable();
+            $table->integer('assign_to')->nullable();
+            $table->dateTime('assign_date')->nullable();
+            $table->integer('assign_by')->nullable();
+            $table->integer('previous_assign_to')->nullable();
+            $table->text('assign_transfer_reason')->nullable();
+            $table->dateTime('assign_transfer_date')->nullable();
+            $table->dateTime('next_followup_date')->nullable();
+            $table->string('lead_status')->default('Pending');
             $table->integer('created_by')->nullable();
             $table->timestamps();
             $table->softDeletes();

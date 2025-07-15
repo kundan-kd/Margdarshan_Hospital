@@ -7,36 +7,43 @@ $('#lead-addForm').on('submit',function(e){
     let city = $('#lead-city').val();
     let state = $('#lead-state').val();
     let pin = $('#lead-pin').val();
-    let team = $('#lead-team').val();
-    $('.leadSubmit').addClass('d-none');
-    $('.leadSpinn').removeClass('d-none');
-    $.ajax({
-        url: addLead,
-        type:"POST",
-        data:{
-            name:name,mobile:mobile,source:source,address:address,city:city,state:state,pin:pin,team:team
-        },
-        success:function(response){
-            if(response.success){
-                 toastSuccessAlert(response.success);
-                 setTimeout(function(){
-                    window.location.reload();
-                 },1000);
-            }else if(response.error_validation){
-                toastWarningAlert(response.success);
-                $('.leadSpinn').addClass('d-none');
-                $('.leadSubmit').removeClass('d-none');
-            }else if(response.error_success){
-                toastErrorAlert(response.error_success);
-                $('.leadSpinn').addClass('d-none');
-                $('.leadSubmit').removeClass('d-none');
-            }else{
-                toastSuccessAlert('something went wrong');
-                $('.leadSpinn').addClass('d-none');
-                $('.leadSubmit').removeClass('d-none');
+     if(name == '' || mobile == '' || source =='' || address =='' || city =='' || state =='' || pin ==''){
+        $('.needs-validation').addClass('was-validated');
+    }else{
+        $('.leadSubmit').addClass('d-none');
+        $('.leadSpinn').removeClass('d-none');
+        $.ajax({
+            url: addLead,
+            type:"POST",
+            data:{
+                name:name,mobile:mobile,source:source,address:address,city:city,state:state,pin:pin
+            },
+            success:function(response){
+                if(response.success){
+                    toastSuccessAlert(response.success);
+                    setTimeout(function(){
+                        window.location.reload();
+                    },1000);
+                }else if(response.error_validation){
+                    toastWarningAlert(response.success);
+                    $('.leadSpinn').addClass('d-none');
+                    $('.leadSubmit').removeClass('d-none');
+                }else if(response.error_success){
+                    toastErrorAlert(response.error_success);
+                    $('.leadSpinn').addClass('d-none');
+                    $('.leadSubmit').removeClass('d-none');
+                }else{
+                    toastSuccessAlert('something went wrong');
+                    $('.leadSpinn').addClass('d-none');
+                    $('.leadSubmit').removeClass('d-none');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("An error occurred: " + error);
             }
-        }
-    });
+        });
+    }
 });
  function clearBulkInput(){
     $('#lead-nameAppend').val('');
@@ -46,7 +53,6 @@ $('#lead-addForm').on('submit',function(e){
     $('#lead-cityAppend').val('');
     $('#lead-stateAppend').val('');
     $('#lead-pinAppend').val('');
-    $('#lead-teamAppend').val('');
  }
 $('#lead-appendForm').on('submit',function(e){
     e.preventDefault();
@@ -57,8 +63,7 @@ $('#lead-appendForm').on('submit',function(e){
     let city = $('#lead-cityAppend').val();
     let state = $('#lead-stateAppend').val();
     let pin = $('#lead-pinAppend').val();
-    let team = $('#lead-teamAppend').val();
-    if(name == '' || mobile == '' || source =='' || address =='' || city =='' || state =='' || pin =='' || team ==''){
+    if(name == '' || mobile == '' || source =='' || address =='' || city =='' || state =='' || pin ==''){
         $('.needs-validation').addClass('was-validated');
     }else{
         let content = '';
@@ -70,12 +75,8 @@ $('#lead-appendForm').on('submit',function(e){
             <td><input type="text" name="bulkLead-city[]" class="form-control form-control-sm" style="width: 100px;" value="${city}"></td>
             <td><input type="text" name="bulkLead-state[]" class="form-control form-control-sm" style="width: 100px;" value="${state}"></td>
             <td><input type="text" name="bulkLead-pin[]" class="form-control form-control-sm" style="width: 100px;" value="${pin}"></td>
-            <td><input type="text" name="bulkLead-team[]" class="form-control form-control-sm" style="width: 100px;" value="${team}"></td>
             <td>
-                <button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#assign-team">
-                <i class="ri-team-line" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-success" data-bs-title="Assign to"></i>
-                </button>
-                <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
+                <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" onclick="removeLeadRow(this)">
                 <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
                 </button>
             </td>
@@ -86,7 +87,9 @@ $('#lead-appendForm').on('submit',function(e){
         $('.needs-validation').removeClass('was-validated');    
     }    
 });
-
+function removeLeadRow(x){
+    $(x).closest('tr').remove();
+}
 function submitBulkLead(){
  let name = $('input[name="bulkLead-name[]"').map(function(){return $(this).val()}).get();
  let mobile = $('input[name="bulkLead-mobile[]"').map(function(){return $(this).val()}).get();
@@ -95,44 +98,51 @@ function submitBulkLead(){
  let city = $('input[name="bulkLead-city[]"').map(function(){return $(this).val()}).get();
  let state = $('input[name="bulkLead-state[]"').map(function(){return $(this).val()}).get();
  let pin = $('input[name="bulkLead-pin[]"').map(function(){return $(this).val()}).get();
- let team = $('input[name="bulkLead-team[]"').map(function(){return $(this).val()}).get();
-
-    $('.bulkLeadSubmit').addClass('d-none');
-    $('.bulkLeadSpinn').removeClass('d-none');
-    $.ajax({
-        url: addBulkLead,
-        type:"POST",
-        data:{
-            name:name,mobile:mobile,source:source,address:address,city:city,state:state,pin:pin,team:team
-        },
-        success:function(response){
-            if(response.success){
-                 toastSuccessAlert(response.success);
-                 setTimeout(function(){
-                    window.location.reload();
-                 },1000);
-            }else if(response.error_validation){
-                toastWarningAlert(response.success);
-                $('.bulkLeadSpinn').addClass('d-none');
-                $('.bulkLeadSubmit').removeClass('d-none');
-            }else if(response.error_success){
-                toastErrorAlert(response.error_success);
-                $('.bulkLeadSpinn').addClass('d-none');
-                $('.bulkLeadSubmit').removeClass('d-none');
-            }else{
-                toastSuccessAlert('something went wrong');
-                $('.bulkLeadSpinn').addClass('d-none');
-                $('.bulkLeadSubmit').removeClass('d-none');
+    if(name.length === 0){
+        toastErrorAlert('No data found');
+        return;
+    }else{
+        $('.bulkLeadSubmit').addClass('d-none');
+        $('.bulkLeadSpinn').removeClass('d-none');
+        $.ajax({
+            url: addBulkLead,
+            type:"POST",
+            data:{
+                name:name,mobile:mobile,source:source,address:address,city:city,state:state,pin:pin
+            },
+            success:function(response){
+                if(response.success){
+                    toastSuccessAlert(response.success);
+                    setTimeout(function(){
+                        window.location.reload();
+                    },1000);
+                }else if(response.error_validation){
+                    toastWarningAlert(response.success);
+                    $('.bulkLeadSpinn').addClass('d-none');
+                    $('.bulkLeadSubmit').removeClass('d-none');
+                }else if(response.error_success){
+                    toastErrorAlert(response.error_success);
+                    $('.bulkLeadSpinn').addClass('d-none');
+                    $('.bulkLeadSubmit').removeClass('d-none');
+                }else{
+                    toastSuccessAlert('something went wrong');
+                    $('.bulkLeadSpinn').addClass('d-none');
+                    $('.bulkLeadSubmit').removeClass('d-none');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("An error occurred: " + error);
             }
-        }
-    });
+        });
+    }
 }
 
-let table_lead_list = $('#lead-lists').DataTable({
+let table_trash_list = $('#lead-trash-lists').DataTable({
     processing: true,
     serverSide: true,
     ajax:{
-        url:viewLeads,
+        url:viewTrashLead,
         type:"POST",
         error: function(xhr,error,thrown){
             console.log(xhr.responseText);
@@ -140,12 +150,6 @@ let table_lead_list = $('#lead-lists').DataTable({
         }
     },
     columns:[
-        {
-            data:'select',
-            name:'select',
-            orderable: false,
-            searchable: false
-        },
         {
             data:'name',
             name:'name'
@@ -177,8 +181,57 @@ let table_lead_list = $('#lead-lists').DataTable({
             name: 'pin'
         },
         {
-            data: 'team',
-            name: 'team'
+            data: 'assign_to',
+            name: 'assign_to'
+        },
+        {
+            data: 'deleted_at',
+            name: 'deleted_at'
+        },
+        {
+            data: 'action',
+            name: 'action',
+            orderable: false,
+            searchable: false
         },
     ]
 });
+function unTrashLead(id){
+     Swal.fire({
+        title: "Are you sure to restore from Trash?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, do it!",
+        customClass: {
+            title: 'swal-title-custom'
+          }
+        
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: restoreLeadData,
+                type: "POST",
+                data: {
+                    id: id
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire("Restored!", response.success, "success");
+                        $('#lead-trash-lists').DataTable().ajax.reload();
+                    } else {
+                        Swal.fire("Error!", "Error", "error");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    Swal.fire("Error!", "An error occurred: " + error, "error");
+                }
+            });
+        }
+    });
+}

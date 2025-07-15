@@ -86,6 +86,14 @@ class InvoiceController extends Controller
             $update = Patient::where('id',$request->id)->update([
             'current_status' =>'Discharged'
             ]);
+            $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
+             Bed::where('id', $previous_bed_data[0]->id)->update([
+                'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
+                'previous_occupied_date' => $previous_bed_data[0]->occupied_date,
+                'occupied_by_patient_id' => null,
+                'occupied_date' => null,
+                'current_status' =>'vacant'
+            ]);
             if($update){
                 $timelines = new Timeline();
                 $timelines->type = $type[0];

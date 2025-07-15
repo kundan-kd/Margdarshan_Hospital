@@ -77,52 +77,65 @@ class PatientController extends Controller
         return response()->json(['success' => 'Patient Deleted Successfully'],200);
     }
     public function patientAddNewPatient(Request $request){
-         $validator = Validator::make($request->all(),[
-            'name' => 'required',
-            'guardian_name' => 'required',
-            'gender' => 'nullable',
-            'bloodtype' => 'nullable',
-            'dob' => 'required',
-            'mstatus' => 'required',
-            'mobile' => 'required',
-            'address' => 'required',
-            'alt_mobile' => 'nullable',
-            'allergy' => 'nullable'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=>$validator->errors()->all()],422);
-        }
-        $month = date('m'); // Gets the current month (e.g., "05")
-        $year = date('y'); // Gets the current year (e.g., "25")
-        $patient = new Patient();
-        $patient->type = "OPD";
-        $patient->name = $request->name;
-        $patient->guardian_name = $request->guardian_name;
-        $patient->gender = $request->gender;
-        $patient->bloodtype = $request->bloodtype;
-        $patient->dob = $request->dob;
-        $patient->marital_status = $request->mstatus;
-        $patient->mobile = $request->mobile;
-        $patient->alt_mobile = $request->alt_mobile;
-        $patient->known_allergies = $request->allergy;
-        $patient->address = $request->address;
-        if($patient->save()){
-            $patient->patient_id = "MHPT". $month.$year.$patient->id;
-            $patient->save();
-            //generate bar code
-            $generator = new BarcodeGeneratorPNG();
-            $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
-            if ($barcode) {
-                   //generate barcode and store in storage/public/barcode
-                    $fileName = $patient->patient_id.'.' . time() . '.png';
-                     $path = public_path('backend/uploads/barcode/' . $fileName);
-                    file_put_contents($path, $barcode);
-                    $patient->barcode = $fileName; //store barcode name in database
-                    $patient->save();
+      $check_patient = Patient::where('mobile', $request->mobile)
+    ->where(function ($query) {
+        $query->where('type', 'OPD')
+              ->orWhere('current_status', 'Admitted');
+    })
+    ->exists();
+
+
+        if($check_patient == false){
+       
+            $validator = Validator::make($request->all(),[
+                'name' => 'required',
+                'guardian_name' => 'required',
+                'gender' => 'nullable',
+                'bloodtype' => 'nullable',
+                'dob' => 'required',
+                'mstatus' => 'required',
+                'mobile' => 'required',
+                'address' => 'required',
+                'alt_mobile' => 'nullable',
+                'allergy' => 'nullable'
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=>$validator->errors()->all()],422);
             }
-            return response()->json(['success'=>'New Patient added successfully'],201);
+            $month = date('m'); // Gets the current month (e.g., "05")
+            $year = date('y'); // Gets the current year (e.g., "25")
+            $patient = new Patient();
+            $patient->type = "OPD";
+            $patient->name = $request->name;
+            $patient->guardian_name = $request->guardian_name;
+            $patient->gender = $request->gender;
+            $patient->bloodtype = $request->bloodtype;
+            $patient->dob = $request->dob;
+            $patient->marital_status = $request->mstatus;
+            $patient->mobile = $request->mobile;
+            $patient->alt_mobile = $request->alt_mobile;
+            $patient->known_allergies = $request->allergy;
+            $patient->address = $request->address;
+            if($patient->save()){
+                $patient->patient_id = "MHPT". $month.$year.$patient->id;
+                $patient->save();
+                //generate bar code
+                $generator = new BarcodeGeneratorPNG();
+                $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
+                if ($barcode) {
+                       //generate barcode and store in storage/public/barcode
+                        $fileName = $patient->patient_id.'.' . time() . '.png';
+                         $path = public_path('backend/uploads/barcode/' . $fileName);
+                        file_put_contents($path, $barcode);
+                        $patient->barcode = $fileName; //store barcode name in database
+                        $patient->save();
+                }
+                return response()->json(['success'=>'New Patient added successfully'],201);
+            }else{
+                return response()->json(['error_success'=>'Patient not added'],500);
+            }
         }else{
-            return response()->json(['error_success'=>'Patient not added'],500);
+             return response()->json(['alreadyFound'=>'Patient with mobile this number already exists']);
         }
     }
     public function newPatientData(Request $request){

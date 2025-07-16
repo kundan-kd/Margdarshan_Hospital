@@ -148,7 +148,7 @@ class AuthenticationController extends Controller
       Artisan::call('route:clear');
       Artisan::call('cache:clear');
       Artisan::call('config:clear');
-      return response()->json(['success' => 'All caches cleared successfully!']);
+      return response()->json(['success' => 'Cache cleared successfully.']);
    }
 
 

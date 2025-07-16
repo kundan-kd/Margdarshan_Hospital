@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\backend\admin\appointment;
 
 use App\Http\Controllers\Controller;
+use App\Models\Lead;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -76,68 +77,87 @@ class PatientController extends Controller
          Patient::where('id',$request->id)->delete();
         return response()->json(['success' => 'Patient Deleted Successfully'],200);
     }
-    public function patientAddNewPatient(Request $request){
-      $check_patient = Patient::where('mobile', $request->mobile)
-    ->where(function ($query) {
-        $query->where('type', 'OPD')
-              ->orWhere('current_status', 'Admitted');
-    })
-    ->exists();
+   public function patientAddNewPatient(Request $request){
+    $existing_patient = Patient::where('mobile', $request->mobile)
+        ->where(function ($query) {
+            $query->where('type', 'OPD')
+                  ->orWhere('current_status', 'Admitted');
+        })->first();
 
-
-        if($check_patient == false){
-       
-            $validator = Validator::make($request->all(),[
-                'name' => 'required',
-                'guardian_name' => 'required',
-                'gender' => 'nullable',
-                'bloodtype' => 'nullable',
-                'dob' => 'required',
-                'mstatus' => 'required',
-                'mobile' => 'required',
-                'address' => 'required',
-                'alt_mobile' => 'nullable',
-                'allergy' => 'nullable'
-            ]);
-            if($validator->fails()){
-                return response()->json(['error_validation'=>$validator->errors()->all()],422);
-            }
-            $month = date('m'); // Gets the current month (e.g., "05")
-            $year = date('y'); // Gets the current year (e.g., "25")
-            $patient = new Patient();
-            $patient->type = "OPD";
-            $patient->name = $request->name;
-            $patient->guardian_name = $request->guardian_name;
-            $patient->gender = $request->gender;
-            $patient->bloodtype = $request->bloodtype;
-            $patient->dob = $request->dob;
-            $patient->marital_status = $request->mstatus;
-            $patient->mobile = $request->mobile;
-            $patient->alt_mobile = $request->alt_mobile;
-            $patient->known_allergies = $request->allergy;
-            $patient->address = $request->address;
-            if($patient->save()){
-                $patient->patient_id = "MHPT". $month.$year.$patient->id;
-                $patient->save();
-                //generate bar code
-                $generator = new BarcodeGeneratorPNG();
-                $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
-                if ($barcode) {
-                       //generate barcode and store in storage/public/barcode
-                        $fileName = $patient->patient_id.'.' . time() . '.png';
-                         $path = public_path('backend/uploads/barcode/' . $fileName);
-                        file_put_contents($path, $barcode);
-                        $patient->barcode = $fileName; //store barcode name in database
-                        $patient->save();
-                }
-                return response()->json(['success'=>'New Patient added successfully'],201);
-            }else{
-                return response()->json(['error_success'=>'Patient not added'],500);
-            }
-        }else{
-             return response()->json(['alreadyFound'=>'Patient with mobile this number already exists']);
-        }
+    if ($existing_patient) {
+        return response()->json([
+            'alreadyFound' => 'Patient with this mobile number already exists as OPD or is currently admitted. No entry allowed.']); // Conflict status
     }
+
+    $validator = Validator::make($request->all(), [
+        'name' => 'required',
+        'guardian_name' => 'required',
+        'gender' => 'nullable',
+        'bloodtype' => 'nullable',
+        'dob' => 'required',
+        'mstatus' => 'required',
+        'mobile' => 'required',
+        'address' => 'required',
+        'alt_mobile' => 'nullable',
+        'allergy' => 'nullable'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['error_validation' => $validator->errors()->all()], 422);
+    }
+
+    $month = date('m');
+    $year = date('y');
+    $existing_patient_data = Patient::where('mobile', $request->mobile)->first();
+    $patient = new Patient();
+    $patient->type = "OPD";
+    $patient->name = $request->name;
+    $patient->guardian_name = $request->guardian_name;
+    $patient->gender = $request->gender;
+    $patient->bloodtype = $request->bloodtype;
+    $patient->dob = $request->dob;
+    $patient->marital_status = $request->mstatus;
+    $patient->mobile = $request->mobile;
+    $patient->alt_mobile = $request->alt_mobile;
+    $patient->known_allergies = $request->allergy;
+    $patient->address = $request->address;
+
+    if ($patient->save()) {
+        if ($existing_patient_data) {
+            // Reuse patient_id and barcode from previous patient
+            $patient->patient_id = $existing_patient_data->patient_id;
+            $patient->barcode = $existing_patient_data->barcode;
+        } else {
+            // Generate new patient_id and barcode
+            $patient->patient_id = "MHPT" . $month . $year . $patient->id;
+            // Barcode generation logic
+            $generator = new BarcodeGeneratorPNG();
+            $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
+ 
+            if ($barcode) {
+                $fileName = $patient->patient_id . '.' . time() . '.png';
+                $path = public_path('backend/uploads/barcode/' . $fileName);
+                file_put_contents($path, $barcode);
+                $patient->barcode = $fileName;
+            }
+        }
+        $patient->save(); // Final save after assigning patient_id and barcode
+        //lead convert when same mobile number patient get admitted
+        $lead = Lead::where('mobile', $request->mobile)->where('lead_status', 'Pending')->whereNotNull('assign_to')->first();     
+        if ($lead) {
+            $lead->lead_status = 'Converted';
+            $lead->lead_patient_id = $patient->id;
+            $lead->lead_status_date = now();
+            $lead->save();
+
+            $patient->lead_id = $lead->id;
+            $patient->save();
+        }
+        return response()->json(['success' => 'New Patient added successfully'], 201);
+    }
+
+    return response()->json(['error_success' => 'Patient not added'], 500);
+}
     public function newPatientData(Request $request){
         $getData = Patient::where('id',$request->id)->get();
         return response()->json(['success'=>'Patient details fetched successfully','data'=>$getData],200);

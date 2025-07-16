@@ -1,6 +1,6 @@
 @extends('backend.admin.layouts.main')
 @section('title')
-Bulk Lead Assign
+Process Desk
 @endsection
 @section('main-container')
   <div class="dashboard-main-body">
@@ -25,10 +25,8 @@ Bulk Lead Assign
                         <tr>
                           <th scope="col">Name</th>
                           <th scope="col">Mobile</th>
-                          {{-- <th scope="col">Lead Source</th> --}}
                           <th scope="col">Address</th>
                           <th scope="col">Assign To</th>
-                          <th scope="col">Assign Date</th>
                           <th scope="col">Narations</th>
                           <th scope="col">Next Follow up</th>
                           <th scope="col">Status</th>

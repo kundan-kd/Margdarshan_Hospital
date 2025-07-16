@@ -16,9 +16,16 @@ use Yajra\DataTables\Facades\DataTables;
 class LeadController extends Controller
 {
    public function analytics(){
-    // $total_lead = Lead::count()-get()
-    return view('backend.admin.modules.sales.lead-dashboard');
-   } 
+    $leads = Lead::count();
+    $convertedLeads = Lead::where('lead_status','Converted')->count();
+    $assignLeads = Lead::whereNotNull('assign_to')->count();
+    $UnAssignLeads = Lead::whereNull('assign_to')->count();
+    $now = Carbon::now();
+    $formattedDate = $now->toDateString(); // Output: "2025-07-16"
+    $todayFollowup = Lead::where('next_followup_date',$formattedDate)->get();
+    $duefollowup = Lead::whereNull('naration')->get();
+    return view('backend.admin.modules.sales.lead-dashboard', compact('leads','convertedLeads','assignLeads','UnAssignLeads','todayFollowup','duefollowup'));
+}
    public function lead(){
     $teams = Team::where('status',1)->get();
     return view('backend.admin.modules.sales.lead-add',compact('teams'));
@@ -301,11 +308,8 @@ public function bulkLeadAssignPage(){
             ->addColumn('mobile',function($row){
                 return $row->mobile;
             })
-            // ->addColumn('source',function($row){
-            //     return $row->source;
-            // })
             ->addColumn('address',function($row){
-                return $row->address.', '.$row->city.', '.$row->state.'-'.$row->pin;
+                return $row->city.', '.$row->state.'-'.$row->pin;
             })
             ->addColumn('assign_to', function ($row) {
                 $user = $row->userData;
@@ -315,16 +319,18 @@ public function bulkLeadAssignPage(){
                 $teamName = Team::where('id', $user->sales_team_id)->value('name');
                 return $user->name . ' (' . ($teamName ?? 'No Team') . ')';
             })
-            ->addColumn('assign_date',function($row){
-                 return $row->assign_date
-                    ? Carbon::parse($row->assign_date)->timezone('Asia/Kolkata')->format('d-M-Y h:i A')
-                    : '—';
+            // ->addColumn('assign_date',function($row){
+            //      return $row->assign_date
+            //         ? Carbon::parse($row->assign_date)->timezone('Asia/Kolkata')->format('d-M-Y h:i A')
+            //         : '—';
+            // })
+            ->addColumn('naration', function($row) {
+                $narationText = $row->naration ?? 'NA';
+                return '<a href="javascript:void(0)" class="text-primary" data-bs-toggle="modal" data-bs-target="#narationView" onclick="getPrevNarations('.$row->id.')">'
+                     . $narationText .
+                     '</a>';
             })
-             ->addColumn('naration',function($row){
-                return ' <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#narationView" onclick="getPrevNarations('.$row->id.')">
-                      <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                    </a>';
-            })
+
              ->addColumn('follow_up',function($row){
                 return $row->next_followup_date ?? 'NA';
             })
@@ -356,6 +362,9 @@ public function bulkLeadAssignPage(){
         $narations->lead_id = $request->lead_id;
         $narations->naration = $request->naration;
         if($narations->save()){
+            Lead::where('id',$request->lead_id)->update([
+                'naration' => $request->naration
+            ]);
             return response()->json(['success'=>'Naration added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Naration not added']);
@@ -380,8 +389,9 @@ public function bulkLeadAssignPage(){
         }
     }
     public function followupDateSubmit(Request $request){
+        $convertedDate = Carbon::createFromFormat('d-m-Y', $request->fdate)->format('Y-m-d');
         $update_follow = Lead::where('id', $request->lead_id)->update([
-            'next_followup_date' => $request->fdate
+            'next_followup_date' => $convertedDate
         ]);
         if($update_follow){
             return response()->json(['success'=> 'follow up date added successfully'], 200);

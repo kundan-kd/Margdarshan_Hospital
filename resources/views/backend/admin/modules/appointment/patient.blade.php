@@ -61,6 +61,11 @@ Patient
         <div class="modal-body">
             <div class="row gy-3">
           <div class="col-6">
+            <label class="form-label fw-normal" for="patient-patientMobile">Phone</label>
+            <input type="number" id="patient-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile')">
+            <div class="patient-patientMobile_errorCls d-none"></div>
+          </div>
+          <div class="col-6">
             <input type="hidden" id="patient-patientId">
             <label class="form-label fw-normal" for="patient-patientName">Patient Name</label>
             <input type="text" id="patient-patientName" name="#0" class="form-control form-control-sm" placeholder="Patient Name" oninput="validateField(this.id,'input')">
@@ -117,11 +122,7 @@ Patient
             </select>
             <div class="patient-patientMStatus_errorCls d-none"></div>
           </div>
-          <div class="col-6">
-            <label class="form-label fw-normal" for="patient-patientMobile">Phone</label>
-            <input type="number" id="patient-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile')">
-            <div class="patient-patientMobile_errorCls d-none"></div>
-          </div>
+          
           <div class="col-6">
             <label class="form-label fw-normal" for="patient-patientAddess">Address</label>
             <input type="text" id="patient-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">

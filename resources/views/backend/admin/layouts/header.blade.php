@@ -45,6 +45,16 @@
 
   {{-----------common css for common custom styling in all pages------------}}
   <link rel="stylesheet" href="{{asset('backend/assets/css/custom/common.css')}}">
+  <style>
+    .clear-cache-btn {
+    padding: 5px 10px !important;
+    cursor: pointer;
+}
+.clear-cache-btn i{
+    font-size:20px;
+    color: #fcfcfc;
+}
+  </style>
   {{-- add extra css for the particular files --}}
   @yield('extra-css') 
 </head>
@@ -91,7 +101,7 @@
       @can('OPD Patient View')
         <li class="mb-1">
         <a href="{{route('opd-out.index')}}">
-          <i class="ri-stethoscope-line"></i>
+         <i class="ri-hospital-line"></i>
           <span>OPD-Out Patients</span>
         </a>
         </li>
@@ -107,7 +117,7 @@
       @can('Emergency Patient View')
       <li class="mb-1">
         <a href="{{route('emergency.index')}}">
-          <i class="ri-hospital-line"></i>
+          <i class="ri-stethoscope-line"></i>
           <span>Emergency</span>
         </a>
       </li>
@@ -131,7 +141,7 @@
         </ul>
       </li>
       @endcan
-
+    @can('Process Center Menu View')    
       <li class="dropdown mb-1">
         <a href="javascript:void(0)">
           <i class="ri-customer-service-line"></i>
@@ -139,7 +149,7 @@
         </a>
         <ul class="sidebar-submenu">
           <li>
-            <a href="{{route('sales.analytics')}}"><i class="ri-file-list-2-line"></i>Analytics</a>
+            <a href="{{route('sales.analytics')}}"><i class="ri-file-chart-line"></i>Analytics</a>
           </li>
           <li>
             <a href="{{route('sales.lead')}}"><i class="ri-file-list-2-line"></i>Lead Add</a>
@@ -148,7 +158,7 @@
             <a href="{{route('sales.bulkLead')}}"><i class="ri-file-list-3-line"></i>Bulk Lead Add</a>
           </li>
           <li>
-            <a href="{{route('sales.leadCenter')}}"><i class="ri-user-shared-2-line"></i>Lead Center</a>
+            <a href="{{route('sales.leadCenter')}}"><i class="ri-user-received-line"></i>Lead Center</a>
           </li> 
           <li>
             <a href="{{route('sales.processDesk')}}"><i class="ri-donut-chart-fill"></i>Process Desk</a>
@@ -159,7 +169,7 @@
           
         </ul>
       </li>
-
+    @endcan
       @can('Master Menu View')
       <li class="dropdown mb-1">
         <a href="javascript:void(0)">
@@ -167,9 +177,9 @@
           <span>Master</span> 
         </a>
         <ul class="sidebar-submenu">
-          <li>
+          {{-- <li>
             <a href="#"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed/Room Group</a>
-          </li>
+          </li> --}}
           <li>
             <a href="{{route('bedtype.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Bed Type</a>
           </li>
@@ -251,56 +261,10 @@
     </div>
     <div class="col-auto">
       <div class="d-flex flex-wrap align-items-center gap-3">
+        <div class="clear-cache-btn">
+                <i class="ri-refresh-line clearCacheBtn text-warning" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Cache"></i>
+        </div> 
         <button type="button" data-theme-toggle class="w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center"></button>
-        <!-- Notification dropdown start -->
-        {{-- <div class="dropdown">
-            <button class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center" type="button" data-bs-toggle="dropdown">
-              <iconify-icon icon="iconoir:bell" class="text-primary-light text-xl"></iconify-icon>
-            </button>
-            <div class="dropdown-menu to-top dropdown-menu-lg p-0">
-              <div class="m-16 py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
-                <div>
-                  <h6 class="text-lg text-primary-light fw-semibold mb-0">Notifications</h6>
-                </div>
-                <span class="text-primary-600 fw-semibold text-lg w-40-px h-40-px rounded-circle bg-base d-flex justify-content-center align-items-center">02</span>
-              </div>
-              
-             <div class="max-h-400-px overflow-y-auto scroll-sm pe-4">
-              <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3"> 
-                  <span class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                    <iconify-icon icon="bitcoin-icons:verify-outline" class="icon text-xxl"></iconify-icon>
-                  </span> 
-                  <div>
-                    <h6 class="text-md fw-semibold mb-4">Congratulations</h6>
-                    <p class="mb-0 text-sm text-secondary-light text-w-200-px">Your profile has been Verified. Your profile has been Verified</p>
-                  </div>
-                </div>
-                <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-              </a>
-              
-              <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between bg-neutral-50">
-                <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3"> 
-                  <span class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                  </span> 
-                  <div>
-                    <h6 class="text-md fw-semibold mb-4">Ronald Richards</h6>
-                    <p class="mb-0 text-sm text-secondary-light text-w-200-px">You can stitch between artboards</p>
-                  </div>
-                </div>
-                <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-              </a>
-             
-             </div>
-  
-              <div class="text-center py-12 px-16"> 
-                  <a href="javascript:void(0)" class="text-primary-600 fw-semibold text-md">See All Notification</a>
-              </div>
-  
-            </div>
-          </div> --}}
-          <!-- Notification dropdown end -->
-
         <div class="dropdown">
           <button class="d-flex justify-content-center align-items-center rounded-circle" type="button" data-bs-toggle="dropdown">
             <img src="{{asset('backend/assets/images/user.png')}}" alt="image" class="w-40-px h-40-px object-fit-cover rounded-circle">

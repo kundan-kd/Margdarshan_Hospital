@@ -156,6 +156,10 @@ $('#patient-addPatientForm').on('submit',function(e){
                             $('#patient-table').DataTable().ajax.reload();
                             $('.patientAddPatientSpinn').addClass('d-none'); 
                             $('.patientAddPatientSubmit').removeClass('d-none'); 
+                        }else if(response.alreadyFound){
+                            toastErrorAlert(response.alreadyFound);
+                            $('.patientAddPatientSpinn').addClass('d-none'); 
+                            $('.patientAddPatientSubmit').removeClass('d-none'); 
                         }else{
                             console.log('error found');
                         }

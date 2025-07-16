@@ -9,6 +9,7 @@ use App\Models\BedType;
 use App\Models\Charge;
 use App\Models\LabInvestigation;
 use App\Models\LabReport;
+use App\Models\Lead;
 use App\Models\Medication;
 use App\Models\MedicineCategory;
 use App\Models\NurseNote;
@@ -190,7 +191,17 @@ class IpdinController extends Controller
                 } 
                 //generate bar code end
             }
-            
+            //lead convert when same mobile number patient get admitted
+            $lead = Lead::where('mobile', $request->mobile)->where('lead_status', 'Pending')->whereNotNull('assign_to')->first();     
+            if ($lead) {
+                $lead->lead_status = 'Converted';
+                $lead->lead_patient_id = $patient->id;
+                $lead->lead_status_date = now();
+                $lead->save();
+
+                $patient->lead_id = $lead->id;
+                $patient->save();
+            }          
             Bed::where('id',$request->bedNumId)->update([
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $patient->id,

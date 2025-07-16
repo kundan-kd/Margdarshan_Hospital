@@ -18,10 +18,6 @@ let table_process_desk_list = $('#process-desk-table').DataTable({
             data:'mobile',
             name:'mobile'
         },
-        // {
-        //     data:'source',
-        //     name:'source'
-        // },
         {
             data:'address',
             name:'address',
@@ -32,10 +28,10 @@ let table_process_desk_list = $('#process-desk-table').DataTable({
             data: 'assign_to',
             name: 'assign_to'
         },
-        {
-            data: 'assign_date',
-            name: 'assign_date'
-        },
+        // {
+        //     data: 'assign_date',
+        //     name: 'assign_date'
+        // },
         {
             data: 'naration',
             name: 'naration'

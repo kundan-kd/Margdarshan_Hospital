@@ -127,7 +127,18 @@ function toastErrorAlert(message){
   toast.show();
 }
 // toast alert ends---------
-
+$('.clearCacheBtn').on('click',function(){
+    $.ajax({
+        url: '/clear-cache',
+        type: 'GET',
+        success: function(response) {
+           toastSuccessAlert(response.success);
+        },
+        error: function(xhr) {
+           toastErrorAlert('An error occurred while clearing the cache.')
+        }
+    });
+});
 // Auto logout after 10 seconds inactivity
     // let idleTime = 0;
 

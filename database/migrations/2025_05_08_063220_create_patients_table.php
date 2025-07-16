@@ -32,6 +32,7 @@ return new class extends Migration
             $table->integer('status')->default(1);
             $table->string('current_status',20)->nullable();
             $table->text('description')->nullable();
+            $table->integer('lead_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -246,6 +246,9 @@ function fillPatientFields(id){
     });
       console.log($('#emergencyPatientId').val());
 }
+$(document).on('click','#emergency-add-patient .modal-body',function(){
+    $('.patient-data-list').addClass('d-none');
+});
 $('#emergency-addPatientForm').on('submit',function(e){
      e.preventDefault();
     let id = $('#emergencyPatientId').val(); 

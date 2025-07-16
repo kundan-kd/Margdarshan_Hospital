@@ -83,12 +83,10 @@ class PatientController extends Controller
             $query->where('type', 'OPD')
                   ->orWhere('current_status', 'Admitted');
         })->first();
-
     if ($existing_patient) {
         return response()->json([
-            'alreadyFound' => 'Patient with this mobile number already exists as OPD or is currently admitted. No entry allowed.']); // Conflict status
+            'alreadyFound' => 'Patient already exists with this mobile no.']);
     }
-
     $validator = Validator::make($request->all(), [
         'name' => 'required',
         'guardian_name' => 'required',
@@ -101,11 +99,9 @@ class PatientController extends Controller
         'alt_mobile' => 'nullable',
         'allergy' => 'nullable'
     ]);
-
     if ($validator->fails()) {
         return response()->json(['error_validation' => $validator->errors()->all()], 422);
     }
-
     $month = date('m');
     $year = date('y');
     $existing_patient_data = Patient::where('mobile', $request->mobile)->first();

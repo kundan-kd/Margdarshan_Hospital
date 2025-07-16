@@ -62,7 +62,12 @@ Patient
             <div class="row gy-3">
           <div class="col-6">
             <label class="form-label fw-normal" for="patient-patientMobile">Phone</label>
-            <input type="number" id="patient-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile')">
+            <input type="number" id="patient-patientMobile" class="form-control form-control-sm" placeholder="Phone" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile');getPatientDetailsOpd(this.value)">
+            <div class="d-block position-relative" style="z-index :99;">
+                    <ul class="search-item list-group position-absolute w-100 rounded-0 patient-data-list-opd">
+                      <!-- dropdown list of patients appended here using JS -->
+                    </ul>
+              </div>
             <div class="patient-patientMobile_errorCls d-none"></div>
           </div>
           <div class="col-6">
@@ -175,6 +180,9 @@ Patient
     const patientAddNewPatient = "{{route('patient.patientAddNewPatient')}}"; 
     const newPatientData = "{{route('patient.newPatientData')}}"; 
     const patientAddNewPatientDataUpdate = "{{route('patient.patientAddNewPatientDataUpdate')}}"; 
+    const getPatientDataUsingMobile ="{{route('common.getPatientData')}}"; // also used in ipd-in.blade
+      const fillPatientData = "{{route('common.fillPatientData')}}"; 
+    
 </script>       
   {{-----------external js files added for page functions------------}}
 <script src="{{asset('backend/assets/js/custom/admin/appointment/patient.js')}}"></script>

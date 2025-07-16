@@ -112,7 +112,89 @@ function resetPatientAddPatient(){
     $('.patientAddPatientUpdate').addClass('d-none');
     $('.patientAddPatientSubmit').removeClass('d-none');
 }
+function getPatientDetailsOpd(mobile){
+    if(mobile.length >= 10){
+        // console.log(mobile);
+        $('.patient-data-list-opd').empty();
+        $('.patient-data-list-opd').removeClass('d-none');
+        $.ajax({
+            url: getPatientDataUsingMobile,
+            type:"POST",
+            headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            data:{mobile:mobile},
+             success: function(response) {
+                const getData = response.data;
 
+                if (!getData || getData.length === 0) { 
+                    $('.patient-data-list-opd').append(`<li class="list-group-item">No Data Found!</li>`);
+                } else {
+                    const addedIds = new Set();
+                    getData.forEach(element => {
+                        if (!addedIds.has(element.id)) {
+                            $('.patient-data-list-opd').append(
+                                `<li class="list-group-item" data-patient-id="${element.id}">${element.name} (${element.patient_id})</li>`
+                            );
+                            addedIds.add(element.id);
+                        }
+                    });
+                }
+            },
+            error:function(xhr,error){
+                console.log(xhr.responseText);
+                alert('An error occured: '+error);
+            }
+        });
+    }else{
+        $('.patient-data-list-opd').empty();
+        $('.patient-data-list-opd').addClass('d-none');
+        // console.log('10 Digit number required!');
+    }
+}
+$(document).on('click', '.patient-data-list-opd li', function() {
+    let patientId = $(this).data('patient-id'); // Get the clicked patient's ID
+    if(patientId != undefined){
+        // $('#itemSearchInput').val('');
+        fillPatientFieldsOpd(patientId); // Pass the ID to the function
+    }
+});
+function fillPatientFieldsOpd(id){
+    $.ajax({
+        url: fillPatientData, // Ensure this is a valid endpoint
+        type: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: { id:id },
+        success: function(response) {
+            console.log(response);
+            if(response.success){
+                $('.patient-data-list-opd').addClass('d-none');
+                let getData = response.data[0];
+                $('#patient-PatientId').val(getData.id);
+                $('#patient-patientName').val(getData.name);
+                $('#patient-guardianName').val(getData.guardian_name);
+                $('#patient-patientBloodType').val(getData.bloodtype).change();
+                $('#patient-patientDOB').val(getData.dob);
+                $('#patient-patientMStatus').val(getData.marital_status).change();
+                $('#patient-patientMobile').val(getData.mobile);
+                $('#patient-patientAddess').val(getData.address);
+                $('#patient-patientAllergy').val(getData.known_allergies);
+                $('input[name="patient-patientGender"]').each(function() {
+                if ($(this).val() === getData.gender) {
+                    $(this).prop('checked', true);
+                }
+                });
+        
+            }
+        
+    }
+    });
+}
+$(document).on('click','#patient-add-patient .modal-body',function(){
+    $('.patient-data-list-opd').addClass('d-none');
+});
 $('#patient-addPatientForm').on('submit',function(e){
      e.preventDefault();
     let id = $('#patient-patientId').val(); 

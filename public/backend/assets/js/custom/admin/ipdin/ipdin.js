@@ -232,9 +232,8 @@ function fillPatientFields(id){
         },
         data: { id:id },
         success: function(response) {
-            console.log(response);
             if(response.success){
-                 $('.patient-data-list').addClass('d-none');
+                $('.patient-data-list').addClass('d-none');
                 let getData = response.data[0];
                 $('#ipdPatientId').val(getData.id);
                 $('#ipd-patientName').val(getData.name);
@@ -258,6 +257,9 @@ function fillPatientFields(id){
     }
     });
 }
+$(document).on('click','#ipd-add-patient .modal-body',function(){
+    $('.patient-data-list').addClass('d-none');
+});
 $('#ipd-addPatientForm').on('submit',function(e){
      e.preventDefault();
     let id = $('#ipdPatientId').val();

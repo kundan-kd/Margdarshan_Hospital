@@ -319,7 +319,7 @@
   const getBedDetailsIpd = "{{route('ipd-getBedDetailsIpd')}}"; 
   const getBedDataIpd = "{{route('ipd-getBedDataIpd')}}"; 
 
-  const getPatientDataUsingMobile = "{{route('common.getPatientData')}}"; 
+  const getPatientDataUsingMobile = "{{route('common.getPatientData')}}"; // also used in patient.blade
   const fillPatientData = "{{route('common.fillPatientData')}}"; 
   
 </script>

@@ -126,7 +126,7 @@ function getBatchExpiry(id,randE){
         success:function(response){
             if(response.data != ''){
                 let getData = response.data[0];
-                let avlQty = getData.qty - getData.stock_out; // Calculate available quantity
+                let avlQty = (parseFloat(getData.qty) + parseFloat(getData.return_qty)) - parseFloat(getData.stock_out);
                 $("#billingAdd-expiry" + randE).val(getData.expiry); 
                 $("#billingAdd-avlQty" + randE).val(avlQty); 
                 $("#billingAdd-salesPrice" + randE).val(getData.sales_price); 

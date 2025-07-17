@@ -339,6 +339,7 @@ class BillingController extends Controller
 // }
 
     public function billingUpdateDatas(Request $request){
+        // dd($request->all());
     try {
         $billing_id = $request->billing_id;
         foreach ($request->editID as $key => $item_id) {

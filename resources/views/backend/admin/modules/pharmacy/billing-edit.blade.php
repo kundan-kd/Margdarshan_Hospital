@@ -79,13 +79,15 @@ Sale Return
                             <tr class="fieldGroup">
                             <td>
                                 <input type="hidden" id="billingEdit_id{{$item->id}}" name="billingEdit_id[]" value="{{$item->id}}">
-                                     <input id="billingEdit-category{{$item->id}}" name="billingEdit-category[]" type="text" class="form-control form-control-sm" value="{{$item->category_id}}" readonly>
+                                     <input id="billingEdit-category{{$item->id}}" name="billingEdit-category[]" type="text" class="form-control form-control-sm" value="{{$item->categoryData->name}}" readonly>
                                 </td>
                                 <td>
-                                    <input id="billingEdit-name{{$item->id}}" name="billingEdit-name[]" type="text" class="form-control form-control-sm" value="{{$item->name_id}}" readonly>
+                                    <input id="billingEdit-name{{$item->id}}" name="billingEdit-name[]" type="text" class="form-control form-control-sm" value="{{$item->name_id}}" style="display: none;">
+                                    <input class="form-control form-control-sm" value="{{$item->medicineNameData->name}}" readonly>
                                 </td>
                                 <td>
-                                    <input id="billingEdit-batch{{$item->id}}" name="billingEdit-batch[]" type="text" class="form-control form-control-sm" value="{{$item->batch_no}}" readonly>
+                                    <input id="billingEdit-batch{{$item->id}}" name="billingEdit-batch[]" type="text" class="form-control form-control-sm" value="{{$item->batch_no}}" style="display: none;">
+                                    <input class="form-control form-control-sm" value="{{$item->medicineNameData->name}}" readonly>
                                 </td>
                                 <td>
                                     <input id="billingEdit-expiry{{$item->id}}" name="billingEdit-expiry[]" type="text" class="form-control form-control-sm" value="{{$item->expiry}}" readonly>

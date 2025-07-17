@@ -136,6 +136,9 @@ User
           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary-600  btn-sm fw-normal userAddSubmit">Submit</button>
           <button type="button" class="btn btn-primary-600  btn-sm fw-normal userAddUpdate d-none" onclick="userAddUpdate(document.getElementById('userId').value)">Update</button>
+          <button class="btn btn-primary-600  btn-sm fw-normal userAddSpinn d-none" type="button">
+            <span class="sr-only">please wait...</span>
+          </button>
            <!-- <button type="button" class="btn btn-warning-600  btn-sm fw-normal">Save & Book Appointment</button>  -->
         </div>
       </form>

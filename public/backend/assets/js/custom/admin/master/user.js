@@ -151,6 +151,8 @@ $('#addUser-form').on('submit',function(e){
             if ($('.userAddUpdate').is(':visible')) {
                 userUpdate(id); // Trigger update function
             } else {
+                $('.userAddSubmit').addClass('d-none');
+                $('.userAddSpinn').removeClass('d-none');
                 $.ajax({
                     url: addUser,
                     method:"POST",
@@ -163,11 +165,21 @@ $('#addUser-form').on('submit',function(e){
                             $('#add-user').modal('hide');
                             $('#addUser-form')[0].reset();
                             $('#user-table').DataTable().ajax.reload();
-                            toastSuccessAlert('user added successfully');
+                            toastSuccessAlert(response.success);
+                            $('.userAddSpinn').addClass('d-none');
+                            $('.userAddSubmit').removeClass('d-none');
+                        } else if(response.error_success) {
+                            toastErrorAlert(response.error_success);    
+                            $('.userAddSpinn').addClass('d-none');
+                            $('.userAddSubmit').removeClass('d-none');
                         } else if(response.already_found) {
                             toastErrorAlert(response.already_found);    
+                            $('.userAddSpinn').addClass('d-none');
+                            $('.userAddSubmit').removeClass('d-none');
                         }else{
-                            toastErrorAlert('error found!');
+                            toastErrorAlert('something went wrong!');
+                            $('.userAddSpinn').addClass('d-none');
+                            $('.userAddSubmit').removeClass('d-none');
                         }
                     },
                     error: function(xhr, status, error) {

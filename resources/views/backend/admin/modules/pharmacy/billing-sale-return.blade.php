@@ -65,8 +65,7 @@ View Sale Return
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
                                     Tax (%)
-                                </th>
-                                
+                                </th>                               
                             </tr>
                         </thead>
                         <tbody>
@@ -75,27 +74,16 @@ View Sale Return
                             <tr class="fieldGroup">
                             <td>
                                 <input type="hidden" id="billingEdit_id{{$item->id}}" name="billingEdit_id[]" value="{{$item->id}}">
-                                    <select id="billingEdit-category{{$item->id}}" name="billingEdit-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicineEdit(this.value,{{$item->id}})" disabled>
-                                        <option value="">Select</option>
-                                        @foreach ($categories as $category)
-                                        <option value="{{$category->id}}"{{$item->category_id == $category->id ? 'selected':''}}>{{$category->name}}</option>
-                                        @endforeach
-                                    </select>
+                                    <input id="billingEdit-category{{$item->id}}" name="billingEdit-category[]" class="form-control form-control-sm" type="text" placeholder="Quantity" value="{{$item->category_id}}" readonly>
                                 </td>
                                 <td>
-                                    <select id="billingEdit-name{{$item->id}}" name="billingEdit-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetailsEdit(this.value,{{$item->id}})" disabled>
-                                        <option value="">Select</option>
-                                    </select>
+                                     <input id="billingEdit-name{{$item->id}}" name="billingEdit-name[]" class="form-control form-control-sm" type="text" placeholder="Quantity" value="{{$item->name_id}}" readonly>
                                 </td>
                                 <td>
-                                    <select id="billingEdit-batch{{$item->id}}" name="billingEdit-batch[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchExpiryEdit(this.value,{{$item->id}})"disabled>
-                                        <option value="">Select</option>
-                                    </select>
+                                    <input id="billingEdit-batch{{$item->id}}" name="billingEdit-batch[]" class="form-control form-control-sm" type="text" placeholder="Quantity" value="{{$item->batch_no}}" readonly>
                                 </td>
                                 <td>
-                                    <div class=" position-relative">
-                                        <input id="billingEdit-expiry{{$item->id}}" name="billingEdit-expiry[]" class="form-control radius-8 bg-base"  type="text" value="" value="{{$item->expiry}}" disabled>
-                                    </div>
+                                    <input id="billingEdit-expiry{{$item->id}}" name="billingEdit-expiry[]" class="form-control form-control-sm" type="text" placeholder="Quantity" value="{{$item->expiry}}" readonly>                                  
                                 </td>
                                 <td>
                                     <input id="billingEdit-qty{{$item->id}}" name="billingEdit-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" value="{{$item->return_qty}}" disabled>

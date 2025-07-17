@@ -27,6 +27,7 @@ class MedicineController extends Controller
     public function medicineView(Request $request){
         if($request->ajax()){
             $medicinecreate = Medicine::get();
+            // dd($medicinecreate);
             return DataTables::of($medicinecreate)
             ->addColumn('name',function($row){
                 return $row->name;
@@ -51,11 +52,25 @@ class MedicineController extends Controller
             ->addColumn('re_ordering_level',function($row){
                 return $row->re_ordering_level;
             })
-            ->addColumn('taxes',function($row){
-                return $row->taxes;
+            ->addColumn('batch', function($row){
+                $batch_nos = \App\Models\PurchaseItem::where('name_id', $row->id)->get(['batch_no', 'qty', 'return_qty', 'stock_out']);
+                $output = '';
+                foreach ($batch_nos as $item) {
+                    if (($item->qty + $item->return_qty - $item->stock_out) > 0) {
+                        $output .= $item->batch_no . '<br>';
+                    }
+                }
+                return $output ?: 'NA';
             })
-            ->addColumn('box_packing',function($row){
-                return $row->box_packing;
+            ->addColumn('expiry', function($row){
+                $expiry_date = \App\Models\PurchaseItem::where('name_id', $row->id)->get(['expiry', 'qty', 'return_qty', 'stock_out']);
+                $outputs = '';
+                foreach ($expiry_date as $item) {
+                   if (($item->qty + $item->return_qty - $item->stock_out) > 0) {
+                        $outputs .= $item->expiry . '<br>';
+                    }
+                }
+                return $outputs ?: 'NA';
             })
             ->addColumn('stock',function($row){
                 return $row->stock_in - $row->stock_out;
@@ -71,7 +86,7 @@ class MedicineController extends Controller
                          <iconify-icon icon="mingcute:delete-2-line" onclick="medicineDelete('.$row->id.')"></iconify-icon>
                          </a>-->';
             })
-            ->rawColumns(['composition','action'])
+            ->rawColumns(['composition','batch','expiry','action'])
             ->make(true);
         }
     }

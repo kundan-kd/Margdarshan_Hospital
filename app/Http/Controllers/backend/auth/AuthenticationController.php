@@ -4,7 +4,9 @@ namespace App\Http\Controllers\backend\auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\Billing;
 use App\Models\EmailOtp;
+use App\Models\Lead;
 use App\Models\Patient;
 use App\Models\PaymentReceived;
 use App\Models\User;
@@ -42,7 +44,21 @@ class AuthenticationController extends Controller
          $emergency_patients = Patient::where('type','EMERGENCY')->count();
          $doctors = User::where('usertype_id',2)->count();
          $total_income = PaymentReceived::sum('amount') + PaymentReceived::sum('discount_amount');
-         return view('backend.admin.modules.dashboard',compact('appointments','opd_patients','ipd_patients','emergency_patients','doctors','total_income'));
+         $leads = Lead::count();
+         $convertedLeads = Lead::where('lead_status','Converted')->count();
+         $assignLeads = Lead::whereNotNull('assign_to')->count();
+         $UnAssignLeads = Lead::whereNull('assign_to')->count();
+         $now = Carbon::now();
+         $formattedDate = $now->toDateString(); // Output: "2025-07-16"
+         $todayFollowup = Lead::where('next_followup_date',$formattedDate)->get();
+         $duefollowup = Lead::whereNull('naration')->get();
+         $today_pharmacy_bill = Billing::whereDate('created_at', $formattedDate)
+            ->selectRaw('SUM(paid_amount - return_amount) as total')
+            ->value('total');
+         $total_pharmacy_bill = Billing::selectRaw('SUM(paid_amount - return_amount) as total')
+            ->value('total');
+
+         return view('backend.admin.modules.dashboard',compact('appointments','opd_patients','ipd_patients','emergency_patients','doctors','total_income','leads','convertedLeads','assignLeads','UnAssignLeads','todayFollowup','duefollowup','today_pharmacy_bill','total_pharmacy_bill'));
     }
     public function sendotp(Request $request){
         if ($request->ajax()) {

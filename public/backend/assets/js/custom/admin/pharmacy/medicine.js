@@ -42,12 +42,12 @@ let table = $('#medicine-create-table').DataTable({
             name:'re_ordering_level'
         },
         {
-            data:'taxes',
-            name:'taxes'
+            data:'batch',
+            name:'batch'
         },
         {
-            data:'box_packing',
-            name:'box_packing'
+            data:'expiry',
+            name:'expiry'
         },
         {
             data:'stock',

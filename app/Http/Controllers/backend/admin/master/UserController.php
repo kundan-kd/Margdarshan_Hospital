@@ -126,13 +126,13 @@ class UserController extends Controller
                         'occupied_by' => 'doctor',
                         'occupied_by_id' => $user->id
                     ]);
-                    return response()->json(['success' => 'User created successfully.']);
+                    return response()->json(['success' => 'User created successfully.'],200);
                 } else {
-                    return response()->json(['error' => 'Failed to create user.'], 500);
+                    return response()->json(['error_success' => 'Failed to create user.']);
                 }
             }
         }else{
-            return response()->json(['already_found'=>'User with this email id already found'],200);
+            return response()->json(['already_found'=>'User with this email id already found']);
         }
     }
     public function getUserData(Request $request){

@@ -339,31 +339,26 @@ class BillingController extends Controller
 // }
 
     public function billingUpdateDatas(Request $request){
-    // dd($request->all());
     try {
         $billing_id = $request->billing_id;
         foreach ($request->editID as $key => $item_id) {
-            // $oldPurchaseQty = BillingItem::where('id', $item_id)->value('qty');
-            // $returnQty = $oldPurchaseQty - $request->qty[$key];
-            
-            // Update the billing item
-            $prevBillingItem = BillingItem::where('id', $item_id)->where('billing_id', $billing_id)->get(['return_qty','return_amount']);
+            $prevBillingItem = BillingItem::where('id', $item_id)->where('billing_id', $billing_id)->first('return_qty','return_amount');
             BillingItem::where('id', $item_id)->where('billing_id', $billing_id)->update([
-                    'return_qty' => $prevBillingItem[0]->return_qty + $request->returnQty[$key],
-                    'return_amount' => $prevBillingItem[0]->return_amount + $request->return_amount[$key] ?? 0
+                    'return_qty' => $prevBillingItem->return_qty + $request->returnQty[$key],
+                    'return_amount' => $prevBillingItem->return_amount + $request->return_amount[$key] ?? 0
                 ]);
-            $prevPurchaseItem = PurchaseItem::where('id',$request->batchID[$key])->get(['return_qty']);
+            $prevPurchaseItem = PurchaseItem::where('id',$request->batchID[$key])->first('return_qty');
             PurchaseItem::where('id',$request->batchID[$key])->update([
-                'return_qty' => $prevPurchaseItem[0]->return_qty + $request->returnQty[$key]
+                'return_qty' => $prevPurchaseItem->return_qty + $request->returnQty[$key]
             ]);
-            $prevMedicine = Medicine::where('id',$request->name[$key])->get(['return_qty']);
+            $prevMedicine = Medicine::where('id',$request->name[$key])->first('return_qty');
             Medicine::where('id',$request->name[$key])->update([
-                'return_qty' => $prevMedicine[0]->return_qty + $request->returnQty[$key]
+                'return_qty' => $prevMedicine->return_qty + $request->returnQty[$key]
             ]);  
         }
-        $prevBilling = Billing::where('id', $billing_id)->get(['return_amount']);
+        $prevBilling = Billing::where('id', $billing_id)->first('return_amount');
         Billing::where('id', $billing_id)->update([
-            'return_amount' => $prevBilling[0]->return_amount + $request->total_return_amount ?? 0,
+            'return_amount' => $prevBilling->return_amount + $request->total_return_amount ?? 0,
         ]);
 
             $sale_returns = new SaleReturn();
@@ -373,7 +368,7 @@ class BillingController extends Controller
             $sale_returns->created_by = Auth::id();
             $sale_returns->save();
 
-        return response()->json(['success' => true, 'message' => 'Billing updated successfully']);
+        return response()->json(['success' => 'Sale Return done successfully']);
     } catch (\Exception $e) {
         return response()->json(['success' => false, 'message' => 'Something went wrong', 'error' => $e->getMessage()]);
     }

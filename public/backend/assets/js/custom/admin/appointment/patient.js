@@ -168,7 +168,6 @@ function fillPatientFieldsOpd(id){
         },
         data: { id:id },
         success: function(response) {
-            console.log(response);
             if(response.success){
                 $('.patient-data-list-opd').addClass('d-none');
                 let getData = response.data[0];
@@ -324,13 +323,13 @@ function patientAddPatientUpdate(id){
                 },
                 success:function(response){
                     if(response.success){
-                        toastSuccessAlert('New Patient added successfully');
+                        toastSuccessAlert('Patient updated successfully');
                         $('#patient-add-patient').modal('hide');
                         $('#patient-table').DataTable().ajax.reload();
                         $('.patientAddPatientSpinn').addClass('d-none'); 
                         $('.patientAddPatientUpdate').removeClass('d-none'); 
                     }else{
-                        console.log('error found');
+                        toastErrorAlert('error found');
                         $('.patientAddPatientSpinn').addClass('d-none'); 
                         $('.patientAddPatientUpdate').removeClass('d-none'); 
                     }

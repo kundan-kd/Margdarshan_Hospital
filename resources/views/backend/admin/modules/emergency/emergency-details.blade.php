@@ -443,7 +443,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Advance Amount</h6>
+                           @can('Advance Add')
                           <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-advance" onclick="resetAdvance()"> <i class="ri-add-line"></i> Add Amount</button>
+                          @endcan
                         </div>
                       <div class="table-responsive">
                         <table class="table  striped-table w-100" id="emergency-advance-list">
@@ -553,8 +555,14 @@
                   <div class="emergencyMed-dose_errorCls d-none"></div>
               </div>
               <div class="col-md-6">
-                  <label class="form-label fw-medium">Remarks</label>
-                  <input id="emergencyMed-remerks" type="text" class="form-control form-control-sm" placeholder=" Remarks">
+                  <label class="form-label fw-medium" for="emergencyMed-remerks">Remarks Type</label>
+                  {{-- <input id="ipdMed-remerks" type="text" class="form-control form-control-sm" placeholder=" Remarks"> --}}
+                   <select id="emergencyMed-remerks" class="form-select form-select-sm select2-cls" style="width: 100%" onchange="validateField(this.id,'select')">
+                        <option value="">Select</option>
+                        <option value="General">General</option>
+                        <option value="Discharge">Discharge</option>
+                  </select>
+                  <div class="emergencyMed-remerks_errorCls d-none"></div>
               </div>
           </div>
         
@@ -883,8 +891,12 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+            @can('Advance Add')
             <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyAdvanceSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+            @endcan
+            @can('Advance Edit')
             <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 emergencyAdvanceUpdate d-none" onclick="emergencyAdvanceUpdate(document.getElementById('emergencyAdvanceId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+            @endcan
         </div>
     </form>
     </div>

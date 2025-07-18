@@ -34,7 +34,8 @@ use Yajra\DataTables\Facades\DataTables;
 class IpdinController extends Controller
 {
      public function index(){
-        return view('backend.admin.modules.ipdin.ipd-in');
+        $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
+        return view('backend.admin.modules.ipdin.ipd-in',compact('doctorData'));
     }
     public function ipdInPatientAdd(){
             return view('backend.admin.modules.ipdin.ipd-in-PatientAdd');
@@ -145,6 +146,8 @@ class IpdinController extends Controller
             'mstatus' => 'required',
             'mobile' => 'required',
             'address' => 'required',
+            'consultDoctor' => 'nullable',
+            'referPerson' => 'nullable',
             'alt_mobile' => 'nullable',
             'allergy' => 'nullable',
             'bedNumId' => 'required'
@@ -167,6 +170,8 @@ class IpdinController extends Controller
         $patient->alt_mobile = $request->alt_mobile;
         $patient->known_allergies = $request->allergy;
         $patient->address = $request->address;
+        $patient->attended_doctor_id = $request->consultDoctor;
+        $patient->reference_person = $request->referPerson;
         $patient->bed_id = $request->bedNumId;
         $patient->current_status = "Admitted";
         if($patient->save()){

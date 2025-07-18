@@ -12,4 +12,8 @@ class Patient extends Model
     public function bedData(){
         return $this->belongsTo(Bed::class,'bed_id');
     }
+    public function doctorData(){
+        return $this->belongsTo(User::class,'attended_doctor_id');
+    }
+
 }

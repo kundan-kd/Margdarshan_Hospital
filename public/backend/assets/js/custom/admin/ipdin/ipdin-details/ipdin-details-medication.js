@@ -113,7 +113,8 @@ $('#ipdMed-form').on('submit',function(e){
     let medCategory_check  = validateField('ipdMed-medCategory', 'select');
     let medName_check  = validateField('ipdMed-medName', 'select');
     let dose_check  = validateField('ipdMed-dose', 'select');
-    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true){
+    let remarks_check  = validateField('ipdMed-remerks', 'select');
+    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true && remarks_check === true){
         let patientId = $('#patient_Id').val();
         let visitid = $('#ipdMed-visitid').val();
         let medCategory = $('#ipdMed-medCategory').val();
@@ -177,7 +178,8 @@ function ipdMedDoseUpdate(id){
     let medCategory_check  = validateField('ipdMed-medCategory', 'select');
     let medName_check  = validateField('ipdMed-medName', 'select');
     let dose_check  = validateField('ipdMed-dose', 'select');
-    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true){
+    let remarks_check  = validateField('ipdMed-remerks', 'select');
+    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true && remarks_check === true){
         let visitid = $('#ipdMed-visitid').val();
         let medCategory = $('#ipdMed-medCategory').val();
         let medName = $('#ipdMed-medName').val();

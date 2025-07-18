@@ -29,8 +29,12 @@ return new class extends Migration
             $table->string('known_allergies',200)->nullable();
             $table->text('address')->nullable();
             $table->integer('bed_id')->nullable();
+            $table->integer('attended_doctor_id')->nullable();
+            $table->string('reference_person',100)->nullable();
             $table->integer('status')->default(1);
             $table->string('current_status',20)->nullable();
+            $table->dateTime('discharge_date')->nullable();
+            $table->integer('discharge_form_generated')->default(0);
             $table->text('description')->nullable();
             $table->integer('lead_id')->nullable();
             $table->timestamps();

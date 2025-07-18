@@ -16,7 +16,7 @@
         <h6 class="fw-normal mb-0">OPD - Out Patient Details</h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
           @can('OPD Move To IPD')
-            <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" onclick="#"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
+            <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
           @endcan
       </div>
     </div>
@@ -464,7 +464,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Advance Amount</h6>
+                          @can('Advance Add')
                           <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-advance" onclick="resetAdvance()"> <i class="ri-add-line"></i> Add Amount</button>
+                          @endcan
                         </div>
                       <div class="table-responsive">
                         <table class="table  striped-table w-100" id="opd-out-advance-list">
@@ -606,8 +608,12 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+            @can('Advance Add')
             <button type="submit" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutAdvanceSubmit"> <i class="ri-checkbox-circle-line"></i> Submit</button>
+            @endcan
+            @can('Advance Edit')
             <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 opdOutAdvanceUpdate d-none" onclick="opdOutAdvanceUpdate(document.getElementById('opdOutAdvanceId').value)"> <i class="ri-checkbox-circle-line"></i> Update</button>
+            @endcan
         </div>
     </form>
     </div>
@@ -816,8 +822,14 @@
                   <div class="opdOutMed-dose_errorCls d-none"></div>
               </div>
               <div class="col-md-6">
-                  <label class="form-label fw-medium">Remarks</label>
-                  <input id="opdOutMed-remerks" type="text" class="form-control form-control-sm" placeholder=" Remarks">
+                  <label class="form-label fw-medium" for="opdOutMed-remerks">Remarks Type</label>
+                  {{-- <input id="ipdMed-remerks" type="text" class="form-control form-control-sm" placeholder=" Remarks"> --}}
+                   <select id="opdOutMed-remerks" class="form-select form-select-sm select2-cls" style="width: 100%" onchange="validateField(this.id,'select')">
+                        <option value="">Select</option>
+                        <option value="General">General</option>
+                        <option value="Discharge">Discharge</option>
+                  </select>
+                  <div class="opdOutMed-remerks_errorCls d-none"></div>
               </div>
           </div>
         
@@ -936,7 +948,6 @@
                 <div class="row gy-3">
                   <div class="col-md-12">
                     <label class="form-label" for="room_num">Bed Number</label>
-                    {{-- <input type="hidden" id=opd-ipdRoom"> --}}
                    <select class="form-control form-control-sm" name="opd-ipdRoom" id="opd-ipdRoom" required>
                         <option value="">Select IPD Bed Number</option>
                         @foreach ($ipdAvailBeds as $ipdBed)
@@ -945,7 +956,26 @@
                     </select>   
                     <div class="invalid-feedback">
                             Select IPD Bed
-                        </div> 
+                    </div> 
+                  </div>
+                     <div class="col-md-12">
+                    <label class="form-label" for="room_num">Reporting Doctor</label>
+                   <select class="form-control form-control-sm" name="opd-doctorID" id="opd-doctorID" required>
+                        <option value="">Select Doctor</option>
+                        @foreach ($doctorData as $doctor)
+                        <option value="{{$doctor->id}}">Dr. {{$doctor->name}}</option>
+                        @endforeach
+                    </select>   
+                    <div class="invalid-feedback">
+                            Select Doctor
+                    </div> 
+                  </div>
+                   <div class="col-md-12">
+                    <label class="form-label" for="room_num">Refer Person</label>
+                    <input class="form-control form-control-sm" name="opd-referPerson" id="opd-referPerson" placeholder="Enter Refer Person Name" required>
+                    <div class="invalid-feedback">
+                            Enter Refer Person
+                    </div> 
                 </div>
                 </div>
                 </div>

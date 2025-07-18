@@ -111,7 +111,8 @@ $('#emergencyMed-form').on('submit',function(e){
     let medCategory_check  = validateField('emergencyMed-medCategory', 'select');
     let medName_check  = validateField('emergencyMed-medName', 'select');
     let dose_check  = validateField('emergencyMed-dose', 'select');
-    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true){
+    let remarks_check  = validateField('emergencyMed-remerks', 'select');
+    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true && remarks_check === true){
         let patientId = $('#patient_Id').val();
         let visitid = $('#emergencyMed-visitid').val();
         let medCategory = $('#emergencyMed-medCategory').val();
@@ -175,7 +176,8 @@ function emergencyMedDoseUpdate(id){
     let medCategory_check  = validateField('emergencyMed-medCategory', 'select');
     let medName_check  = validateField('emergencyMed-medName', 'select');
     let dose_check  = validateField('emergencyMed-dose', 'select');
-    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true){
+    let remarks_check  = validateField('emergencyMed-remerks', 'select');
+    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true && remarks_check === true){
         let visitid = $('#emergencyMed-visitid').val();
         let medCategory = $('#emergencyMed-medCategory').val();
         let medName = $('#emergencyMed-medName').val();

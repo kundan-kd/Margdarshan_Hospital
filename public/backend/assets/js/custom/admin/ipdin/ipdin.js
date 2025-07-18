@@ -282,6 +282,8 @@ $('#ipd-addPatientForm').on('submit',function(e){
             let mstatus = $('#ipd-patientMStatus').val();
             let mobile = $('#ipd-patientMobile').val();
             let address = $('#ipd-patientAddess').val();
+            let consultDoctor = $('#ipd-consultDoctor').val();
+            let referPerson = $('#ipd-referPerson').val();
             let alt_mobile = $('#ipd-patientAltMobile').val();
             let allergy = $('#ipd-patientAllergy').val();
             let bedNumId = $('#ipd-patientBedNum').val();
@@ -295,7 +297,7 @@ $('#ipd-addPatientForm').on('submit',function(e){
                         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                     },
                     data:{id:id,
-                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
+                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,consultDoctor:consultDoctor,referPerson:referPerson,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
                     },
                     success:function(response){
                         if(response.success){

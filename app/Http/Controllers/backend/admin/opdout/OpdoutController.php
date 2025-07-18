@@ -112,7 +112,9 @@ class OpdoutController extends Controller
             'bed_id' => $request->bed_id,
             'previous_type'=>$curr_status[0]->type,
             'type_change_date' => $now,
-            'current_status' => "Admitted"
+            'current_status' => "Admitted",
+            'attended_doctor_id' => $request->doctor_id,
+            'reference_person' => $request->ref_person
         ]);
         if($update){
             Appointment::where('patient_id',$request->id)->update([

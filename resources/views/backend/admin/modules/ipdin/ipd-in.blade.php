@@ -249,6 +249,24 @@
             <input type="text" id="ipd-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
             <div class="ipd-patientAddess_errorCls d-none"></div>
           </div>
+          <div class="col-6">
+            <label class="form-label fw-normal" for="ipd-consultDoctor">Consultant Doctor</label>
+           
+                   <select class="form-control form-control-sm select2-cls" style="width: 100%" name="ipd-consultDoctor" id="ipd-consultDoctor">
+                        <option value="">Select Doctor</option>
+                        @foreach ($doctorData as $doctor)
+                        <option value="{{$doctor->id}}">Dr. {{$doctor->name}}</option>
+                        @endforeach
+                    </select>   
+                    <div class="invalid-feedback">
+                            Select Doctor
+                    </div>
+          </div>
+          <div class="col-6">
+            <label class="form-label fw-normal" for="ipd-referPerson">Refer Person</label>
+            <input type="text" id="ipd-referPerson"  class="form-control form-control-sm" placeholder="Refer Person">
+            <div class="ipd-referPerson_errorCls d-none"></div>
+          </div>
           {{-- <div class="col-6">
             <label class="form-label fw-normal">Alt Phone</label>
             <input type="number" id="ipd-patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">

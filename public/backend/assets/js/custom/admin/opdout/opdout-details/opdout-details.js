@@ -10,7 +10,9 @@ $('#opd-ipdRoomForm').on('submit',function(e){
     e.preventDefault();
     let patient_id = $('#patient_Id').val();
     let bed = $('#opd-ipdRoom').val();
-    if(bed == ''){
+    let doctor_id = $('#opd-doctorID').val();
+    let ref_person = $('#opd-referPerson').val();
+    if(bed == '' || doctor_id =='' || ref_person == ''){
          $('.needs-validation').addClass('was-validated');
     }else{
         Swal.fire({
@@ -31,10 +33,13 @@ $('#opd-ipdRoomForm').on('submit',function(e){
                 headers:{
                     'X-CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
                 },
-                data:{id:patient_id,bed_id:bed},
+                data:{id:patient_id,bed_id:bed,doctor_id:doctor_id,ref_person:ref_person},
                 success:function(response){
                     if (response.success) {
                         Swal.fire("Moved", response.success, "success");
+                        setTimeout(function(){
+                            admissionForm(patient_id); //print patient form
+                        },1000);
                         setTimeout(function(){
                             window.open('/ipd-in');
                         },2500);
@@ -266,3 +271,7 @@ $('#opdFinding-form').on('submit',function(e){
         console.log('Please fill required field');
     }
 });
+
+function admissionForm(id){
+    window.open('/admission-form-print/' + id);
+}

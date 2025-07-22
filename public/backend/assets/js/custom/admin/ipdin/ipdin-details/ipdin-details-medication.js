@@ -109,14 +109,14 @@ function medicinelist(medicine_cat_id,visit_id){
 }
 $('#ipdMed-form').on('submit',function(e){
     e.preventDefault();
-    let visitid_check  = validateField('ipdMed-visitid', 'select');
+    // let visitid_check  = validateField('ipdMed-visitid', 'select');
     let medCategory_check  = validateField('ipdMed-medCategory', 'select');
     let medName_check  = validateField('ipdMed-medName', 'select');
     let dose_check  = validateField('ipdMed-dose', 'select');
     let remarks_check  = validateField('ipdMed-remerks', 'select');
-    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true && remarks_check === true){
+    if(medCategory_check === true && medName_check === true && dose_check === true && remarks_check === true){
         let patientId = $('#patient_Id').val();
-        let visitid = $('#ipdMed-visitid').val();
+        let visitid = $('#ipdMed-visitid').val() || null;
         let medCategory = $('#ipdMed-medCategory').val();
         let medName = $('#ipdMed-medName').val();
         let dose = $('#ipdMed-dose').val();
@@ -174,13 +174,13 @@ function ipdMedDoseEdit(id){
     });
 }
 function ipdMedDoseUpdate(id){
-    let visitid_check  = validateField('ipdMed-visitid', 'select');
+    // let visitid_check  = validateField('ipdMed-visitid', 'select');
     let medCategory_check  = validateField('ipdMed-medCategory', 'select');
     let medName_check  = validateField('ipdMed-medName', 'select');
     let dose_check  = validateField('ipdMed-dose', 'select');
     let remarks_check  = validateField('ipdMed-remerks', 'select');
-    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true && remarks_check === true){
-        let visitid = $('#ipdMed-visitid').val();
+    if(medCategory_check === true && medName_check === true && dose_check === true && remarks_check === true){
+        let visitid = $('#ipdMed-visitid').val() || null; 
         let medCategory = $('#ipdMed-medCategory').val();
         let medName = $('#ipdMed-medName').val();
         let dose = $('#ipdMed-dose').val();

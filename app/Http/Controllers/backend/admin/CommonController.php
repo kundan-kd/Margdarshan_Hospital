@@ -26,8 +26,11 @@ public function barCodeGenerate()
         ->header('Content-Type', 'image/png');
 }
 public function getPatientData(Request $request){
-    $getData = Patient::where('mobile',$request->mobile)->get();
-    return response()->json(['success'=>'Patient data found','data'=>$getData],200);
+    $latestPatient = Patient::where('mobile', $request->mobile)
+                            ->orderByDesc('created_at')
+                            ->limit(1)
+                            ->first(); // Gets the latest one directly from DB
+    return response()->json(['success' => 'Latest patient data found','data' => $latestPatient], 200);
 }
 public function fillPatientData(Request $request){
     $getData = Patient::where('id',$request->id)->get();

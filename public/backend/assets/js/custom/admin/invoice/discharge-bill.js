@@ -140,70 +140,24 @@ function dischargeSummary(id){
 function dischargeFormPrint(id){
     window.open('/discharge-form-print/' + id);
 }
-// $('#discharge-summaryForm').on('submit',function(){
-//     let patient_id = $('#patient_id').val();
-//     let final_diagnosis = $('#discharge-finalDiagnosis').val();
-//     let chief_complaint = $('#discharge-chiefComplaint').val();
-//     let past_history = $('#discharge-pastHistory').val();
-//     let clinical_finding = $('#discharge-clinicalFinding').val();
-//     let investigation = $('#discharge-investigation').val();
-//     let brief_history = $('#discharge-briefHistory').val();
-//     let condition_at_discharge = $('#discharge-conditionAtDischarge').val();
-//     let medication_diet = $('#discharge-medicationDiet').val();
-//     let advice = $('#discharge-advice').val();
-//     let review_after = $('#discharge-reviewAfter').val();
-//     if(final_diagnosis =='' || chief_complaint =='' || past_history =='' || clinical_finding =='' || investigation =='' || brief_history =='' || condition_at_discharge =='' || medication_diet =='' || advice =='' || review_after ==''){
-//         $('.needs-validation').addClass('was-validated');
-//     }else{
 
-//     }
-// });
 $('#discharge-summaryForm').on('submit', function(e) {
     e.preventDefault(); // Prevent default form submission
-
     let patient_id = $('#patient_id').val();
-    let final_diagnosis = $('#discharge-finalDiagnosis').val();
-    // let chief_complaint = $('#discharge-chiefComplaint').val();
-    // let past_history = $('#discharge-pastHistory').val();
-    // let clinical_finding = $('#discharge-clinicalFinding').val();
-    // let investigation = $('#discharge-investigation').val();
-    // let brief_history = $('#discharge-briefHistory').val();
-    // let condition_at_discharge = $('#discharge-conditionAtDischarge').val();
-    // let medication_diet = $('#discharge-medicationDiet').val();
-    // let advice = $('#discharge-advice').val();
-    // let review_after = $('#discharge-reviewAfter').val();
-
-    // if (
-    //     final_diagnosis === '' || chief_complaint === '' || past_history === '' ||
-    //     clinical_finding === '' || investigation === '' || brief_history === '' ||
-    //     condition_at_discharge === '' || medication_diet === '' || advice === '' ||
-    //     review_after === ''
-    // ) {
-    //     $('.needs-validation').addClass('was-validated');
-    // } else {
+    let final_diagnosis = CKEDITOR.instances['discharge-finalDiagnosis'].getData();
         $.ajax({
             url: dischargeSummarySubmit, // Replace with your actual route
             type: "POST",
             data: {
                 patient_id: patient_id,
                 final_diagnosis: final_diagnosis,
-                // chief_complaint: chief_complaint,
-                // past_history: past_history,
-                // clinical_finding: clinical_finding,
-                // investigation: investigation,
-                // brief_history: brief_history,
-                // condition_at_discharge: condition_at_discharge,
-                // medication_diet: medication_diet,
-                // advice: advice,
-                // review_after: review_after
             },
             success: function(response) {
-                console.log(response);
                 toastSuccessAlert(response.success);
-                // Handle success (e.g., show message, redirect, reset form)
-                // alert('Discharge summary saved successfully!');
-                // $('#discharge-summaryForm')[0].reset();
                 $('.needs-validation').removeClass('was-validated');
+                setTimeout(function(){
+                    window.location.href='/patient-discharge-bills/'+ patient_id;
+                },700);
             },
             error: function(xhr) {
                 // Handle error

@@ -146,8 +146,8 @@ Discharge Billing
           <div class="text-end">
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddSubmitBtn" {{$visibility}} onclick="billAmountSubmit({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Submit</button>
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddDischargePrintBtn {{((($total_amount + $pre_bed_amount ?? 0) - ($received_amount + $discount_amount)) <= 0) ? '' : 'd-none' }}" {{$visibility}} onclick="billDischargeNPrint({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge & Print</button>
-                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 {{$patientData[0]->discharge_form_generated == 0 ? '':'d-none'}}" onclick="dischargeSummary({{$patient_id}})"> <i class="ri-checkbox-circle-line {{$patientData[0]->discharge_form_generated == 1 ? '':'d-none'}}"></i> Discharge Summary</button>
-                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2" onclick="dischargeFormPrint({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge Form</button>
+                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 {{$patientData[0]->discharge_form_generated == 0 ? '':'d-none'}}" onclick="dischargeSummary({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge Summary</button>
+                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 {{$patientData[0]->discharge_form_generated == 1 ? '':'d-none'}}" onclick="dischargeFormPrint({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge Form</button>
                 {{-- <button type="button"class="btn btn-primary-600 btn-sm fw-normal mx-2 billPrintBtn d-none"onclick="billPrint({{ $patient_id }})"><i class="ri-checkbox-circle-line"></i> Print</button> --}}
                 <button class="btn btn-primary-600  btn-sm fw-normal billAddSpinnBtn d-none" type="button" disabled>
                     Please Wait...

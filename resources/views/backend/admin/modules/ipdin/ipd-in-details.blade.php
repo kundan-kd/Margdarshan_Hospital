@@ -953,13 +953,13 @@
              <div class="col-md-6">
               <input type="hidden" id="ipdMedDoseId">
                   <label class="form-label fw-medium" for="ipdMed-visitid">Visit ID</label> <sup class="text-danger">*</sup>
-                    <select id="ipdMed-visitid" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                    <select id="ipdMed-visitid" class="form-select form-select-sm select2-cls" style="width: 100%">
                         <option value="">Select</option>
                         @foreach ($visitsData as $visit)
                         <option value="{{$visit->id}}">MDVI0{{$visit->id}}</option>
                         @endforeach
                     </select>
-                    <div class="ipdMed-visitid_errorCls d-none"></div>
+                    {{-- <div class="ipdMed-visitid_errorCls d-none"></div> --}}
               </div>
               <div class="col-md-6">
                   <label class="form-label fw-medium" for="ipdMed-medCategory">Medicine Category</label> <sup class="text-danger">*</sup>

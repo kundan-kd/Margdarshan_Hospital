@@ -126,19 +126,12 @@ function getPatientDetailsOpd(mobile){
             data:{mobile:mobile},
              success: function(response) {
                 const getData = response.data;
-
-                if (!getData || getData.length === 0) { 
+                if (!getData) {
                     $('.patient-data-list-opd').append(`<li class="list-group-item">No Data Found!</li>`);
                 } else {
-                    const addedIds = new Set();
-                    getData.forEach(element => {
-                        if (!addedIds.has(element.id)) {
-                            $('.patient-data-list-opd').append(
-                                `<li class="list-group-item" data-patient-id="${element.id}">${element.name} (${element.patient_id})</li>`
-                            );
-                            addedIds.add(element.id);
-                        }
-                    });
+                    $('.patient-data-list-opd').append(
+                        `<li class="list-group-item" data-patient-id="${getData.id}">${getData.name} (${getData.patient_id})</li>`
+                    );
                 }
             },
             error:function(xhr,error){

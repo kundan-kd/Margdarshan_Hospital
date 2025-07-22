@@ -68,8 +68,8 @@ medicines
          <div class="row">
           <input type="hidden" id="createMed_id">
             <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal" for="createMed_name">Medician Name</label>
-                <input id="createMed_name" type="text" class="form-control form-control-sm" placeholder=" Medician Name" oninput="validateField(this.id,'input')">
+              <label class="form-label fw-normal" for="createMed_name">Medicine Name</label>
+                <input id="createMed_name" type="text" class="form-control form-control-sm" placeholder=" Medicine Name" oninput="validateField(this.id,'input')">
                   <div class="createMed_name_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">

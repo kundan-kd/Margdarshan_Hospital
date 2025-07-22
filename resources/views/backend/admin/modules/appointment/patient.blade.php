@@ -181,7 +181,7 @@ Patient
     const newPatientData = "{{route('patient.newPatientData')}}"; 
     const patientAddNewPatientDataUpdate = "{{route('patient.patientAddNewPatientDataUpdate')}}"; 
     const getPatientDataUsingMobile ="{{route('common.getPatientData')}}"; // also used in ipd-in.blade
-      const fillPatientData = "{{route('common.fillPatientData')}}"; 
+    const fillPatientData = "{{route('common.fillPatientData')}}"; 
     
 </script>       
   {{-----------external js files added for page functions------------}}

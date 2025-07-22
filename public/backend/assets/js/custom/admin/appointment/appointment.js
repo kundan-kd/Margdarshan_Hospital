@@ -120,11 +120,13 @@ $('#addPatientForm').on('submit',function(e){
                         $('#add-appointment').modal('show');
                         $('.patientSpinn').addClass('d-none');
                         $('.patientSubmit').removeClass('d-none'); 
-                    }else{
-                        console.log('error found');
-                        $('.patientSpinn').addClass('d-none');
-                        $('.patientSubmit').removeClass('d-none'); 
-                    }
+                        }else if(response.alreadyFound){
+                            toastErrorAlert(response.alreadyFound);
+                            $('.patientSpinn').addClass('d-none'); 
+                            $('.patientSubmit').removeClass('d-none'); 
+                        }else{
+                            console.log('error found');
+                        }
                 },
                 error:function(xhr, status, error){
                     console.log(xhr.respnseText);
@@ -161,77 +163,49 @@ function resetAddPatient(){
     $('.patientMobile_errorCls').addClass('d-none');
     $('.patientAddess_errorCls').addClass('d-none');
 }
+
 function getPatientData(x) {
     validateField('itemSearchInput', 'input');
-    const nameLength = x.length;
-
-    if (nameLength < 3) {
+    if (x.length < 3) {
         $('.patient-name-list').addClass('d-none');
         $('#patientNameAppt').val('');
         $('.patient-name-list').empty();
-    } else {
-        $('.patient-name-list').removeClass('d-none');
-        $('.patient-name-list').empty();
-
-        $.ajax({
-            url: searchPatient,
-            type: "POST",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: { name: x },
-            success: function(response) {
-                const getData = response.data;
-
-                if (!getData || getData.length === 0) { 
-                    $('.patient-name-list').append(`<li class="list-group-item">No Data Found!</li>`);
-                } else {
-                    const addedIds = new Set();
-                    getData.forEach(element => {
-                        if (!addedIds.has(element.id)) {
-                            $('.patient-name-list').append(
-                                `<li class="list-group-item" data-patient-id="${element.id}">${element.name} (${element.patient_id})</li>`
-                            );
-                            addedIds.add(element.id);
-                        }
-                    });
-                }
-            }
-        });
+        return;
     }
-}
+    $('.patient-name-list').empty().removeClass('d-none');
+    $.ajax({
+        url: searchPatient,
+        type: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: { name: x },
+        success: function(response) {
+            console.log(response);
+            const patients = response.data;
+            $('.patient-name-list').empty();
 
-// function getPatientData(x) {
-//     validateField('itemSearchInput','input');
-//     let nameLength = x.length;
-//     if(nameLength < 3){
-//         $('.patient-name-list').addClass('d-none');
-//         $('#patientNameAppt').val('');
-//     }else{
-//         $('.patient-name-list').removeClass('d-none');
-//          $('.patient-name').empty();
-//         $.ajax({
-//             url: searchPatient, // Ensure this is a valid endpoint
-//             type: "POST",
-//             headers: {
-//                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//             },
-//             data: { name: x },
-//             success: function(response) {
-//                 let getData = response.data;
-               
-//                 if(getData == null || getData == ''){
-//                      $('.patient-name').append(` <li class="list-group-item">No Data Found!</li>`);
-//                 }else{
-//                         getData.forEach(element => {
-//                         $('.patient-name').append(` <li class="list-group-item" data-patient-id=${element.id}>${element.name} (${element.patient_id})</li>`);
-//                     });
-//                 }
-             
-//             }
-//         });
-//     }
-// }
+            if (!patients || patients.length === 0) {
+                $('.patient-name-list').append(`<li class="list-group-item">No Data Found!</li>`);
+            } else {
+                patients.forEach(patient => {
+                    $('.patient-name-list').append(
+                        `<li class="list-group-item" data-patient-id="${patient.id}">${patient.name} (${patient.patient_id})</li>`
+                    );
+                });
+            }
+
+        },
+        error: function(xhr) {
+            console.error('Error fetching patient:', xhr.responseText);
+            $('.patient-name-list').append(`<li class="list-group-item text-danger">Something went wrong!</li>`);
+        }
+    });
+}
+$(document).on('click','#appointmentForm .modal-body',function(){
+    $('.patient-name-list').addClass('d-none');
+});
+
 // run function getPatientDetails on click of patient name list
 $(document).on('click', '.patient-name-list li', function() {
     let patientId = $(this).data('patient-id'); // Get the clicked patient's ID
@@ -240,7 +214,78 @@ $(document).on('click', '.patient-name-list li', function() {
         getPatientDetails(patientId); // Pass the ID to the function
     }
 });
-
+function getPatientDetailsOpd(mobile){
+    if(mobile.length >= 10){
+        // console.log(mobile);
+        $('.patient-data-list-opd').empty();
+        $('.patient-data-list-opd').removeClass('d-none');
+        $.ajax({
+            url: getPatientDataUsingMobile,
+            type:"POST",
+            headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            data:{mobile:mobile},
+            success: function(response) {
+                const getData = response.data;
+                if (!getData) {
+                    $('.patient-data-list-opd').append(`<li class="list-group-item">No Data Found!</li>`);
+                } else {
+                    $('.patient-data-list-opd').append(
+                        `<li class="list-group-item" data-patient-id="${getData.id}">${getData.name} (${getData.patient_id})</li>`
+                    );
+                }
+            },
+            error:function(xhr,error){
+                console.log(xhr.responseText);
+                alert('An error occured: '+error);
+            }
+        });
+    }else{
+        $('.patient-data-list-opd').empty();
+        $('.patient-data-list-opd').addClass('d-none');
+        // console.log('10 Digit number required!');
+    }
+}
+$(document).on('click', '.patient-data-list-opd li', function() {
+    let patientId = $(this).data('patient-id'); // Get the clicked patient's ID
+    // console.log(patientId);
+    if(patientId != undefined){
+        // $('#itemSearchInput').val('');
+        fillPatientFieldsOpd(patientId); // Pass the ID to the function
+    }
+});
+function fillPatientFieldsOpd(id){
+    $.ajax({
+        url: fillPatientData, // Ensure this is a valid endpoint
+        type: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: { id:id },
+        success: function(response) {
+            if(response.success){
+                $('.patient-data-list-opd').addClass('d-none');
+                let getData = response.data[0];
+                $('#patientName').val(getData.name);
+                $('#guardianName').val(getData.guardian_name);
+                $('#patientBloodType').val(getData.bloodtype).change();
+                $('#patientDOB').val(getData.dob);
+                $('#patientMStatus').val(getData.marital_status).change();
+                $('#patientMobile').val(getData.mobile);
+                $('#patientAddess').val(getData.address);
+                $('#patientAllergy').val(getData.known_allergies);
+                $('input[name="patientGender"]').each(function() {
+                if ($(this).val() === getData.gender) {
+                    $(this).prop('checked', true);
+                }
+                });
+        
+            }
+        
+    }
+    });
+}
 function getPatientDetails(id){
     $.ajax({
         url: getPatient, // Ensure this is a valid endpoint

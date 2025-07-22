@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backend\admin\appointment;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Department;
+use App\Models\Lead;
 use App\Models\Patient;
 use App\Models\PaymentBill;
 use App\Models\PaymentMode;
@@ -84,7 +85,16 @@ class AppointmentController extends Controller
     }
 
     public function addNewPatient(Request $request){
-         $validator = Validator::make($request->all(),[
+         $existing_patient = Patient::where('mobile', $request->mobile)
+            ->where(function ($query) {
+                $query->where('type', 'OPD')
+                    ->orWhere('current_status', 'Admitted');
+            })->first();
+        if ($existing_patient) {
+            return response()->json([
+                'alreadyFound' => 'Patient already exists with this mobile no.']);
+        }
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'guardian_name' => 'required',
             'gender' => 'nullable',
@@ -96,11 +106,12 @@ class AppointmentController extends Controller
             'alt_mobile' => 'nullable',
             'allergy' => 'nullable'
         ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=>$validator->errors()->all()],422);
+        if ($validator->fails()) {
+            return response()->json(['error_validation' => $validator->errors()->all()], 422);
         }
-        $month = date('m'); // Gets the current month (e.g., "05")
-        $year = date('y'); // Gets the current year (e.g., "25")
+        $month = date('m');
+        $year = date('y');
+        $existing_patient_data = Patient::where('mobile', $request->mobile)->first();
         $patient = new Patient();
         $patient->type = "OPD";
         $patient->name = $request->name;
@@ -113,32 +124,90 @@ class AppointmentController extends Controller
         $patient->alt_mobile = $request->alt_mobile;
         $patient->known_allergies = $request->allergy;
         $patient->address = $request->address;
-        if($patient->save()){
-            $patient->patient_id = "MHPT". $month.$year.$patient->id;
-            $patient->save();
-            //generate bar code
-            $generator = new BarcodeGeneratorPNG();
-            $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
-            if ($barcode) {
-                   //generate barcode and store in storage/public/barcode
-                    $fileName = $patient->patient_id.'.' . time() . '.png';
-                     $path = public_path('backend/uploads/barcode/' . $fileName);
+
+        if ($patient->save()) {
+            if ($existing_patient_data) {
+                // Reuse patient_id and barcode from previous patient
+                $patient->patient_id = $existing_patient_data->patient_id;
+                $patient->barcode = $existing_patient_data->barcode;
+            } else {
+                // Generate new patient_id and barcode
+                $patient->patient_id = "MHPT" . $month . $year . $patient->id;
+                // Barcode generation logic
+                $generator = new BarcodeGeneratorPNG();
+                $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
+    
+                if ($barcode) {
+                    $fileName = $patient->patient_id . '.' . time() . '.png';
+                    $path = public_path('backend/uploads/barcode/' . $fileName);
                     file_put_contents($path, $barcode);
-                    $patient->barcode = $fileName; //store barcode name in database
-                    $patient->save();
+                    $patient->barcode = $fileName;
+                }
             }
-            return response()->json(['success'=>'New Patient added successfully'],201);
-        }else{
-            return response()->json(['error_success'=>'Patient not added'],500);
+            $patient->save(); // Final save after assigning patient_id and barcode
+            //lead convert when same mobile number patient get admitted
+            $lead = Lead::where('mobile', $request->mobile)->where('lead_status', 'Pending')->whereNotNull('assign_to')->first();     
+            if ($lead) {
+                $lead->lead_status = 'Converted';
+                $lead->lead_patient_id = $patient->id;
+                $lead->lead_status_date = now();
+                $lead->save();
+
+                $patient->lead_id = $lead->id;
+                $patient->save();
+            }
+            return response()->json(['success' => 'New Patient added successfully'], 201);
         }
+    return response()->json(['error_success' => 'Patient not added'], 500);
     }
-    public function searchPatient(Request $request){
-        $getData = Patient::where('name','LIKE',"%{$request->name}%")
-                            ->orWhere('patient_id', 'LIKE', "%{$request->name}%")
-                            ->orWhere('mobile','LIKE',"%{$request->name}%")
-                            ->get(['id','patient_id','name']);
-        return response()->json(['success'=>'Patient data fetched successfully','data'=>$getData],200);
-    }
+
+public function searchPatient(Request $request){
+    $keyword = $request->input('name');
+
+    $latestDistinctIds = Patient::where(function ($query) use ($keyword) {
+        $query->where('name', 'LIKE', "%{$keyword}%")
+              ->orWhere('patient_id', 'LIKE', "%{$keyword}%")
+              ->orWhere('mobile', 'LIKE', "%{$keyword}%");
+    })
+    ->orderByDesc('created_at')
+    ->pluck('id')
+    ->unique()
+    ->take(5);
+
+    $getData = Patient::whereIn('id', $latestDistinctIds)
+                      ->orderByDesc('created_at') // Ensure latest first
+                      ->get(['id', 'patient_id', 'name']);
+
+    return response()->json([
+        'success' => 'Latest distinct patient data fetched successfully',
+        'data' => $getData
+    ], 200);
+}
+
+    // public function searchPatient(Request $request){
+    //     $getData = Patient::where('name','LIKE',"%{$request->name}%")
+    //                         ->orWhere('patient_id', 'LIKE', "%{$request->name}%")
+    //                         ->orWhere('mobile','LIKE',"%{$request->name}%")
+    //                             ->distinct()
+    //                         ->get(['id','patient_id','name']);
+    //     return response()->json(['success'=>'Patient data fetched successfully','data'=>$getData],200);
+    // }
+//   public function searchPatient(Request $request)
+// {
+//     $keyword = $request->input('name');
+
+//     $getData = Patient::select('name', 'patient_id', 'id')
+//                       ->where('name', 'LIKE', "%{$keyword}%")
+//                       ->orWhere('patient_id', 'LIKE', "%{$keyword}%")
+//                       ->orWhere('mobile', 'LIKE', "%{$keyword}%")
+//                       ->distinct()
+//                       ->get();
+
+//     return response()->json([
+//         'success' => 'Distinct patient data fetched successfully',
+//         'data' => $getData
+//     ], 200);
+// }
     public function getPatient(Request $request){
         $getData = Patient::where('id',$request->id)->get(['id','patient_id','name']);
         return response()->json(['success'=>'Patient details fetched successfully','data'=>$getData],200);

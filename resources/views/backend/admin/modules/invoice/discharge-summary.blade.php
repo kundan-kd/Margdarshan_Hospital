@@ -46,7 +46,12 @@ Discharge Summary
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                         <p>ADVICE ON DISCHARGE:</p>
-                        <table style="border-collapse: separate; border-spacing: 10px;">
+                        @php $i = 1; @endphp
+                         @foreach ($medications as $medicine)
+                        <p>{{$i}} - {{ $medicine->medicineNameData->name}} ({{$medicine->dose}})</p>        
+                          @php $i++; @endphp                    
+                        @endforeach
+                        {{-- <table>
                             <tbody>
                                 @php $i = 1; @endphp
                                 @foreach ($medications as $medicine)
@@ -58,7 +63,7 @@ Discharge Summary
                                     @php $i++; @endphp
                                 @endforeach
                             </tbody>
-                        </table>
+                        </table> --}}
 
                         <p>REVIEW ON/AFTER:</p>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>

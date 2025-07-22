@@ -179,7 +179,17 @@ $ddate = date("d/m/yy");
       </div>
       <form action="" id="addPatientForm">
         <div class="modal-body">
-            <div class="row gy-3">
+          <div class="row gy-3">
+          <div class="col-6">
+            <label class="form-label fw-normal" for="patientMobile">Phone</label>
+            <input type="number" id="patientMobile" class="form-control form-control-sm" placeholder="Phone" maxlength="10" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile');getPatientDetailsOpd(this.value)">
+            <div class="d-block position-relative" style="z-index :99;">
+                    <ul class="search-item list-group position-absolute w-100 rounded-0 patient-data-list-opd">
+                      <!-- dropdown list of patients appended here using JS -->
+                    </ul>
+              </div>
+            <div class="patientMobile_errorCls d-none"></div>
+          </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="patientName">Patient Name</label>
             <input type="text" id="patientName" name="#0" class="form-control form-control-sm" placeholder="Patient Name" oninput="validateField(this.id,'input')">
@@ -235,11 +245,6 @@ $ddate = date("d/m/yy");
               <option value="UnMarried">UnMarried</option>
             </select>
             <div class="patientMStatus_errorCls d-none"></div>
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-normal" for="patientMobile">Phone</label>
-            <input type="number" id="patientMobile" class="form-control form-control-sm" placeholder="Phone" maxlength="10" oninput="this.value=this.value.slice(0,10);validateField(this.id,'mobile')">
-            <div class="patientMobile_errorCls d-none"></div>
           </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="patientAddess">Address</label>
@@ -409,17 +414,20 @@ $ddate = date("d/m/yy");
   const getDoctorAddedData = "{{route('appointment-booking.getDoctorAddedData')}}";
   const getDoctorData = "{{route('appointment-booking.getDoctorData')}}";
   const updateAppointmentVisitData = "{{route('appointment-booking.updateAppointmentVisitData')}}";
+  const getPatientDataUsingMobile ="{{route('common.getPatientData')}}"; // also used in ipd-in.blade
+     const fillPatientData = "{{route('common.fillPatientData')}}"; 
 
 </script>
   {{-----------external js files added for page functions------------}}
 <script src="{{asset('backend/assets/js/custom/admin/appointment/appointment.js')}}"></script>
 <script>
   //  -- select2 js library included for dropdown search and select box.. other method for implenting used due to boostrap conflicts--
- window.addEventListener('load', () => {
+ $('#add-appointment').on('shown.bs.modal', function () {
     $('.select2-cls').select2({
-    dropdownParent: $('#add-appointment')
-  });
+        dropdownParent: $('#add-appointment')
+    });
 });
+
  $('#add-patient').on('shown.bs.modal', function () {
       $('.select2-cls').select2({
           dropdownParent: $('#add-patient')

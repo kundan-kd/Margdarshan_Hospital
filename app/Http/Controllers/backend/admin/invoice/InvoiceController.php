@@ -147,49 +147,23 @@ class InvoiceController extends Controller
     public function dischargeFormPrint($id){
         $patients = Patient::where('id',$id)->get();
         $dischargeSummary = DischargeSummary::where('patient_id',$id)->get();
-        //  dd($id,$patients,$dischargeSummary);
-        //  return view('reports.show', ['contentHtml' => $report->summary_html]);
         return view('backend.admin.modules.invoice.discharge-form',compact('patients','dischargeSummary',));
     }
     public function dischargeSummarySubmit(Request $request){
-         // ✅ Validate incoming request
-    $validated = $request->validate([
-        'patient_id' => 'required',
-        'final_diagnosis' => 'required',
-        // 'chief_complaint' => 'required',
-        // 'past_history' => 'required',
-        // 'clinical_finding' => 'required',
-        // 'investigation' => 'required',
-        // 'brief_history' => 'required',
-        // 'condition_at_discharge' => 'required',
-        // 'medication_diet' => 'required',
-        // 'advice' => 'required',
-        // 'review_after' => 'required',
-    ]);
-
-    // ✅ Create new discharge summary record
-    $summary = new DischargeSummary();
-    $summary->patient_id = $validated['patient_id'];
-    $summary->final_diagnosis = $validated['final_diagnosis'];
-    // $summary->chief_complaint = $validated['chief_complaint'];
-    // $summary->past_history = $validated['past_history'];
-    // $summary->clinical_finding = $validated['clinical_finding'];
-    // $summary->investigation = $validated['investigation'];
-    // $summary->brief_history = $validated['brief_history'];
-    // $summary->condition_at_discharge = $validated['condition_at_discharge'];
-    // $summary->medication_diet_instruction = $validated['medication_diet'];
-    // $summary->advice_on_discharge = $validated['advice'];
-    // $summary->review_after = $validated['review_after'];
-    if($summary->save()){
-        Patient::where('id',$summary->patient_id)->update([
-            'discharge_form_generated' => 1
+        $validated = $request->validate([
+            'patient_id' => 'required',
+            'final_diagnosis' => 'required',
         ]);
-          return response()->json(['success'=>'Discharge summary submited successfully'],200);
-    }else{
-          return response()->json(['error_success'=>'Discharge summary not submited']);
-    }
-
-  
-
+        $summary = new DischargeSummary();
+        $summary->patient_id = $validated['patient_id'];
+        $summary->final_diagnosis = $validated['final_diagnosis'];
+        if($summary->save()){
+            Patient::where('id',$summary->patient_id)->update([
+                'discharge_form_generated' => 1
+            ]);
+            return response()->json(['success'=>'Discharge summary submited successfully'],200);
+        }else{
+            return response()->json(['error_success'=>'Discharge summary not submited']);
+        }
     }
 }

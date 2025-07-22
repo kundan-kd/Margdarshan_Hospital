@@ -54,7 +54,7 @@ Billing-add
                                     Medicine Category
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
-                                    Mediciane Name
+                                    Medicine Name
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
                                     Batch

@@ -250,9 +250,8 @@
             <div class="ipd-patientAddess_errorCls d-none"></div>
           </div>
           <div class="col-6">
-            <label class="form-label fw-normal" for="ipd-consultDoctor">Consultant Doctor</label>
-           
-                   <select class="form-control form-control-sm select2-cls" style="width: 100%" name="ipd-consultDoctor" id="ipd-consultDoctor">
+            <label class="form-label fw-normal" for="ipd-consultDoctor">Consultant Doctor</label>          
+                  <select class="form-control form-control-sm select2-cls" style="width: 100%" name="ipd-consultDoctor" id="ipd-consultDoctor">
                         <option value="">Select Doctor</option>
                         @foreach ($doctorData as $doctor)
                         <option value="{{$doctor->id}}">Dr. {{$doctor->name}}</option>

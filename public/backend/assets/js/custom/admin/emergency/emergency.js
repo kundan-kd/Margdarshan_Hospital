@@ -272,6 +272,8 @@ $('#emergency-addPatientForm').on('submit',function(e){
             let mstatus = $('#emergency-patientMStatus').val();
             let mobile = $('#emergency-patientMobile').val();
             let address = $('#emergency-patientAddess').val();
+            let consultDoctor = $('#emergency-consultDoctor').val();
+            let referPerson = $('#emergency-referPerson').val();
             let alt_mobile = $('#emergency-patientAltMobile').val();
             let allergy = $('#emergency-patientAllergy').val();
             let bedNumId = $('#emergency-patientBedNum').val();
@@ -285,7 +287,7 @@ $('#emergency-addPatientForm').on('submit',function(e){
                         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                     },
                     data:{id:id,
-                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
+                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,consultDoctor:consultDoctor,referPerson:referPerson,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
                     },
                     success:function(response){
                           if(response.success){
@@ -295,6 +297,7 @@ $('#emergency-addPatientForm').on('submit',function(e){
                             $('#emergency-patient-list').DataTable().ajax.reload();
                             $('.emergencyPatientSpinn').addClass('d-none'); 
                             $('.emergencyPatientSubmit').removeClass('d-none'); 
+                             admissionForm(response.data); //print patient form
                         }else if(response.error_success){
                             toastErrorAlert(response.error_success);
                             $('.emergencyPatientSpinn').addClass('d-none'); 
@@ -330,7 +333,6 @@ function emergencyPatientEdit(id){
         },
         data:{id:id},
         success:function(response){
-            console.log(response);
             if(response.success){
                let getData = response.data[0];
                 $('#emergency-add-patientLabel').html('Edit Emergency Patient');
@@ -345,6 +347,8 @@ function emergencyPatientEdit(id){
                 $('#emergency-patientMStatus').val(getData.marital_status);
                 $('#emergency-patientMobile').val(getData.mobile);
                 $('#emergency-patientAddess').val(getData.address);
+                $('#emergency-consultDoctor').val(getData.attended_doctor_id);
+                $('#emergency-referPerson').val(getData.reference_person);
                 $('#emergency-patientAltMobile').val(getData.alt_mobile);
                 $('#emergency-patientAllergy').val(getData.known_allergies);
                 $('#emergency-patientBedNum').val(getData.bed_id);
@@ -451,4 +455,7 @@ function emergencyPatientDelete(id){
 }
 function emergencyPatientUsingId(id){
     window.open('emergency-details/' + id, '_blank');
+}
+function admissionForm(id){
+    window.open('/admission-form-print/' + id);
 }

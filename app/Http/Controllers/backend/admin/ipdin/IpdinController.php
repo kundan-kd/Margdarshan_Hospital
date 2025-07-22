@@ -103,6 +103,9 @@ class IpdinController extends Controller
                 <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center ' . $dischargeClass . '">
                     <iconify-icon icon="mdi:file-download-outline" onclick="printBill(' . $row->id . ')"></iconify-icon>
                 </a>
+                 <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <iconify-icon icon="mdi:file-download-outline" onclick="admissionForm(' . $row->id . ')"></iconify-icon>
+                </a>
                 <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mingcute:delete-2-line" onclick="ipdpatientDelete(' . $row->id . ')"></iconify-icon>
                 </a>-->';
@@ -220,7 +223,7 @@ class IpdinController extends Controller
             $payment_bills->amount_for = 'Bed Charge';
             $payment_bills->title = 'Patient Admitted to IPD';  // amount is updated here when move to other dept or discharge
             $payment_bills->save();
-            return response()->json(['success'=>'New IPD Patient added successfully'],201);
+            return response()->json(['success'=>'New IPD Patient added successfully','data'=>$patient->id],200);
         }else{
             return response()->json(['error_success'=>'IPD Patient not added'],500);
         }

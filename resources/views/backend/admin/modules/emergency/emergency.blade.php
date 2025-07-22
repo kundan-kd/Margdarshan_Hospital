@@ -159,6 +159,19 @@
             <input type="text" id="emergency-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
             <div class="emergency-patientAddess_errorCls d-none"></div>
           </div>
+           <div class="col-6">
+            <label class="form-label fw-normal" for="emergency-consultDoctor">Consultant Doctor</label>          
+              <select class="form-control form-control-sm select2-cls" style="width: 100%" name="emergency-consultDoctor" id="emergency-consultDoctor">
+                    <option value="">Select Doctor</option>
+                    @foreach ($doctorData as $doctor)
+                    <option value="{{$doctor->id}}">Dr. {{$doctor->name}}</option>
+                    @endforeach
+                </select>  
+          </div>
+          <div class="col-6">
+            <label class="form-label fw-normal" for="emergency-referPerson">Refer Person</label>
+            <input type="text" id="emergency-referPerson"  class="form-control form-control-sm" placeholder="Refer Person">
+          </div>
           {{-- <div class="col-6">
             <label class="form-label fw-normal">Alt Phone</label>
             <input type="number" id="emergency-patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">

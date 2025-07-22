@@ -307,6 +307,7 @@ $('#ipd-addPatientForm').on('submit',function(e){
                             $('#ipd-in-patient-list').DataTable().ajax.reload();
                             $('.ipdPatientSpinn').addClass('d-none'); 
                             $('.ipdPatientSubmit').removeClass('d-none'); 
+                            admissionForm(response.data); //print patient form
                         }else if(response.error_success){
                             toastErrorAlert(response.error_success);
                             $('.ipdPatientSpinn').addClass('d-none'); 
@@ -360,6 +361,8 @@ function ipdPatientEdit(id){
                 $('#ipd-patientMStatus').val(getData.marital_status);
                 $('#ipd-patientMobile').val(getData.mobile);
                 $('#ipd-patientAddess').val(getData.address);
+                $('#ipd-consultDoctor').val(getData.attended_doctor_id);
+                $('#ipd-referPerson').val(getData.reference_person);
                 $('#ipd-patientAltMobile').val(getData.alt_mobile);
                 $('#ipd-patientAllergy').val(getData.known_allergies);
                 $('#ipd-patientBedNum').val(getData.bed_id);
@@ -464,4 +467,7 @@ function ipdpatientDelete(id){
 }
 function ipdPatientUsingId(id){
     window.open('ipd-in-details/' + id, '_blank');
+}
+function admissionForm(id){
+    window.open('/admission-form-print/' + id);
 }

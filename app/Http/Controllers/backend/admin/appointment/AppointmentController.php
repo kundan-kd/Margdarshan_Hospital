@@ -32,8 +32,8 @@ class AppointmentController extends Controller
         $appointment = Appointment::get();
         return DataTables::of($appointment)
         ->addColumn('patient_id',function($row){
-            // return $row->patient_data->patient_id;
-            return '<a target="_blank" class="text-primary cursor-pointer" onclick="opdPatientUsingId('.$row->patient_id.')">'.$row->patient_data->patient_id.'</a>';
+            return $row->patient_data->patient_id;
+            // return '<a target="_blank" class="text-primary cursor-pointer" onclick="opdPatientUsingId('.$row->patient_id.')">'.$row->patient_data->patient_id.'</a>';
         })
         ->addColumn('patient_name',function($row){
             return $row->patient_name;

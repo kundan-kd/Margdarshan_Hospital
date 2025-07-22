@@ -33,7 +33,8 @@ use Yajra\DataTables\Facades\DataTables;
 class EmergencyController extends Controller
 {
       public function index(){
-        return view('backend.admin.modules.emergency.emergency');
+        $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
+        return view('backend.admin.modules.emergency.emergency',compact('doctorData'));
     }
      function emergencyDetails($id){
        $patients = Patient::where('id',$id)->get();
@@ -89,6 +90,9 @@ class EmergencyController extends Controller
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="emergencyPatientEdit('.$row->id.');getBedDataEmergency('.$row->id.')"></iconify-icon>
                     </a>
+                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <iconify-icon icon="mdi:file-download-outline" onclick="admissionForm(' . $row->id . ')"></iconify-icon>
+                </a>
                     <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyPatientDelete('.$row->id.')"></iconify-icon>
                     </a> -->';
@@ -136,6 +140,8 @@ class EmergencyController extends Controller
         $patient->alt_mobile = $request->alt_mobile;
         $patient->known_allergies = $request->allergy;
         $patient->address = $request->address;
+        $patient->attended_doctor_id = $request->consultDoctor;
+        $patient->reference_person = $request->referPerson;
         $patient->bed_id = $request->bedNumId;
 
         $patient->current_status = "Admitted";
@@ -185,7 +191,7 @@ class EmergencyController extends Controller
             $payment_bills->amount_for = 'Bed Charge';
             $payment_bills->title = 'Patient Admitted to Emergency';
             $payment_bills->save();
-            return response()->json(['success'=>'New Emergency Patient added successfully'],201);
+            return response()->json(['success'=>'New Emergency Patient added successfully','data'=>$patient->id],200);
         }else{
             return response()->json(['error_success'=>'Emergency Patient not added'],500);
         }

@@ -12,4 +12,7 @@ class Lead extends Model
     public function userData(){
         return $this->belongsTo(User::class,'assign_to');
     }
+    public function narationListData(){
+        return $this->belongsTo(NarationList::class,'naration_list_id');
+    }
 }

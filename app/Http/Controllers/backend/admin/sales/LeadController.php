@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backend\admin\sales;
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
 use App\Models\LeadDescription;
+use App\Models\NarationList;
 use App\Models\Team;
 use App\Models\User;
 use Carbon\Carbon;
@@ -296,7 +297,8 @@ public function bulkLeadAssignPage(){
     }
     public function processDesk(){
        $salesTeamMember = User::where('status',1)->where('usertype_id',7)->get(['id','name','sales_team_id']);
-        return view('backend.admin.modules.sales.process-desk',compact(['salesTeamMember']));
+       $narationList = NarationList::where('status',1)->get();
+        return view('backend.admin.modules.sales.process-desk',compact('salesTeamMember','narationList'));
     }
     public function viewProcessDeskLeads(Request $request){
         if($request->ajax()){
@@ -325,7 +327,7 @@ public function bulkLeadAssignPage(){
             //         : '—';
             // })
             ->addColumn('naration', function($row) {
-                $narationText = $row->naration ?? 'NA';
+                $narationText = $row->narationListData->naration ?? 'NA';
                 return '<a href="javascript:void(0)" class="text-primary" data-bs-toggle="modal" data-bs-target="#narationView" onclick="getPrevNarations('.$row->id.')">'
                      . $narationText .
                      '</a>';
@@ -360,9 +362,11 @@ public function bulkLeadAssignPage(){
     public function narationAdd(Request $request){
         $narations = new LeadDescription();
         $narations->lead_id = $request->lead_id;
+        $narations->naration_list_id = $request->naration_list;
         $narations->naration = $request->naration;
         if($narations->save()){
             Lead::where('id',$request->lead_id)->update([
+                'naration_list_id' => $request->naration_list,
                 'naration' => $request->naration
             ]);
             return response()->json(['success'=>'Naration added successfully'],200);
@@ -371,7 +375,7 @@ public function bulkLeadAssignPage(){
         }
     }
     public function getNarationData(Request $request){
-        $getData = LeadDescription::where('lead_id',$request->id)->orderBy('id','desc')->get();
+        $getData = LeadDescription::with('narationList')->where('lead_id',$request->id)->orderBy('id','desc')->get();
         return response()->json(['success'=>'Naration data fetched','data'=>$getData],200);
     }
     public function tranferToDataSubmit(Request $request){

@@ -16,6 +16,7 @@ use App\Http\Controllers\backend\admin\master\CompositionController;
 use App\Http\Controllers\backend\admin\master\DepartmentController;
 use App\Http\Controllers\backend\admin\master\MedicinecategoryController;
 use App\Http\Controllers\backend\admin\master\MedicinegroupController;
+use App\Http\Controllers\backend\admin\master\NarationlistController;
 use App\Http\Controllers\backend\admin\master\PaymentmodeController;
 use App\Http\Controllers\backend\admin\master\RoomnumberController;
 use App\Http\Controllers\backend\admin\master\RoomtypeController;
@@ -252,6 +253,13 @@ Route::post('/team-add',[TeamController::class,'addTeam'])->name('team.addTeam')
 Route::post('/team-data',[TeamController::class,'getTeamData'])->name('team.getTeamData');
 Route::post('/team-update',[TeamController::class,'updateTeamData'])->name('team.updateTeamData');
 Route::post('/team-status-update',[TeamController::class,'statusUpdate'])->name('team.statusUpdate');
+
+Route::get('/naration-list',[NarationlistController::class,'index'])->name('naration-list.index');
+Route::post('/naration-list-view',[NarationlistController::class,'viewNarationLists'])->name('naration-list.viewNarationLists');
+Route::post('/naration-list-add',[NarationlistController::class,'addNarationList'])->name('naration-list.addNarationList');
+Route::post('/naration-list-data',[NarationlistController::class,'getNarationListData'])->name('naration-list.getNarationListData');
+Route::post('/naration-list-update',[NarationlistController::class,'updateNarationListData'])->name('naration-list.updateNarationListData');
+Route::post('/naration-list-status-update',[NarationlistController::class,'statusUpdate'])->name('naration-list.statusUpdate');
 
 Route::get('/billing',[BillingController::class,'index'])->name('billing.index');
 Route::get('/billing-view',[BillingController::class,'billingView'])->name('billing.billingView');

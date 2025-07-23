@@ -181,6 +181,7 @@ function getPatientData(x) {
         },
         data: { name: x },
         success: function(response) {
+            console.log(response);
             const patients = response.data;
              $('.patient-name-list').empty();
 
@@ -189,7 +190,7 @@ function getPatientData(x) {
             } else {
                 patients.forEach(patient => {
                     $('.patient-name-list').append(
-                        `<li class="list-group-item" data-patient-id="${patient.id}">${patient.name} (${patient.patient_id})</li>`
+                        `<li class="list-group-item" data-patient-id="${patient.id}">${patient.name} (${patient.patient_id}) - ${patient.current_status || ''} (${patient.type})</li>`
                     );
                 });
             }
@@ -317,8 +318,8 @@ function getDocRoomNum(id){
         success: function(response) {
             if(response.data !=''){
                 if(response.success){
-                    $('#roomNumAppt').val(response.roomNum[0].room_num);
-                    $('#roomNumApptId').val(response.roomNum[0].id); // Store room number ID for later use
+                    $('#roomNumAppt').val(response.roomNum[0].id);
+                    // $('#roomNumApptId').val(response.roomNum[0].id); // Store room number ID for later use
                     $('#opd_fee').val(response.data[0].fee);
                 }
             }
@@ -395,9 +396,10 @@ $('#appointmentForm').on('submit',function(e){
   let itemSearchInput = validateField('itemSearchInput', 'input');
   let depertmentAppt = validateField('departmentAppt', 'select');
   let doctorAppt = validateField('doctorAppt', 'select');
-//   let paymentModeAppt = validateField('paymentModeAppt', 'select');
+  let room_num = validateField('roomNumAppt', 'select');
+  let opd_fee = validateField('opd_fee', 'amount');
   let dateAppt = validateField('dateAppt', 'select');
-  if(itemSearchInput === true && depertmentAppt === true && doctorAppt === true && true && dateAppt === true){
+  if(itemSearchInput === true && depertmentAppt === true && doctorAppt === true && true && room_num === true && opd_fee === true && dateAppt === true){
     $('.appointmentSubmitBtn').addClass('d-none'); 
     $('.appointmentSpinn').removeClass('d-none');
     let patientID = $('#patientNameApptID').val();
@@ -406,7 +408,7 @@ $('#appointmentForm').on('submit',function(e){
     let doctorID = $('#doctorAppt').val();
     let date = $('#dateAppt').val();
     // let pmode = $('#paymentModeAppt').val();
-    let rnum = $('#roomNumApptId').val();
+    let rnum = $('#roomNumAppt').val();
     let fee = $('#opd_fee').val();
     if ($('.appointmentUpdateBtn').is(':visible')) {
             updateAppointment(id); // Trigger update function when update btn is active
@@ -440,6 +442,10 @@ $('#appointmentForm').on('submit',function(e){
                             $('.appointmentSubmitBtn').removeClass('d-none');
                         }else if(response.already_admitted){
                             toastErrorAlert(response.already_admitted);
+                            $('.appointmentSpinn').addClass('d-none');
+                            $('.appointmentSubmitBtn').removeClass('d-none');
+                        }else if(response.already_discharged){
+                            toastErrorAlert(response.already_discharged);
                             $('.appointmentSpinn').addClass('d-none');
                             $('.appointmentSubmitBtn').removeClass('d-none');
                         }else{

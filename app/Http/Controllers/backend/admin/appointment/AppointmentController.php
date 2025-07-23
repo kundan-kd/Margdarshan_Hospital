@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backend\admin\appointment;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Department;
+use App\Models\Lead;
 use App\Models\Patient;
 use App\Models\PaymentBill;
 use App\Models\PaymentMode;
@@ -25,7 +26,8 @@ class AppointmentController extends Controller
         $paymentmodes = PaymentMode::where('status',1)->get();
         $patients = Patient::where('status',1)->get();
         $doctors = User::where('status',1)->where('usertype_id',2)->get(['id','name']);
-        return view('backend.admin.modules.appointment.appointment',compact('departments','paymentmodes','patients','doctors'));
+        $opd_rooms = RoomNumber::where('room_group_id',7)->get(['id','room_num']);
+        return view('backend.admin.modules.appointment.appointment',compact('departments','paymentmodes','patients','doctors','opd_rooms'));
     }
     public function viewAppointments(Request $request){
      if($request->ajax()){
@@ -222,7 +224,7 @@ class AppointmentController extends Controller
     
         $getData = Patient::whereIn('id', $latestDistinctIds)
                           ->orderByDesc('created_at') // Ensure latest first
-                          ->get(['id', 'patient_id', 'name']);
+                          ->get(['id', 'patient_id', 'name','current_status','type']);
     
         return response()->json([
             'success' => 'Latest distinct patient data fetched successfully',
@@ -262,6 +264,10 @@ class AppointmentController extends Controller
         $check_patient_admitted = Patient::where('id',$request->patientID)->where('current_status','Admitted')->exists();
         if($check_patient_admitted){
             return response()->json(['already_admitted'=>'This patient is already admitted,Kindly discharge before adding new']);
+        }
+        $check_patient_discharge = Patient::where('id',$request->patientID)->where('current_status','Discharged')->exists();
+        if($check_patient_discharge){
+             return response()->json(['already_discharged'=>'This patient is discharged,Kindly add as new Patient']);
         }
         
         $validator = Validator::make($request->all(),[

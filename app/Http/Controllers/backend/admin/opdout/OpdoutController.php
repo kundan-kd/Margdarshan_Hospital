@@ -49,16 +49,16 @@ class OpdoutController extends Controller
             $appointment = Appointment::where('type','OPD')->get(); // **Load all records when no filters are applied**
         }
         return DataTables::of($appointment)
-           ->addColumn('token',function($row){
+            ->addColumn('token',function($row){
                 return '<a target="_blank" class="text-primary cursor-pointer" onclick="patientDetailsUsingToken('.$row->patient_id.')">'.$row->token.'</a>';
             })
-             ->addColumn('patient_name',function($row){
+            ->addColumn('patient_name',function($row){
                 return $row->patient_data->name;
             })
-             ->addColumn('gender',function($row){
+            ->addColumn('gender',function($row){
                 return $row->patient_data->gender;
             })
-             ->addColumn('mobile',function($row){
+            ->addColumn('mobile',function($row){
                 return $row->patient_data->mobile; //fetched through modal relationship
             })
             ->addColumn('doctor',function($row){
@@ -120,7 +120,8 @@ class OpdoutController extends Controller
             Appointment::where('patient_id',$request->id)->update([
             'type' =>'IPD',
             'bed_id' => $request->bed_id,
-            'type_change_date' => $now
+            'type_change_date' => $now,
+            'status' => 'Visited'
             ]);
 
             Bed::where('id',$request->bed_id)->update([

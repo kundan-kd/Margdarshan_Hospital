@@ -61,17 +61,18 @@ function addNaration(id){
     $('#add-narration').modal('show');
 }
 function narationSubmit(lead_id){
+    let narationList_check = validateField('processDesk-narationList','select');
     let naration_check = validateField('processDesk-naration','input');
-    if(naration_check == true){
+    if(narationList_check == true && naration_check == true){
+        let naration_list = $('#processDesk-narationList').val();
         let naration = $('#processDesk-naration').val();
         $('.narationSubmit').addClass('d-none');
         $('.narationSpinn').removeClass('d-none');
         $.ajax({
             url:narationAdd,
             type: "POST",
-            data:{lead_id:lead_id,naration:naration},
+            data:{lead_id:lead_id,naration_list:naration_list,naration:naration},
             success:function(response){
-                console.log(response);
                 if(response.success){
                     $('#add-narration').modal('hide');
                     toastSuccessAlert(response.success);
@@ -98,6 +99,7 @@ function getPrevNarations(id){
         data:{id:id},
         success: function(response) {
             let getData = response.data;
+            console.log(response);
             let i = 1;
             let tableBody = $('#narationHistory tbody');
             tableBody.empty(); // Optional: clear existing rows if needed
@@ -113,11 +115,12 @@ function getPrevNarations(id){
             getData.forEach(function(element) {
                 let readableDate = formatter.format(new Date(element.created_at));
                 let row = `
-                    <tr>
-                        <td>${i}</td>
-                        <td>${element.naration}</td>
-                         <td>${readableDate}</td>
-                    </tr>
+                <tr>
+                    <td>${i}</td>
+                    <td>${element.naration_list ? element.naration_list.naration : 'N/A'}</td>
+                    <td>${element.naration}</td>
+                    <td>${readableDate}</td>
+                </tr>
                 `;
                 tableBody.append(row);
                 i++;

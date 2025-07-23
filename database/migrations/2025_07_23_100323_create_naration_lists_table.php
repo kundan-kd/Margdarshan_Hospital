@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lead_descriptions', function (Blueprint $table) {
+        Schema::create('naration_lists', function (Blueprint $table) {
             $table->id();
-            $table->integer('lead_id')->nullable();
-            $table->integer('naration_list_id')->nullable();
+            $table->string('type',30)->nullable();
             $table->text('naration')->nullable();
+            $table->integer('status')->default(1);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lead_descriptions');
+        Schema::dropIfExists('naration_lists');
     }
 };

@@ -92,12 +92,6 @@ $ddate = date("d/m/yy");
                   data-bs-title="Add Patient" onclick="resetAddPatient()" style="margin-top: 4px;">
                   <i class="ri-add-line fw-bold"></i>
                   </button>
-                  {{-- <button class=" mx-1 w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center" style="margin-top: 4px" onclick="manageAddPatient()">
-                  <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-primary" data-bs-title="Add Patient">
-                    <i class="ri-add-line fw-bold"></i>
-                  </div>
-                </button> --}}
-
                 </div>
             </div>
             <div class="col-6">
@@ -119,31 +113,26 @@ $ddate = date("d/m/yy");
               <label class="form-label fw-normal" for="doctorAppt">Doctor</label>
               <select id="doctorAppt" class="form-select form-select-sm select2-cls" style="width: 100%" onchange="getDocRoomNum(this.value)" oninput="validateField(this.id,'select')">
                 <option value="">Select Doctor</option>
-                {{-- @foreach ($doctors as $doctor)
-                <option value="{{$doctor->id}}">Dr. {{$doctor->name}}</option>
-                @endforeach --}}
               </select>
               <div class="doctorAppt_errorCls d-none"></div>
             </div>
-            
-            {{-- <div class="col-6">
-              <label class="form-label fw-normal" for="paymentModeAppt">Payment Mode</label>
-              <select id="paymentModeAppt" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')" >
-                <option value="">Payment Mode</option>
-                @foreach ($paymentmodes as $paymentmode)
-                <option value="{{$paymentmode->id}}">{{$paymentmode->name}}</option>
+            <div class="col-6">
+              <label class="form-label fw-normal" for="roomNumAppt">OPD Room</label>
+              {{-- <input type="hidden" id="roomNumApptId" style="display:none;"> --}}
+              {{-- <input type="text" id="roomNumAppt" class="form-control form-control-sm " placeholder="OPD Room No" readonly> --}}
+
+               <select id="roomNumAppt" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                <option value="">Select OPD Room</option>
+                @foreach ($opd_rooms as $rooms)
+                <option value="{{$rooms->id}}">{{$rooms->room_num}}</option>
                 @endforeach
               </select>
-              <div class="paymentModeAppt_errorCls d-none"></div>
-            </div> --}}
-            <div class="col-6">
-              <label class="form-label fw-normal ">Room No</label>
-              <input type="hidden" id="roomNumApptId" style="display:none;">
-              <input type="text" id="roomNumAppt" class="form-control form-control-sm " placeholder="Room No" readonly>
+               <div class="roomNumAppt_errorCls d-none"></div>
             </div>
             <div class="col-6">
-              <label class="form-label fw-normal ">Fee</label>
-              <input type="text" id="opd_fee" class="form-control form-control-sm" placeholder="Doctor Fee" readonly>
+              <label class="form-label fw-normal" for="opd_fee">Fee</label>
+              <input type="text" id="opd_fee" class="form-control form-control-sm" placeholder="Doctor Fee" oninput="validateField(this.id,'amount')">
+               <div class="opd_fee_errorCls d-none"></div>
             </div>
             <div class="col-12">
               <label class="form-label fw-normal" for="dateAppt">Appointment Date</label>

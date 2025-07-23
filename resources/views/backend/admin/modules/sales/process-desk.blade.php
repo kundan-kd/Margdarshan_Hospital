@@ -53,6 +53,15 @@ Process Desk
             <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close" ></button>
           </div>
           <div class="modal-body">
+             <label class="form-label fw-medium" for="processDesk-narationList">Naration List</label>
+            <select class="form-select form-select-sm mb-11 select2-cls" style="width: 100%;" id="processDesk-narationList" onchange="validateField(this.id,'select')">
+                <option value="">Select Narration</option>
+                @foreach ($narationList as $naration)
+                <option value="{{$naration->id}}">{{$naration->naration}}</option>                 
+                @endforeach
+              </select>
+              <div class="processDesk-narationList_errorCls d-none"></div>
+
             <label class="form-label fw-medium" for="processDesk-naration">Narration</label>
             <input type="hidden" id="processDesk-leadId">
              <textarea name="#0" class="form-control" id="processDesk-naration" rows="2" cols="50" placeholder="Lead Description" oninput="validateField(this.id,'input')"></textarea>
@@ -142,6 +151,7 @@ Process Desk
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">Sr. No.</th>
+                                    <th scope="col">Title</th>
                                     <th scope="col">Narrations</th>
                                     <th scope="col">Date & Time</th>
                                 </tr>
@@ -167,6 +177,13 @@ Process Desk
   $('#process-desk-table').on('draw.dt', function () {
     $('[data-bs-toggle="tooltip"]').tooltip();
   });
+
+   $('#add-narration').on('shown.bs.modal', function () {
+      $('.select2-cls').select2({
+          dropdownParent: $('#add-narration')
+      });
+    });
+
     // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
         flatpickr(receiveID, {

@@ -27,7 +27,6 @@ class MedicineController extends Controller
     public function medicineView(Request $request){
         if($request->ajax()){
             $medicinecreate = Medicine::get();
-            // dd($medicinecreate);
             return DataTables::of($medicinecreate)
             ->addColumn('name',function($row){
                 return $row->name;
@@ -72,6 +71,9 @@ class MedicineController extends Controller
                 }
                 return $outputs ?: 'NA';
             })
+             ->addColumn('hsn',function($row){
+                return $row->hsn_number;
+            })
             ->addColumn('stock',function($row){
                 return $row->stock_in - $row->stock_out;
             })
@@ -102,6 +104,7 @@ class MedicineController extends Controller
         'rack' => 'required',
         'name' => 'required',
         'composition' => 'array|required',
+        'hsn' => 'required',
         'taxes' => 'required',
         'box_pack' => 'required',
         'narration' => 'nullable',
@@ -118,6 +121,7 @@ class MedicineController extends Controller
         $medicines->re_ordering_level = $request->re_order_level;
         $medicines->rack = $request->rack;
         $medicines->composition = implode(",",$request->composition); //array to string conversion
+        $medicines->hsn_number = $request->hsn;
         $medicines->taxes = $request->taxes;
         $medicines->box_packing = $request->box_pack;
         $medicines->narration = $request->narration;
@@ -141,6 +145,7 @@ class MedicineController extends Controller
         'rack'=>$request->rack, 
         'name'=>$request->name, 
         'composition'=>implode(",",$request->composition), // array to string conversion
+        'hsn_number'=>$request->hsn, 
         'taxes'=>$request->taxes, 
         'box_packing'=>$request->box_pack, 
         'narration'=>$request->narration, 
@@ -187,6 +192,9 @@ class MedicineController extends Controller
             })
             ->addColumn('unit',function($row){
                 return $row->unitData->unit;
+            })
+            ->addColumn('hsn',function($row){
+                return $row->hsn_number;
             })
             ->addColumn('re_ordering_level',function($row){
                 return $row->re_ordering_level;

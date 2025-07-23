@@ -38,7 +38,7 @@ purchase-edit
       <form id="purchaseEdit_form">
       <div class="card-body pharmacy-purchase-content pt-1" style="max-height: 500px; overflow-y: auto;">
           <div class="row mb-3">
-              <div class="col-md-12" >
+              <div class="col-md-12">
                   <table class="pharmacy-purchase-bill-table table table-hover">
                       <thead >
                           <tr class="border-bottom">

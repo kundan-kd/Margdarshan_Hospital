@@ -38,27 +38,27 @@ class AuthenticationController extends Controller
         }
     }
     public function dashboard(){
-         $appointments = Appointment::count();
-         $opd_patients = Patient::where('type','OPD')->count();
-         $ipd_patients = Patient::where('type','IPD')->count();
-         $emergency_patients = Patient::where('type','EMERGENCY')->count();
-         $doctors = User::where('usertype_id',2)->count();
-         $total_income = PaymentReceived::sum('amount') + PaymentReceived::sum('discount_amount');
-         $leads = Lead::count();
-         $convertedLeads = Lead::where('lead_status','Converted')->count();
-         $assignLeads = Lead::whereNotNull('assign_to')->count();
-         $UnAssignLeads = Lead::whereNull('assign_to')->count();
-         $now = Carbon::now();
-         $formattedDate = $now->toDateString(); // Output: "2025-07-16"
-         $todayFollowup = Lead::where('next_followup_date',$formattedDate)->get();
-         $duefollowup = Lead::whereNull('naration')->get();
-         $today_pharmacy_bill = Billing::whereDate('created_at', $formattedDate)
+        $appointments = Appointment::count();
+        $opd_patients = Patient::where('type','OPD')->count();
+        $ipd_patients = Patient::where('type','IPD')->count();
+        $emergency_patients = Patient::where('type','EMERGENCY')->count();
+        $doctors = User::where('usertype_id',2)->count();
+        $total_income = PaymentReceived::sum('amount') + PaymentReceived::sum('discount_amount');
+        $leads = Lead::count();
+        $convertedLeads = Lead::where('lead_status','Converted')->count();
+        $assignLeads = Lead::whereNotNull('assign_to')->count();
+        $UnAssignLeads = Lead::whereNull('assign_to')->count();
+        $now = Carbon::now();
+        $formattedDate = $now->toDateString(); // Output: "2025-07-16"
+        $todayFollowup = Lead::where('next_followup_date',$formattedDate)->get();
+        $duefollowup = Lead::whereNull('naration')->get();
+        $today_pharmacy_bill = Billing::whereDate('created_at', $formattedDate)
             ->selectRaw('SUM(paid_amount - return_amount) as total')
             ->value('total');
-         $total_pharmacy_bill = Billing::selectRaw('SUM(paid_amount - return_amount) as total')
+        $total_pharmacy_bill = Billing::selectRaw('SUM(paid_amount - return_amount) as total')
             ->value('total');
-
-         return view('backend.admin.modules.dashboard',compact('appointments','opd_patients','ipd_patients','emergency_patients','doctors','total_income','leads','convertedLeads','assignLeads','UnAssignLeads','todayFollowup','duefollowup','today_pharmacy_bill','total_pharmacy_bill'));
+        
+        return view('backend.admin.modules.dashboard',compact('appointments','opd_patients','ipd_patients','emergency_patients','doctors','total_income','leads','convertedLeads','assignLeads','UnAssignLeads','todayFollowup','duefollowup','today_pharmacy_bill','total_pharmacy_bill'));
     }
     public function sendotp(Request $request){
         if ($request->ajax()) {
@@ -158,7 +158,7 @@ class AuthenticationController extends Controller
     $editor->givePermissionTo($edit);
 
     return 'Roles and permissions created!';
-   }
+  }
    public function clearAll(){
       Artisan::call('view:clear');
       Artisan::call('route:clear');
@@ -166,6 +166,5 @@ class AuthenticationController extends Controller
       Artisan::call('config:clear');
       return response()->json(['success' => 'Cache cleared successfully.']);
    }
-
 
 }

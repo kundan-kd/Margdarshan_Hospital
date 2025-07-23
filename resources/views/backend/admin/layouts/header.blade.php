@@ -89,7 +89,7 @@
         </a>
         <ul class="sidebar-submenu">
           <li>
-            <a href="{{route('appointment.index')}}"><i class="ri-calendar-fill"></i></i>Book Appointment</a>
+            <a href="{{route('appointment.index')}}"><i class="ri-calendar-check-line"></i>Book Appointment</a>
           </li>
           <li>
             <a href="{{route('patient.index')}}"><i class="ri-user-2-line"></i>Patients</a>

@@ -270,7 +270,6 @@ $('#opdFinding-form').on('submit',function(e){
         console.log('Please fill required field');
     }
 });
-
 function admissionForm(id){
     window.open('/admission-form-print/' + id);
 }

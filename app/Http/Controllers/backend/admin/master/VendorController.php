@@ -53,31 +53,26 @@ class VendorController extends Controller
         }
     }
      public function addVendor(Request $request){
-        $check_vendor = Vendor::where('email',$request->email)->where('gst_number',$request->gst)->exists();
-        if($check_vendor == false){
-            $validator = Validator::make($request->all(),[
-                'name' => 'required',
-                'phone' => 'required',
-                'email' => 'required|email',
-                'address' => 'required',
-                'gst' => 'required'
-            ]);
-            if($validator->fails()){
-                return response()->json(['error_validation'=> $validator->errors()->all(),],422);
-            }
-            $vendors = new Vendor();
-            $vendors->name = $request->name;
-            $vendors->phone = $request->phone;
-            $vendors->email = $request->email;
-            $vendors->address = $request->address;
-            $vendors->gst_number = $request->gst;
-            if($vendors->save()){
-                return response()->json(['success'=>'Vendor added successfully'],201);
-            }else{
-                return response()->json(['error_success'=>'Vendor not added'],500);
-            }
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'phone' => 'required',
+            'email' => 'nullable',
+            'address' => 'required',
+            'gst' => 'required'
+        ]);
+        if($validator->fails()){
+            return response()->json(['error_validation'=> $validator->errors()->all(),],422);
+        }
+        $vendors = new Vendor();
+        $vendors->name = $request->name;
+        $vendors->phone = $request->phone;
+        $vendors->email = $request->email;
+        $vendors->address = $request->address;
+        $vendors->gst_number = $request->gst;
+        if($vendors->save()){
+            return response()->json(['success'=>'Vendor added successfully'],201);
         }else{
-            return response()->json(['already_found'=>'This Vendor already found'],200);
+            return response()->json(['error_success'=>'Vendor not added'],500);
         }
     }
     public function getVendorData(Request $request){

@@ -36,7 +36,7 @@ Patient
             <th scope="col" class="fw-medium">Blood Type</th>
             <th scope="col" class="fw-medium">DOB</th>
             <th scope="col" class="fw-medium">Phone</th>
-            <th scope="col" class="fw-medium">Address</th>
+            <!--<th scope="col" class="fw-medium">Address</th>-->
             <th scope="col" class="fw-medium">Allergies</th>
             <th scope="col" class="fw-medium">Admitted</th>
             <th scope="col" class="fw-medium">Action</th>
@@ -181,7 +181,7 @@ Patient
     const newPatientData = "{{route('patient.newPatientData')}}"; 
     const patientAddNewPatientDataUpdate = "{{route('patient.patientAddNewPatientDataUpdate')}}"; 
     const getPatientDataUsingMobile ="{{route('common.getPatientData')}}"; // also used in ipd-in.blade
-    const fillPatientData = "{{route('common.fillPatientData')}}"; 
+      const fillPatientData = "{{route('common.fillPatientData')}}"; 
     
 </script>       
   {{-----------external js files added for page functions------------}}

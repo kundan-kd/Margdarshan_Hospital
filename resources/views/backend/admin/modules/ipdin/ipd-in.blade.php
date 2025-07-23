@@ -249,7 +249,7 @@
             <input type="text" id="ipd-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
             <div class="ipd-patientAddess_errorCls d-none"></div>
           </div>
-          <div class="col-6">
+            <div class="col-6">
             <label class="form-label fw-normal" for="ipd-consultDoctor">Consultant Doctor</label>          
                   <select class="form-control form-control-sm select2-cls" style="width: 100%" name="ipd-consultDoctor" id="ipd-consultDoctor">
                         <option value="">Select Doctor</option>
@@ -336,7 +336,7 @@
   const getBedDetailsIpd = "{{route('ipd-getBedDetailsIpd')}}"; 
   const getBedDataIpd = "{{route('ipd-getBedDataIpd')}}"; 
 
-  const getPatientDataUsingMobile = "{{route('common.getPatientData')}}"; // also used in patient.blade
+  const getPatientDataUsingMobile = "{{route('common.getPatientData')}}"; 
   const fillPatientData = "{{route('common.fillPatientData')}}"; 
   
 </script>

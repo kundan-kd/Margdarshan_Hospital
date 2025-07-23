@@ -158,7 +158,7 @@
 				<div class="info-row"> <span class="info-label">Patient Name:</span> <span class="info-value">{{$patients[0]->name}}</span> </div>
 				<div class="info-row"> <span class="info-label">Guardian's Name:</span> <span class="info-value">{{$patients[0]->guardian_name}}</span> </div>
 				<div class="info-row"> <span class="info-label">Marital Status:</span> <span class="info-value">{{$patients[0]->marital_status}}</span> </div>
-				<div class="info-row"> <span class="info-label">Treat Consultant:</span> <span class="info-value">Dr. {{$patients[0]->doctorData->name}}</span> </div>
+				<div class="info-row"> <span class="info-label">Treat Consultant:</span> <span class="info-value">Dr. {{$patients[0]->doctorData->name ?? ''}}</span> </div>
 				<div class="info-row"> <span class="info-label">Address:</span> <span class="info-value">{{$patients[0]->address}}</span> </div>
 			
 			</div>
@@ -167,7 +167,7 @@
 				<div class="info-row"> <span class="info-label">Age / Sex:</span> <span class="info-value">{{$patients[0]->gender}}</span> </div>
 				<div class="info-row"> <span class="info-label">Contact No:</span> <span class="info-value">{{$patients[0]->mobile}}</span> </div>
 				<div class="info-row"> <span class="info-label">Department:</span> <span class="info-value">{{$patients[0]->type}}</span> </div>
-				<div class="info-row"> <span class="info-label">Ref Person:</span> <span class="info-value">{{$patients[0]->reference_person}}</span> </div>
+				<div class="info-row"> <span class="info-label">Ref Person:</span> <span class="info-value">{{$patients[0]->reference_person ?? ''}}</span> </div>
                 	<div class="info-row"> <span class="info-label">Patient Type:</span> <span class="info-value">{{$patients[0]->type}}</span> </div>
 				<div class="info-row"> <span class="info-label">Brought By:</span> <span class="info-value">{{$patients[0]->guardian_name}}</span> </div>
 			</div>

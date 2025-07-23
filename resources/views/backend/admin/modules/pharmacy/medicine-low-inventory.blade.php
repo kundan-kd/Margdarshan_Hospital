@@ -24,6 +24,7 @@ Low Inv. Medicine
               <th scope="col" class="fw-medium">Composition</th>
               <th scope="col" class="fw-medium">Group</th>
               <th scope="col" class="fw-medium">Unit</th>
+              <th scope="col" class="fw-medium">HSN</th>
               <th scope="col" class="fw-medium">Re Order Level</th>
               <th scope="col" class="fw-medium">Current Stock</th>
             </tr>
@@ -76,6 +77,10 @@ Low Inv. Medicine
         {
             data:'unit',
             name:'unit'
+        },
+        {
+            data:'hsn',
+            name:'hsn'
         },
         {
             data:'re_ordering_level',

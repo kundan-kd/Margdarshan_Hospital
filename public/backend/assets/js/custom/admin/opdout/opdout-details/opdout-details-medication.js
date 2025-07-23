@@ -114,8 +114,7 @@ $('#opdOutMed-form').on('submit',function(e){
     let medCategory_check  = validateField('opdOutMed-medCategory', 'select');
     let medName_check  = validateField('opdOutMed-medName', 'select');
     let dose_check  = validateField('opdOutMed-dose', 'select');
-    let remarks_check  = validateField('opdOutMed-remerks', 'select');
-    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true && remarks_check === true){
+    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true){
         let patientId = $('#patient_Id').val();
         let visitid = $('#opdOutMed-visitid').val();
         let medCategory = $('#opdOutMed-medCategory').val();
@@ -178,8 +177,7 @@ function opdOutMedDoseUpdate(id){
     let medCategory_check  = validateField('opdOutMed-medCategory', 'select');
     let medName_check  = validateField('opdOutMed-medName', 'select');
     let dose_check  = validateField('opdOutMed-dose', 'select');
-    let remarks_check  = validateField('opdOutMed-remerks', 'select');
-    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true && remarks_check === true){
+    if(visitid_check === true && medCategory_check === true && medName_check === true && dose_check === true){
         let visitid = $('#opdOutMed-visitid').val();
         let medCategory = $('#opdOutMed-medCategory').val();
         let medName = $('#opdOutMed-medName').val();

@@ -822,14 +822,8 @@
                   <div class="opdOutMed-dose_errorCls d-none"></div>
               </div>
               <div class="col-md-6">
-                  <label class="form-label fw-medium" for="opdOutMed-remerks">Remarks Type</label>
-                  {{-- <input id="ipdMed-remerks" type="text" class="form-control form-control-sm" placeholder=" Remarks"> --}}
-                   <select id="opdOutMed-remerks" class="form-select form-select-sm select2-cls" style="width: 100%" onchange="validateField(this.id,'select')">
-                        <option value="">Select</option>
-                        <option value="General">General</option>
-                        <option value="Discharge">Discharge</option>
-                  </select>
-                  <div class="opdOutMed-remerks_errorCls d-none"></div>
+                  <label class="form-label fw-medium">Remarks</label>
+                  <input id="opdOutMed-remerks" type="text" class="form-control form-control-sm" placeholder=" Remarks">
               </div>
           </div>
         
@@ -959,7 +953,7 @@
                     </div> 
                   </div>
                      <div class="col-md-12">
-                    <label class="form-label" for="room_num">Reporting Doctor</label>
+                    <label class="form-label" for="room_num">Consultant Doctor</label>
                    <select class="form-control form-control-sm" name="opd-doctorID" id="opd-doctorID" required>
                         <option value="">Select Doctor</option>
                         @foreach ($doctorData as $doctor)

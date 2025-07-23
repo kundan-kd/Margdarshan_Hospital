@@ -159,7 +159,7 @@
             <input type="text" id="emergency-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
             <div class="emergency-patientAddess_errorCls d-none"></div>
           </div>
-           <div class="col-6">
+          <div class="col-6">
             <label class="form-label fw-normal" for="emergency-consultDoctor">Consultant Doctor</label>          
               <select class="form-control form-control-sm select2-cls" style="width: 100%" name="emergency-consultDoctor" id="emergency-consultDoctor">
                     <option value="">Select Doctor</option>

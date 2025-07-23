@@ -23,11 +23,6 @@ Discharge Billing
                if($patientData[0]->current_status == 'Discharged'){
                 $visibility = 'disabled';
                }
-              //  $discharge_summary_display = '';
-              //   if($patientData[0]->discharge_form_generated	 == 1){
-              //   $discharge_summary_display = 'd-none';
-              //  }
-            //  dd($patientData);
             @endphp
             <p class="mt-3 fw-medium">Patient ID : <span class="fw-normal billingAdd-billNo">{{$patientData[0]->patient_id}} ({{$patientData[0]->name}})</span></p>
             <p class="mt-3 fw-medium mx-5">Date : <span class="fw-normal">{{ $dateTime}}</span></p>

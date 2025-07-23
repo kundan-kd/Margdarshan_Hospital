@@ -161,7 +161,7 @@ $('#addUser-form').on('submit',function(e){
                     },
                     data:{departmentID:departmentID,userType:userType,fee:fee,opdRoom:opdRoom,salesTeam:salesTeam,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
                     success:function(response){
-                        if(response.success){
+                       if(response.success){
                             $('#add-user').modal('hide');
                             $('#addUser-form')[0].reset();
                             $('#user-table').DataTable().ajax.reload();

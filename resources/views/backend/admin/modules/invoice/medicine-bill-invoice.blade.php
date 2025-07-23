@@ -407,9 +407,9 @@
                     <span class="bill-detail">Paid Amount:</span>
                     <span class="amount">₹ {{round($billings[0]->paid_amount)}}</span>
                 </div>
-                <div class="total-row" style="{{ $billings[0]->return_amount > 0 ? '' : 'display:none;' }}">
-                    <span class="bill-detail">Return Amount:</span>
-                    <span class="amount">₹ {{round($billings[0]->return_amount)}}</span>
+                <div class="total-row">
+                    <span class="bill-detail">Due:</span>
+                    <span class="amount">₹ {{round($billings[0]->due_amount)}}</span>
                 </div>
             </div>
 

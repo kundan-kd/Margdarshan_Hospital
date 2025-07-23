@@ -43,8 +43,9 @@ medicines
               <th scope="col" class="fw-medium">Group</th>
               <th scope="col" class="fw-medium">Unit</th>
               <th scope="col" class="fw-medium">Re-Order Level</th>
-              <th scope="col" class="fw-medium">Batch</th>
+               <th scope="col" class="fw-medium">Batch</th>
               <th scope="col" class="fw-medium">Expiry</th>
+              <th scope="col" class="fw-medium">HSN</th>
               <th scope="col" class="fw-medium">Stock</th>
               <th scope="col" class="fw-medium">Action</th>
             </tr>
@@ -132,6 +133,11 @@ medicines
                     @endforeach
                   </select>
                <div class="createMed_composition_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="createMed_hsn">HSN Number</label>
+                <input id="createMed_hsn" type="text" class="form-control form-control-sm" placeholder="HSN Number" oninput="validateField(this.id,'input')">
+                <div class="createMed_hsn_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">
               <label class="form-label fw-normal" for="createMed_taxes">Taxes</label>

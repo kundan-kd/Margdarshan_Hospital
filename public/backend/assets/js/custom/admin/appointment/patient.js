@@ -55,12 +55,12 @@ let table = $('#patient-table').DataTable({
             orderable: false,
             searchable: true
         },
-        {
-            data:'address',
-            name:'address',
-            orderable: false,   
-            searchable: true
-        },
+        // {
+        //     data:'address',
+        //     name:'address',
+        //     orderable: false,   
+        //     searchable: true
+        // },
         {
             data:'allergies',
             name:'allergies',
@@ -126,6 +126,19 @@ function getPatientDetailsOpd(mobile){
             data:{mobile:mobile},
              success: function(response) {
                 const getData = response.data;
+                // if (!getData || getData.length === 0) { 
+                //     $('.patient-data-list-opd').append(`<li class="list-group-item">No Data Found!</li>`);
+                // } else {
+                //     const addedIds = new Set();
+                //     getData.forEach(element => {
+                //         if (!addedIds.has(element.id)) {
+                //             $('.patient-data-list-opd').append(
+                //                 `<li class="list-group-item" data-patient-id="${element.id}">${element.name} (${element.patient_id})</li>`
+                //             );
+                //             addedIds.add(element.id);
+                //         }
+                //     });
+                // }
                 if (!getData) {
                     $('.patient-data-list-opd').append(`<li class="list-group-item">No Data Found!</li>`);
                 } else {
@@ -322,7 +335,7 @@ function patientAddPatientUpdate(id){
                         $('.patientAddPatientSpinn').addClass('d-none'); 
                         $('.patientAddPatientUpdate').removeClass('d-none'); 
                     }else{
-                        toastErrorAlert('error found');
+                         toastErrorAlert('error found');
                         $('.patientAddPatientSpinn').addClass('d-none'); 
                         $('.patientAddPatientUpdate').removeClass('d-none'); 
                     }

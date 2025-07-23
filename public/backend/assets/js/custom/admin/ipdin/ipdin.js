@@ -190,6 +190,19 @@ function getPatientDetails(mobile){
             data:{mobile:mobile},
              success: function(response) {
                 const getData = response.data;
+                // if (!getData || getData.length === 0) { 
+                //     $('.patient-data-list').append(`<li class="list-group-item">No Data Found!</li>`);
+                // } else {
+                //     const addedIds = new Set();
+                //     getData.forEach(element => {
+                //         if (!addedIds.has(element.id)) {
+                //             $('.patient-data-list').append(
+                //                 `<li class="list-group-item" data-patient-id="${element.id}">${element.name} (${element.patient_id})</li>`
+                //             );
+                //             addedIds.add(element.id);
+                //         }
+                //     });
+                // }
                 if (!getData) {
                     $('.patient-data-list').append(`<li class="list-group-item">No Data Found!</li>`);
                 } else {
@@ -225,8 +238,9 @@ function fillPatientFields(id){
         },
         data: { id:id },
         success: function(response) {
+            console.log(response);
             if(response.success){
-                $('.patient-data-list').addClass('d-none');
+                 $('.patient-data-list').addClass('d-none');
                 let getData = response.data[0];
                 $('#ipdPatientId').val(getData.id);
                 $('#ipd-patientName').val(getData.name);
@@ -311,6 +325,10 @@ $('#ipd-addPatientForm').on('submit',function(e){
                             $('.ipdPatientSubmit').removeClass('d-none'); 
                         }else if(response.previous_admitted){
                             toastErrorAlert(response.previous_admitted);
+                            $('.ipdPatientSpinn').addClass('d-none'); 
+                            $('.ipdPatientSubmit').removeClass('d-none'); 
+                        }else if(response.previous_added_opd){
+                            toastErrorAlert(response.previous_added_opd);
                             $('.ipdPatientSpinn').addClass('d-none'); 
                             $('.ipdPatientSubmit').removeClass('d-none'); 
                         }else{
@@ -463,4 +481,7 @@ function ipdPatientUsingId(id){
 }
 function admissionForm(id){
     window.open('/admission-form-print/' + id);
+}
+function dischargeForm(id){
+    window.open('/discharge-form-print/' + id);
 }

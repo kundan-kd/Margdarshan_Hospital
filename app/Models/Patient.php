@@ -15,5 +15,4 @@ class Patient extends Model
     public function doctorData(){
         return $this->belongsTo(User::class,'attended_doctor_id');
     }
-
 }

@@ -32,7 +32,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class EmergencyController extends Controller
 {
-      public function index(){
+     public function index(){
         $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
         return view('backend.admin.modules.emergency.emergency',compact('doctorData'));
     }
@@ -90,9 +90,9 @@ class EmergencyController extends Controller
                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="lucide:edit" onclick="emergencyPatientEdit('.$row->id.');getBedDataEmergency('.$row->id.')"></iconify-icon>
                     </a>
-                     <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                    <iconify-icon icon="mdi:file-download-outline" onclick="admissionForm(' . $row->id . ')"></iconify-icon>
-                </a>
+                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                      <iconify-icon icon="mdi:file-download-outline" onclick="admissionForm(' . $row->id . ')"></iconify-icon>
+                    </a>
                     <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyPatientDelete('.$row->id.')"></iconify-icon>
                     </a> -->';
@@ -108,6 +108,9 @@ class EmergencyController extends Controller
             if($prevPatient->current_status == "Admitted"){
                 return response()->json(['previous_admitted'=>'Kindly discharge this patient from '.$prevPatient->type.' before adding new']);
             }
+            if($prevPatient->type == "OPD"){
+                return response()->json(['previous_added_opd'=>'This patient already found in OPD, Kindly move to IPD first']);
+            }
         }
          $validator = Validator::make($request->all(),[
             'name' => 'required',
@@ -118,6 +121,8 @@ class EmergencyController extends Controller
             'mstatus' => 'required',
             'mobile' => 'required',
             'address' => 'required',
+            'consultDoctor' => 'nullable',
+            'referPerson' => 'nullable',
             'alt_mobile' => 'nullable',
             'allergy' => 'nullable',
             'bedNumId' => 'required'

@@ -21,7 +21,4 @@ class Medicine extends Model
     public function unitData(){
         return $this->belongsTo(Unit::class,'unit_id');
     }
-    // public function purchaseItemData(){
-    //      return $this->hasMany(PurchaseItem::class, 'name_id');
-    // }
 }

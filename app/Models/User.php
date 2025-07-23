@@ -22,7 +22,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(UserType::class, 'usertype_id');
     }
-    public function roomNumberData()
+     public function roomNumberData()
     {
         return $this->belongsTo(RoomNumber::class, 'room_number');
     }

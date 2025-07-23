@@ -33,7 +33,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class IpdinController extends Controller
 {
-     public function index(){
+    public function index(){
         $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
         return view('backend.admin.modules.ipdin.ipd-in',compact('doctorData'));
     }
@@ -60,7 +60,7 @@ class IpdinController extends Controller
         if($request->patientType != null ){
             $patients = Patient::where('type',$request->patientType)->orWhere('current_status',$request->patientType)->get();
         }else{
-            $patients = Patient::where('type','IPD')->orWhere('type','ICU')->where('current_status','!=','Discharged')->get();
+            $patients = Patient::whereIn('type', ['IPD', 'ICU'])->where('current_status','!=','Discharged')->get();
         }    
         return DataTables::of($patients)
         ->addColumn('patient_id',function($row){
@@ -103,7 +103,7 @@ class IpdinController extends Controller
                 <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center ' . $dischargeClass . '">
                     <iconify-icon icon="mdi:file-download-outline" onclick="printBill(' . $row->id . ')"></iconify-icon>
                 </a>
-                 <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mdi:file-download-outline" onclick="admissionForm(' . $row->id . ')"></iconify-icon>
                 </a>
                 <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -139,6 +139,9 @@ class IpdinController extends Controller
             if($prevPatient->current_status == "Admitted"){
                 return response()->json(['previous_admitted'=>'Kindly discharge this patient from '.$prevPatient->type.' before adding new']);
             }
+            if($prevPatient->type == "OPD"){
+                return response()->json(['previous_added_opd'=>'This patient already found in OPD, Kindly move to IPD']);
+            }
         }
         $validator = Validator::make($request->all(),[
             'name' => 'required',
@@ -149,7 +152,7 @@ class IpdinController extends Controller
             'mstatus' => 'required',
             'mobile' => 'required',
             'address' => 'required',
-            'consultDoctor' => 'nullable',
+             'consultDoctor' => 'nullable',
             'referPerson' => 'nullable',
             'alt_mobile' => 'nullable',
             'allergy' => 'nullable',
@@ -209,7 +212,7 @@ class IpdinController extends Controller
 
                 $patient->lead_id = $lead->id;
                 $patient->save();
-            }          
+            }   
             Bed::where('id',$request->bedNumId)->update([
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $patient->id,

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\backend\admin\appointment;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Department;
-use App\Models\Lead;
 use App\Models\Patient;
 use App\Models\PaymentBill;
 use App\Models\PaymentMode;
@@ -83,7 +82,6 @@ class AppointmentController extends Controller
         ->make(true);
      }
     }
-
     public function addNewPatient(Request $request){
          $existing_patient = Patient::where('mobile', $request->mobile)
             ->where(function ($query) {
@@ -156,58 +154,81 @@ class AppointmentController extends Controller
                 $patient->lead_id = $lead->id;
                 $patient->save();
             }
-            return response()->json(['success' => 'New Patient added successfully'], 201);
+            return response()->json(['success' => 'New Patient added successfully'], 200);
         }
-    return response()->json(['error_success' => 'Patient not added'], 500);
+    return response()->json(['error_success' => 'Patient not added']);
     }
-
-public function searchPatient(Request $request){
-    $keyword = $request->input('name');
-
-    $latestDistinctIds = Patient::where(function ($query) use ($keyword) {
-        $query->where('name', 'LIKE', "%{$keyword}%")
-              ->orWhere('patient_id', 'LIKE', "%{$keyword}%")
-              ->orWhere('mobile', 'LIKE', "%{$keyword}%");
-    })
-    ->orderByDesc('created_at')
-    ->pluck('id')
-    ->unique()
-    ->take(5);
-
-    $getData = Patient::whereIn('id', $latestDistinctIds)
-                      ->orderByDesc('created_at') // Ensure latest first
-                      ->get(['id', 'patient_id', 'name']);
-
-    return response()->json([
-        'success' => 'Latest distinct patient data fetched successfully',
-        'data' => $getData
-    ], 200);
-}
-
-    // public function searchPatient(Request $request){
-    //     $getData = Patient::where('name','LIKE',"%{$request->name}%")
-    //                         ->orWhere('patient_id', 'LIKE', "%{$request->name}%")
-    //                         ->orWhere('mobile','LIKE',"%{$request->name}%")
-    //                             ->distinct()
-    //                         ->get(['id','patient_id','name']);
-    //     return response()->json(['success'=>'Patient data fetched successfully','data'=>$getData],200);
+    // public function addNewPatient(Request $request){
+    //      $validator = Validator::make($request->all(),[
+    //         'name' => 'required',
+    //         'guardian_name' => 'required',
+    //         'gender' => 'nullable',
+    //         'bloodtype' => 'nullable',
+    //         'dob' => 'required',
+    //         'mstatus' => 'required',
+    //         'mobile' => 'required',
+    //         'address' => 'required',
+    //         'alt_mobile' => 'nullable',
+    //         'allergy' => 'nullable'
+    //     ]);
+    //     if($validator->fails()){
+    //         return response()->json(['error_validation'=>$validator->errors()->all()],422);
+    //     }
+    //     $month = date('m'); // Gets the current month (e.g., "05")
+    //     $year = date('y'); // Gets the current year (e.g., "25")
+    //     $patient = new Patient();
+    //     $patient->type = "OPD";
+    //     $patient->name = $request->name;
+    //     $patient->guardian_name = $request->guardian_name;
+    //     $patient->gender = $request->gender;
+    //     $patient->bloodtype = $request->bloodtype;
+    //     $patient->dob = $request->dob;
+    //     $patient->marital_status = $request->mstatus;
+    //     $patient->mobile = $request->mobile;
+    //     $patient->alt_mobile = $request->alt_mobile;
+    //     $patient->known_allergies = $request->allergy;
+    //     $patient->address = $request->address;
+    //     if($patient->save()){
+    //         $patient->patient_id = "MHPT". $month.$year.$patient->id;
+    //         $patient->save();
+    //         //generate bar code
+    //         $generator = new BarcodeGeneratorPNG();
+    //         $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
+    //         if ($barcode) {
+    //               //generate barcode and store in storage/public/barcode
+    //                 $fileName = $patient->patient_id.'.' . time() . '.png';
+    //                  $path = public_path('backend/uploads/barcode/' . $fileName);
+    //                 file_put_contents($path, $barcode);
+    //                 $patient->barcode = $fileName; //store barcode name in database
+    //                 $patient->save();
+    //         }
+    //         return response()->json(['success'=>'New Patient added successfully'],201);
+    //     }else{
+    //         return response()->json(['error_success'=>'Patient not added'],500);
+    //     }
     // }
-//   public function searchPatient(Request $request)
-// {
-//     $keyword = $request->input('name');
-
-//     $getData = Patient::select('name', 'patient_id', 'id')
-//                       ->where('name', 'LIKE', "%{$keyword}%")
-//                       ->orWhere('patient_id', 'LIKE', "%{$keyword}%")
-//                       ->orWhere('mobile', 'LIKE', "%{$keyword}%")
-//                       ->distinct()
-//                       ->get();
-
-//     return response()->json([
-//         'success' => 'Distinct patient data fetched successfully',
-//         'data' => $getData
-//     ], 200);
-// }
+    public function searchPatient(Request $request){
+        $keyword = $request->input('name');
+    
+        $latestDistinctIds = Patient::where(function ($query) use ($keyword) {
+            $query->where('name', 'LIKE', "%{$keyword}%")
+                  ->orWhere('patient_id', 'LIKE', "%{$keyword}%")
+                  ->orWhere('mobile', 'LIKE', "%{$keyword}%");
+        })
+        ->orderByDesc('created_at')
+        ->pluck('id')
+        ->unique()
+        ->take(5);
+    
+        $getData = Patient::whereIn('id', $latestDistinctIds)
+                          ->orderByDesc('created_at') // Ensure latest first
+                          ->get(['id', 'patient_id', 'name']);
+    
+        return response()->json([
+            'success' => 'Latest distinct patient data fetched successfully',
+            'data' => $getData
+        ], 200);
+    }
     public function getPatient(Request $request){
         $getData = Patient::where('id',$request->id)->get(['id','patient_id','name']);
         return response()->json(['success'=>'Patient details fetched successfully','data'=>$getData],200);
@@ -234,6 +255,15 @@ public function searchPatient(Request $request){
         return response()->json(['success'=>'Doctor detail fetched successfully','data'=>$appointment,'doctorData' =>$doctorData,'roomNum'=>$roomNum],200);
     }
     public function appointmentBook(Request $request){
+        $check_patient = Appointment::where('patient_id',$request->patientID)->where('status','Pending')->exists();
+        if($check_patient){
+            return response()->json(['already_open'=>'Appointment for this patient is already open']);
+        }
+        $check_patient_admitted = Patient::where('id',$request->patientID)->where('current_status','Admitted')->exists();
+        if($check_patient_admitted){
+            return response()->json(['already_admitted'=>'This patient is already admitted,Kindly discharge before adding new']);
+        }
+        
         $validator = Validator::make($request->all(),[
             'patientID' => 'nullable',
             'name' => 'required',

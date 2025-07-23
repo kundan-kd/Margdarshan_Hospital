@@ -136,7 +136,7 @@ class InvoiceController extends Controller
         $patients = Patient::where('id',$id)->get();
         return view('backend.admin.modules.invoice.admission-form',compact('patients'));
     }
-    public function dischargeSummary($id){
+     public function dischargeSummary($id){
         $medications = Medication::where('patient_id',$id)->where('remarks','Discharge')->get();
         // Fetch today's vitals for the patient
         $vitals = Vital::where('patient_id', $id)
@@ -147,7 +147,7 @@ class InvoiceController extends Controller
     public function dischargeFormPrint($id){
         $patients = Patient::where('id',$id)->get();
         $dischargeSummary = DischargeSummary::where('patient_id',$id)->get();
-        return view('backend.admin.modules.invoice.discharge-form',compact('patients','dischargeSummary',));
+        return view('backend.admin.modules.invoice.discharge-form',compact('patients','dischargeSummary'));
     }
     public function dischargeSummarySubmit(Request $request){
         $validated = $request->validate([

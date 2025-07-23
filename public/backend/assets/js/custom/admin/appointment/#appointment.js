@@ -120,13 +120,11 @@ $('#addPatientForm').on('submit',function(e){
                         $('#add-appointment').modal('show');
                         $('.patientSpinn').addClass('d-none');
                         $('.patientSubmit').removeClass('d-none'); 
-                        }else if(response.alreadyFound){
-                            toastErrorAlert(response.alreadyFound);
-                            $('.patientSpinn').addClass('d-none'); 
-                            $('.patientSubmit').removeClass('d-none'); 
-                        }else{
-                            console.log('error found');
-                        }
+                    }else{
+                        console.log('error found');
+                        $('.patientSpinn').addClass('d-none');
+                        $('.patientSubmit').removeClass('d-none'); 
+                    }
                 },
                 error:function(xhr, status, error){
                     console.log(xhr.respnseText);
@@ -163,7 +161,6 @@ function resetAddPatient(){
     $('.patientMobile_errorCls').addClass('d-none');
     $('.patientAddess_errorCls').addClass('d-none');
 }
-
 function getPatientData(x) {
     validateField('itemSearchInput', 'input');
     if (x.length < 3) {
@@ -181,17 +178,14 @@ function getPatientData(x) {
         },
         data: { name: x },
         success: function(response) {
-            const patients = response.data;
-             $('.patient-name-list').empty();
+            const patient = response.data;
 
-            if (!patients || patients.length === 0) {
+            if (!patient) {
                 $('.patient-name-list').append(`<li class="list-group-item">No Data Found!</li>`);
             } else {
-                patients.forEach(patient => {
-                    $('.patient-name-list').append(
-                        `<li class="list-group-item" data-patient-id="${patient.id}">${patient.name} (${patient.patient_id})</li>`
-                    );
-                });
+                $('.patient-name-list').append(
+                    `<li class="list-group-item" data-patient-id="${patient.id}">${patient.name} (${patient.patient_id})</li>`
+                );
             }
         },
         error: function(xhr) {
@@ -212,78 +206,7 @@ $(document).on('click', '.patient-name-list li', function() {
         getPatientDetails(patientId); // Pass the ID to the function
     }
 });
-function getPatientDetailsOpd(mobile){
-    if(mobile.length >= 10){
-        // console.log(mobile);
-        $('.patient-data-list-opd').empty();
-        $('.patient-data-list-opd').removeClass('d-none');
-        $.ajax({
-            url: getPatientDataUsingMobile,
-            type:"POST",
-            headers:{
-            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-            },
-            data:{mobile:mobile},
-            success: function(response) {
-                const getData = response.data;
-                if (!getData) {
-                    $('.patient-data-list-opd').append(`<li class="list-group-item">No Data Found!</li>`);
-                } else {
-                    $('.patient-data-list-opd').append(
-                        `<li class="list-group-item" data-patient-id="${getData.id}">${getData.name} (${getData.patient_id})</li>`
-                    );
-                }
-            },
-            error:function(xhr,error){
-                console.log(xhr.responseText);
-                alert('An error occured: '+error);
-            }
-        });
-    }else{
-        $('.patient-data-list-opd').empty();
-        $('.patient-data-list-opd').addClass('d-none');
-        // console.log('10 Digit number required!');
-    }
-}
-$(document).on('click', '.patient-data-list-opd li', function() {
-    let patientId = $(this).data('patient-id'); // Get the clicked patient's ID
-    // console.log(patientId);
-    if(patientId != undefined){
-        // $('#itemSearchInput').val('');
-        fillPatientFieldsOpd(patientId); // Pass the ID to the function
-    }
-});
-function fillPatientFieldsOpd(id){
-    $.ajax({
-        url: fillPatientData, // Ensure this is a valid endpoint
-        type: "POST",
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data: { id:id },
-        success: function(response) {
-            if(response.success){
-                $('.patient-data-list-opd').addClass('d-none');
-                let getData = response.data[0];
-                $('#patientName').val(getData.name);
-                $('#guardianName').val(getData.guardian_name);
-                $('#patientBloodType').val(getData.bloodtype).change();
-                $('#patientDOB').val(getData.dob);
-                $('#patientMStatus').val(getData.marital_status).change();
-                $('#patientMobile').val(getData.mobile);
-                $('#patientAddess').val(getData.address);
-                $('#patientAllergy').val(getData.known_allergies);
-                $('input[name="patientGender"]').each(function() {
-                if ($(this).val() === getData.gender) {
-                    $(this).prop('checked', true);
-                }
-                });
-        
-            }
-        
-    }
-    });
-}
+
 function getPatientDetails(id){
     $.ajax({
         url: getPatient, // Ensure this is a valid endpoint
@@ -431,15 +354,8 @@ $('#appointmentForm').on('submit',function(e){
                             $('.appointmentSpinn').addClass('d-none');
                             $('.appointmentSubmitBtn').removeClass('d-none');
                         }else if(response.error_validation){
+                            console.log(response.error_validation);
                             toastWarningAlert(response.error_validation);
-                            $('.appointmentSpinn').addClass('d-none');
-                            $('.appointmentSubmitBtn').removeClass('d-none');
-                        }else if(response.already_open){
-                            toastErrorAlert(response.already_open);
-                            $('.appointmentSpinn').addClass('d-none');
-                            $('.appointmentSubmitBtn').removeClass('d-none');
-                        }else if(response.already_admitted){
-                            toastErrorAlert(response.already_admitted);
                             $('.appointmentSpinn').addClass('d-none');
                             $('.appointmentSubmitBtn').removeClass('d-none');
                         }else{

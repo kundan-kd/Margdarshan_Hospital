@@ -50,6 +50,10 @@ let table = $('#medicine-create-table').DataTable({
             name:'expiry'
         },
         {
+            data:'hsn',
+            name:'hsn'
+        },
+        {
             data:'stock',
             name:'stock'
         },
@@ -113,9 +117,10 @@ $('#createMed_form').on('submit', function(e) {
     let createMed_group = validateField('createMed_group', 'select');
     let createMed_unit = validateField('createMed_unit', 'select');
     let createMed_reOrderingLevel = validateField('createMed_reOrderingLevel', 'select');
+    let createMed_hsn = validateField('createMed_hsn', 'input');
     let createMed_taxes = validateField('createMed_taxes', 'select');
     let createMed_boxPacking = validateField('createMed_boxPacking', 'select');
-    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_group === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_taxes === true && createMed_boxPacking === true){
+    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_group === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_hsn === true && createMed_taxes === true && createMed_boxPacking === true){
 
     let category = $('#createMed_category').val();
     let company = $('#createMed_company').val();
@@ -124,11 +129,8 @@ $('#createMed_form').on('submit', function(e) {
     let re_order_level = $('#createMed_reOrderingLevel').val();
     let rack = $('#createMed_rack').val();
     let name = $('#createMed_name').val();
-    //  let composition = $('#createMed_composition').val();
-    //  let composition = '';
-     let composition_array = $('select[name="createMed_composition[]"]').map(function(){return $(this).val();}).get();
-    
-    // console.log(composition_array);
+    let composition_array = $('select[name="createMed_composition[]"]').map(function(){return $(this).val();}).get();
+    let hsn = $('#createMed_hsn').val();
     let taxes = $('#createMed_taxes').val();
     let box_pack = $('#createMed_boxPacking').val();
     let narration = $('#createMed_narration').val();
@@ -139,7 +141,7 @@ $('#createMed_form').on('submit', function(e) {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         data:{
-            category:category,company:company,group:group,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition_array,taxes:taxes,box_pack:box_pack,narration:narration
+            category:category,company:company,group:group,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition_array,hsn:hsn,taxes:taxes,box_pack:box_pack,narration:narration
         },
         success:function(response){
         //   console.log(response);
@@ -191,6 +193,7 @@ function medicineEdit(id){
             $('#createMed_rack').val(getData.rack);
             $('#createMed_name').val(getData.name);
             $('#createMed_composition').val(arrayValue).trigger('change'); ;
+            $('#createMed_hsn').val(getData.hsn_number);
             $('#createMed_taxes').val(getData.taxes);
             $('#createMed_boxPacking').val(getData.box_packing);
             $('#createMed_narration').val(getData.narration);
@@ -205,9 +208,10 @@ let createMed_name = validateField('createMed_name', 'Medicine select');
     let createMed_group = validateField('createMed_group', 'select');
     let createMed_unit = validateField('createMed_unit', 'select');
     let createMed_reOrderingLevel = validateField('createMed_reOrderingLevel', 'select');
+    let createMed_hsn = validateField('createMed_hsn', 'input');
     let createMed_taxes = validateField('createMed_taxes', 'select');
     let createMed_boxPacking = validateField('createMed_boxPacking', 'select');
-    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_group === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_taxes === true && createMed_boxPacking === true){
+    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_group === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_hsn === true && createMed_taxes === true && createMed_boxPacking === true){
 
         let category = $('#createMed_category').val();
         let company = $('#createMed_company').val();
@@ -217,6 +221,7 @@ let createMed_name = validateField('createMed_name', 'Medicine select');
         let rack = $('#createMed_rack').val();
         let name = $('#createMed_name').val();
         let composition = $('#createMed_composition').val();
+        let hsn = $('#createMed_hsn').val();
         let taxes = $('#createMed_taxes').val();
         let box_pack = $('#createMed_boxPacking').val();
         let narration = $('#createMed_narration').val();
@@ -227,7 +232,7 @@ let createMed_name = validateField('createMed_name', 'Medicine select');
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             data:{
-                id:id,category:category,company:company,group:group,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition,taxes:taxes,box_pack:box_pack,narration:narration
+                id:id,category:category,company:company,group:group,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition,hsn:hsn,taxes:taxes,box_pack:box_pack,narration:narration
             },
             success:function(response){
                 if(response.success){

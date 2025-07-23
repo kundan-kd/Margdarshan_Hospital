@@ -125,10 +125,12 @@ function invoiceSubmit(id){
             },
             data:{id:id,total_amount:total_amount,discount_amount:discount_amount,paid_amount:paid_amount},
             success:function(response){
+                console.log(response);
+                
                 billPrint(id) //print bill
                 setTimeout(function(){
                     const url = `/patient-discharge-bills/${id}`;
-  window.location.href = url;
+                     window.location.href = url;
 
                 },300);
             }

@@ -176,6 +176,19 @@ function getPatientDetails(mobile){
             data:{mobile:mobile},
              success: function(response) {
                 const getData = response.data;
+                // if (!getData || getData.length === 0) { 
+                //     $('.patient-data-list').append(`<li class="list-group-item">No Data Found!</li>`);
+                // } else {
+                //     const addedIds = new Set();
+                //     getData.forEach(element => {
+                //         if (!addedIds.has(element.id)) {
+                //             $('.patient-data-list').append(
+                //                 `<li class="list-group-item" data-patient-id="${element.id}">${element.name} (${element.patient_id})</li>`
+                //             );
+                //             addedIds.add(element.id);
+                //         }
+                //     });
+                // }
                 if (!getData) {
                     $('.patient-data-list').append(`<li class="list-group-item">No Data Found!</li>`);
                 } else {
@@ -290,7 +303,7 @@ $('#emergency-addPatientForm').on('submit',function(e){
                             $('#emergency-patient-list').DataTable().ajax.reload();
                             $('.emergencyPatientSpinn').addClass('d-none'); 
                             $('.emergencyPatientSubmit').removeClass('d-none'); 
-                             admissionForm(response.data); //print patient form
+                            admissionForm(response.data); //print patient form
                         }else if(response.error_success){
                             toastErrorAlert(response.error_success);
                             $('.emergencyPatientSpinn').addClass('d-none'); 
@@ -303,8 +316,13 @@ $('#emergency-addPatientForm').on('submit',function(e){
                             toastErrorAlert(response.previous_admitted);
                             $('.emergencyPatientSpinn').addClass('d-none'); 
                             $('.emergencyPatientSubmit').removeClass('d-none'); 
+                        }else if(response.previous_added_opd){
+                            toastErrorAlert(response.previous_added_opd);
+                            $('.emergencyPatientSpinn').addClass('d-none'); 
+                            $('.emergencyPatientSubmit').removeClass('d-none'); 
                         }else{
                              toastErrorAlert('something went wrong!');
+                             
                         }
                     },
                     error:function(xhr, status, error){
@@ -326,6 +344,7 @@ function emergencyPatientEdit(id){
         },
         data:{id:id},
         success:function(response){
+            console.log(response);
             if(response.success){
                let getData = response.data[0];
                 $('#emergency-add-patientLabel').html('Edit Emergency Patient');

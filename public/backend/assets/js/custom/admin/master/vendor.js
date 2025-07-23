@@ -81,7 +81,7 @@ $('#vendorForm').on('submit',function(e){
    let email = $('#vendorEmail').val();
    let address = $('#vendorAddress').val();
    let gst = $('#vendorGST').val();
-   if(name == '' || phone == '' || email == '' || address == '' || gst == ''){
+   if(name == '' || phone == '' || address == '' || gst == ''){
     $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
    }else{
         if ($('.vendorUpdate').is(':visible')) {
@@ -148,7 +148,7 @@ function vendorUpdate(id){
     let email = $('#vendorEmail').val();
     let address = $('#vendorAddress').val();
     let gst = $('#vendorGST').val();
-    if(name == '' || phone == '' || email == '' || address == '' || gst == ''){
+    if(name == '' || phone == '' || address == '' || gst == ''){
     $('.needs-validation').addClass('was-validated'); //added bootstrap class for form validation
     }else{
         $.ajax({

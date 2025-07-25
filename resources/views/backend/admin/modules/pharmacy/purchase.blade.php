@@ -37,6 +37,7 @@ purchase
               <th scope="col" class="fw-medium">Bill No.</th>
               <th scope="col" class="fw-medium">Total Amount</th>
               <th scope="col" class="fw-medium">Paid Amount</th>
+              <th scope="col" class="fw-medium">Due Amount</th>
               <th scope="col" class="fw-medium">Action</th>
             </tr>
           </thead>

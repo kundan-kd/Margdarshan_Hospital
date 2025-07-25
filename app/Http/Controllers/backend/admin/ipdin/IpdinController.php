@@ -46,7 +46,7 @@ class IpdinController extends Controller
         $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
         $nurseData = User::where('status',1)->where('usertype_id',3)->get(['id','name','department_id']);
         $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
-        $medicationData = Medication::where('patient_id',$patients[0]->id)->get();
+        $medicationData = Medication::with('medicineNameData')->where('patient_id',$patients[0]->id)->get();
         $testtypes = TestType::where('status',1)->get();
         $testnames = TestName::where('status',1)->get();
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
@@ -97,16 +97,19 @@ class IpdinController extends Controller
         })
         ->addColumn('action', function($row) {
             $dischargeClass = ($row->current_status == 'Discharged') ? '' : 'd-none';
-            return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+            return '<a href="javascript:void(0)" title="Edit Patient" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="lucide:edit" onclick="ipdPatientEdit(' . $row->id . ');getBedData(' . $row->id . ')"></iconify-icon>
                 </a>
-                <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center ' . $dischargeClass . '">
+                <a href="javascript:void(0)" title="Discharge Bill" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center ' . $dischargeClass . '">
                     <iconify-icon icon="mdi:file-download-outline" onclick="printBill(' . $row->id . ')"></iconify-icon>
                 </a>
-                <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                <a href="javascript:void(0)" title="Admission Form" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mdi:file-download-outline" onclick="admissionForm(' . $row->id . ')"></iconify-icon>
                 </a>
-                <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <iconify-icon icon="mdi:file-download-outline" onclick="summaryReport(' . $row->id . ')"></iconify-icon>
+                </a>
+                <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mingcute:delete-2-line" onclick="ipdpatientDelete(' . $row->id . ')"></iconify-icon>
                 </a>-->';
         })

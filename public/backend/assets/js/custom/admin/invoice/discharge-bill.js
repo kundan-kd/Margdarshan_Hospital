@@ -142,30 +142,47 @@ function dischargeSummary(id){
 function dischargeFormPrint(id){
     window.open('/discharge-form-print/' + id);
 }
-
 $('#discharge-summaryForm').on('submit', function(e) {
     e.preventDefault(); // Prevent default form submission
     let patient_id = $('#patient_id').val();
-    let final_diagnosis = CKEDITOR.instances['discharge-finalDiagnosis'].getData();
-        $.ajax({
-            url: dischargeSummarySubmit, // Replace with your actual route
-            type: "POST",
-            data: {
-                patient_id: patient_id,
-                final_diagnosis: final_diagnosis,
-            },
-            success: function(response) {
-                toastSuccessAlert(response.success);
-                $('.needs-validation').removeClass('was-validated');
-                setTimeout(function(){
-                    window.location.href='/patient-discharge-bills/'+ patient_id;
-                },700);
-            },
-            error: function(xhr) {
-                // Handle error
-                toastErrorAlert('Something went wrong. Please try again.');
-                console.error(xhr.responseText);
+    let discharge_type = $('#discharg-type').val();  
+    if(discharge_type == ''){
+        $('.needs-validation').addClass('was-validated');
+        return;
+    }else{
+        let final_diagnosis = CKEDITOR.instances['discharge-finalDiagnosis'].getData();
+        Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, Submit",
+        customClass: {
+            title: 'swal-title-custom'
+        }       
+        }).then((result) => {
+            if (result.isConfirmed) {               
+                $.ajax({
+                    url: dischargeSummarySubmit, // Replace with your actual route
+                    type: "POST",
+                    data: {
+                        patient_id:patient_id,discharge_type:discharge_type,final_diagnosis:final_diagnosis,
+                    },
+                    success: function(response) {
+                        toastSuccessAlert(response.success);
+                        $('.needs-validation').removeClass('was-validated');
+                        setTimeout(function(){
+                            window.location.href='/patient-discharge-bills/'+ patient_id;
+                        },1500);
+                    },
+                    error: function(xhr) {
+                        toastErrorAlert('Something went wrong. Please try again.');
+                        console.error(xhr.responseText);
+                    }
+                });
             }
         });
-    // }
+    }
 });

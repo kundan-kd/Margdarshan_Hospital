@@ -15,6 +15,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">OPD - Out Patient Details</h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
+           <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" onclick="summaryReport({{$patients[0]->id}})">Summary Report</button>
           @can('OPD Move To IPD')
             <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
           @endcan
@@ -179,13 +180,9 @@
                                     </thead>
                                     <tbody>
                                       @foreach ($medicationData as $medication)
-                                      {{-- @php
-                                        $medicine_name = app\Models\Medicine::where('id',$medication->medicine_name_id)->get(['name']);
-                                      @endphp --}}
                                         <tr>
-                                          <td>{{$medication->created_at}}</td>
-                                          {{-- <td>{{$medicine_name[0]->name}}</td> --}}
-                                          <td>{{$medication->dose}}</td>
+                                          <td>{{$medication->created_at->format('d-m-Y')}}</td>
+                                          <td>{{$medication->medicineNameData->name}}</td>
                                           <td>{{$medication->dose}}</td>
                                           <td>{{$medication->remarks}}</td>
                                         </tr>
@@ -214,7 +211,7 @@
                                         <tr>
                                             <td>{{ $labTestType[0]->name }}</td>
                                             <td>{{ $labTestName[0]->name }}</td>
-                                            <td>{{ $labInv->created_at->toDateString() }}</td>
+                                            <td>{{ $labInv->created_at->format('d-m-Y h:i A') }}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>

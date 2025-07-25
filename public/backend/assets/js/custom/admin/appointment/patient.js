@@ -55,21 +55,15 @@ let table = $('#patient-table').DataTable({
             orderable: false,
             searchable: true
         },
-        // {
-        //     data:'address',
-        //     name:'address',
-        //     orderable: false,   
-        //     searchable: true
-        // },
-        {
-            data:'allergies',
-            name:'allergies',
-            orderable: false,
-            searchable: true
-        },
         {
             data:'created_at',
             name:'created_at'
+        },
+        {
+            data:'curr_status',
+            name:'curr_status',
+            orderable: false,
+            searchable: true
         },
         {
             data:'action',

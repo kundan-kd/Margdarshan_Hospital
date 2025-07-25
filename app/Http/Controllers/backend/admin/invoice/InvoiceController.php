@@ -9,11 +9,13 @@ use App\Models\Billing;
 use App\Models\BillingItem;
 use App\Models\DischargeSummary;
 use App\Models\Invoice;
+use App\Models\LabInvestigation;
 use App\Models\Medication;
 use App\Models\Patient;
 use App\Models\PaymentBill;
 use App\Models\PaymentReceived;
 use App\Models\Timeline;
+use App\Models\Visit;
 use App\Models\Vital;
 use DateTime;
 use Illuminate\Http\Request;
@@ -152,6 +154,7 @@ class InvoiceController extends Controller
     public function dischargeSummarySubmit(Request $request){
         $validated = $request->validate([
             'patient_id' => 'required',
+            'discharge_type' => 'required',
             'final_diagnosis' => 'required',
         ]);
         $summary = new DischargeSummary();
@@ -159,11 +162,20 @@ class InvoiceController extends Controller
         $summary->final_diagnosis = $validated['final_diagnosis'];
         if($summary->save()){
             Patient::where('id',$summary->patient_id)->update([
-                'discharge_form_generated' => 1
+                'discharge_form_generated' => 1,
+                'discharge_type' => $validated['discharge_type']
             ]);
             return response()->json(['success'=>'Discharge summary submited successfully'],200);
         }else{
             return response()->json(['error_success'=>'Discharge summary not submited']);
         }
+    }
+    public function summaryRepoet($id){
+        $patients = Patient::where('id',$id)->get();
+        $visitsData = Visit::with('doctorData')->where('patient_id',$id)->where('type','OPD')->get();
+        $medicationData = Medication::with('medicineNameData')->where('patient_id',$id)->get();
+        $vitalsData = Vital::where('patient_id',$patients[0]->id)->get();
+        $labInvestigationData = LabInvestigation::with('testNameData')->where('patient_id',$id)->get();
+        return view('backend.admin.modules.invoice.summary-report',compact('patients','visitsData','medicationData','vitalsData','labInvestigationData'));
     }
 }

@@ -24,7 +24,8 @@ let table_opd_patients = $('#opd-out-list-table').DataTable({
         { data: 'mobile', name: 'mobile' },
         { data: 'doctor', name: 'doctor' },
         { data: 'room_no', name: 'room_no' },
-        { data: 'appointment_date', name: 'appointment_date' }
+        { data: 'appointment_date', name: 'appointment_date' },
+        { data: 'action', name: 'action',orderable:false,searchable:false }
     ],
      dom: 'Blfrtip',
     buttons: [
@@ -52,4 +53,6 @@ function getListFilter(){
 function patientDetailsUsingToken(id){
      window.open('opd-out-details/' + id, '_blank');
 }
-
+function summaryReport(id){
+    window.open('/summary-report/' + id);
+}

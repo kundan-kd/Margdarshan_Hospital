@@ -44,16 +44,13 @@ class PatientController extends Controller
         ->addColumn('mobile',function($row){
             return $row->mobile;
         })
-        // ->addColumn('address',function($row){
-        //     return $row->address;
-        // })
-        ->addColumn('allergies',function($row){
-            return $row->known_allergies;
-        })
         ->addColumn('created_at',function($row){
             $date = new \DateTime($row->created_at);
             $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
             return $date->format('d-m-Y h:i A');
+        })
+        ->addColumn('curr_status',function($row){
+            return $row->current_status ?? 'OPD';
         })
         ->addColumn('action',function($row){
             return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">

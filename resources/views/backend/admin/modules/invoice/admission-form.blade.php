@@ -163,7 +163,7 @@
 			
 			</div>
 			<div class="info-group">
-				<div class="info-row"> <span class="info-label">IPD No:</span> <span class="info-value">{{$patients[0]->bedData->bed_no}}</span> </div>
+				<div class="info-row"> <span class="info-label">Bed No:</span> <span class="info-value">{{$patients[0]->bedData->bed_no}}</span> </div>
 				<div class="info-row"> <span class="info-label">Age / Sex:</span> <span class="info-value">{{$patients[0]->gender}}</span> </div>
 				<div class="info-row"> <span class="info-label">Contact No:</span> <span class="info-value">{{$patients[0]->mobile}}</span> </div>
 				<div class="info-row"> <span class="info-label">Department:</span> <span class="info-value">{{$patients[0]->type}}</span> </div>

@@ -35,6 +35,10 @@ let table = $('#purchase-list-table').DataTable({
             name:'paid_amount'
         },
         {
+            data:'due_amount',
+            name:'due_amount'
+        },
+        {
             data:'action',
             name:'action',
             orderable: false,

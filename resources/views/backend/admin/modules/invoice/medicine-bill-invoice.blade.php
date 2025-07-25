@@ -295,7 +295,7 @@
         <div class="invoice-header">
             <div class="hospital-info">
                 <div>
-                    <div class="hospital-logo">Margdarshan Hospital</div>
+                    <div class="hospital-logo">Amriti Pharmacy</div>
                     <div class="hospital-details">
                         G-86, Behind Manju Sinha Smriti Park,<br>Kankarbagh, Patna – 800020<br>
                         Phone: +91 8210595186<br>
@@ -462,7 +462,7 @@
 
         <!-- Footer -->
         <div class="footer">
-            <p><strong>Margdarsan Hospital</strong> | Licensed Healthcare Facility | Contact: 9876543210</p>
+            <p><strong>Amriti Pharmacy</strong> | Licensed Healthcare Facility | Contact: 9876543210</p>
             <p>For billing inquiries: info@margdarshanhospital.com</p>
             <p>This is a computer-generated invoice. Please retain this document for your records.</p>
         </div>

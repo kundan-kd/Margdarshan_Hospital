@@ -71,17 +71,11 @@ class OpdoutController extends Controller
                 return $row->appointment_date;
             })
            
-            // ->addColumn('action',function($row){
-            //    return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-            //             <iconify-icon icon="iconamoon:eye-light" onclick="medicineDetails('.$row->id.')"></iconify-icon>
-            //             </a>
-            //             <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-            //              <iconify-icon icon="lucide:edit" onclick="medicineEdit('.$row->id.')"></iconify-icon>
-            //              </a>
-            //              <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-            //              <iconify-icon icon="mingcute:delete-2-line" onclick="medicineDelete('.$row->id.')"></iconify-icon>
-            //              </a>';
-            // })
+            ->addColumn('action',function($row){
+               return ' <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                    <iconify-icon icon="mdi:file-download-outline" onclick="summaryReport(' . $row->patient_id . ')"></iconify-icon>
+                </a>';
+            })
             ->rawColumns(['token','action'])
             ->make(true);
     }
@@ -94,7 +88,7 @@ class OpdoutController extends Controller
         $departments = Department::where('status', 1) ->where('name', '!=', 'Admin')->get();
         $doctorData = User::where('status',1)->where('usertype_id',2)->get(['id','name','department_id']);
         $visitsData = Visit::where('patient_id',$patients[0]->id)->get();
-        $medicationData = Medication::where('patient_id',$patients[0]->id)->get();
+        $medicationData = Medication::with('medicineNameData')->where('patient_id',$patients[0]->id)->get();
         $testtypes = TestType::where('status',1)->get();
         $testnames = TestName::where('status',1)->get();
         $labInvestigationData = LabInvestigation::where('patient_id',$patients[0]->id)->get();
@@ -123,7 +117,6 @@ class OpdoutController extends Controller
             'type_change_date' => $now,
             'status' => 'Visited'
             ]);
-
             Bed::where('id',$request->bed_id)->update([
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $request->id,

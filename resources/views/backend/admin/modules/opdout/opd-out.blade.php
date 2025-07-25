@@ -58,6 +58,7 @@
               <th scope="col" class="fw-medium">Doctor</th>
               <th scope="col" class="fw-medium">Room No.</th>
               <th scope="col" class="fw-medium">Appointment Date</th>
+              <th scope="col" class="fw-medium">Action</th>
             </tr>
           </thead>
           <tbody>

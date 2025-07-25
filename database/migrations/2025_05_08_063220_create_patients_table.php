@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('current_status',20)->nullable();
             $table->dateTime('discharge_date')->nullable();
             $table->integer('discharge_form_generated')->default(0);
+            $table->string('discharge_type',20)->nullable();
             $table->text('description')->nullable();
             $table->integer('lead_id')->nullable();
             $table->timestamps();

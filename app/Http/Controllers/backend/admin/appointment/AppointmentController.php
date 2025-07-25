@@ -67,16 +67,16 @@ class AppointmentController extends Controller
             $check_payment = $row->paid_status == 'Paid' ? 'd-none' : '';
             $check_visit = $row->status == 'Visited' ? 'd-none' : '';
             return '
-                <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center '.$check_invoice.'">
+                <a href="javascript:void(0)" title="Appointment Bill" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center '.$check_invoice.'">
                     <iconify-icon icon="mdi:file-download-outline" onclick="printAppointmentBill(' . $row->id . ')"></iconify-icon>
                 </a>
-                <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_payment.'">
+                <a href="javascript:void(0)" title="Bill Payment" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_payment.'">
                     <iconify-icon icon="lucide:edit" onclick="appointmentEdit(' . $row->id . ')" ></iconify-icon>
                 </a>
-                <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
+                <a href="javascript:void(0)" title="Visit Date" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
                     <iconify-icon icon="lucide:calendar" onclick="visitEdit(' . $row->id . ')" ></iconify-icon>
                 </a>
-                <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                <a href="javascript:void(0)" title="Delete" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mingcute:delete-2-line" onclick="deleteReason(' . $row->id . ')"></iconify-icon>
                 </a>';
         })
@@ -224,7 +224,7 @@ class AppointmentController extends Controller
     
         $getData = Patient::whereIn('id', $latestDistinctIds)
                           ->orderByDesc('created_at') // Ensure latest first
-                          ->get(['id', 'patient_id', 'name','current_status','type']);
+                          ->get(['id','patient_id','name','current_status','type']);
     
         return response()->json([
             'success' => 'Latest distinct patient data fetched successfully',
@@ -263,11 +263,11 @@ class AppointmentController extends Controller
         }
         $check_patient_admitted = Patient::where('id',$request->patientID)->where('current_status','Admitted')->exists();
         if($check_patient_admitted){
-            return response()->json(['already_admitted'=>'This patient is already admitted,Kindly discharge before adding new']);
+            return response()->json(['already_admitted'=>'This patient is already admitted, Kindly discharge before adding new']);
         }
         $check_patient_discharge = Patient::where('id',$request->patientID)->where('current_status','Discharged')->exists();
         if($check_patient_discharge){
-             return response()->json(['already_discharged'=>'This patient is discharged,Kindly add as new Patient']);
+             return response()->json(['already_discharged'=>'This patient is discharged, Kindly add as new Patient']);
         }
         
         $validator = Validator::make($request->all(),[

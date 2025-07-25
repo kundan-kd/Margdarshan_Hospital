@@ -170,8 +170,8 @@
                                         $doctor_name = app\Models\User::where('id',$visit->consult_doctor ??'')->get(['name']);
                                       @endphp
                                         <tr>
-                                        <td>{{$visit->appointment_date}}</td>
-                                        <td>{{$doctor_name[0]->name }}</td>
+                                        <td>{{$visit->created_at->format('d-m-Y h:i A')}}</td>
+                                        <td>Dr. {{$doctor_name[0]->name}}</td>
                                        </tr>
                                       @endforeach
                                     </tbody>
@@ -193,13 +193,9 @@
                                     </thead>
                                     <tbody>
                                       @foreach ($medicationData as $medication)
-                                      {{-- @php
-                                        $medicine_name = app\Models\Medicine::where('id',$medication->medicine_name_id)->get(['name']);
-                                      @endphp --}}
                                         <tr>
-                                          <td>{{$medication->created_at}}</td>
-                                          {{-- <td>{{$medicine_name[0]->name}}</td> --}}
-                                          <td>{{$medication->dose}}</td>
+                                          <td>{{$medication->created_at->format('d-m-Y h:i A')}}</td>
+                                          <td>{{$medication->medicineNameData->name}}</td>
                                           <td>{{$medication->dose}}</td>
                                           <td>{{$medication->remarks}}</td>
                                         </tr>
@@ -229,7 +225,7 @@
                                         <tr>
                                             <td>{{ $labTestType[0]->name }}</td>
                                             <td>{{ $labTestName[0]->name }}</td>
-                                            <td>{{ $labInv->created_at->toDateString() }}</td>
+                                            <td>{{ $labInv->created_at->format('d-m-Y h:i A') }}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>

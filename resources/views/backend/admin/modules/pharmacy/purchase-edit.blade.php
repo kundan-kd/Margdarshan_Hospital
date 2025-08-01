@@ -30,7 +30,7 @@ purchase-edit
                   $time = date('m/d/Y');
                 @endphp
                 <div class="col-md-3 offset-md-3 text-end">
-                    <p class="mt-3 fw-medium">Date : <span class="fw-normal">{{$time}}</span></p>
+                    <p class="mt-3 fw-medium">Purchase Date : <span class="fw-normal">{{ date('d-m-Y', strtotime($purchase[0]->purchase_date)) }}</span></p>
                 </div>
             </div>
       </div>

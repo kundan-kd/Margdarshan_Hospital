@@ -119,7 +119,7 @@
                               <div class="modal-dialog modal-dialog-centered modal-md">
                                 <div class="modal-content">
                                   <div class="modal-header p-11 bg-primary-500">
-                                    <h6 class="modal-title fw-normal text-md text-white" id="ipd-add-labLabel">Add Fundings</h6>
+                                    <h6 class="modal-title fw-normal text-md text-white" id="ipd-add-labLabel">Add Findings</h6>
                                     <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
                                   </div>
                                   <form action="" id="ipdFinding-form">
@@ -163,7 +163,7 @@
                                         $doctor_name = app\Models\User::where('id',$visit->consult_doctor)->get(['name']);
                                       @endphp
                                         <tr>
-                                        <td>{{$visit->created_at->format('d-m-Y h:i A')}}</td>
+                                         <td>{{$visit->created_at->format('d-m-Y h:i A')}}</td>
                                         <td>Dr. {{$doctor_name[0]->name}}</td>
                                        </tr>
                                       @endforeach

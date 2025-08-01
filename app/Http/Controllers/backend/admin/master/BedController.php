@@ -38,7 +38,9 @@ class BedController extends Controller
                 return $row->amount;
             })
             ->addColumn('current_status',function($row){
-                return $row->current_status === 'vacant'? '<span class="text-success">Vacant</span>': '<span class="text-danger">Occupied</span>';
+                // return $row->current_status === 'vacant'? '<span class="text-success">Vacant</span>': '<span class="text-danger">Occupied</span>';
+                return $row->current_status === 'vacant'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Vacant</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white">Occupied</span>';                
+
             })
             ->addColumn('status',function($row){
                 $ischecked = $row->status == 1 ? 'checked':'';

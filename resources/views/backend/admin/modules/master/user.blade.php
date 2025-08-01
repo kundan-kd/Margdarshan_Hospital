@@ -180,13 +180,40 @@ User
           dropdownParent: $('#add-user')
       });
     });
+        flatpickr("#user-dob", {
+        dateFormat: "d-m-Y",
+        defaultDate: "today",
+        onReady: function (selectedDates, dateStr, instance) {
+            const yearElement = instance.currentYearElement;
+            yearElement.addEventListener("click", function () {
+                const yearList = document.createElement("select");
+                // Create year options
+                for (let y = 1925; y <= new Date().getFullYear(); y++) {
+                    const opt = document.createElement("option");
+                    opt.value = y;
+                    opt.text = y;
+                    if (y === parseInt(yearElement.value)) {
+                        opt.selected = true;
+                    }
+                    yearList.appendChild(opt);
+                }
+                // Replace input with dropdown
+                yearElement.parentNode.replaceChild(yearList, yearElement);
+                // Update Flatpickr on change
+                yearList.addEventListener("change", function () {
+                    instance.changeYear(parseInt(this.value));
+                    instance.redraw();
+                });
+            });
+        }
+    });
      // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
         flatpickr(receiveID, {
             dateFormat: "d-m-Y ",
         });
     }
-    getDatePicker('#user-dob'); 
+    // getDatePicker('#user-dob'); 
     getDatePicker('#user-doj'); 
      const viewUsers = "{{route('user.viewUsers')}}";
      const addUser = "{{route('user.addUser')}}";

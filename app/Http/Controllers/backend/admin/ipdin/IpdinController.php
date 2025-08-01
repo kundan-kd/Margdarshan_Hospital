@@ -106,10 +106,7 @@ class IpdinController extends Controller
                 <a href="javascript:void(0)" title="Admission Form" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mdi:file-download-outline" onclick="admissionForm(' . $row->id . ')"></iconify-icon>
                 </a>
-                <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                    <iconify-icon icon="mdi:file-download-outline" onclick="summaryReport(' . $row->id . ')"></iconify-icon>
-                </a>
-                <a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mingcute:delete-2-line" onclick="ipdpatientDelete(' . $row->id . ')"></iconify-icon>
                 </a>-->';
         })

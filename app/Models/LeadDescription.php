@@ -9,8 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class LeadDescription extends Model
 {
     use HasFactory,SoftDeletes;
-    public function narationList()
-{
+    public function narationList(){
     return $this->belongsTo(NarationList::class, 'naration_list_id');
-}
+    }
 }

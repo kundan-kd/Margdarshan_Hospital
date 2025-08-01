@@ -181,7 +181,6 @@ function getPatientData(x) {
         },
         data: { name: x },
         success: function(response) {
-            console.log(response);
             const patients = response.data;
              $('.patient-name-list').empty();
 

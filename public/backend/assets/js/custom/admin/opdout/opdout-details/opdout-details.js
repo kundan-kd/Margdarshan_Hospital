@@ -39,7 +39,8 @@ $('#opd-ipdRoomForm').on('submit',function(e){
                         Swal.fire("Moved", response.success, "success");
                         setTimeout(function() {
                             window.location.href='/ipd-in';
-                        }, 500);                        
+                        }, 500); 
+                        
                         admissionForm(patient_id); // Ensure it executes after alert is shown
                     } else {
                         Swal.fire("Error!", "Error", "error");

@@ -56,3 +56,4 @@ function patientDetailsUsingToken(id){
 function summaryReport(id){
     window.open('/summary-report/' + id);
 }
+

@@ -15,7 +15,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">OPD - Out Patient Details</h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
-           <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" onclick="summaryReport({{$patients[0]->id}})">Summary Report</button>
+             <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" onclick="summaryReport({{$patients[0]->id}})">Summary Report</button>
           @can('OPD Move To IPD')
             <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
           @endcan
@@ -114,7 +114,7 @@
                               <div class="modal-dialog modal-dialog-centered modal-md">
                                 <div class="modal-content">
                                   <div class="modal-header p-11 bg-primary-500">
-                                    <h6 class="modal-title fw-normal text-md text-white" id="opd-add-labLabel">Add Fundings</h6>
+                                    <h6 class="modal-title fw-normal text-md text-white" id="opd-add-labLabel">Add Findings</h6>
                                     <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
                                   </div>
                                   <form action="" id="opdFinding-form">
@@ -159,7 +159,7 @@
                                       @endphp
                                         <tr>
                                         <td>{{$visit->appointment_date}}</td>
-                                        <td>{{$doctor_name[0]->name}}</td>
+                                        <td>Dr. {{$doctor_name[0]->name}}</td>
                                        </tr>
                                       @endforeach
                                     </tbody>

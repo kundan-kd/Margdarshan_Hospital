@@ -7,6 +7,7 @@ th {
 }
 .dt-input{
     text-align: left;
+    margin-bottom: 4px;
 }
 .dt-length {
     text-transform: capitalize;

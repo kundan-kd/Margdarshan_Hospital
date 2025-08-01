@@ -49,16 +49,16 @@ class OpdoutController extends Controller
             $appointment = Appointment::where('type','OPD')->get(); // **Load all records when no filters are applied**
         }
         return DataTables::of($appointment)
-            ->addColumn('token',function($row){
+           ->addColumn('token',function($row){
                 return '<a target="_blank" class="text-primary cursor-pointer" onclick="patientDetailsUsingToken('.$row->patient_id.')">'.$row->token.'</a>';
             })
-            ->addColumn('patient_name',function($row){
+             ->addColumn('patient_name',function($row){
                 return $row->patient_data->name;
             })
-            ->addColumn('gender',function($row){
+             ->addColumn('gender',function($row){
                 return $row->patient_data->gender;
             })
-            ->addColumn('mobile',function($row){
+             ->addColumn('mobile',function($row){
                 return $row->patient_data->mobile; //fetched through modal relationship
             })
             ->addColumn('doctor',function($row){
@@ -70,8 +70,7 @@ class OpdoutController extends Controller
             ->addColumn('appointment_date',function($row){
                 return $row->appointment_date;
             })
-           
-            ->addColumn('action',function($row){
+           ->addColumn('action',function($row){
                return ' <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mdi:file-download-outline" onclick="summaryReport(' . $row->patient_id . ')"></iconify-icon>
                 </a>';
@@ -117,6 +116,7 @@ class OpdoutController extends Controller
             'type_change_date' => $now,
             'status' => 'Visited'
             ]);
+
             Bed::where('id',$request->bed_id)->update([
                 'current_status' => 'occupied',
                 'occupied_by_patient_id' => $request->id,

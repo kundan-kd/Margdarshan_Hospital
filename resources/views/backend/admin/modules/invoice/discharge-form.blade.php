@@ -142,7 +142,7 @@
         // dd($dischargeSummary);
     @endphp
 	<div class="container">
-		<div class="header">{{$patients[0]->discharge_type}} SUMMARY</div>
+		<div class="header">{{$patients[0]->discharge_type ?? 'DiSCHARGE'}} SUMMARY</div>
 		<div class="info-grid">
 			<div class="left-column">
 				<div class="info-row"> <span class="label">Patient ID:</span> <span class="value">{{$patients[0]->patient_id}}</span> </div>

@@ -201,11 +201,13 @@ $('#purchaseAdd_form').on('submit',function(e){
   e.preventDefault();
     let billNo_check = validateField('purchaseAdd_billNo', 'input');
     let vendorID_check = validateField('purchaseAdd_vendor', 'select');
-    if(billNo_check == true && vendorID_check == true){
+    let purchase_date_check = validateField('purchaseAdd_Date', 'select');
+    if(billNo_check == true && vendorID_check == true && purchase_date_check == true){
         $('.purchaseAddSubmitBtn').addClass('d-none');
         $('.purchaseAddSpinnBtn').removeClass('d-none');
         let billNo = $('#purchaseAdd_billNo').val();
         let vendorID = $('#purchaseAdd_vendor').val();
+        let purchase_date = $('#purchaseAdd_Date').val();
         let category = $('select[name="purchaseAdd_category[]"]').map(function(){return $(this).val();}).get();
         let name = $('select[name="purchaseAdd_name[]"]').map(function(){return $(this).val();}).get();
         let batchNo = $('input[name="purchaseAdd_batch[]"]').map(function(){return $(this).val();}).get();
@@ -234,7 +236,7 @@ $('#purchaseAdd_form').on('submit',function(e){
                 'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
             },
             data:{
-                billNo:billNo,vendorID:vendorID,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
+                billNo:billNo,vendorID:vendorID,purchase_date:purchase_date,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
             },
             success:function(response){
                 if(response.success){

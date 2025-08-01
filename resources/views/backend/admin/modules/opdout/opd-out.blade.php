@@ -43,22 +43,20 @@
              <a class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-1" id="excelBtn"><i class="ri-file-excel-2-line"></i> Excel</a>
             </div>
         </div>
-       
       </div>
-
     <div class="card basic-data-table">
       <div class="card-body">
         <table class="table bordered-table mb-0 w-100" id="opd-out-list-table" data-page-length='10'>
           <thead>
             <tr >
-              <th scope="col" class="fw-medium">Patient ID</th>
+              <th scope="col" class="fw-medium">Token ID</th>
               <th scope="col" class="fw-medium">Patient Name</th>
               <th scope="col" class="fw-medium">Gender</th>
               <th scope="col" class="fw-medium">Phone</th>
               <th scope="col" class="fw-medium">Doctor</th>
               <th scope="col" class="fw-medium">Room No.</th>
               <th scope="col" class="fw-medium">Appointment Date</th>
-              <th scope="col" class="fw-medium">Action</th>
+              <th scope="col" class="fw-medium">Summary Report</th>
             </tr>
           </thead>
           <tbody>

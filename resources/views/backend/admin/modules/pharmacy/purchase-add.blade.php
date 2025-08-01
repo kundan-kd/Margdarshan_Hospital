@@ -38,8 +38,10 @@ purchase-add
                     @php
                         $time = date('m/d/Y');
                     @endphp
-                    <div class="col-md-3 offset-md-3 text-end">
-                        <p class="mb-0 fw-medium">Date : <span class="fw-normal">{{$time}}</span></p>
+                    <div class="col-md-2">
+                        <label for="purchaseAdd_Date" style="display:none;">Purchase Date</label>
+                        <input type="date" id="purchaseAdd_Date" class="form-control form-control-sm" placeholder="Select Purchase Date" oninput="validateField(this.id,'select')">
+                        <div class="purchaseAdd_Date_errorCls d-none"></div>
                     </div>
                 </div>
         </div>
@@ -240,13 +242,12 @@ purchase-add
 @endsection
 @section('extra-js')
 <script>
-    //    function getDatePicker(receiveID) {
-    //     flatpickr(receiveID, {
-    //         enableTime: true,
-    //         dateFormat: "d/m/Y H:i",
-    //     });
-    // }
-    // getDatePicker('#purchaseAdd_expiry0'); 
+        function getDatePicker(receiveID) {
+        flatpickr(receiveID, {
+            dateFormat: "d-m-Y",
+        });
+    }
+    getDatePicker('#purchaseAdd_Date'); 
     const purchaseAddDatas = "{{route('purchase.purchaseAddDatas')}}";
      const getPurchaseNames = "{{route('billing.getMedicineNames')}}";
      const getCategoryDatas = "{{route('purchase.getCategoryDatas')}}";

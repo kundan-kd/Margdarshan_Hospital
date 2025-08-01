@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('type',20)->nullable();
             $table->string('bill_no',100)->nullable();
             $table->string('vendor_id',100)->nullable();
+            $table->date('purchase_date')->nullable();
             $table->double('total_amount')->nullable();
             $table->double('total_discount_per')->nullable();
             $table->double('total_discount')->nullable();

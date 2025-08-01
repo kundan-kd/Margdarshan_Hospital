@@ -42,10 +42,10 @@
                                     <span class="w-30 text-md fw-semibold text-primary-light"> Designation</span>
                                     <span class="w-70 text-secondary-light fw-medium">: Admin</span>
                                 </li>
-                                <li class="d-flex align-items-center gap-1">
-                                    <span class="w-30 text-md fw-semibold text-primary-light"> Bio</span>
-                                    <span class="w-70 text-secondary-light fw-medium">: An admin oversees operations, manages staff and resources, ensures efficiency, implements policies, and maintains seamless workflows for organizational success.</span>
-                                </li>
+                                <!--<li class="d-flex align-items-center gap-1">-->
+                                <!--    <span class="w-30 text-md fw-semibold text-primary-light"> Bio</span>-->
+                                <!--    <span class="w-70 text-secondary-light fw-medium">: An admin oversees operations, manages staff and resources, ensures efficiency, implements policies, and maintains seamless workflows for organizational success.</span>-->
+                                <!--</li>-->
                             </ul>
                         </div>
                     </div>
@@ -116,12 +116,9 @@
                                                 <label for="depart" class="form-label fw-semibold text-primary-light text-sm mb-8">Department <span class="text-danger-600">*</span> </label>
                                                 <select class="form-control radius-8 form-select" id="depart">
                                                 <option value="cardiology">Cardiology</option>
-                                                <option value="neurology">Neurology</option>
-                                                <option value="orthopedics">Orthopedics</option>
-                                                <option value="pediatrics">Pediatrics</option>
-                                                <option value="radiology">Radiology</option>
-                                                <option value="dermatology">Dermatology</option>
-                                                <option value="psychiatry">Psychiatry</option>
+                                                @foreach($departments as $department)
+                                                <option value="{{$department->id}}"{{$user->usertype_id == $department->id ? 'selected':''}}>{{$department->name}}</option>
+                                                @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -129,13 +126,9 @@
                                             <div class="mb-20">
                                                 <label for="desig" class="form-label fw-semibold text-primary-light text-sm mb-8">Designation <span class="text-danger-600">*</span> </label>
                                                 <select class="form-control radius-8 form-select" id="desig">
-                                                   <option value="doctor">Doctor</option>
-                                                    <option value="nurse">Nurse</option>
-                                                    <option value="administrator">Administrator</option>
-                                                    <option value="technician">Technician</option>
-                                                    <option value="receptionist">Receptionist</option>
-                                                    <option value="pharmacist">Pharmacist</option>
-                                                    <option value="therapist">Therapist</option>    
+                                                    @foreach($usertypes as $utypes)
+                                                   <option value="{{$utypes->id}}"{{$user->usertype_id == $utypes->id ? 'selected':''}}>{{$utypes->name}}</option>
+                                                   @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -150,7 +143,7 @@
                                         <button type="button" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"> 
                                             Cancel
                                         </button>
-                                        <button type="button" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8" disabled> 
+                                        <button type="button" class="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8 d-none"> 
                                             Save
                                         </button>
                                     </div>

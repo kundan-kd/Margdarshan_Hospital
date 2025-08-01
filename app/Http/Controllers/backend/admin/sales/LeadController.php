@@ -334,7 +334,8 @@ public function bulkLeadAssignPage(){
             })
 
             ->addColumn('follow_up',function($row){
-                return $row->next_followup_date ? Carbon::parse($row->assign_date)->timezone('Asia/Kolkata')->format('d-M-Y'): 'NA';
+                // return $row->next_followup_date ? Carbon::parse($row->assign_date)->timezone('Asia/Kolkata')->format('d-M-Y'): 'NA';
+                return $row->next_followup_date ? date('d/m/Y', strtotime($row->next_followup_date)) : 'NA';
             })
             ->addColumn('lead_status',function($row){
                  return $row->lead_status === 'Pending'? '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white">Pending</span>': '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Converted</span>';                

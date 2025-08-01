@@ -142,6 +142,7 @@ function dischargeSummary(id){
 function dischargeFormPrint(id){
     window.open('/discharge-form-print/' + id);
 }
+
 $('#discharge-summaryForm').on('submit', function(e) {
     e.preventDefault(); // Prevent default form submission
     let patient_id = $('#patient_id').val();

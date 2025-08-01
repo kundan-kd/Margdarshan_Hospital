@@ -21,20 +21,10 @@
           @can('Emergency Move To ICU')
             <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="#"> <i class="ri-stethoscope-line"></i> Move to ICU</button>
           @endcan
-          {{-- @can('Emergency Discharge')
-            <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} data-bs-toggle="modal" data-bs-target="#emergencyDischargeModel" onclick="patientDischargeE({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
-          @endcan --}}
-          @can('Emergency Discharge')
-            <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="emergencyDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
-          @endcan
-          {{-- <button type="button" class="btn btn-warning-600 fw-normal btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button> --}}
+          <!--@can('Emergency Discharge')-->
+          <!--  <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="emergencyDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>-->
+          <!--@endcan-->
         </div>
-        <!-- <div class="btns">
-            <button class="btn btn-primary-600  btn-sm fw-normal " data-bs-toggle="modal" data-bs-target="#emergency-emergency"><i class="ri-stethoscope-line"></i> Move to emergency</button>
-            <button class="btn btn-danger-600  btn-sm fw-normal " data-bs-toggle="modal" data-bs-target="#emergency-icu"><i class="ri-hotel-bed-line"></i> Move to ICU</button>
-            <button class="btn btn-success-600  btn-sm fw-normal" data-bs-toggle="modal" data-bs-target="#emergency-discharge"><i class="ri-thumb-up-line"></i> Discharge</button>
-            <button class="btn btn-warning-600  btn-sm fw-normal"><i class="ri-file-pdf-2-line"></i> Export</button> 
-        </div> -->
     </div>
     @php
       $curr_date = date('d/m/Y');
@@ -126,7 +116,7 @@
                               <div class="modal-dialog modal-dialog-centered modal-md">
                                 <div class="modal-content">
                                   <div class="modal-header p-11 bg-primary-500">
-                                    <h6 class="modal-title fw-normal text-md text-white" id="emergency-add-labLabel">Add Fundings</h6>
+                                    <h6 class="modal-title fw-normal text-md text-white" id="emergency-add-labLabel">Add Findings</h6>
                                     <button type="button" class="btn-close text-sm btn-custom" data-bs-dismiss="modal" aria-label="Close"></button>
                                   </div>
                                   <form action="" id="emergencyFinding-form">
@@ -194,7 +184,7 @@
                                     <tbody>
                                       @foreach ($medicationData as $medication)
                                         <tr>
-                                          <td>{{$medication->created_at->format('d-m-Y h:i A')}}</td>
+                                            <td>{{$medication->created_at->format('d-m-Y h:i A')}}</td>
                                           <td>{{$medication->medicineNameData->name}}</td>
                                           <td>{{$medication->dose}}</td>
                                           <td>{{$medication->remarks}}</td>

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
 
 class PurchaseController extends Controller
 {
@@ -29,9 +30,9 @@ class PurchaseController extends Controller
             $purchase = Purchase::get();
             return DataTables::of($purchase)
             ->addColumn('created_at',function($row){
-                $date = new \DateTime($row->created_at);
-                $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
-                return $date->format('d-m-Y h:i A');
+                // $date = new \DateTime($row->created_at);
+                // $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
+                return date('d-m-Y', strtotime($row->purchase_date));
             })
             ->addColumn('vendor',function($row){
                 return $row->vendorData->name;
@@ -67,6 +68,7 @@ class PurchaseController extends Controller
         $validator = Validator::make($request->all(), [
             'billNo' => 'required',
             'vendorID' => 'required',
+            'purchase_date' => 'required',
             'category' => 'required|array',
             'name' => 'required|array',
             'batchNo' => 'required|array',
@@ -95,6 +97,7 @@ class PurchaseController extends Controller
             $purchase = new Purchase();
             $purchase->bill_no = $request->billNo;
             $purchase->vendor_id = $request->vendorID;
+            $purchase->purchase_date = Carbon::createFromFormat('d-m-Y', $request->purchase_date)->format('Y-m-d');
             $purchase->total_amount = $request->totalAmount;
             $purchase->total_discount_per = $request->totalDiscountPer;
             $purchase->total_discount = $request->totalDiscount;

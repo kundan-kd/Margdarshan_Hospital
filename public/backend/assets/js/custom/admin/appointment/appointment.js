@@ -86,12 +86,12 @@ $('#addPatientForm').on('submit',function(e){
     let patientName  = validateField('patientName', 'input');
     let guardianName = validateField('guardianName', 'input');
     // let patientGender = validateField('patientGender', 'radio');
-    let patientBloodType = validateField('patientBloodType', 'select');
+    // let patientBloodType = validateField('patientBloodType', 'select');
     let patientDOB = validateField('patientDOB', 'select');
     let patientMStatus = validateField('patientMStatus', 'select');     
     let patientMobile = validateField('patientMobile', 'mobile');
     let patientAddess = validateField('patientAddess', 'input');
-        if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
+        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
             $('.patientSubmit').addClass('d-none'); 
             $('.patientSpinn').removeClass('d-none');
             let name = $('#patientName').val();
@@ -189,7 +189,7 @@ function getPatientData(x) {
             } else {
                 patients.forEach(patient => {
                     $('.patient-name-list').append(
-                        `<li class="list-group-item" data-patient-id="${patient.id}">${patient.name} (${patient.patient_id}) - ${patient.current_status || ''} (${patient.type})</li>`
+                        `<li class="list-group-item" data-patient-id="${patient.id}">${patient.name} (${patient.patient_id})</li>`
                     );
                 });
             }
@@ -227,7 +227,7 @@ function getPatientDetailsOpd(mobile){
             success: function(response) {
                 const getData = response.data;
                 if (!getData) {
-                    $('.patient-data-list-opd').append(`<li class="list-group-item">No Data Found!</li>`);
+                    // $('.patient-data-list-opd').append(`<li class="list-group-item">No Data Found!</li>`);
                 } else {
                     $('.patient-data-list-opd').append(
                         `<li class="list-group-item" data-patient-id="${getData.id}">${getData.name} (${getData.patient_id})</li>`
@@ -443,10 +443,10 @@ $('#appointmentForm').on('submit',function(e){
                             toastErrorAlert(response.already_admitted);
                             $('.appointmentSpinn').addClass('d-none');
                             $('.appointmentSubmitBtn').removeClass('d-none');
-                        }else if(response.already_discharged){
-                            toastErrorAlert(response.already_discharged);
-                            $('.appointmentSpinn').addClass('d-none');
-                            $('.appointmentSubmitBtn').removeClass('d-none');
+                        // }else if(response.already_discharged){
+                        //     toastErrorAlert(response.already_discharged);
+                        //     $('.appointmentSpinn').addClass('d-none');
+                        //     $('.appointmentSubmitBtn').removeClass('d-none');
                         }else{
                             toastErrorAlert('Something went wrong, please try again');
                             $('.appointmentSpinn').addClass('d-none');

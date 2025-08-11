@@ -224,7 +224,7 @@ function getBillingAmountEdit(randQ){
     }
     let salesPrice = parseFloat($("#billingEdit-salesPrice" + randQ).val()) || 0;
     let tax = parseFloat($("#billingEdit-tax" + randQ).val()) || 0;
-    let returnQty = prevQty - qty;
+    let returnQty = qty;
     let returnAmt = returnQty * salesPrice;
     let returnTaxAmt = (returnAmt * tax)/100;
     let returnAmtWithTax = returnAmt + returnTaxAmt;
@@ -269,7 +269,7 @@ function updateTotalBillingEdit() {
          $('#billingEdit-returnAmount').val(Math.round(totalReturnAmountSum + totalTaxAmountSum) || 0);
     } else {
         // If no discount, ensure discount amount is reset
-        $('.billingEdit-discountAmount').html('0.00');
+        // $('.billingEdit-discountAmount').html('0.00');
     }
 }
 

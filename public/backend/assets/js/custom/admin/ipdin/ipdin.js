@@ -272,13 +272,12 @@ $('#ipd-addPatientForm').on('submit',function(e){
     let id = $('#ipdPatientId').val();
     let patientName  = validateField('ipd-patientName', 'input');
     let guardianName = validateField('ipd-guardianName', 'input');
-    let patientBloodType = validateField('ipd-patientBloodType', 'select');
     let patientDOB = validateField('ipd-patientDOB', 'select');
     let patientMStatus = validateField('ipd-patientMStatus', 'select');     
     let patientMobile = validateField('ipd-patientMobile', 'mobile');
     let patientAddess = validateField('ipd-patientAddess', 'input');
     let bedNumId = validateField('ipd-patientBedNum', 'select');
-        if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
+        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
             $('.ipdPatientSubmit').addClass('d-none'); 
             $('.ipdPatientSpinn').removeClass('d-none'); 
             let name = $('#ipd-patientName').val();
@@ -391,13 +390,12 @@ function ipdPatientUpdate(id){
      let patientName  = validateField('ipd-patientName', 'input');
     let guardianName = validateField('ipd-guardianName', 'input');
     // let patientGender = validateField('patientGender', 'radio');
-    let patientBloodType = validateField('ipd-patientBloodType', 'select');
     let patientDOB = validateField('ipd-patientDOB', 'select');
     let patientMStatus = validateField('ipd-patientMStatus', 'select');     
     let patientMobile = validateField('ipd-patientMobile', 'mobile');
     let patientAddess = validateField('ipd-patientAddess', 'input');
     let bedNumId = validateField('ipd-patientBedNum', 'select');
-        if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
+        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
             $('.ipdPatientUpdate').addClass('d-none'); 
             $('.ipdPatientSpinn').removeClass('d-none'); 
             let name = $('#ipd-patientName').val();

@@ -428,8 +428,36 @@ $ddate = date("d/m/yy");
             dateFormat: "d-m-Y ",
         });
     }
+    
+    flatpickr("#patientDOB", {
+        dateFormat: "d-m-Y",
+        defaultDate: "today",
+        onReady: function (selectedDates, dateStr, instance) {
+            const yearElement = instance.currentYearElement;
+            yearElement.addEventListener("click", function () {
+                const yearList = document.createElement("select");
+                // Create year options
+                for (let y = 1925; y <= new Date().getFullYear(); y++) {
+                    const opt = document.createElement("option");
+                    opt.value = y;
+                    opt.text = y;
+                    if (y === parseInt(yearElement.value)) {
+                        opt.selected = true;
+                    }
+                    yearList.appendChild(opt);
+                }
+                // Replace input with dropdown
+                yearElement.parentNode.replaceChild(yearList, yearElement);
+                // Update Flatpickr on change
+                yearList.addEventListener("change", function () {
+                    instance.changeYear(parseInt(this.value));
+                    instance.redraw();
+                });
+            });
+        }
+    });
     getDatePicker('#dateAppt'); 
-    getDatePicker('#patientDOB'); 
+    // getDatePicker('#patientDOB'); 
     getDatePicker('#apptVisitDate'); 
 
 </script>

@@ -1,18 +1,45 @@
-function addNewRowBilling() {
-    let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
-      $.ajax({
+let medicineCategory = [];
+setMedicineCategory();
+
+function setMedicineCategory(){
+    $.ajax({
         url:getBillingCategoryDatas,
         type:"GET",
         success:function(response){
-            let getCategoryData = response.data;
+            console.log(response.categoryList);
+            medicineCategory = [];
+            $('#billingAdd-category0').empty();
+            let categoryDropdown ='';
+            categoryDropdown +=`<option value="">Select</option>`;
+            response.categoryList.forEach(element =>{
+                if(element.billMedicine.length > 0){
+                    medicineCategory.push(element);
+                    categoryDropdown += ` <option value="${element.id}">${element.name}</option>`;
+                }
+            });
+            $('#billingAdd-category0').append(categoryDropdown);
+        }
+    });
+}
+
+
+function addNewRowBilling() {
+    let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
+    //   $.ajax({
+    //     url:getBillingCategoryDatas,
+    //     type:"GET",
+    //     success:function(response){
+    //         let getCategoryData = response.data;
+            
+            
             let newRowDataBilling = `<tr class="fieldGroup">
                               <td>
                                   <select id="billingAdd-category${rand}" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicine(this.value,${rand})">
                                         <option value="" selected disabled>Select</option>`;
-                    getCategoryData.forEach(element =>{
-                        newRowDataBilling += ` <option value="${element.id}">${element.name}</option>`;
-                        });
-                    newRowDataBilling += ` </select>
+                                    medicineCategory.forEach(element =>{
+                                     newRowDataBilling += ` <option value="${element.id}">${element.name}</option>`;
+                                    });
+                                newRowDataBilling += ` </select>
                               </td>
                               <td>
                                   <select id="billingAdd-name${rand}" name="billingAdd-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetails(this.value,${rand})">
@@ -34,7 +61,7 @@ function addNewRowBilling() {
                                   </div>
                               </td>
                               <td>
-                                  <input id="billingAdd-qty${rand}" name="billingAdd-qty[]" name="billingAdd-name" class="form-control form-control-sm" type="number" placeholder="Quantity" oninput="getBillingAmount(${rand})">
+                                  <input id="billingAdd-qty${rand}" name="billingAdd-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" oninput="getBillingAmount(${rand})">
                               </td>
                               <td>
                                   <input id="billingAdd-avlQty${rand}" name="billingAdd-avlQty[]" type="number" class="form-control form-control-sm" placeholder="Avilable Qty" readonly>
@@ -59,12 +86,12 @@ function addNewRowBilling() {
                               </td>
                           </tr>`;
 
-    $('.newRowAppendBilling').parent().append(newRowDataBilling); // Append properly to tbody
-    getDatePicker('.expiry-date'+ rand); 
-    // Reinitialize Select2 for newly added row
-    $('.select2-cls').select2();
-       }
-    });
+                $('.newRowAppendBilling').parent().append(newRowDataBilling); // Append properly to tbody
+                getDatePicker('.expiry-date'+ rand); 
+                // Reinitialize Select2 for newly added row
+                $('.select2-cls').select2();
+    //   }
+    // });
 }
  function removeRowBilling(x){
     x.closest("tr").remove(); // remove entire row with tr selector
@@ -73,70 +100,121 @@ function addNewRowBilling() {
 }
 
 function getBillingMedicine(id,randNum){
- $.ajax({
-        url:getBillingMedicineNames,
-        type:"GET",
-        headers:{
-            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-        },
-        data:{id:id},
-        success:function(response){
-        let getData = response.data;
-        let medicineDropdown1 = $("#billingAdd-name" + randNum); // Use the randNum to target the specific dropdown
-        medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
-        getData.forEach(element => {
-            medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);
-        });
-        medicineDropdown1.trigger("change"); // Refresh Select2 dropdown
+    let medicineDropdown1 = $("#billingAdd-name" + randNum);
+    medicineDropdown1.find("option:not(:first)").remove();
+    medicineCategory.forEach(element => {
+        if(element.id == parseInt(id)){
+            element.billMedicine.forEach(element_medicine => {
+                medicineDropdown1.append(`<option value="${element_medicine.id}">${element_medicine.name}</option>`);
+            });
         }
     });
+    medicineDropdown1.trigger("change");
+//  $.ajax({
+//         url:getBillingMedicineNames,
+//         type:"GET",
+//         headers:{
+//             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+//         },
+//         data:{id:id},
+//         success:function(response){
+//         let getData = response.data;
+//         let medicineDropdown1 = $("#billingAdd-name" + randNum); // Use the randNum to target the specific dropdown
+//         medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
+//         getData.forEach(element => {
+//             medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);
+//         });
+//         medicineDropdown1.trigger("change"); // Refresh Select2 dropdown
+//         }
+//     });
 }
 
 function getBatchDetails(id,randB){
-    let medID = id;
-    if(medID == null || medID == ''){
-        medID = 0;}
-    $.ajax({
-            url:getBatchNumbers,
-            type:"GET",
-            headers:{
-                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-            },
-            data:{id:medID},
-            success:function(response){
-            let getData = response.data;
-            let batchDropdown2 = $("#billingAdd-batch" + randB); // Use the randNum to target the specific dropdown
-            batchDropdown2.find("option:not(:first)").remove(); // empity dropdown except first one
-            getData.forEach(element => {
-                batchDropdown2.append(`<option value="${element.id}">${element.batch_no}</option>`);
-            });
-            batchDropdown2.trigger("change"); // Refresh Select2 dropdown
+    if(id !== ''){
+        let category = $("#billingAdd-category" + randB).val();
+        let batchDropdown2 = $("#billingAdd-batch" + randB);
+        batchDropdown2.find("option:not(:first)").remove();
+        medicineCategory.forEach(element => {
+            if(element.id == parseInt(category)){
+                element.billMedicine.forEach(element_medicine => {
+                    if(element_medicine.id == parseInt(id)){
+                        element_medicine.purchase.forEach(element_batch => {
+                            batchDropdown2.append(`<option value="${element_batch.id}">${element_batch.batch_no}</option>`);
+                        });
+                        batchDropdown2.trigger("change"); 
+                    }
+                });
             }
-    });
+        });
+    }
+    // let medID = id;
+    // if(medID == null || medID == ''){
+    //     medID = 0;}
+    // $.ajax({
+    //         url:getBatchNumbers,
+    //         type:"GET",
+    //         headers:{
+    //             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+    //         },
+    //         data:{id:medID},
+    //         success:function(response){
+    //         let getData = response.data;
+    //         let batchDropdown2 = $("#billingAdd-batch" + randB); // Use the randNum to target the specific dropdown
+    //         batchDropdown2.find("option:not(:first)").remove(); // empity dropdown except first one
+    //         getData.forEach(element => {
+    //             batchDropdown2.append(`<option value="${element.id}">${element.batch_no}</option>`);
+    //         });
+    //         batchDropdown2.trigger("change"); // Refresh Select2 dropdown
+    //         }
+    // });
 }
 
 function getBatchExpiry(id,randE){
-    $.ajax({
-        url:getBatchExpiryDate,
-        type:"GET",
-        headers:{
-            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-        },
-        data:{id:id},
-        success:function(response){
-            if(response.data != ''){
-                let getData = response.data[0];
-                let avlQty = (parseFloat(getData.qty) + parseFloat(getData.return_qty)) - parseFloat(getData.stock_out);
-                $("#billingAdd-expiry" + randE).val(getData.expiry); 
-                $("#billingAdd-avlQty" + randE).val(avlQty); 
-                $("#billingAdd-salesPrice" + randE).val(getData.sales_price); 
-                $("#billingAdd-tax" + randE).val(getData.tax); 
+    if(id !== ''){
+        let category = $("#billingAdd-category" + randE).val();
+        let name = $("#billingAdd-name" + randE).val();
+        let batchDropdown2 = $("#billingAdd-batch" + randE).val();
+        
+        medicineCategory.forEach(element => {
+            if(element.id == parseInt(category)){
+                element.billMedicine.forEach(element_medicine => {
+                    if(element_medicine.id == parseInt(name)){
+                        element_medicine.purchase.forEach(element_batch => {
+                            if(element_batch.id == parseInt(id)){
+                                let avlQty = (parseFloat(element_batch.qty) + parseFloat(element_batch.return_qty)) - parseFloat(element_batch.stock_out);
+                                $("#billingAdd-expiry" + randE).val(element_batch.expiry); 
+                                $("#billingAdd-avlQty" + randE).val(avlQty); 
+                                $("#billingAdd-salesPrice" + randE).val(parseFloat(element_batch.sales_price)); 
+                                $("#billingAdd-tax" + randE).val(parseFloat(element_batch.tax));
+                            }
+                        });
+                    }
+                });
             }
-             getBillingAmount(randE);
-        }
-    });
+        });
+    }
+    // $.ajax({
+    //     url:getBatchExpiryDate,
+    //     type:"GET",
+    //     headers:{
+    //         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+    //     },
+    //     data:{id:id},
+    //     success:function(response){
+    //         if(response.data != ''){
+    //             let getData = response.data[0];
+    //             let avlQty = (parseFloat(getData.qty) + parseFloat(getData.return_qty)) - parseFloat(getData.stock_out);
+    //             $("#billingAdd-expiry" + randE).val(getData.expiry); 
+    //             $("#billingAdd-avlQty" + randE).val(avlQty); 
+    //             $("#billingAdd-salesPrice" + randE).val(getData.sales_price); 
+    //             $("#billingAdd-tax" + randE).val(getData.tax); 
+    //         }
+    //          getBillingAmount(randE);
+    //     }
+    // });
    
 }
+
 function getBillingAmount(randA){
     let qty = parseFloat($("#billingAdd-qty" + randA).val());
     if(qty <= 0){
@@ -160,7 +238,8 @@ function getBillingAmount(randA){
     let currTaxAmount = (currAmount * tax)/100;
     $('#billingAdd-taxAmount'+randA).val(currTaxAmount) || 0;
     updateTotalBilling();
-    }
+}
+
 function updateTotalBilling() {
     // Calculate total amount and total tax amount
     let total_amount = $('input[name="billingAdd-amount[]"]').map(function() { return parseFloat($(this).val()) || 0; }).get();

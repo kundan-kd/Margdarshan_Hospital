@@ -467,6 +467,7 @@ Route::get('/discharge-summary/{id}',[InvoiceController::class,'dischargeSummary
 Route::get('/discharge-form-print/{id}',[InvoiceController::class,'dischargeFormPrint']);
 Route::post('/discharge-summary-added',[InvoiceController::class,'dischargeSummarySubmit'])->name('discharge.dischargeSummarySubmit');
 Route::get('/summary-report/{id}',[InvoiceController::class,'summaryRepoet']);
+Route::get('/advance-payment-page/{id}',[InvoiceController::class,'advancePaymentPage']);
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
 Route::get('/barcode', [CommonController::class, 'barCodeGenerate']);

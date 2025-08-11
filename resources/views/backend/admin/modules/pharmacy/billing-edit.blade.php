@@ -62,6 +62,9 @@ Sale Return
                                     Quantity
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
+                                    Return Quantity
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
                                     Sales Price (₹)
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
@@ -92,11 +95,11 @@ Sale Return
                                 <td>
                                     <input id="billingEdit-expiry{{$item->id}}" name="billingEdit-expiry[]" type="text" class="form-control form-control-sm" value="{{$item->expiry}}" readonly>
                                 </td>
-                                <td style="display: none;">
-                                    <input id="billingEdit-PrevQty{{$item->id}}" name="billingEdit-PrevQty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" value="{{$item->qty - $item->return_qty}}">
+                                <td style="display: none1;">
+                                    <input id="billingEdit-PrevQty{{$item->id}}" name="billingEdit-PrevQty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" value="{{$item->qty - $item->return_qty}}" readonly>
                                 </td>
                                 <td>
-                                    <input id="billingEdit-qty{{$item->id}}" name="billingEdit-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" value="{{$item->qty - $item->return_qty}}" oninput="getBillingAmountEdit({{$item->id}})" required>
+                                    <input id="billingEdit-qty{{$item->id}}" name="billingEdit-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" value="0" oninput="getBillingAmountEdit({{$item->id}})" required>
                                 </td>
                                 <td>
                                     <input id="billingEdit-salesPrice{{$item->id}}" name="billingEdit-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" value="{{$item->sales_price}}" readonly>

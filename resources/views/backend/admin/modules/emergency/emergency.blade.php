@@ -226,7 +226,7 @@
           dropdownParent: $('#emergency-add-patient')
       });
     });
-    flatpickr("#emergency-patientDOB", {
+   flatpickr("#emergency-patientDOB", {
         dateFormat: "d-m-Y",
         defaultDate: "today",
         onReady: function (selectedDates, dateStr, instance) {

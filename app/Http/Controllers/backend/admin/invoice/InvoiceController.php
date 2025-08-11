@@ -178,4 +178,9 @@ class InvoiceController extends Controller
         $labInvestigationData = LabInvestigation::with('testNameData')->where('patient_id',$id)->get();
         return view('backend.admin.modules.invoice.summary-report',compact('patients','visitsData','medicationData','vitalsData','labInvestigationData'));
     }
+    public function advancePaymentPage($id){
+        $patients = Patient::where('id',$id)->get();
+        $advanve_amount = PaymentReceived::where('patient_id',$id)->where('amount_for','Advance')->get();
+        return view('backend.admin.modules.invoice.advance-payment',compact('patients','advanve_amount'));
+    }
 }

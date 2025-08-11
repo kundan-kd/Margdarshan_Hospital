@@ -48,7 +48,7 @@ purchase
     </div>
   </div>
 
-  <!-- Move medician-create-new start -->
+<!-- Move medician-create-new start -->
 <div class="modal fade" id="medician-create-new" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="medician-create-newLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
@@ -67,7 +67,7 @@ purchase
   </div>
 </div>
 <!-- Move to medician-create-new end -->
- <!-- Move to medician-list-add start -->
+<!-- Move to medician-list-add start -->
 <div class="modal fade" id="medician-list-add" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="medician-list-addLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">

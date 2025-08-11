@@ -319,9 +319,8 @@
       $('.select2-cls').select2({
           dropdownParent: $('#ipd-add-patient')
       });
-  });
-
-     flatpickr("#ipd-patientDOB", {
+    });
+    flatpickr("#ipd-patientDOB", {
         dateFormat: "d-m-Y",
         defaultDate: "today",
         onReady: function (selectedDates, dateStr, instance) {

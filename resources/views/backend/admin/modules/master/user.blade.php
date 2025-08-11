@@ -180,7 +180,7 @@ User
           dropdownParent: $('#add-user')
       });
     });
-        flatpickr("#user-dob", {
+    flatpickr("#user-dob", {
         dateFormat: "d-m-Y",
         defaultDate: "today",
         onReady: function (selectedDates, dateStr, instance) {

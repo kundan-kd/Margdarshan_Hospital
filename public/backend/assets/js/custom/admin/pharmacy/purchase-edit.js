@@ -45,16 +45,16 @@ function addNewRowEdit(){
                 <input id="purchaseEdit_expiry${rand}" name="purchaseEdit_expiry[]" class="form-control form-control-sm expiry-date${rand}" type="text" placeholder="Expiry Date" required>
             </td>
             <td>
-                <input id="purchaseEdit_mrp${rand}" name="purchaseEdit_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required>
+                <input id="purchaseEdit_mrp${rand}" name="purchaseEdit_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required step="0.01">
             </td>
             <td>
-                <input id="purchaseEdit_salesPrice${rand}" name="purchaseEdit_salesPrice[]" class="form-control form-control-sm" type="number" placeholder="Sale Price" required>
+                <input id="purchaseEdit_salesPrice${rand}" name="purchaseEdit_salesPrice[]" class="form-control form-control-sm" type="number" placeholder="Sale Price" required step="0.01">
             </td>
             <td>
                 <input id="purchaseEdit_qty${rand}" name="purchaseEdit_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" oninput="getAmountEdit(${rand})" required>
             </td>
             <td>
-                <input id="purchaseEdit_purchaseRate${rand}" name="purchaseEdit_purchaseRate[]" class="form-control form-control-sm" type="number" placeholder="Purchase Rate" oninput="getAmountEdit(${rand})" required>
+                <input id="purchaseEdit_purchaseRate${rand}" name="purchaseEdit_purchaseRate[]" class="form-control form-control-sm" type="number" placeholder="Purchase Rate" oninput="getAmountEdit(${rand})" required step="0.01">
             </td>
             <td>
                 <input id="purchaseEdit_amount${rand}" name="purchaseEdit_amount[]" class="form-control form-control-sm" type="number" placeholder="Amount" readonly>

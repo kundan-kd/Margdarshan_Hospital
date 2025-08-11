@@ -276,3 +276,6 @@ function admissionForm(id){
 function summaryReport(id){
     window.open('/summary-report/' + id);
 }
+function viewAdvancePdf(id) {
+   window.open('/advance-payment-page/' + id);
+}

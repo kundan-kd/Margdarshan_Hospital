@@ -121,7 +121,7 @@ purchase-edit
                         </tr>
                         <tr>
                           <td class="text-neutral-700 fw-medium">Due</td>
-                          <td class="text-neutral-700 text-end">₹ {{$purchases[0]->due ?? 0}}</td>
+                          <td class="text-neutral-700 text-end">₹ {{round($purchases[0]->due ?? 0,2)}}</td>
                         </tr>
                      </table>
                 </div>

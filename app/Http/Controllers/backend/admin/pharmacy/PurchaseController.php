@@ -47,7 +47,7 @@ class PurchaseController extends Controller
                 return $row->paid_amount ?? 0;
             })
             ->addColumn('due_amount',function($row){
-                return $row->due ?? 0;
+                return round($row->due ?? 0,2);
             })
             ->addColumn('action',function($row){
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -263,10 +263,35 @@ class PurchaseController extends Controller
          $data = ['medicines'=>$getData,'nameData'=>$getNameData];
          return response()->json(['success'=>'Medicine data found','data'=>$data],200);
     }
+    
     public function getCategoryDatas(){
-     $getData = MedicineCategory::get();
-     return response()->json(['success'=>'Category data found','data'=>$getData],200);   
+        $getData = MedicineCategory::where('status',1)->get(['id','name']);
+        $categoryList = [];
+        foreach($getData as $cate){
+            $billMedicine = [];
+            $medicines = $cate->medicineData;
+            foreach($medicines as $med){
+                $chk = PurchaseItem::where('name_id',$med->id)->get(['id','batch_no','expiry','qty','return_qty','stock_out','sales_price','tax']);
+                if(sizeOf($chk) > 0){
+                    $billMedicine[] =[
+                        'id' => $med->id,
+                        'name' => $med->name,
+                        'purchase' => $chk
+                    ];
+                }
+            }
+            
+            $categoryList[]=[
+                'id' => $cate->id,
+                'name' => $cate->name,
+                'medicine' => $cate->medicineData,
+                'billMedicine' => $billMedicine
+            ];
+        }
+        
+        return response()->json(['success'=>'Category data found','data'=>$getData,'categoryList' => $categoryList],200);   
     }
+    
     public function pruchaseViewIndex($id){
         // dd($request);
         $purchases = Purchase::with('vendorData')->where('id',$id)->get();

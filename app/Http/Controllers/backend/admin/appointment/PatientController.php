@@ -18,11 +18,18 @@ class PatientController extends Controller
         // Logic to retrieve and display a list of patients
         return view('backend.admin.modules.appointment.patient');
     }
+
     public function viewPatients(Request $request){
-         if($request->ajax()){
-        $appointment = Patient::get();
-        return DataTables::of($appointment)
-        ->addColumn('patient_id',function($row){
+        if($request->ajax()){
+            // Get latest patient entry per patient_id using Eloquent
+            $latestPatients = Patient::whereIn('id', function($query) {
+                $query->selectRaw('MAX(id)')
+                      ->from('patients')
+                      ->groupBy('patient_id');
+            })->get();
+    
+            return DataTables::of($latestPatients)
+                    ->addColumn('patient_id',function($row){
             return $row->patient_id;
         })
         ->addColumn('name',function($row){
@@ -49,24 +56,68 @@ class PatientController extends Controller
             $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
             return $date->format('d-m-Y h:i A');
         })
-        ->addColumn('curr_status',function($row){
+                  ->addColumn('curr_status',function($row){
             return $row->current_status ?? 'OPD';
         })
-        ->addColumn('action',function($row){
-            return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                    </a> -->
-                    <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="lucide:edit" onclick="patientNewEdit('.$row->id.')"></iconify-icon>
-                    </a>
-                    <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                      <iconify-icon icon="mingcute:delete-2-line" onclick="patientNewDelete('.$row->id.')"></iconify-icon>
-                    </a> -->';
-        })
-        ->rawColumns(['action'])
-        ->make(true);
-     }
+                ->addColumn('action', function($row){
+                    return '
+                        <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                          <iconify-icon icon="lucide:edit" onclick="patientNewEdit('.$row->id.')"></iconify-icon>
+                        </a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
     }
+    // public function viewPatients(Request $request){
+    //     if($request->ajax()){
+    //     $appointment = Patient::get();
+    //     return DataTables::of($appointment)
+    //     ->addColumn('patient_id',function($row){
+    //         return $row->patient_id;
+    //     })
+    //     ->addColumn('name',function($row){
+    //         return $row->name;
+    //     })
+    //     ->addColumn('type',function($row){
+    //         return $row->type;
+    //     })
+    //     ->addColumn('gender',function($row){
+    //         return $row->gender; //fetched through modal relationship
+    //     })
+    //     ->addColumn('bloodtype',function($row){
+    //         return $row->bloodtype;
+    //     })
+    //     ->addColumn('dob',function($row){
+    //         return $row->dob;
+    //     })
+       
+    //     ->addColumn('mobile',function($row){
+    //         return $row->mobile;
+    //     })
+    //     ->addColumn('created_at',function($row){
+    //         $date = new \DateTime($row->created_at);
+    //         $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
+    //         return $date->format('d-m-Y h:i A');
+    //     })
+    //     ->addColumn('curr_status',function($row){
+    //         return $row->current_status ?? 'OPD';
+    //     })
+    //     ->addColumn('action',function($row){
+    //         return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+    //                   <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
+    //                 </a> -->
+    //                 <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+    //                   <iconify-icon icon="lucide:edit" onclick="patientNewEdit('.$row->id.')"></iconify-icon>
+    //                 </a>
+    //                 <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+    //                   <iconify-icon icon="mingcute:delete-2-line" onclick="patientNewDelete('.$row->id.')"></iconify-icon>
+    //                 </a> -->';
+    //     })
+    //     ->rawColumns(['action'])
+    //     ->make(true);
+    //  }
+    // }
     public function deletePatientData(Request $request){
          Patient::where('id',$request->id)->delete();
         return response()->json(['success' => 'Patient Deleted Successfully'],200);

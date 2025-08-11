@@ -56,26 +56,47 @@
     }
     getDatePicker('.expiry-date'); 
 
-function addNewRow() {
-    let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
-    $('.randNumNew').html(rand);
+let medicineCategory = [];
+setMedicineCategory();
+
+function setMedicineCategory(){
     $.ajax({
         url:getCategoryDatas,
         type:"GET",
         success:function(response){
-            let getCategoryData = response.data;
+            medicineCategory = [];
+            $('#purchaseAdd_category0').empty();
+            let categoryDropdown ='';
+            categoryDropdown +=`<option value="">Select</option>`;
+            response.categoryList.forEach(element =>{
+                medicineCategory.push(element);
+                categoryDropdown += ` <option value="${element.id}">${element.name}</option>`;
+            });
+            $('#purchaseAdd_category0').append(categoryDropdown);
+        }
+    });
+}
+
+function addNewRow() {
+    let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
+    $('.randNumNew').html(rand);
+    // $.ajax({
+    //     url:getCategoryDatas,
+    //     type:"GET",
+    //     success:function(response){
+    //         let getCategoryData = response.data;
           
     let newRowData = `<tr class="fieldGroupCopy">
         <td>
             <select id="purchaseAdd_category${rand}" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" style="width: 100%;" onchange="getPurchaseMedicine(this.value,${rand})" required>
                 <option value="" selected disabled>Select</option>`;
-                  getCategoryData.forEach(element =>{
+                    medicineCategory.forEach(element =>{
                      newRowData += ` <option value="${element.id}">${element.name}</option>`;
-                     });
+                    });
             newRowData += ` </select>
         </td>
         <td>
-            <select id="purchaseAdd_name${rand}" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls" style="width: 100%;" required>
+            <select id="purchaseAdd_name${rand}" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls" style="width: 100%;" onchange="getTaxValue(this.value,${rand})" required>
                 <option value="" selected disabled>Select</option>
                 <!-- Options will be populated dynamically based on category selection -->
             </select>
@@ -87,23 +108,23 @@ function addNewRow() {
             <input id="purchaseAdd_expiry${rand}" name="purchaseAdd_expiry[]" class="form-control form-control-sm expiry-date${rand}" type="text" placeholder="MM/YYYY" required>
         </td>
         <td>
-            <input id="purchaseAdd_mrp${rand}" name="purchaseAdd_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required>
+            <input id="purchaseAdd_mrp${rand}" name="purchaseAdd_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required step="0.01">
         </td>
         <td>
-            <input id="purchaseAdd_salesPrice${rand}" name="purchaseAdd_salesPrice[]" class="form-control form-control-sm" type="number" placeholder="Sale Price" required>
+            <input id="purchaseAdd_salesPrice${rand}" name="purchaseAdd_salesPrice[]" class="form-control form-control-sm" type="number" placeholder="Sale Price" required step="0.01">
         </td>
        
         <td>
             <input id="purchaseAdd_qty${rand}" name="purchaseAdd_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" oninput="getAmount(${rand})" required>
         </td>
         <td>
-            <input id="purchaseAdd_purchaseRate${rand}" name="purchaseAdd_purchaseRate[]" class="form-control form-control-sm" type="number" placeholder="Purchase Rate" oninput="getAmount(${rand})" required>
+            <input id="purchaseAdd_purchaseRate${rand}" name="purchaseAdd_purchaseRate[]" class="form-control form-control-sm" type="number" placeholder="Purchase Rate" oninput="getAmount(${rand})" required step="0.01">
         </td>
         <td>
             <input id="purchaseAdd_amount${rand}" name="purchaseAdd_amount[]" class="form-control form-control-sm" type="number" placeholder="Amount" readonly>
         </td>
          <td>
-            <input id="purchaseAdd_tax${rand}" name="purchaseAdd_tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" oninput="getTax(${rand})" required>
+            <input id="purchaseAdd_tax${rand}" name="purchaseAdd_tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" oninput="getTax(${rand})" required readonly>
         </td>
         
         <td>
@@ -114,9 +135,9 @@ function addNewRow() {
     </tr>`;
     $('.newRowAppend').parent().append(newRowData); // Append properly to tbody
     getDatePicker('.expiry-date'+ rand); 
-   $('.select2-cls').select2();
-        }
-    });
+    $('.select2-cls').select2();
+        // }
+    // });
 
 
     // Reinitialize Select2 for newly added row
@@ -260,21 +281,43 @@ $('#purchaseAdd_form').on('submit',function(e){
 
  
     function getPurchaseMedicine(id,randNum){
-        $.ajax({
-        url:getPurchaseNames,
-        type:"GET",
-            headers:{
-                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-            },
-            data:{id:id},
-            success:function(response){
-            let getData = response.data;
-            let medicineDropdown1 = $("#purchaseAdd_name" + randNum); // Use the randNum to target the specific dropdown
-            medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
-            getData.forEach(element => {
-                medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);
-            });
-            medicineDropdown1.trigger("change"); // Refresh Select2 dropdown
+        let medicineDropdown1 = $("#purchaseAdd_name" + randNum);
+        medicineDropdown1.find("option:not(:first)").remove();
+        medicineCategory.forEach(element => {
+            if(element.id == parseInt(id)){
+                element.medicine.forEach(element_medicine => {
+                    medicineDropdown1.append(`<option value="${element_medicine.id}">${element_medicine.name}</option>`);
+                });
+            }
+        });
+        medicineDropdown1.trigger("change");
+        // $.ajax({
+        // url:getPurchaseNames,
+        // type:"GET",
+        //     headers:{
+        //         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        //     },
+        //     data:{id:id},
+        //     success:function(response){
+        //     let getData = response.data;
+        //     let medicineDropdown1 = $("#purchaseAdd_name" + randNum); // Use the randNum to target the specific dropdown
+        //     medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
+        //     getData.forEach(element => {
+        //         medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);
+        //     });
+        //     medicineDropdown1.trigger("change"); // Refresh Select2 dropdown
+        //     }
+        // });
+    }
+    function getTaxValue(id,randNum){
+         let category = $("#purchaseAdd_category" + randNum).val();
+         medicineCategory.forEach(element => {
+            if(element.id == parseInt(category)){
+                element.medicine.forEach(element_medicine => {
+                    if(element_medicine.id == parseInt(id)){
+                        $('#purchaseAdd_tax'+randNum).val(Math.round(element_medicine.taxes));
+                    }
+                });
             }
         });
     }

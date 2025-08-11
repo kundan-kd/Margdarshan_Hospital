@@ -398,3 +398,7 @@ $('#emergencyFinding-form').on('submit',function(e){
         console.log('Please fill required field');
     }
 });
+
+function viewAdvancePdf(id) {
+   window.open('/advance-payment-page/' + id);
+}

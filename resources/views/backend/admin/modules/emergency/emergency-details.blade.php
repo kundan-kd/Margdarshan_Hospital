@@ -429,8 +429,9 @@
                     <div class="col-md-12 px-3">
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Advance Amount</h6>
+                          <span><span><button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" onclick="viewAdvancePdf(document.getElementById('patient_Id').value)">PDF</button></span>
                            @can('Advance Add')
-                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-advance" onclick="resetAdvance()"> <i class="ri-add-line"></i> Add Amount</button>
+                          <span><button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#emergency-add-advance" onclick="resetAdvance()"> <i class="ri-add-line"></i> Add Amount</button></span></span>
                           @endcan
                         </div>
                       <div class="table-responsive">

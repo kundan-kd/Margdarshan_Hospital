@@ -1,4 +1,5 @@
 function getDiscountAmount(disPer){
+    console.log(disPer);
     let total_amount = parseFloat($('.bill-totalAmount').html());
     let paid_amount = parseFloat($('.bill-totalPaidAmount').html());
     let discount_amount = (total_amount * disPer || 0)/100;
@@ -9,12 +10,14 @@ function getDiscountAmount(disPer){
     // }else{
     //     $('.billPrintBtn').addClass('d-none');
     // }
-    $('.bill-discountAmount').html(round(discount_amount));
-    $('.bill-totalNetAmount').html(round(net_amount));
-    $('.bill-totalDueAmount').html(round(due_amount));
+    $('.bill-discountAmount').html(Math.round(discount_amount));
+    $('.bill-totalNetAmount').html(Math.round(net_amount));
+    $('.bill-totalDueAmount').html(Math.round(due_amount));
+    $('.bill-totalDiscountAmount').html(Math.round(discount_amount));
     let pay_amount = $('#billAdd-payAmount').val();
     checkPayAmount(pay_amount);
 }
+
 function checkPayAmount(amount){
     let due_amount = parseFloat($('.bill-totalDueAmount').html());
     if(amount > due_amount){

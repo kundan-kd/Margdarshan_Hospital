@@ -260,14 +260,13 @@ $('#emergency-addPatientForm').on('submit',function(e){
     let id = $('#emergencyPatientId').val(); 
     let patientName  = validateField('emergency-patientName', 'input');
     let guardianName = validateField('emergency-guardianName', 'input');
-    let patientBloodType = validateField('emergency-patientBloodType', 'select');
     let patientDOB = validateField('emergency-patientDOB', 'select');
     let patientMStatus = validateField('emergency-patientMStatus', 'select');     
     let patientMobile = validateField('emergency-patientMobile', 'mobile');
     let patientAddess = validateField('emergency-patientAddess', 'input');
     let bedNumId = validateField('emergency-patientBedNum', 'select');
 
-        if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
+        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
             $('.emergencyPatientSubmit').addClass('d-none'); 
             $('.emergencyPatientSpinn').removeClass('d-none'); 
             let name = $('#emergency-patientName').val();
@@ -378,14 +377,13 @@ function emergencyPatientUpdate(id){
      let patientName  = validateField('emergency-patientName', 'input');
     let guardianName = validateField('emergency-guardianName', 'input');
     // let patientGender = validateField('patientGender', 'radio');
-    let patientBloodType = validateField('emergency-patientBloodType', 'select');
     let patientDOB = validateField('emergency-patientDOB', 'select');
     let patientMStatus = validateField('emergency-patientMStatus', 'select');     
     let patientMobile = validateField('emergency-patientMobile', 'mobile');
     let patientAddess = validateField('emergency-patientAddess', 'input');
         let bedNumId = validateField('emergency-patientBedNum', 'select');
 
-        if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
+        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
             $('.emergencyPatientUpdate').addClass('d-none'); 
             $('.emergencyPatientSpinn').removeClass('d-none'); 
             let name = $('#emergency-patientName').val();

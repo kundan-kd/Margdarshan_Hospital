@@ -134,7 +134,7 @@ function getPatientDetailsOpd(mobile){
                 //     });
                 // }
                 if (!getData) {
-                    $('.patient-data-list-opd').append(`<li class="list-group-item">No Data Found!</li>`);
+                    // $('.patient-data-list-opd').append(`<li class="list-group-item">No Data Found!</li>`);
                 } else {
                     $('.patient-data-list-opd').append(
                         `<li class="list-group-item" data-patient-id="${getData.id}">${getData.name} (${getData.patient_id})</li>`
@@ -200,12 +200,11 @@ $('#patient-addPatientForm').on('submit',function(e){
     let patientName  = validateField('patient-patientName', 'input');
     let guardianName = validateField('patient-guardianName', 'input');
     // let patientGender = validateField('patientGender', 'radio');
-    let patientBloodType = validateField('patient-patientBloodType', 'select');
     let patientDOB = validateField('patient-patientDOB', 'select');
     let patientMStatus = validateField('patient-patientMStatus', 'select');     
     let patientMobile = validateField('patient-patientMobile', 'mobile');
     let patientAddess = validateField('patient-patientAddess', 'input');
-        if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
+        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
             $('.patientAddPatientSubmit').addClass('d-none'); 
             $('.patientAddPatientSpinn').removeClass('d-none');
             let name = $('#patient-patientName').val();
@@ -294,12 +293,11 @@ function patientNewEdit(id){
 function patientAddPatientUpdate(id){
     let patientName  = validateField('patient-patientName', 'input');
     let guardianName = validateField('patient-guardianName', 'input');
-    let patientBloodType = validateField('patient-patientBloodType', 'select');
     let patientDOB = validateField('patient-patientDOB', 'select');
     let patientMStatus = validateField('patient-patientMStatus', 'select');     
     let patientMobile = validateField('patient-patientMobile', 'mobile');
     let patientAddess = validateField('patient-patientAddess', 'input');
-        if(patientName === true && guardianName === true && patientBloodType === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
+        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
             $('.patientAddPatientUpdate').addClass('d-none'); 
             $('.patientAddPatientSpinn').removeClass('d-none'); 
             let name = $('#patient-patientName').val();

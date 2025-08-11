@@ -105,17 +105,17 @@ purchase-edit
                                   <input id="purchaseEdit_expiry{{$purchaseItem->id}}" name="purchaseEdit_expiry[]" class="form-control form-control-sm expiry-date" type="text" value="{{$purchaseItem->expiry}}" required>
                               </td>
                               <td>
-                                  <input id="purchaseEdit_mrp{{$purchaseItem->id}}" name="purchaseEdit_mrp[]" class="form-control form-control-sm" type="number"value="{{$purchaseItem->mrp}}" required>
+                                  <input id="purchaseEdit_mrp{{$purchaseItem->id}}" name="purchaseEdit_mrp[]" class="form-control form-control-sm" type="number"value="{{$purchaseItem->mrp}}" required step="0.01">
                               </td>
                               <td>
-                                  <input id="purchaseEdit_salesPrice{{$purchaseItem->id}}" name="purchaseEdit_salesPrice[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->sales_price}}" required>
+                                  <input id="purchaseEdit_salesPrice{{$purchaseItem->id}}" name="purchaseEdit_salesPrice[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->sales_price}}" required step="0.01">
                               </td>
                               
                               <td>
                                   <input id="purchaseEdit_qty{{$purchaseItem->id}}" name="purchaseEdit_qty[]" class="form-control form-control-sm" type="number" value="{{$purchaseItem->qty}}" oninput="getAmountEdit({{$purchaseItem->id}})" required>
                               </td>
                               <td>
-                                  <input id="purchaseEdit_purchaseRate{{$purchaseItem->id}}" name="purchaseEdit_purchaseRate[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->purchase_rate}}" oninput="getAmountEdit({{$purchaseItem->id}})" required>
+                                  <input id="purchaseEdit_purchaseRate{{$purchaseItem->id}}" name="purchaseEdit_purchaseRate[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->purchase_rate}}" oninput="getAmountEdit({{$purchaseItem->id}})" required step="0.01">
                               </td>
                               <td>
                                   <input id="purchaseEdit_amount{{$purchaseItem->id}}" name="purchaseEdit_amount[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->amount}}" readonly>
@@ -182,7 +182,7 @@ purchase-edit
                           <option value="Other">Other</option>
                       </select></td>
                       <td class="border-0">
-                         <input id="purchaseEdit_payAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkPayAmount({{$purchase[0]->id}},this.value)">
+                         <input id="purchaseEdit_payAmount" type="number" step="0.01" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkPayAmount({{$purchase[0]->id}},this.value)">
                          <div class="purchaseEdit_payAmount_cls"></div>
                       </td>
                     </tr>

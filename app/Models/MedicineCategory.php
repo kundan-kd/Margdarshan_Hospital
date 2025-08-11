@@ -9,4 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class MedicineCategory extends Model
 {
     use HasFactory,SoftDeletes;
+     public function medicineData(){
+        return $this->hasMany(Medicine::class,'category_id');
+    }
 }

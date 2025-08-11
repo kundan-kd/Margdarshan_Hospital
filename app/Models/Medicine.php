@@ -21,4 +21,5 @@ class Medicine extends Model
     public function unitData(){
         return $this->belongsTo(Unit::class,'unit_id');
     }
+   
 }

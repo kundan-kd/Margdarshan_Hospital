@@ -85,8 +85,8 @@ Billing-add
                             <td>
                                     <select id="billingAdd-category0" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicine(this.value,0)" required>
                                         <option value="" selected>Select</option>
-                                        @foreach ($categories as $category)
-                                        <option value="{{$category['id']}}">{{$category['name']}}</option>
+                                        @foreach ($categories_data as $category)
+                                            <option value="{{$category->id}}">{{$category->name}}</option>
                                         @endforeach
                                     </select>
                                 </td>
@@ -191,7 +191,7 @@ Billing-add
                          <div class="billingAdd-paymentMode_errorCls d-none"></div>
                       </td>
                         <td class="border-0">
-                          <input id="billingAdd-payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount" readonly>
+                          <input id="billingAdd-payAmount" type="number" step="0.01" class="form-control form-control-sm" placeholder="Payment Amount" readonly>
                         </td>
                       </tr>
                     </table>

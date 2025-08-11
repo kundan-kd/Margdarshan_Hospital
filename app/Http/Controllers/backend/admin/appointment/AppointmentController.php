@@ -220,7 +220,7 @@ class AppointmentController extends Controller
         ->orderByDesc('created_at')
         ->pluck('id')
         ->unique()
-        ->take(5);
+        ->take(1);
     
         $getData = Patient::whereIn('id', $latestDistinctIds)
                           ->orderByDesc('created_at') // Ensure latest first
@@ -265,10 +265,10 @@ class AppointmentController extends Controller
         if($check_patient_admitted){
             return response()->json(['already_admitted'=>'This patient is already admitted, Kindly discharge before adding new']);
         }
-        $check_patient_discharge = Patient::where('id',$request->patientID)->where('current_status','Discharged')->exists();
-        if($check_patient_discharge){
-             return response()->json(['already_discharged'=>'This patient is discharged, Kindly add as new Patient']);
-        }
+        // $check_patient_discharge = Patient::where('id',$request->patientID)->where('current_status','Discharged')->exists();
+        // if($check_patient_discharge){
+        //      return response()->json(['already_discharged'=>'This patient is discharged, Kindly add as new Patient']);
+        // }
         
         $validator = Validator::make($request->all(),[
             'patientID' => 'nullable',
@@ -284,9 +284,27 @@ class AppointmentController extends Controller
         }
         $month = date('m'); // Gets the current month (e.g., "05")
         $year = date('y'); // Gets the current year (e.g., "25")
+        $prevPatientData = Patient::where('id',$request->patientID)->get();
+        if($prevPatientData[0]->current_status == 'Discharged'){
+            $patient_data = new Patient();
+            $patient_data->type = "OPD";
+            $patient_data->patient_id = $prevPatientData[0]->patient_id;
+            $patient_data->name = $prevPatientData[0]->name;
+            $patient_data->guardian_name = $prevPatientData[0]->guardian_name;
+            $patient_data->gender = $prevPatientData[0]->gender;
+            $patient_data->bloodtype = $prevPatientData[0]->bloodtype;
+            $patient_data->dob = $prevPatientData[0]->dob;
+            $patient_data->marital_status = $prevPatientData[0]->marital_status;
+            $patient_data->mobile = $prevPatientData[0]->mobile;
+            $patient_data->barcode = $prevPatientData[0]->barcode;
+            $patient_data->known_allergies = $prevPatientData[0]->allergy;
+            $patient_data->address = $prevPatientData[0]->address;
+            $patient_data->save();
+        }
+        
         $appointment = new Appointment();
-        $appointment->patient_id = 'OPD';
-        $appointment->patient_id = $request->patientID;
+        $appointment->type = 'OPD';
+        $appointment->patient_id = $patient_data->id ?? $request->patientID;
         $appointment->patient_name = $request->name;
         $appointment->department_id = $request->departmentID;
         $appointment->doctor_id = $request->doctorID;
@@ -345,6 +363,10 @@ class AppointmentController extends Controller
             'status' => "Visited"
         ]);
         if($update){
+            Patient::where('id',$appointment_data[0]->patient_id)->update([
+                'current_status' => 'Discharged',
+                'description' => 'Visited to OPD'
+            ]);
             $visits = new Visit();
             $visits->type = "OPD";
             $visits->patient_id = $appointment_data[0]->patient_id;
@@ -360,11 +382,16 @@ class AppointmentController extends Controller
         }
     }
     public function deleteAppointmentData(Request $request){
+        $patient_data = Appointment::where('id',$request->id)->get(['patient_id']);
         $update = Appointment::where('id',$request->id)->update([
             'reason_for_delete' => $request->reason,
             'status' => 'Deleted'
         ]);
         if($update){
+            Patient::where('id',$patient_data[0]->patient_id)->update([
+                'description' => 'Appointment Cancelled'
+            ]);
+            Patient::where('id',$patient_data[0]->patient_id)->delete();
             Appointment::where('id',$request->id)->delete();
             return response()->json(['success' => 'Appointment cancelled successfully'],200);
         }else{

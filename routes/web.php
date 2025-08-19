@@ -282,7 +282,7 @@ Route::get('/opd-out',[OpdoutController::class,'index'])->name('opd-out.index');
 Route::post('/opd-out-view',[OpdoutController::class,'viewOpdOut'])->name('opd-out.viewOpdOut');
 Route::get('/opd-out-details/{id}',[OpdoutController::class,'opdOutDetails']);
 Route::post('/opd-out-movetoipd',[OpdoutController::class,'moveToIpdStatus'])->name('opd-out.moveToIpdStatus');
-Route::post('/opd-out-movetoicu',[OpdoutController::class,'moveToIcuStatus'])->name('opd-out.moveToIcuStatus');
+// Route::post('/opd-out-movetoicu',[OpdoutController::class,'moveToIcuStatus'])->name('opd-out.moveToIcuStatus');
 Route::post('/opd-out-findinds-add',[OpdoutController::class,'opdOutFindingSubmit'])->name('opd-out.opdOutFindingSubmit');
 Route::post('/opd-out-visit-add',[OpdoutController::class,'opdOutVisitSubmit'])->name('opd-out-visit.opdOutVisitSubmit');
 Route::post('/opd-out-visit-view',[OpdoutController::class,'viewOptOutVisit'])->name('opd-out-visit.viewOptOutVisit');
@@ -468,6 +468,7 @@ Route::get('/discharge-form-print/{id}',[InvoiceController::class,'dischargeForm
 Route::post('/discharge-summary-added',[InvoiceController::class,'dischargeSummarySubmit'])->name('discharge.dischargeSummarySubmit');
 Route::get('/summary-report/{id}',[InvoiceController::class,'summaryRepoet']);
 Route::get('/advance-payment-page/{id}',[InvoiceController::class,'advancePaymentPage']);
+Route::get('/bill-print/{id}',[InvoiceController::class,'billPrint']);
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
 Route::get('/barcode', [CommonController::class, 'barCodeGenerate']);

@@ -304,7 +304,7 @@ class AppointmentController extends Controller
         
         $appointment = new Appointment();
         $appointment->type = 'OPD';
-        $appointment->patient_id = $patient_data->id ?? $request->patientID;
+        $appointment->patient_id = $patient_data->id ?? $request->patientID; // if previous patient with same details found then old Patient_id be updated else new.
         $appointment->patient_name = $request->name;
         $appointment->department_id = $request->departmentID;
         $appointment->doctor_id = $request->doctorID;
@@ -319,7 +319,7 @@ class AppointmentController extends Controller
             $payment_bills = new PaymentBill();
             $payment_bills->type = "OPD";
             $payment_bills->type_id = $appointment->id;
-            $payment_bills->patient_id = $request->patientID;
+            $payment_bills->patient_id = $patient_data->id ?? $request->patientID;
             $payment_bills->amount_for = 'OPD Consultant';
             $payment_bills->title = 'OPD Appointment Fee';
             $payment_bills->amount = $request->fee;

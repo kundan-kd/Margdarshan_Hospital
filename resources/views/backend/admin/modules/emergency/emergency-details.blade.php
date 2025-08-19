@@ -68,6 +68,10 @@
                                     <td class="fw-medium">Patient ID :</td>
                                     <td>{{$patients[0]->patient_id}}</td>
                                   </tr>
+                                   <tr>
+                                    <td class="fw-medium">Admission Date :</td>
+                                    <td>{{$patients[0]->created_at->format('d-m-Y')}}</td>
+                                  </tr>
                                   <tr>
                                     <td class="fw-medium">Gender :</td>
                                     <td>{{$patients[0]->gender}}</td>

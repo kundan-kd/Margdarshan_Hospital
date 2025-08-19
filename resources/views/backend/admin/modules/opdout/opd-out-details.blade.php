@@ -13,11 +13,16 @@
 <div class="dashboard-main-body">
   <input type="hidden" id="patient_Id" value="{{$patients[0]->id}}">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-normal mb-0">OPD - Out Patient Details</h6>
+     <h6 class="fw-normal mb-0">
+        OPD - Out Patient Details  
+        @if($patients[0]->type != 'OPD')
+            <span class="text-danger">(Moved to {{ $patients[0]->type }})</span>
+        @endif
+    </h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
              <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" onclick="summaryReport({{$patients[0]->id}})">Summary Report</button>
           @can('OPD Move To IPD')
-            <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel"> <i class="ri-stethoscope-line"></i></i> Move to IPD</button>
+            <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->type != 'OPD' ? 'disabled':''}}> <i class="ri-stethoscope-line"></i> Move to IPD</button>
           @endcan
       </div>
     </div>
@@ -63,9 +68,9 @@
                                     <td class="fw-medium">Patient ID :</td>
                                     <td>{{$patients[0]->patient_id}}</td>
                                   </tr>
-                                  <tr>
-                                    <td class="fw-medium">Name :</td>
-                                    <td>{{$patients[0]->name}}</td>
+                                   <tr>
+                                    <td class="fw-medium">Admission Date :</td>
+                                    <td>{{$patients[0]->created_at->format('d-m-Y')}}</td>
                                   </tr>
                                   <tr>
                                     <td class="fw-medium">Gender :</td>
@@ -80,9 +85,10 @@
                                     <td> {{$patients[0]->guardian_name}}</td>
                                   </tr>
                                   <tr>
-                                    <td class="fw-medium">phone :</td>
+                                    <td class="fw-medium">Phone :</td>
                                     <td>{{$patients[0]->mobile}}</td>
                                   </tr>
+                                 
                                   <tr>
                                     <td class="fw-medium">Bar Code :</td>
                                     <td> <img src="{{asset('backend/uploads/barcode/'. $patients[0]->barcode)}}" style="width: 150px;height:50px;" alt="barcode">
@@ -256,7 +262,7 @@
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Medication</h6>
                         @can('OPD Medication Add')
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-medication-dose" onclick="resetMedication();getVisitId(document.getElementById('patient_Id').value)"> <i class="ri-add-line"></i> Add Medication Dose</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-medication-dose" onclick="resetMedication();getVisitId(document.getElementById('patient_Id').value)" {{$patients[0]->type != 'OPD' ? 'disabled':''}}> <i class="ri-add-line"></i> Add Medication Dose</button>
                         @endcan
                         <!-- <button class="btn btn-primary-600  btn-sm fw-medium" data-bs-toggle="modal" data-bs-target="#ipd-add-medication"><i class="ri-add-line"></i> Add Medication</button> -->
                       </div>
@@ -302,7 +308,7 @@
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Lab Investigations</h6>
                         @can('OPD Lab Add')
-                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-lab" onclick="resetLabTest()"> <i class="ri-add-line"></i> Add Lab</button>
+                        <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"  data-bs-toggle="modal" data-bs-target="#opd-add-lab" onclick="resetLabTest()" {{$patients[0]->type != 'OPD' ? 'disabled':''}}> <i class="ri-add-line"></i> Add Lab</button>
                         @endcan
                       </div>
                       <div class="card basic-data-table">
@@ -330,7 +336,7 @@
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
                           <h6 class="text-md fw-normal mb-0">Charges</h6>
                           @can('OPD Charge Add')
-                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-charges" onclick="resetCharge()"> <i class="ri-add-line"></i> Add Charges</button>
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-charges" onclick="resetCharge()" {{$patients[0]->type != 'OPD' ? 'disabled':''}}> <i class="ri-add-line"></i> Add Charges</button>
                           @endcan
                         </div>
                       <div class="table-responsive">
@@ -423,7 +429,7 @@
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
                         <h6 class="text-md fw-normal mb-0">Vital History</h6>
                         @can('OPD Vital Add')
-                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-vital-history" onclick="resetVital()"> <i class="ri-add-line"></i> Add Vital History</button>
+                          <button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-vital-history" onclick="resetVital()" {{$patients[0]->type != 'OPD' ? 'disabled':''}}> <i class="ri-add-line"></i> Add Vital History</button>
                         @endcan
                       </div>
                       <div class="table-responsive">
@@ -463,7 +469,7 @@
                           <h6 class="text-md fw-normal mb-0">Advance Amount</h6>
                           <span><span><button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" onclick="viewAdvancePdf(document.getElementById('patient_Id').value)">PDF</button></span>
                           @can('Advance Add')
-                          <span><button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-advance" onclick="resetAdvance()"> <i class="ri-add-line"></i> Add Amount</button></span></span>
+                          <span><button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#opd-add-advance" onclick="resetAdvance()" {{$patients[0]->type != 'OPD' ? 'disabled':''}}> <i class="ri-add-line"></i> Add Amount</button></span></span>
                           @endcan
                         </div>
                       <div class="table-responsive">
@@ -1098,7 +1104,6 @@ $('#opd-new-checkup').on('shown.bs.modal', function () {
 
   const opdOutFindingSubmit = "{{route('opd-out.opdOutFindingSubmit')}}";
   const moveToIpdStatus = "{{route('opd-out.moveToIpdStatus')}}";
-  const moveToIcuStatus = "{{route('opd-out.moveToIcuStatus')}}";
   const opdOutVisitMedicineName = "{{route('common.getMedicineName')}}";
 
   const opdOutVisitSubmit = "{{route('opd-out-visit.opdOutVisitSubmit')}}";

@@ -34,7 +34,7 @@ function billAmountSubmit(id){
     if(pmode_check === true && amt_check === true){
         let pay_amount = $('#billAdd-payAmount').val();
         let pmode = $('#billAdd-paymentMode').val();
-        let type = "EMERGENCY";
+        let type = "IPD";
         let discount_amount = parseFloat($('.bill-discountAmount').html() || 0);
         if(pmode ==''){
             $('#billAdd-paymentMode').focus();
@@ -190,3 +190,6 @@ $('#discharge-summaryForm').on('submit', function(e) {
         });
     }
 });
+function billAmountPrint(id){
+    window.open('/bill-print/' + id);
+}

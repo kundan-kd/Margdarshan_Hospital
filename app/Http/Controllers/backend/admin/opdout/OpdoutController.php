@@ -39,14 +39,13 @@ class OpdoutController extends Controller
         if($request->doctor_id != null && $request->roomNum != null){
             $appointment = Appointment::where('doctor_id', $request->doctor_id)
                                       ->where('room_number', $request->roomNum)
-                                      ->where('type','OPD')
                                       ->get();
         } elseif ($request->doctor_id != null && $request->roomNum == null) {
-            $appointment = Appointment::where('doctor_id', $request->doctor_id)->where('type','OPD')->get();
+            $appointment = Appointment::where('doctor_id', $request->doctor_id)->get();
         } elseif ($request->doctor_id == null && $request->roomNum != null) {
-            $appointment = Appointment::where('room_number', $request->roomNum)->where('type','OPD')->get();
+            $appointment = Appointment::where('room_number', $request->roomNum)->get();
         } else {
-            $appointment = Appointment::where('type','OPD')->get(); // **Load all records when no filters are applied**
+            $appointment = Appointment::get(); // **Load all records when no filters are applied**
         }
         return DataTables::of($appointment)
            ->addColumn('token',function($row){

@@ -27,52 +27,29 @@
     
     <div class="card basic-data-table">
       <div class="card-body">
-        <table class="table bordered-table mb-0 w-100" id="emergency-patient-list" data-page-length='10'>
-          <thead>
-            <tr>
-              <th scope="col" class="fw-medium">Patient ID</th>
-              <th scope="col" class="fw-medium">Name</th>
-              <th scope="col" class="fw-medium">Bed No.</th>
-              <th scope="col" class="fw-medium">Gender</th>
-              <th scope="col" class="fw-medium">Blood Type</th>
-              <th scope="col" class="fw-medium">DOB</th>
-              <th scope="col" class="fw-medium">Phone</th>
-              <th scope="col" class="fw-medium">Admitted On</th>
-              <th scope="col" class="fw-medium">Allergies</th>
-              <th scope="col" class="fw-medium">Status</th>
-              <th scope="col" class="fw-medium">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-           {{-- <tr>
-              <td><a href="#" class="text-primary-600">Arun Kumar</a></td>
-              <td>07-05-2025 03:28 PM</td>
-              <td>+911234567890</td>
-              <td>Male</td>
-              <td>Niraj Kumar</td>
-              <td>2</td>
-              <td>Non</td>
-              <td><span class="bg-success-focus text-success-main px-16 py-4 radius-4 fw-normal text-sm">Paid</span></td>
-              <td>
-                <button class="mx-1 bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#emergency-patient-details">
-                  <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                </button>
-                <a href="edit-emergency-patient-details.html"><button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                  <iconify-icon icon="lucide:edit"></iconify-icon>
-                </button>
-                </a>
-                <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                  <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
-                </button>
-                <a href="emergency-invoice.html" target="_blank"><button class="mx-1 bg-warning-200 bg-hover-warning-300 text-warning-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                  <i class="ri-printer-line"></i>
-                </button>
-                </a>
-              </td>
-           </tr> --}}
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table bordered-table mb-0 w-100" id="emergency-patient-list" data-page-length='10'>
+            <thead>
+              <tr>
+                <th scope="col" class="fw-medium">Patient ID</th>
+                <th scope="col" class="fw-medium">Name</th>
+                <th scope="col" class="fw-medium">Bed No.</th>
+                <th scope="col" class="fw-medium">Gender</th>
+                <th scope="col" class="fw-medium">Blood Type</th>
+                <th scope="col" class="fw-medium">DOB</th>
+                <th scope="col" class="fw-medium">Phone</th>
+                <th scope="col" class="fw-medium">Admitted On</th>
+                <th scope="col" class="fw-medium">Allergies</th>
+                <th scope="col" class="fw-medium">Status</th>
+                <th scope="col" class="fw-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+          
+            </tbody>
+          </table>
       </div>
+    </div>
     </div>
   </div>
   <!-- modal2 start -->

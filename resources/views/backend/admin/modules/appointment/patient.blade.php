@@ -25,28 +25,30 @@ Patient
           </div>
     </div>
     <div class="card-body">
-      <table class="table bordered-table mb-0" id="patient-table" data-page-length='10'>
-        <thead>
-          <tr>
-            <th scope="col" class="fw-medium">Patient ID</th>
-            <th scope="col" class="fw-medium">Name</th>
-            <th scope="col" class="fw-medium">Type</th>
-            <th scope="col" class="fw-medium">Guardian</th>
-            <th scope="col" class="fw-medium">Gender</th>
-            <th scope="col" class="fw-medium">Blood Type</th>
-            <th scope="col" class="fw-medium">DOB</th>
-            <th scope="col" class="fw-medium">Phone</th>
-            <th scope="col" class="fw-medium">Admitted</th>
-            <th scope="col" class="fw-medium">Current Status</th>
-            <th scope="col" class="fw-medium">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-               {{-- Table data appended here using ajax datatable --}}
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table bordered-table mb-0" id="patient-table" data-page-length='10'>
+          <thead>
+            <tr>
+              <th scope="col" class="fw-medium">Patient ID</th>
+              <th scope="col" class="fw-medium">Name</th>
+              <th scope="col" class="fw-medium">Type</th>
+              <th scope="col" class="fw-medium">Guardian</th>
+              <th scope="col" class="fw-medium">Gender</th>
+              <th scope="col" class="fw-medium">Blood Type</th>
+              <th scope="col" class="fw-medium">DOB</th>
+              <th scope="col" class="fw-medium">Phone</th>
+              <th scope="col" class="fw-medium">Admitted</th>
+              <th scope="col" class="fw-medium">Current Status</th>
+              <th scope="col" class="fw-medium">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+                {{-- Table data appended here using ajax datatable --}}
+          </tbody>
+        </table>
     </div>
   </div>
+</div>
 </div>
   <!-- modal2 start -->
 <div class="modal fade" id="patient-add-patient" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-appointmentLabel" aria-hidden="true">

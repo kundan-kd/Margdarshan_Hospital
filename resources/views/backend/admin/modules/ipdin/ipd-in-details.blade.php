@@ -73,6 +73,10 @@
                                     <td>{{$patients[0]->patient_id}}</td>
                                   </tr>
                                   <tr>
+                                    <td class="fw-medium">Admission Date :</td>
+                                    <td>{{$patients[0]->created_at->format('d-m-Y')}}</td>
+                                  </tr>
+                                  <tr>
                                     <td class="fw-medium">Gender :</td>
                                     <td>{{$patients[0]->gender}}</td>
                                   </tr>
@@ -361,6 +365,7 @@
                               <th class="fw-medium">Date</th>
                               <th class="fw-medium">Title</th>
                               <th class="fw-medium">Description</th>
+                              <th class="fw-medium">Quantity</th>
                               <th class="fw-medium">Amount</th>
                               <th class="fw-medium">Action</th>
                              </tr>
@@ -460,7 +465,7 @@
                   <div class="row">
                     <div class="col-md-12 px-3">
                       <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
-                          <h6 class="text-md fw-normal mb-0">Advance Amount</h6>
+                          <h6 class="text-md fw-normal mb-0">Advance Amount Paid</h6>
                          <span><span><button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" onclick="viewAdvancePdf(document.getElementById('patient_Id').value)">PDF</button></span>
                           @can('Advance Add')
                           <span><button type="button" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#ipd-add-advance" onclick="resetAdvance()"> <i class="ri-add-line"></i> Add Amount</button></span></span>
@@ -471,6 +476,7 @@
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Amount Type</th>
                               <th class="fw-medium">Amount</th>
                               <th class="fw-medium">Payment Mode</th>
                               <th class="fw-medium">Action</th>

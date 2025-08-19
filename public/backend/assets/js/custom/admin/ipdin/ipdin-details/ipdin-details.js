@@ -281,6 +281,10 @@ let table_advance = $('#ipd-advance-list').DataTable({
             name:'created_at'
         },
         {
+            data:'amount_type',
+            name:'amount_type'
+        },
+        {
             data:'amount',
             name:'amount'
         },

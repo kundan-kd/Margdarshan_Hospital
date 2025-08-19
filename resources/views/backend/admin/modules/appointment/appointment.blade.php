@@ -28,6 +28,7 @@ Appointment
      
     </div>
     <div class="card-body">
+      <div class="table-responsive">
       <table class="table bordered-table mb-0" id="appointment-book-table" data-page-length='10'>
         <thead>
           <tr>
@@ -47,6 +48,7 @@ Appointment
                {{-- Table data appended here using ajax datatable --}}
         </tbody>
       </table>
+    </div>
     </div>
   </div>
 </div>
@@ -291,7 +293,7 @@ $ddate = date("d/m/yy");
                         placeholder="Enter Reason" style="background-image: none;">
                         <option value="">Select</option>
                         @foreach ($paymentmodes as $pmode)
-                            <option value="{{$pmode->id}}">{{$pmode->name}}</option>
+                            <option value="{{$pmode->id}}" {{$pmode->id == 2 ? 'selected':''}}>{{$pmode->name}}</option>
                         @endforeach
                     </select>
                     <div class="invalid-feedback">

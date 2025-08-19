@@ -51,8 +51,10 @@ Discharge Billing
                       <thead>
                         <tr>
                           <th scope="col" class="text-sm">Sr.No.</th>
+                          <th scope="col" class="text-sm">Date</th>
                           <th scope="col" class="text-sm">Title</th>
                           <th scope="col" class="text-sm">Description</th>
+                          <th scope="col" class="text-sm">Quantity</th>
                           <th scope="col" class="text-sm">Amount</th>
                         </tr>
                       </thead>
@@ -64,15 +66,19 @@ Discharge Billing
                             @if($bills->amount == 0 || $bills->amount == NULL)
                               <tr>
                               <td>{{$i}}</td>
+                              <td>{{$bills->created_at->format('d-m-Y')}}</td>
                               <td>{{$bills->amount_for}}</td>
                               <td>{{$bills->title}}</td>
+                              <td>{{$occupied_days ?? '-'}}</td>
                               <td>{{$pre_bed_amount ?? 0}}</td>
                             </tr>
                             @else
                              <tr>
                               <td>{{$i}}</td>
+                              <td>{{$bills->created_at->format('d-m-Y')}}</td>
                               <td>{{$bills->amount_for}}</td>
                               <td>{{$bills->title}}</td>
+                              <td>{{$bills->days ?? '-'}}</td>
                               <td>{{$bills->amount ?? 0}}</td>
                             </tr>
                             @endif
@@ -139,6 +145,7 @@ Discharge Billing
         </div>
         <div class=" pharmacy-footer card-footer border-top">
           <div class="text-end">
+                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 printBtn" onclick="billAmountPrint({{$patient_id}})"> Print</button>
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddSubmitBtn" {{$visibility}} onclick="billAmountSubmit({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Submit</button>
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddDischargePrintBtn {{((($total_amount + $pre_bed_amount ?? 0) - ($received_amount + $discount_amount)) <= 0) ? '' : 'd-none' }}" {{$visibility}} onclick="billDischargeNPrint({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge & Print</button>
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 {{$patientData[0]->discharge_form_generated == 0 ? '':'d-none'}}" onclick="dischargeSummary({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge Summary</button>

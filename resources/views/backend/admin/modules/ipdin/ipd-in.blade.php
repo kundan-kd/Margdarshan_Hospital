@@ -37,53 +37,30 @@
       </div>
     <div class="card basic-data-table">
       <div class="card-body">
-        <table class="table bordered-table mb-0 w-100" id="ipd-in-patient-list" data-page-length='10'>
-          <thead>
-            <tr >
-              <th scope="col" class="fw-medium">Patient ID</th>
-              <th scope="col" class="fw-medium">Depertment</th>
-              <th scope="col" class="fw-medium">Bed No.</th>
-              <th scope="col" class="fw-medium">Name</th>
-              <th scope="col" class="fw-medium">Gender</th>
-              <th scope="col" class="fw-medium">Blood Type</th>
-              <th scope="col" class="fw-medium">DOB</th>
-              <th scope="col" class="fw-medium">Phone</th>
-              <th scope="col" class="fw-medium">Admitted On</th>
-              <th scope="col" class="fw-medium">Allergies</th>
-              <th scope="col" class="fw-medium">Status</th>
-              <th scope="col" class="fw-medium">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-           {{-- <tr>
-              <td><a href="{{route('ipd-in.ipdInDetails')}}" class="text-primary-600">Rahul Kumar</a></td>
-              <td>20-05-2025</td>
-              <td>9876543210</td>
-              <td>Male</td>
-              <td>Ravi Sankar</td>
-              <td>4</td>
-              <td>201</td>
-              <td><span class="bg-success-focus text-success-main px-16 py-4 radius-4 fw-medium text-sm">Paid</span></td>
-               <td>
-                <button class="mx-1 bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" data-bs-toggle="modal" data-bs-target="#ipd-visit-view">
-                  <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-                </button>
-                <a href="ipd-edit-visit-detail.html"><button class="mx-1 bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                  <iconify-icon icon="lucide:edit"></iconify-icon>
-                </button>
-                </a>
-                <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                  <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
-                </button>
-                <a href="ipd-invoice.html" target="_blank"><button class="mx-1 bg-warning-200 bg-hover-warning-300 text-warning-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle">
-                  <i class="ri-printer-line"></i>
-                </button>
-                </a>
-              </td>
-           </tr> --}}
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table bordered-table mb-0 w-100" id="ipd-in-patient-list" data-page-length='10'>
+            <thead>
+              <tr >
+                <th scope="col" class="fw-medium">Patient ID</th>
+                <th scope="col" class="fw-medium">Depertment</th>
+                <th scope="col" class="fw-medium">Bed No.</th>
+                <th scope="col" class="fw-medium">Name</th>
+                <th scope="col" class="fw-medium">Gender</th>
+                <th scope="col" class="fw-medium">Blood Type</th>
+                <th scope="col" class="fw-medium">DOB</th>
+                <th scope="col" class="fw-medium">Phone</th>
+                <th scope="col" class="fw-medium">Admitted On</th>
+                <th scope="col" class="fw-medium">Allergies</th>
+                <th scope="col" class="fw-medium">Status</th>
+                <th scope="col" class="fw-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+            </tbody>
+          </table>
       </div>
+    </div>
     </div>
   </div>
 

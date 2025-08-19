@@ -447,7 +447,9 @@ class EmergencyController extends Controller
                 return 'MDVI0'.$row->id; //fetched through modal relationship
             })
             ->addColumn('visit_date',function($row){
-                return $row->created_at; //fetched through modal relationship
+                return $row->created_at
+                ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
+                ->format('d-m-Y h:i A');      // Format as human-readable
             })
             ->addColumn('doctor',function($row){
                 return 'Dr. '.$row->doctorData->name;
@@ -547,7 +549,9 @@ class EmergencyController extends Controller
                 return 'MDVI0'.$row->visit_id; //fetched through modal relationship
             })
             ->addColumn('date',function($row){
-                return $row->created_at; //fetched through modal relationship
+                return $row->created_at
+                ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
+                ->format('d-m-Y h:i A');      // Format as human-readable
             })
             ->addColumn('category',function($row){
                 return $row->medicineCategoryData->name;
@@ -655,7 +659,9 @@ class EmergencyController extends Controller
             $labTestDetails = LabInvestigation::where('patient_id',$request->patient_id)->get();
             return DataTables::of($labTestDetails)
             ->addColumn('created_at',function($row){
-                return $row->created_at;
+                return $row->created_at
+                ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
+                ->format('d-m-Y h:i A');      // Format as human-readable
             })
             ->addColumn('test_type',function($row){
                 return $row->testTypeData->name;
@@ -773,7 +779,9 @@ class EmergencyController extends Controller
             $emergencyCharges = PaymentBill::where('patient_id',$request->patient_id)->get();
             return DataTables::of($emergencyCharges)
             ->addColumn('created_at',function($row){
-                return $row->created_at;
+                return $row->created_at
+                ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
+                ->format('d-m-Y h:i A');      // Format as human-readable
             })
             ->addColumn('title',function($row){
                 return $row->amount_for;
@@ -786,7 +794,7 @@ class EmergencyController extends Controller
             })
             ->addColumn('action',function($row){
                 return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
-                      <iconify-icon icon="lucide:edit" onclick="emergencyChargeEdit('.$row->id.')"></iconify-icon>
+                      <iconify-icon icon="lucide:edit" onclick="##emergencyChargeEdit('.$row->id.')"></iconify-icon>
                     </a>
                     <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                       <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyChargeDelete('.$row->id.')"></iconify-icon>
@@ -848,7 +856,9 @@ class EmergencyController extends Controller
             $nurseNote = NurseNote::where('patient_id',$request->patient_id)->get();
             return DataTables::of($nurseNote)
             ->addColumn('date',function($row){
-                return $row->created_at;
+                return $row->created_at
+                ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
+                ->format('d-m-Y h:i A');      // Format as human-readable
             })
             ->addColumn('name',function($row){
                 return $row->nurseData->name;
@@ -996,7 +1006,9 @@ class EmergencyController extends Controller
             $advance = PaymentReceived::where('patient_id',$request->patient_id)->where('amount_for','Advance')->get();
             return DataTables::of($advance)
             ->addColumn('created_at',function($row){
-                return $row->created_at;
+                return $row->created_at
+                ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
+                ->format('d-m-Y h:i A');      // Format as human-readable
             })
             ->addColumn('amount',function($row){
                 return $row->amount;

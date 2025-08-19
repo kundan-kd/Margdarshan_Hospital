@@ -33,26 +33,29 @@ medicines
           </div>
       </div> -->
       <div class="card-body">
-        <table class="table bordered-table mb-0" id="medicine-create-table" data-page-length='10'>
-          <thead>
-            <tr>
-              <th scope="col" class="fw-medium">Name</th>
-              <th scope="col" class="fw-medium">Category</th>
-              <th scope="col" class="fw-medium">Company</th>
-              <th scope="col" class="fw-medium">Composition</th>
-              <th scope="col" class="fw-medium">Group</th>
-              <th scope="col" class="fw-medium">Unit</th>
-              <th scope="col" class="fw-medium">Re-Order Level</th>
-               <th scope="col" class="fw-medium">Batch</th>
-              <th scope="col" class="fw-medium">Expiry</th>
-              <th scope="col" class="fw-medium">HSN</th>
-              <th scope="col" class="fw-medium">Stock</th>
-              <th scope="col" class="fw-medium">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table bordered-table mb-0" id="medicine-create-table" data-page-length='10'>
+            <thead>
+              <tr>
+                <th scope="col" class="fw-medium">Name</th>
+                <th scope="col" class="fw-medium">Category</th>
+                <th scope="col" class="fw-medium">Company</th>
+                <th scope="col" class="fw-medium">Composition</th>
+                <th scope="col" class="fw-medium">Group</th>
+                <th scope="col" class="fw-medium">Unit</th>
+                <th scope="col" class="fw-medium">Re-Order Level</th>
+                <th scope="col" class="fw-medium">Batch</th>
+                <th scope="col" class="fw-medium">Expiry</th>
+                <th scope="col" class="fw-medium">HSN</th>
+                <th scope="col" class="fw-medium">Stock</th>
+                <th scope="col" class="fw-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

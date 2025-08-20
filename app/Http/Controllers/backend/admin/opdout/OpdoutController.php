@@ -36,7 +36,7 @@ class OpdoutController extends Controller
    
     public function viewOpdOut(Request $request) {
     if($request->ajax()) {
-        if($request->doctor_id != null && $request->roomNum != null){
+       if($request->doctor_id != null && $request->roomNum != null){
             $appointment = Appointment::where('doctor_id', $request->doctor_id)
                                       ->where('room_number', $request->roomNum)
                                       ->get();
@@ -252,7 +252,9 @@ class OpdoutController extends Controller
     }
     public function viewOptOutVisit(Request $request){
     if($request->ajax()){
-            $opdoutVisit = Visit::where('patient_id',$request->patient_id)->get();
+            $patient_id_new = Patient::where('id',$request->patient_id)->pluck('patient_id');
+            $patient_id_list = Patient::where('patient_id',$patient_id_new[0])->get(['id']);
+            $opdoutVisit = Visit::whereIn('patient_id',$patient_id_list)->get();
             return DataTables::of($opdoutVisit)
             ->addColumn('visit_id',function($row){
                 return 'MDVI0'.$row->id; //fetched through modal relationship

@@ -33,28 +33,27 @@ medicines
           </div>
       </div> -->
       <div class="card-body">
-        <div class="table-responsive">
-          <table class="table bordered-table mb-0" id="medicine-create-table" data-page-length='10'>
-            <thead>
-              <tr>
-                <th scope="col" class="fw-medium">Name</th>
-                <th scope="col" class="fw-medium">Category</th>
-                <th scope="col" class="fw-medium">Company</th>
-                <th scope="col" class="fw-medium">Composition</th>
-                <th scope="col" class="fw-medium">Group</th>
-                <th scope="col" class="fw-medium">Unit</th>
-                <th scope="col" class="fw-medium">Re-Order Level</th>
-                <th scope="col" class="fw-medium">Batch</th>
-                <th scope="col" class="fw-medium">Expiry</th>
-                <th scope="col" class="fw-medium">HSN</th>
-                <th scope="col" class="fw-medium">Stock</th>
-                <th scope="col" class="fw-medium">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="table bordered-table mb-0" id="medicine-create-table" data-page-length='10'>
+              <thead>
+                <tr>
+                  <th scope="col" class="fw-medium">Name</th>
+                  <th scope="col" class="fw-medium">Category</th>
+                  <th scope="col" class="fw-medium">Company</th>
+                  <th scope="col" class="fw-medium">Composition</th>
+                  <!--<th scope="col" class="fw-medium">Group</th>-->
+                  <th scope="col" class="fw-medium">Unit</th>
+                  <th scope="col" class="fw-medium">Re-Order Level</th>
+                   <th scope="col" class="fw-medium">Batch</th>
+                  <th scope="col" class="fw-medium">Expiry</th>
+                  <th scope="col" class="fw-medium">HSN</th>
+                  <th scope="col" class="fw-medium">Stock</th>
+                  <th scope="col" class="fw-medium">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
         </div>
       </div>
     </div>
@@ -96,16 +95,16 @@ medicines
                   </select>
                  <div class="createMed_company_errorCls d-none"></div>
             </div>
-            <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal" for="createMed_group">Group</label>
-                <select id="createMed_group" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
-                    <option value="">Select</option>
-                    @foreach ($groups as $group)
-                          <option value="{{$group->id}}">{{$group->name}}</option>
-                    @endforeach
-                  </select>
-                  <div class="createMed_group_errorCls d-none"></div>
-            </div>
+            <!--<div class="col-md-3 mb-3">-->
+            <!--  <label class="form-label fw-normal" for="createMed_group">Group</label>-->
+            <!--    <select id="createMed_group" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">-->
+            <!--        <option value="">Select</option>-->
+            <!--        @foreach ($groups as $group)-->
+            <!--              <option value="{{$group->id}}">{{$group->name}}</option>-->
+            <!--        @endforeach-->
+            <!--      </select>-->
+            <!--      <div class="createMed_group_errorCls d-none"></div>-->
+            <!--</div>-->
             <div class="col-md-3 mb-3">
               <label class="form-label fw-normal" for="createMed_unit">Unit</label>
                 <select id="createMed_unit" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">

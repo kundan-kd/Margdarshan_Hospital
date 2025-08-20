@@ -18,6 +18,7 @@ return new class extends Migration
             $table->double('amount')->default(0);
             $table->double('discount')->default(0);
             $table->double('paid_amount')->default(0);
+            $table->text('notes')->nullable();
             $table->string('status')->nullable();
             $table->integer('created_by')->nullable();
             $table->timestamps();

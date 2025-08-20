@@ -68,7 +68,7 @@
                                     <td class="fw-medium">Patient ID :</td>
                                     <td>{{$patients[0]->patient_id}}</td>
                                   </tr>
-                                   <tr>
+                                  <tr>
                                     <td class="fw-medium">Admission Date :</td>
                                     <td>{{$patients[0]->created_at->format('d-m-Y')}}</td>
                                   </tr>
@@ -85,10 +85,9 @@
                                     <td> {{$patients[0]->guardian_name}}</td>
                                   </tr>
                                   <tr>
-                                    <td class="fw-medium">Phone :</td>
+                                    <td class="fw-medium">phone :</td>
                                     <td>{{$patients[0]->mobile}}</td>
                                   </tr>
-                                 
                                   <tr>
                                     <td class="fw-medium">Bar Code :</td>
                                     <td> <img src="{{asset('backend/uploads/barcode/'. $patients[0]->barcode)}}" style="width: 150px;height:50px;" alt="barcode">

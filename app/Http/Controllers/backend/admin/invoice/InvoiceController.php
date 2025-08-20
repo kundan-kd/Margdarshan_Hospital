@@ -28,7 +28,7 @@ class InvoiceController extends Controller
         $patient_id = $id;
            // Get the most recent 'Bed Charge' payment bill for a specific patient
         $previous_payment_bill = PaymentBill::where('patient_id', $id)->where('amount_for', 'Bed Charge')->latest('id')->first();
-         $occupied_days = 0;
+        $occupied_days = 0;
         $pre_bed_amount = 0;
         if($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL){
             $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
@@ -42,7 +42,8 @@ class InvoiceController extends Controller
         $total_amount = PaymentBill::where('patient_id',$id)->sum('amount');
         $received_amount = PaymentReceived::where('patient_id',$id)->sum('amount');
         $discount_amount = PaymentReceived::where('patient_id',$id)->sum('discount_amount');
-        return view('backend.admin.modules.invoice.discharge-bill',compact('payment_bills','patient_id','total_amount','received_amount','discount_amount','occupied_days','pre_bed_amount'));
+        $notes = Invoice::where('patient_id',$id)->get(['notes']);
+        return view('backend.admin.modules.invoice.discharge-bill',compact('payment_bills','patient_id','total_amount','received_amount','discount_amount','occupied_days','pre_bed_amount','notes'));
     }
     public function payBillAmount(Request $request){
           $validator = Validator::make($request->all(),[
@@ -121,6 +122,7 @@ class InvoiceController extends Controller
         $invoices->amount = $request->total_amount;
         $invoices->discount = $request->discount_amount;
         $invoices->paid_amount = $request->paid_amount;
+        $invoices->notes = $request->notes;
         $invoices->status = "Discharge";
         $invoices->created_by = Auth::id(); // This gets the logged-in user's ID
         $invoices->save();

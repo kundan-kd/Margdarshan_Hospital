@@ -22,7 +22,7 @@ Low Inv. Medicine
               <th scope="col" class="fw-medium">Category</th>
               <th scope="col" class="fw-medium">Company</th>
               <th scope="col" class="fw-medium">Composition</th>
-              <th scope="col" class="fw-medium">Group</th>
+              <!--<th scope="col" class="fw-medium">Group</th>-->
               <th scope="col" class="fw-medium">Unit</th>
               <th scope="col" class="fw-medium">HSN</th>
               <th scope="col" class="fw-medium">Re Order Level</th>
@@ -70,10 +70,10 @@ Low Inv. Medicine
             data:'composition',
             name:'composition'
         },
-        {
-            data:'group',
-            name:'group'
-        },
+        // {
+        //     data:'group',
+        //     name:'group'
+        // },
         {
             data:'unit',
             name:'unit'

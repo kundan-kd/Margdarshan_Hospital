@@ -317,7 +317,7 @@ function getDocRoomNum(id){
         success: function(response) {
             if(response.data !=''){
                 if(response.success){
-                    $('#roomNumAppt').val(response.roomNum[0].id);
+                    $('#roomNumAppt').val(response.roomNum[0].id).change();
                     // $('#roomNumApptId').val(response.roomNum[0].id); // Store room number ID for later use
                     $('#opd_fee').val(response.data[0].fee);
                 }

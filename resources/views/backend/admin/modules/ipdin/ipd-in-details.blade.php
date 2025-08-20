@@ -22,7 +22,7 @@
           <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged' || $patients[0]->type == 'ICU'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
           @endcan
           @can('IPD Discharge')
-          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="ipdDischarge({{$patients[0]->id}})" {{$patients[0]->type == 'ICU'?'disabled':''}}> <i class="ri-thumb-up-line"></i> Discharge</button>
+          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="ipdDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
           @endcan
         </div>
         <!-- <div class="btns">
@@ -72,7 +72,7 @@
                                     <td class="fw-medium">Patient ID :</td>
                                     <td>{{$patients[0]->patient_id}}</td>
                                   </tr>
-                                  <tr>
+                                   <tr>
                                     <td class="fw-medium">Admission Date :</td>
                                     <td>{{$patients[0]->created_at->format('d-m-Y')}}</td>
                                   </tr>
@@ -365,7 +365,6 @@
                               <th class="fw-medium">Date</th>
                               <th class="fw-medium">Title</th>
                               <th class="fw-medium">Description</th>
-                              <th class="fw-medium">Quantity</th>
                               <th class="fw-medium">Amount</th>
                               <th class="fw-medium">Action</th>
                              </tr>

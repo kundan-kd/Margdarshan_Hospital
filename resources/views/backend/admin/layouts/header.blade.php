@@ -198,9 +198,9 @@
           <li>
             <a href="{{route('company.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Company</a>
           </li>
-          <li>
-            <a href="{{route('medicine-group.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Medicine Group</a>
-          </li>
+          <!--<li>--> 
+          <!--  <a href="{{route('medicine-group.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Medicine Group</a>-->
+          <!--</li>-->
           <li>
             <a href="{{route('unit.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Unit</a>
           </li>

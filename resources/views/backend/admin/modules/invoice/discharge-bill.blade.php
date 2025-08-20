@@ -92,6 +92,8 @@ Discharge Billing
             <hr class="mb-3">
             <div class="row">
                 <div class="col-md-6">
+                    <label class="form-label fw-medium">Note</label>
+                    <textarea id="billAdd-notes" class="form-control " rows="4" cols="50" placeholder="Note">{{$notes[0]->notes ?? ''}}</textarea>
                 </div>
                 <div class="col-md-4 offset-2">
                     <table class="table table-sm">

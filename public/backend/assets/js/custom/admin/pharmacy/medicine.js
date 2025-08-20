@@ -29,10 +29,10 @@ let table = $('#medicine-create-table').DataTable({
             data:'composition',
             name:'composition'
         },
-        {
-            data:'group',
-            name:'group'
-        },
+        // {
+        //     data:'group',
+        //     name:'group'
+        // },
         {
             data:'unit',
             name:'unit'
@@ -95,7 +95,7 @@ $('.createNewBtn').on('click',function(e){
 function resetMedicineAdd(){
     $('#createMed_category').val('').trigger('change'); //reset select2 dropdown
     $('#createMed_company').val('').trigger('change'); //reset select2 dropdown
-    $('#createMed_group').val('').trigger('change'); //reset select2 dropdown
+    // $('#createMed_group').val('').trigger('change'); //reset select2 dropdown
     $('#createMed_unit').val('').trigger('change'); //reset select2 dropdown
     $('.createMed_name_errorCls').addClass('d-none');
     $('.createMed_category_errorCls').addClass('d-none');
@@ -114,17 +114,17 @@ $('#createMed_form').on('submit', function(e) {
     let createMed_name = validateField('createMed_name', 'Medicine select');
     let createMed_category = validateField('createMed_category', 'select');
     let createMed_company = validateField('createMed_company', 'select');
-    let createMed_group = validateField('createMed_group', 'select');
+    // let createMed_group = validateField('createMed_group', 'select');
     let createMed_unit = validateField('createMed_unit', 'select');
     let createMed_reOrderingLevel = validateField('createMed_reOrderingLevel', 'select');
     let createMed_hsn = validateField('createMed_hsn', 'input');
     let createMed_taxes = validateField('createMed_taxes', 'select');
     let createMed_boxPacking = validateField('createMed_boxPacking', 'select');
-    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_group === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_hsn === true && createMed_taxes === true && createMed_boxPacking === true){
+    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_hsn === true && createMed_taxes === true && createMed_boxPacking === true){
 
     let category = $('#createMed_category').val();
     let company = $('#createMed_company').val();
-    let group = $('#createMed_group').val();
+    // let group = $('#createMed_group').val();
     let unit = $('#createMed_unit').val();
     let re_order_level = $('#createMed_reOrderingLevel').val();
     let rack = $('#createMed_rack').val();
@@ -141,7 +141,7 @@ $('#createMed_form').on('submit', function(e) {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         data:{
-            category:category,company:company,group:group,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition_array,hsn:hsn,taxes:taxes,box_pack:box_pack,narration:narration
+            category:category,company:company,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition_array,hsn:hsn,taxes:taxes,box_pack:box_pack,narration:narration
         },
         success:function(response){
         //   console.log(response);
@@ -187,7 +187,7 @@ function medicineEdit(id){
             $('#createMed_id').val(getData.id);
             $('#createMed_category').val(getData.category_id).trigger('change'); //set select2 dropdown value
             $('#createMed_company').val(getData.company_id).trigger('change'); //set select2 dropdown value
-            $('#createMed_group').val(getData.group_id).trigger('change'); //set select2 dropdown value
+            // $('#createMed_group').val(getData.group_id).trigger('change'); //set select2 dropdown value
             $('#createMed_unit').val(getData.unit_id).trigger('change'); //set select2 dropdown value
             $('#createMed_reOrderingLevel').val(getData.re_ordering_level);
             $('#createMed_rack').val(getData.rack);
@@ -205,17 +205,17 @@ function medicineUpdate(id){
 let createMed_name = validateField('createMed_name', 'Medicine select');
     let createMed_category = validateField('createMed_category', 'select');
     let createMed_company = validateField('createMed_company', 'select');
-    let createMed_group = validateField('createMed_group', 'select');
+    // let createMed_group = validateField('createMed_group', 'select');
     let createMed_unit = validateField('createMed_unit', 'select');
     let createMed_reOrderingLevel = validateField('createMed_reOrderingLevel', 'select');
     let createMed_hsn = validateField('createMed_hsn', 'input');
     let createMed_taxes = validateField('createMed_taxes', 'select');
     let createMed_boxPacking = validateField('createMed_boxPacking', 'select');
-    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_group === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_hsn === true && createMed_taxes === true && createMed_boxPacking === true){
+    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_hsn === true && createMed_taxes === true && createMed_boxPacking === true){
 
         let category = $('#createMed_category').val();
         let company = $('#createMed_company').val();
-        let group = $('#createMed_group').val();
+        // let group = $('#createMed_group').val();
         let unit = $('#createMed_unit').val();
         let re_order_level = $('#createMed_reOrderingLevel').val();
         let rack = $('#createMed_rack').val();
@@ -232,7 +232,7 @@ let createMed_name = validateField('createMed_name', 'Medicine select');
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             data:{
-                id:id,category:category,company:company,group:group,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition,hsn:hsn,taxes:taxes,box_pack:box_pack,narration:narration
+                id:id,category:category,company:company,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition,hsn:hsn,taxes:taxes,box_pack:box_pack,narration:narration
             },
             success:function(response){
                 if(response.success){

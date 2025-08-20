@@ -837,9 +837,6 @@ class IpdinController extends Controller
             ->addColumn('desc',function($row){
                 return $row->title;
             })
-            ->addColumn('qty',function($row){
-                return $row->days ?? '-';
-            })
             ->addColumn('amount',function($row){
                 return $row->amount;
             })

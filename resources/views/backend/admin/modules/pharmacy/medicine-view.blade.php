@@ -35,16 +35,10 @@ purchase-edit
                     <th class="fw-medium">Medicine Composition</th>
                     <td>{{$composition_list}}</td>
                 </tr>
-                <tr>     
-                    <th class="fw-medium">Medicine Group</th>
-                    <td>{{$medicines->groupData->name}}</td>
+                <tr> 
                     <th class="fw-medium">Unit</th>
                     <td>{{$medicines->unitData->name}}</td>
-                </tr>
-                <tr>           
-                   <th class="fw-medium">Min Level</th>
-                    <td>1</td>
-                    <th class="fw-medium">Re-Order Level</th>
+                     <th class="fw-medium">Re-Order Level</th>
                     <td>{{$medicines->re_ordering_level}}</td>
                 </tr>
                 <tr>    

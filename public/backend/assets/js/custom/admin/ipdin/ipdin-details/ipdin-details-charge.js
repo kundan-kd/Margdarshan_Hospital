@@ -36,10 +36,6 @@ let table_charge = $('#ipd-charges-list').DataTable({
             name:'desc'
         },
         {
-            data:'qty',
-            name:'qty'
-        },
-        {
             data:'amount',
             name:'amount'
         },

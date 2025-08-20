@@ -120,13 +120,14 @@ function invoiceSubmit(id){
     let total_amount = parseFloat($('.bill-totalAmount').html() || 0);
     let discount_amount = parseFloat($('.bill-totalDiscountAmount').html() || 0);
     let paid_amount = parseFloat($('.bill-totalPaidAmount').html() || 0);
+    let notes = $('#billAdd-notes').val();
         $.ajax({
             url:invoiceDataSubmit,
             type:"POST",
             headers:{
                 'X-CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
             },
-            data:{id:id,total_amount:total_amount,discount_amount:discount_amount,paid_amount:paid_amount},
+            data:{id:id,total_amount:total_amount,discount_amount:discount_amount,paid_amount:paid_amount,notes:notes},
             success:function(response){
                 console.log(response);
                 

@@ -42,9 +42,9 @@ class MedicineController extends Controller
                 $compositionNames = \App\Models\Composition::whereIn('id', $compositionIds)->pluck('name')->toArray();
                 return implode('<br>', $compositionNames);
             })
-            ->addColumn('group',function($row){
-                return $row->groupData->name;
-            })
+            // ->addColumn('group',function($row){
+            //     return $row->groupData->name;
+            // })
             ->addColumn('unit',function($row){
                 return $row->unitData->unit;
             })
@@ -98,7 +98,7 @@ class MedicineController extends Controller
         $validator = Validator::make($request->all(),[
         'category' => 'required',
         'company' => 'required',
-        'group' => 'required',
+        // 'group' => 'required',
         'unit' => 'required',
         're_order_level' => 'required',
         'rack' => 'required',
@@ -116,7 +116,7 @@ class MedicineController extends Controller
         $medicines->name = $request->name;
         $medicines->category_id = $request->category;
         $medicines->company_id = $request->company;
-        $medicines->group_id = $request->group;
+        // $medicines->group_id = $request->group;
         $medicines->unit_id = $request->unit;
         $medicines->re_ordering_level = $request->re_order_level;
         $medicines->rack = $request->rack;
@@ -139,7 +139,7 @@ class MedicineController extends Controller
        $update = Medicine::where('id',$request->id)->update([
         'category_id'=>$request->category,
         'company_id'=>$request->company, 
-        'group_id'=>$request->group, 
+        // 'group_id'=>$request->group, 
         'unit_id'=>$request->unit, 
         're_ordering_level'=>$request->re_order_level, 
         'rack'=>$request->rack, 
@@ -187,9 +187,9 @@ class MedicineController extends Controller
             ->addColumn('composition',function($row){
                 return $row->composition;
             })
-            ->addColumn('group',function($row){
-                return $row->groupData->name;
-            })
+            // ->addColumn('group',function($row){
+            //     return $row->groupData->name;
+            // })
             ->addColumn('unit',function($row){
                 return $row->unitData->unit;
             })

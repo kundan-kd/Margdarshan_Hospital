@@ -37,30 +37,30 @@
       </div>
     <div class="card basic-data-table">
       <div class="card-body">
-        <div class="table-responsive">
-          <table class="table bordered-table mb-0 w-100" id="ipd-in-patient-list" data-page-length='10'>
-            <thead>
-              <tr >
-                <th scope="col" class="fw-medium">Patient ID</th>
-                <th scope="col" class="fw-medium">Depertment</th>
-                <th scope="col" class="fw-medium">Bed No.</th>
-                <th scope="col" class="fw-medium">Name</th>
-                <th scope="col" class="fw-medium">Gender</th>
-                <th scope="col" class="fw-medium">Blood Type</th>
-                <th scope="col" class="fw-medium">DOB</th>
-                <th scope="col" class="fw-medium">Phone</th>
-                <th scope="col" class="fw-medium">Admitted On</th>
-                <th scope="col" class="fw-medium">Allergies</th>
-                <th scope="col" class="fw-medium">Status</th>
-                <th scope="col" class="fw-medium">Action</th>
-              </tr>
-            </thead>
-            <tbody>
+          <div class="table-responsive">
+            <table class="table bordered-table mb-0 w-100" id="ipd-in-patient-list" data-page-length='10'>
+              <thead>
+                <tr >
+                  <th scope="col" class="fw-medium">Patient ID</th>
+                  <th scope="col" class="fw-medium">Depertment</th>
+                  <th scope="col" class="fw-medium">Bed No.</th>
+                  <th scope="col" class="fw-medium">Name</th>
+                  <th scope="col" class="fw-medium">Gender</th>
+                  <th scope="col" class="fw-medium">Blood Type</th>
+                  <th scope="col" class="fw-medium">DOB</th>
+                  <th scope="col" class="fw-medium">Phone</th>
+                  <th scope="col" class="fw-medium">Admitted On</th>
+                  <th scope="col" class="fw-medium">Allergies</th>
+                  <th scope="col" class="fw-medium">Status</th>
+                  <th scope="col" class="fw-medium">Action</th>
+                </tr>
+              </thead>
+              <tbody>
               
-            </tbody>
-          </table>
+              </tbody>
+            </table>
       </div>
-    </div>
+      </div>
     </div>
   </div>
 

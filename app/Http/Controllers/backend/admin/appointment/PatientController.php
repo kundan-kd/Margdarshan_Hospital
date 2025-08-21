@@ -38,6 +38,9 @@ class PatientController extends Controller
         ->addColumn('type',function($row){
             return $row->type;
         })
+        ->addColumn('entry_type',function($row){
+            return $row->entry_type ?? 'NA';
+        })
         ->addColumn('gender',function($row){
             return $row->gender; //fetched through modal relationship
         })
@@ -69,55 +72,7 @@ class PatientController extends Controller
                 ->make(true);
         }
     }
-    // public function viewPatients(Request $request){
-    //     if($request->ajax()){
-    //     $appointment = Patient::get();
-    //     return DataTables::of($appointment)
-    //     ->addColumn('patient_id',function($row){
-    //         return $row->patient_id;
-    //     })
-    //     ->addColumn('name',function($row){
-    //         return $row->name;
-    //     })
-    //     ->addColumn('type',function($row){
-    //         return $row->type;
-    //     })
-    //     ->addColumn('gender',function($row){
-    //         return $row->gender; //fetched through modal relationship
-    //     })
-    //     ->addColumn('bloodtype',function($row){
-    //         return $row->bloodtype;
-    //     })
-    //     ->addColumn('dob',function($row){
-    //         return $row->dob;
-    //     })
-       
-    //     ->addColumn('mobile',function($row){
-    //         return $row->mobile;
-    //     })
-    //     ->addColumn('created_at',function($row){
-    //         $date = new \DateTime($row->created_at);
-    //         $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
-    //         return $date->format('d-m-Y h:i A');
-    //     })
-    //     ->addColumn('curr_status',function($row){
-    //         return $row->current_status ?? 'OPD';
-    //     })
-    //     ->addColumn('action',function($row){
-    //         return '<!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-    //                   <iconify-icon icon="iconamoon:eye-light"></iconify-icon>
-    //                 </a> -->
-    //                 <a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-    //                   <iconify-icon icon="lucide:edit" onclick="patientNewEdit('.$row->id.')"></iconify-icon>
-    //                 </a>
-    //                 <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-    //                   <iconify-icon icon="mingcute:delete-2-line" onclick="patientNewDelete('.$row->id.')"></iconify-icon>
-    //                 </a> -->';
-    //     })
-    //     ->rawColumns(['action'])
-    //     ->make(true);
-    //  }
-    // }
+   
     public function deletePatientData(Request $request){
          Patient::where('id',$request->id)->delete();
         return response()->json(['success' => 'Patient Deleted Successfully'],200);
@@ -136,6 +91,7 @@ class PatientController extends Controller
         'name' => 'required',
         'guardian_name' => 'required',
         'gender' => 'nullable',
+        'entry_type' => 'required',
         'bloodtype' => 'nullable',
         'dob' => 'required',
         'mstatus' => 'required',
@@ -155,6 +111,7 @@ class PatientController extends Controller
     $patient->name = $request->name;
     $patient->guardian_name = $request->guardian_name;
     $patient->gender = $request->gender;
+    $patient->entry_type = $request->entry_type;
     $patient->bloodtype = $request->bloodtype;
     $patient->dob = $request->dob;
     $patient->marital_status = $request->mstatus;
@@ -208,6 +165,7 @@ class PatientController extends Controller
             'name' => $request->name,
             'guardian_name' => $request->guardian_name,
             'gender' => $request->gender,
+            'entry_type' => $request->entry_type,
             'bloodtype' => $request->bloodtype,
             'dob'=> $request->dob,
             'marital_status'=> $request->mstatus,

@@ -38,6 +38,10 @@ let table_patient = $('#ipd-in-patient-list').DataTable({
             name:'gender'
         },
         {
+            data:'entry_type',
+            name:'entry_type'
+        },
+        {
             data:'bloodtype',
             name:'bloodtype',
             orderable: false,
@@ -112,11 +116,13 @@ function resetAddPatient(){
     $('.ipdPatientUpdate').addClass('d-none');
     $('.ipd-patientName_errorCls').addClass('d-none');
     $('.ipd-guardianName_errorCls').addClass('d-none');
+    $('.ipd-entryType_errorCls').addClass('d-none');
     $('.ipd-patientBloodType_errorCls').addClass('d-none');
     $('.ipd-patientDOB_errorCls').addClass('d-none');
     $('.ipd-patientMStatus_errorCls').addClass('d-none');
     $('.ipd-patientMobile_errorCls').addClass('d-none');
     $('.ipd-patientAddess_errorCls').addClass('d-none');
+    $('.ipd-patientBedNum_errorCls').addClass('d-none');
 }
 function getBedData(id){
     $.ajax({
@@ -238,13 +244,14 @@ function fillPatientFields(id){
         },
         data: { id:id },
         success: function(response) {
-            console.log(response);
+             console.log(response);
             if(response.success){
                  $('.patient-data-list').addClass('d-none');
                 let getData = response.data[0];
                 $('#ipdPatientId').val(getData.id);
                 $('#ipd-patientName').val(getData.name);
                 $('#ipd-guardianName').val(getData.guardian_name);
+                $('#ipd-entryType').val(getData.entryType).change();
                 $('#ipd-patientBloodType').val(getData.bloodtype).change();
                 $('#ipd-patientDOB').val(getData.dob);
                 $('#ipd-patientMStatus').val(getData.marital_status).change();
@@ -272,17 +279,19 @@ $('#ipd-addPatientForm').on('submit',function(e){
     let id = $('#ipdPatientId').val();
     let patientName  = validateField('ipd-patientName', 'input');
     let guardianName = validateField('ipd-guardianName', 'input');
+    let patientEntryType = validateField('ipd-entryType', 'select');
     let patientDOB = validateField('ipd-patientDOB', 'select');
     let patientMStatus = validateField('ipd-patientMStatus', 'select');     
     let patientMobile = validateField('ipd-patientMobile', 'mobile');
     let patientAddess = validateField('ipd-patientAddess', 'input');
     let bedNumId = validateField('ipd-patientBedNum', 'select');
-        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
+        if(patientName === true && guardianName === true && patientEntryType == true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
             $('.ipdPatientSubmit').addClass('d-none'); 
             $('.ipdPatientSpinn').removeClass('d-none'); 
             let name = $('#ipd-patientName').val();
             let guardian_name = $('#ipd-guardianName').val();
             let gender = $('input[name="ipd-patientGender"]:checked').val(); // Corrected na
+            let entry_type = $('#ipd-entryType').val();
             let bloodtype = $('#ipd-patientBloodType').val();
             let dob = $('#ipd-patientDOB').val();
             let mstatus = $('#ipd-patientMStatus').val();
@@ -303,7 +312,7 @@ $('#ipd-addPatientForm').on('submit',function(e){
                         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                     },
                     data:{id:id,
-                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,consultDoctor:consultDoctor,referPerson:referPerson,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
+                    name:name,guardian_name:guardian_name,gender:gender,entry_type:entry_type,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,consultDoctor:consultDoctor,referPerson:referPerson,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
                     },
                     success:function(response){
                         if(response.success){
@@ -356,7 +365,6 @@ function ipdPatientEdit(id){
         },
         data:{id:id},
         success:function(response){
-           // console.log(response);
             if(response.success){
                let getData = response.data[0];
                 $('#ipd-add-patientLabel').html('Edit IPD Patient');
@@ -366,6 +374,7 @@ function ipdPatientEdit(id){
                 $('#ipdPatientId').val(id);
                 $('#ipd-patientName').val(getData.name);
                 $('#ipd-guardianName').val(getData.guardian_name);
+                $('#ipd-entryType').val(getData.entry_type).change();
                 $('#ipd-patientBloodType').val(getData.bloodtype);
                 $('#ipd-patientDOB').val(getData.dob);
                 $('#ipd-patientMStatus').val(getData.marital_status);
@@ -387,20 +396,21 @@ function ipdPatientEdit(id){
     });
 }
 function ipdPatientUpdate(id){
-     let patientName  = validateField('ipd-patientName', 'input');
+    let patientName  = validateField('ipd-patientName', 'input');
     let guardianName = validateField('ipd-guardianName', 'input');
-    // let patientGender = validateField('patientGender', 'radio');
+    let patientEntryType = validateField('ipd-entryType', 'select');
     let patientDOB = validateField('ipd-patientDOB', 'select');
     let patientMStatus = validateField('ipd-patientMStatus', 'select');     
     let patientMobile = validateField('ipd-patientMobile', 'mobile');
     let patientAddess = validateField('ipd-patientAddess', 'input');
     let bedNumId = validateField('ipd-patientBedNum', 'select');
-        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
+        if(patientName === true && guardianName === true && patientEntryType == true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
             $('.ipdPatientUpdate').addClass('d-none'); 
             $('.ipdPatientSpinn').removeClass('d-none'); 
             let name = $('#ipd-patientName').val();
             let guardian_name = $('#ipd-guardianName').val();
             let gender = $('input[name="ipd-patientGender"]:checked').val(); // Corrected na
+            let entry_type = $('#ipd-entryType').val();
             let bloodtype = $('#ipd-patientBloodType').val();
             let dob = $('#ipd-patientDOB').val();
             let mstatus = $('#ipd-patientMStatus').val();
@@ -416,7 +426,7 @@ function ipdPatientUpdate(id){
                     'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                 },
                 data:{
-                id:id,name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
+                id:id,name:name,guardian_name:guardian_name,gender:gender,entry_type:entry_type,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
                 },
                 success:function(response){
                     if(response.success){

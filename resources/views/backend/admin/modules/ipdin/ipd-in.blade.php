@@ -46,6 +46,7 @@
                   <th scope="col" class="fw-medium">Bed No.</th>
                   <th scope="col" class="fw-medium">Name</th>
                   <th scope="col" class="fw-medium">Gender</th>
+                  <th scope="col" class="fw-medium">Entry Type</th>
                   <th scope="col" class="fw-medium">Blood Type</th>
                   <th scope="col" class="fw-medium">DOB</th>
                   <th scope="col" class="fw-medium">Phone</th>
@@ -220,7 +221,16 @@
             </select>
             <div class="ipd-patientMStatus_errorCls d-none"></div>
           </div>
-          
+          <div class="col-6">
+            <label class="form-label fw-normal" for="ipd-entryType">Entry Type</label>
+            <select class="form-select form-select-sm select2-cls" id="ipd-entryType" style="width: 100%" oninput="validateField(this.id,'select')">
+              <option value="">Select</option>
+              <option value="General">General</option>
+              <option value="3rd Party Insurance">3rd Party Insurance</option>
+              <option value="CGSH/ECHS">CGSH/ECHS</option>
+            </select>
+            <div class="ipd-entryType_errorCls d-none"></div>
+          </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="ipd-patientAddess">Address</label>
             <input type="text" id="ipd-patientAddess"  class="form-control form-control-sm" placeholder="Address"  oninput="validateField(this.id,'input')">
@@ -266,7 +276,7 @@
             <label class="form-label fw-normal">Bed Charge</label>
             <input type="text" id="ipd-patientBedCharge"  class="form-control form-control-sm" placeholder="Bed Charge" readonly>
           </div>
-          <div class="col-12">
+          <div class="col-6">
             <label class="form-label fw-normal">Any Known Allergies</label>
             <input type="text" id="ipd-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
           </div>

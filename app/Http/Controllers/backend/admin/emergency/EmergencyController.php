@@ -63,6 +63,9 @@ class EmergencyController extends Controller
         ->addColumn('gender',function($row){
             return $row->gender; //fetched through modal relationship
         })
+        ->addColumn('entry_type',function($row){
+            return $row->entry_type ?? 'NA';
+        })
         ->addColumn('bloodtype',function($row){
             return $row->bloodtype;
         })
@@ -119,6 +122,7 @@ class EmergencyController extends Controller
             'bloodtype' => 'nullable',
             'dob' => 'required',
             'mstatus' => 'required',
+            'entry_type' => 'required',
             'mobile' => 'required',
             'address' => 'required',
             'consultDoctor' => 'nullable',
@@ -141,6 +145,7 @@ class EmergencyController extends Controller
         $patient->bloodtype = $request->bloodtype;
         $patient->dob = $request->dob;
         $patient->marital_status = $request->mstatus;
+        $patient->entry_type = $request->entry_type;
         $patient->mobile = $request->mobile;
         $patient->alt_mobile = $request->alt_mobile;
         $patient->known_allergies = $request->allergy;
@@ -214,6 +219,7 @@ class EmergencyController extends Controller
             'bloodtype' => $request->bloodtype,
             'dob'=> $request->dob,
             'marital_status'=> $request->mstatus,
+            'entry_type'=> $request->entry_type,
             'mobile'=> $request->mobile,
             'alt_mobile'=> $request->alt_mobile,
             'known_allergies'=> $request->allergy,

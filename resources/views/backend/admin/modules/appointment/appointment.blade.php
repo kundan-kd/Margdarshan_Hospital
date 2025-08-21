@@ -208,6 +208,16 @@ $ddate = date("d/m/yy");
                 </div>
               </div>
           </div>
+           <div class="col-6">
+            <label class="form-label fw-normal" for="patientEnrtyType">Entry Type</label>
+            <select class="form-select form-select-sm select2-cls" id="patientEnrtyType" style="width: 100%" oninput="validateField(this.id,'select')">
+              <option value="">Select</option>
+              <option value="General">General</option>
+              <option value="3rd Party Insurance">3rd Party Insurance</option>
+              <option value="CGSH/ECHS">CGSH/ECHS</option>
+            </select>
+            <div class="patientEnrtyType_errorCls d-none"></div>
+          </div>
           <div class="col-6">
             <label class="form-label fw-normal" for="patientBloodType">Blood Type</label>
             <select class="form-select form-select-sm select2-cls" style="width:100%" id="patientBloodType" oninput="validateField(this.id,'select')">
@@ -246,7 +256,7 @@ $ddate = date("d/m/yy");
             <label class="form-label fw-normal">Alt Phone</label>
             <input type="number" id="patientAltMobile" class="form-control form-control-sm" maxlength="10" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">
           </div> --}}
-          <div class="col-12">
+          <div class="col-6">
             <label class="form-label fw-normal">Any Known Allergies</label>
             <input type="text" id="patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
           </div>

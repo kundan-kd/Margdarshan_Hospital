@@ -75,6 +75,9 @@ class IpdinController extends Controller
         ->addColumn('gender',function($row){
             return $row->gender; //fetched through modal relationship
         })
+        ->addColumn('entry_type',function($row){
+            return $row->entry_type ?? 'NA'; //fetched through modal relationship
+        })
         ->addColumn('bloodtype',function($row){
             return $row->bloodtype;
         })
@@ -147,6 +150,7 @@ class IpdinController extends Controller
             'name' => 'required',
             'guardian_name' => 'required',
             'gender' => 'nullable',
+            'entry_type' => 'required',
             'bloodtype' => 'nullable',
             'dob' => 'required',
             'mstatus' => 'required',
@@ -169,6 +173,7 @@ class IpdinController extends Controller
         $patient->name = $request->name;
         $patient->guardian_name = $request->guardian_name;
         $patient->gender = $request->gender;
+        $patient->entry_type = $request->entry_type;
         $patient->bloodtype = $request->bloodtype;
         $patient->dob = $request->dob;
         $patient->marital_status = $request->mstatus;
@@ -241,6 +246,7 @@ class IpdinController extends Controller
             'name' => $request->name,
             'guardian_name' => $request->guardian_name,
             'gender' => $request->gender,
+            'entry_type' => $request->entry_type,
             'bloodtype' => $request->bloodtype,
             'dob'=> $request->dob,
             'marital_status'=> $request->mstatus,

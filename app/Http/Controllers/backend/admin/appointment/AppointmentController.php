@@ -76,7 +76,7 @@ class AppointmentController extends Controller
                 <a href="javascript:void(0)" title="Visit Date" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
                     <iconify-icon icon="lucide:calendar" onclick="visitEdit(' . $row->id . ')" ></iconify-icon>
                 </a>
-                <a href="javascript:void(0)" title="Delete" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                <a href="javascript:void(0)" title="Delete" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
                     <iconify-icon icon="mingcute:delete-2-line" onclick="deleteReason(' . $row->id . ')"></iconify-icon>
                 </a>';
         })
@@ -98,6 +98,7 @@ class AppointmentController extends Controller
             'name' => 'required',
             'guardian_name' => 'required',
             'gender' => 'nullable',
+            'entry_type' => 'required',
             'bloodtype' => 'nullable',
             'dob' => 'required',
             'mstatus' => 'required',
@@ -117,6 +118,7 @@ class AppointmentController extends Controller
         $patient->name = $request->name;
         $patient->guardian_name = $request->guardian_name;
         $patient->gender = $request->gender;
+        $patient->entry_type = $request->entry_type;
         $patient->bloodtype = $request->bloodtype;
         $patient->dob = $request->dob;
         $patient->marital_status = $request->mstatus;

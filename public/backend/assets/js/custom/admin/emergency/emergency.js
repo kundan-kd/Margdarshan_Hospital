@@ -31,6 +31,10 @@ let table_patient_emergency = $('#emergency-patient-list').DataTable({
             name:'gender'
         },
         {
+            data:'entry_type',
+            name:'entry_type'
+        },
+        {
             data:'bloodtype',
             name:'bloodtype',
             orderable: false,
@@ -104,6 +108,7 @@ function resetAddPatient(){
     $('.emergency-patientBloodType_errorCls').addClass('d-none');
     $('.emergency-patientDOB_errorCls').addClass('d-none');
     $('.emergency-patientMStatus_errorCls').addClass('d-none');
+    $('.emergency-entryType_errorCls').addClass('d-none');
     $('.emergency-patientMobile_errorCls').addClass('d-none');
     $('.emergency-patientAddess_errorCls').addClass('d-none');
 }
@@ -216,7 +221,7 @@ $(document).on('click', '.patient-data-list li', function() {
     }
 });
 function fillPatientFields(id){
-    console.log($('#emergencyPatientId').val());
+    // console.log($('#emergencyPatientId').val());
     $.ajax({
         url: fillPatientData, // Ensure this is a valid endpoint
         type: "POST",
@@ -225,7 +230,7 @@ function fillPatientFields(id){
         },
         data: { id:id },
         success: function(response) {
-            console.log(response);
+            // console.log(response);
             if(response.success){
                  $('.patient-data-list').addClass('d-none');
                 let getData = response.data[0];
@@ -235,6 +240,7 @@ function fillPatientFields(id){
                 $('#emergency-patientBloodType').val(getData.bloodtype).change();
                 $('#emergency-patientDOB').val(getData.dob);
                 $('#emergency-patientMStatus').val(getData.marital_status).change();
+                $('#emergency-entryType').val(getData.entryType).change();
                 $('#emergency-patientMobile').val(getData.mobile);
                 $('#emergency-patientAddess').val(getData.address);
                 $('#emergency-patientAltMobile').val(getData.alt_mobile);
@@ -262,11 +268,12 @@ $('#emergency-addPatientForm').on('submit',function(e){
     let guardianName = validateField('emergency-guardianName', 'input');
     let patientDOB = validateField('emergency-patientDOB', 'select');
     let patientMStatus = validateField('emergency-patientMStatus', 'select');     
+    let patientEntryType = validateField('emergency-entryType', 'select');     
     let patientMobile = validateField('emergency-patientMobile', 'mobile');
     let patientAddess = validateField('emergency-patientAddess', 'input');
     let bedNumId = validateField('emergency-patientBedNum', 'select');
 
-        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
+        if(patientName == true && guardianName == true && patientDOB == true && patientMStatus == true && patientEntryType == true && patientMobile == true && patientAddess == true && bedNumId == true){    
             $('.emergencyPatientSubmit').addClass('d-none'); 
             $('.emergencyPatientSpinn').removeClass('d-none'); 
             let name = $('#emergency-patientName').val();
@@ -275,6 +282,7 @@ $('#emergency-addPatientForm').on('submit',function(e){
             let bloodtype = $('#emergency-patientBloodType').val();
             let dob = $('#emergency-patientDOB').val();
             let mstatus = $('#emergency-patientMStatus').val();
+            let entry_type = $('#emergency-entryType').val();
             let mobile = $('#emergency-patientMobile').val();
             let address = $('#emergency-patientAddess').val();
             let consultDoctor = $('#emergency-consultDoctor').val();
@@ -292,7 +300,7 @@ $('#emergency-addPatientForm').on('submit',function(e){
                         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                     },
                     data:{id:id,
-                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,consultDoctor:consultDoctor,referPerson:referPerson,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
+                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,entry_type:entry_type,mobile:mobile,address:address,consultDoctor:consultDoctor,referPerson:referPerson,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
                     },
                     success:function(response){
                           if(response.success){
@@ -343,7 +351,7 @@ function emergencyPatientEdit(id){
         },
         data:{id:id},
         success:function(response){
-            console.log(response);
+            // console.log(response);
             if(response.success){
                let getData = response.data[0];
                 $('#emergency-add-patientLabel').html('Edit Emergency Patient');
@@ -356,6 +364,7 @@ function emergencyPatientEdit(id){
                 $('#emergency-patientBloodType').val(getData.bloodtype);
                 $('#emergency-patientDOB').val(getData.dob);
                 $('#emergency-patientMStatus').val(getData.marital_status);
+                $('#emergency-entryType').val(getData.entry_type).change();
                 $('#emergency-patientMobile').val(getData.mobile);
                 $('#emergency-patientAddess').val(getData.address);
                 $('#emergency-consultDoctor').val(getData.attended_doctor_id);
@@ -376,14 +385,14 @@ function emergencyPatientEdit(id){
 function emergencyPatientUpdate(id){
      let patientName  = validateField('emergency-patientName', 'input');
     let guardianName = validateField('emergency-guardianName', 'input');
-    // let patientGender = validateField('patientGender', 'radio');
     let patientDOB = validateField('emergency-patientDOB', 'select');
-    let patientMStatus = validateField('emergency-patientMStatus', 'select');     
+    let patientMStatus = validateField('emergency-patientMStatus', 'select');   
+    let patientEntryType = validateField('emergency-entryType', 'select');       
     let patientMobile = validateField('emergency-patientMobile', 'mobile');
     let patientAddess = validateField('emergency-patientAddess', 'input');
         let bedNumId = validateField('emergency-patientBedNum', 'select');
 
-        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true && bedNumId === true){    
+        if(patientName == true && guardianName == true && patientDOB == true && patientMStatus == true && patientEntryType == true && patientMobile == true && patientAddess == true && bedNumId == true){    
             $('.emergencyPatientUpdate').addClass('d-none'); 
             $('.emergencyPatientSpinn').removeClass('d-none'); 
             let name = $('#emergency-patientName').val();
@@ -392,6 +401,7 @@ function emergencyPatientUpdate(id){
             let bloodtype = $('#emergency-patientBloodType').val();
             let dob = $('#emergency-patientDOB').val();
             let mstatus = $('#emergency-patientMStatus').val();
+            let entry_type = $('#emergency-entryType').val();
             let mobile = $('#emergency-patientMobile').val();
             let address = $('#emergency-patientAddess').val();
             let alt_mobile = $('#emergency-patientAltMobile').val();
@@ -405,7 +415,7 @@ function emergencyPatientUpdate(id){
                     'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                 },
                 data:{
-                id:id,name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
+                id:id,name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,entry_type:entry_type,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy,bedNumId:bedNumId
                 },
                 success:function(response){
                     if(response.success){

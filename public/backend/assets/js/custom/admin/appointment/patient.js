@@ -23,9 +23,13 @@ let table = $('#patient-table').DataTable({
             data:'name',
             name:'name'
         },
-         {
+        {
             data:'type',
             name:'type'
+        },
+        {
+            data:'entry_type',
+            name:'entry_type'
         },
         {
             data:'guardian_name',
@@ -99,6 +103,7 @@ function resetPatientAddPatient(){
     $('.patient-patientName_errorCls').addClass('d-none');
     $('.patient-guardianName_errorCls').addClass('d-none');
     $('.patient-patientBloodType_errorCls').addClass('d-none');
+    $('.patient-enrtyType_errorCls').addClass('d-none');
     $('.patient-patientDOB_errorCls').addClass('d-none');
     $('.patient-patientMStatus_errorCls').addClass('d-none');
     $('.patient-patientMobile_errorCls').addClass('d-none');
@@ -199,17 +204,18 @@ $('#patient-addPatientForm').on('submit',function(e){
     let id = $('#patient-patientId').val(); 
     let patientName  = validateField('patient-patientName', 'input');
     let guardianName = validateField('patient-guardianName', 'input');
-    // let patientGender = validateField('patientGender', 'radio');
+    let patientEntryType = validateField('patient-enrtyType', 'select');
     let patientDOB = validateField('patient-patientDOB', 'select');
     let patientMStatus = validateField('patient-patientMStatus', 'select');     
     let patientMobile = validateField('patient-patientMobile', 'mobile');
     let patientAddess = validateField('patient-patientAddess', 'input');
-        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
+        if(patientName === true && guardianName === true && patientEntryType == true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
             $('.patientAddPatientSubmit').addClass('d-none'); 
             $('.patientAddPatientSpinn').removeClass('d-none');
             let name = $('#patient-patientName').val();
             let guardian_name = $('#patient-guardianName').val();
             let gender = $('input[name="patient-patientGender"]:checked').val(); // Corrected na
+            let entry_type = $('#patient-enrtyType').val();
             let bloodtype = $('#patient-patientBloodType').val();
             let dob = $('#patient-patientDOB').val();
             let mstatus = $('#patient-patientMStatus').val();
@@ -227,7 +233,7 @@ $('#patient-addPatientForm').on('submit',function(e){
                         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                     },
                     data:{
-                    name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
+                    name:name,guardian_name:guardian_name,gender:gender,entry_type:entry_type,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
                     },
                     success:function(response){
                         if(response.success){
@@ -272,6 +278,7 @@ function patientNewEdit(id){
                 $('#patient-patientId').val(id);
                 $('#patient-patientName').val(getData.name);
                 $('#patient-guardianName').val(getData.guardian_name);
+                $('#patient-enrtyType').val(getData.entry_type);
                 $('#patient-patientBloodType').val(getData.bloodtype);
                 $('#patient-patientDOB').val(getData.dob);
                 $('#patient-patientMStatus').val(getData.marital_status);
@@ -293,16 +300,18 @@ function patientNewEdit(id){
 function patientAddPatientUpdate(id){
     let patientName  = validateField('patient-patientName', 'input');
     let guardianName = validateField('patient-guardianName', 'input');
+    let patientEntryType = validateField('patient-enrtyType', 'select');
     let patientDOB = validateField('patient-patientDOB', 'select');
     let patientMStatus = validateField('patient-patientMStatus', 'select');     
     let patientMobile = validateField('patient-patientMobile', 'mobile');
     let patientAddess = validateField('patient-patientAddess', 'input');
-        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
+        if(patientName === true && guardianName === true && patientEntryType == true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
             $('.patientAddPatientUpdate').addClass('d-none'); 
             $('.patientAddPatientSpinn').removeClass('d-none'); 
             let name = $('#patient-patientName').val();
             let guardian_name = $('#patient-guardianName').val();
             let gender = $('input[name="patient-patientGender"]:checked').val(); // Corrected na
+            let entry_type = $('#patient-enrtyType').val();
             let bloodtype = $('#patient-patientBloodType').val();
             let dob = $('#patient-patientDOB').val();
             let mstatus = $('#patient-patientMStatus').val();
@@ -317,7 +326,7 @@ function patientAddPatientUpdate(id){
                     'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                 },
                 data:{
-                id:id,name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
+                id:id,name:name,guardian_name:guardian_name,gender:gender,entry_type:entry_type,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
                 },
                 success:function(response){
                     if(response.success){

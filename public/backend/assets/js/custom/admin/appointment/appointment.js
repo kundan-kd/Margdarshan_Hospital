@@ -86,17 +86,18 @@ $('#addPatientForm').on('submit',function(e){
     let patientName  = validateField('patientName', 'input');
     let guardianName = validateField('guardianName', 'input');
     // let patientGender = validateField('patientGender', 'radio');
-    // let patientBloodType = validateField('patientBloodType', 'select');
+    let patientEntryType = validateField('patientEnrtyType', 'select');
     let patientDOB = validateField('patientDOB', 'select');
     let patientMStatus = validateField('patientMStatus', 'select');     
     let patientMobile = validateField('patientMobile', 'mobile');
     let patientAddess = validateField('patientAddess', 'input');
-        if(patientName === true && guardianName === true && patientDOB === true && patientMStatus === true && patientMobile === true && patientAddess === true){    
+        if(patientName == true && guardianName == true && patientEntryType == true && patientDOB == true && patientMStatus == true && patientMobile == true && patientAddess == true){    
             $('.patientSubmit').addClass('d-none'); 
             $('.patientSpinn').removeClass('d-none');
             let name = $('#patientName').val();
             let guardian_name = $('#guardianName').val();
             let gender = $('input[name="patientGender"]:checked').val(); // Corrected na
+            let entry_type = $('#patientEnrtyType').val();
             let bloodtype = $('#patientBloodType').val();
             let dob = $('#patientDOB').val();
             let mstatus = $('#patientMStatus').val();
@@ -111,7 +112,7 @@ $('#addPatientForm').on('submit',function(e){
                     'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                 },
                 data:{
-                name:name,guardian_name:guardian_name,gender:gender,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
+                name:name,guardian_name:guardian_name,gender:gender,entry_type:entry_type,bloodtype:bloodtype,dob:dob,mstatus:mstatus,mobile:mobile,address:address,alt_mobile:alt_mobile,allergy:allergy
                 },
                 success:function(response){
                     if(response.success){
@@ -157,6 +158,7 @@ function resetAddPatient(){
     $('#addPatientForm')[0].reset();
     $('.patientName_errorCls').addClass('d-none');
     $('.guardianName_errorCls').addClass('d-none');
+    $('.patientEnrtyType_errorCls').addClass('d-none');
     $('.patientBloodType_errorCls').addClass('d-none');
     $('.patientDOB_errorCls').addClass('d-none');
     $('.patientMStatus_errorCls').addClass('d-none');

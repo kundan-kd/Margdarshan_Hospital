@@ -32,6 +32,7 @@ Patient
                 <th scope="col" class="fw-medium">Patient ID</th>
                 <th scope="col" class="fw-medium">Name</th>
                 <th scope="col" class="fw-medium">Type</th>
+                <th scope="col" class="fw-medium">Entry Type</th>
                 <th scope="col" class="fw-medium">Guardian</th>
                 <th scope="col" class="fw-medium">Gender</th>
                 <th scope="col" class="fw-medium">Blood Type</th>
@@ -100,6 +101,16 @@ Patient
               </div>
           </div>
           <div class="col-6">
+            <label class="form-label fw-normal" for="patient-enrtyType">Entry Type</label>
+            <select class="form-select form-select-sm select2-cls" id="patient-enrtyType" style="width: 100%" oninput="validateField(this.id,'select')">
+              <option value="">Select</option>
+              <option value="General">General</option>
+              <option value="3rd Party Insurance">3rd Party Insurance</option>
+              <option value="CGSH/ECHS">CGSH/ECHS</option>
+            </select>
+            <div class="patient-enrtyType_errorCls d-none"></div>
+          </div>
+          <div class="col-6">
             <label class="form-label fw-normal" for="patient-patientBloodType">Blood Type</label>
             <select class="form-select form-select-sm select2-cls" id="patient-patientBloodType" style="width: 100%" oninput="validateField(this.id,'select')">
               <option value="">Select</option>
@@ -138,7 +149,7 @@ Patient
             <label class="form-label fw-normal">Alt Phone</label>
             <input type="number" id="patient-patientAltMobile" class="form-control form-control-sm" placeholder="Alt Phone" oninput="this.value=this.value.slice(0,10)">
           </div> --}}
-          <div class="col-12">
+          <div class="col-6">
             <label class="form-label fw-normal">Any Known Allergies</label>
             <input type="text" id="patient-patientAllergy"  class="form-control form-control-sm" placeholder="Any Known Allergies">
           </div>

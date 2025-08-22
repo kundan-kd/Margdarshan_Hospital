@@ -52,22 +52,22 @@ class OpdoutController extends Controller
                 return '<a target="_blank" class="text-primary cursor-pointer" onclick="patientDetailsUsingToken('.$row->patient_id.')">'.$row->token.'</a>';
             })
              ->addColumn('patient_name',function($row){
-                return $row->patient_data->name;
+                return $row->patient_data->name ?? '';
             })
              ->addColumn('gender',function($row){
-                return $row->patient_data->gender;
+                return $row->patient_data->gender ?? '';
             })
              ->addColumn('mobile',function($row){
-                return $row->patient_data->mobile; //fetched through modal relationship
+                return $row->patient_data->mobile ?? ''; //fetched through modal relationship
             })
             ->addColumn('doctor',function($row){
                 return "Dr. ".$row->user_data->name ?? '';
             })
             ->addColumn('room_no',function($row){
-                return $row->roomNumberData->room_num;
+                return $row->roomNumberData->room_num ?? '';
             })
             ->addColumn('appointment_date',function($row){
-                return $row->appointment_date;
+                return $row->appointment_date ?? '';
             })
            ->addColumn('action',function($row){
                return ' <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -571,6 +571,7 @@ class OpdoutController extends Controller
     public function opdOutChargeSubmit(Request $request){
         $validator = Validator::make($request->all(),[
             'name' => 'required',
+            'qty' => 'nullable',
             'amount' => 'required'
         ]);
         if($validator->fails()){
@@ -581,6 +582,7 @@ class OpdoutController extends Controller
             $payment_bills->patient_id = $request->patientId;
             $payment_bills->amount_for = 'Charge';
             $payment_bills->title = $request->name;
+            $payment_bills->qty = $request->qty;
             $payment_bills->amount = $request->amount;
         if($payment_bills->save()){
 
@@ -609,6 +611,9 @@ class OpdoutController extends Controller
             ->addColumn('desc',function($row){
                 return $row->title;
             })
+            ->addColumn('qty',function($row){
+                return $row->qty;
+            })
             ->addColumn('amount',function($row){
                 return $row->amount;
             })
@@ -631,6 +636,7 @@ class OpdoutController extends Controller
     public function opdOutChargeDataUpdate(Request $request){
          $update = PaymentBill::where('id',$request->id)->update([
             'title' => $request->name,
+            'qty' => $request->qty,
             'amount' => $request->amount
         ]);
         if($update){

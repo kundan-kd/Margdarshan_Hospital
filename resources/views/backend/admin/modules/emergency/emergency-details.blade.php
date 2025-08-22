@@ -348,6 +348,7 @@
                               <th class="fw-medium">Date</th>
                               <th class="fw-medium">Title</th>
                               <th class="fw-medium">Description</th>
+                              <th class="fw-medium">Quantity</th>
                               <th class="fw-medium">Amount</th>
                               <th class="fw-medium">Action</th>
                              </tr>
@@ -828,6 +829,10 @@
                 <label class="form-label fw-medium" for="emergencyCharge-name">Name</label> <sup class="text-danger">*</sup>
                   <input id="emergencyCharge-name" type="text" class="form-control form-control-sm" placeholder="Charge Name" oninput="validateField(this.id,'input')">
                   <div class="emergencyCharge-name_errorCls d-none"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium" for="emergencyCharge-qty">Quantity</label> <sup class="text-danger">*</sup>
+                  <input id="emergencyCharge-qty" type="number" class="form-control form-control-sm" placeholder="Quantity">
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-medium" for="emergencyCharge-amount">Amount</label> <sup class="text-danger">*</sup>

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('type_id')->nullable();
             $table->double('amount')->default(0);
             $table->string('payment_mode',30)->nullable();
+            $table->string('txn_no',100)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

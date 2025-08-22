@@ -36,6 +36,10 @@ let table_charge = $('#opd-out-charges-list').DataTable({
             name:'desc'
         },
         {
+            data:'qty',
+            name:'qty'
+        },
+        {
             data:'amount',
             name:'amount'
         },
@@ -54,12 +58,13 @@ $('#opdOutCharge-form').on('submit',function(e){
     if(name_check === true && amount_check === true){
        let patientId = $('#patient_Id').val();
        let name = $('#opdOutCharge-name').val();
+       let qty = $('#opdOutCharge-qty').val();
        let amount = $('#opdOutCharge-amount').val();
         $.ajax({
             url:opdOutChargeSubmit,
             type:"POST",
             data:{
-                patientId:patientId,name:name,amount:amount
+                patientId:patientId,name:name,qty:qty,amount:amount
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -103,6 +108,7 @@ function opdOutChargeEdit(id){
                 $('#opd-add-charges').modal('show');
                 $('#opdOutChargeId').val(id);
                 $('#opdOutCharge-name').val(getData.title);
+                $('#opdOutCharge-qty').val(getData.qty);
                 $('#opdOutCharge-amount').val(getData.amount);
             }
         }
@@ -113,12 +119,13 @@ function opdOutChargeUpdate(id){
     let amount_check = validateField('opdOutCharge-amount', 'amount');
     if(name_check === true && amount_check === true){
        let name = $('#opdOutCharge-name').val();
+       let qty = $('#opdOutCharge-qty').val();
        let amount = $('#opdOutCharge-amount').val();
         $.ajax({
             url:opdOutChargeDataUpdate,
             type:"POST",
             data:{
-                id:id,name:name,amount:amount
+                id:id,name:name,qty:qty,amount:amount
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

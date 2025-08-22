@@ -85,6 +85,7 @@ class PurchaseController extends Controller
             'totalTaxAmount' => 'required',
             'totalNetAmount' => 'required',
             'paymentMode' => 'nullable',
+            'txn' => 'nullable',
             'payAmount' => 'nullable',
         ]);
         if ($validator->fails()) {
@@ -113,6 +114,7 @@ class PurchaseController extends Controller
                     $payment_received->type_id =$purchase->id;
                     $payment_received->amount = $request->payAmount;
                     $payment_received->payment_mode = $request->paymentMode;
+                    $payment_received->txn_no = $request->txn;
                     $payment_received->save();
                 }
             }
@@ -245,6 +247,7 @@ class PurchaseController extends Controller
                 $payment_received->type_id = $purchase_id;
                 $payment_received->amount = $request->payAmount;
                 $payment_received->payment_mode = $request->paymentMode;
+                $payment_received->txn_no = $request->txn;
                 $payment_received->save();
             }
             PurchaseItem::where('purchase_id',$request->purchase_id)->where('status',0)->delete();

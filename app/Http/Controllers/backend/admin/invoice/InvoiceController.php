@@ -48,7 +48,8 @@ class InvoiceController extends Controller
     public function payBillAmount(Request $request){
           $validator = Validator::make($request->all(),[
             'amount' => 'required',
-            'pmode' => 'required'
+            'pmode' => 'required',
+            'txn' => 'nullable'
         ]);
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
@@ -60,6 +61,7 @@ class InvoiceController extends Controller
         $payment_received->amount = $request->amount;
         $payment_received->discount_amount = $request->discount_amount;
         $payment_received->payment_mode = $request->pmode;
+        $payment_received->txn_no = $request->txn;
         if($payment_received->save()){
             return response()->json(['success'=>'Discharge amount submitted successfully'],200);
         }else{

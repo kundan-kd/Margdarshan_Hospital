@@ -164,6 +164,7 @@ $('#purchaseEdit_form').on('submit',function(e){
   let totalTaxAmount = parseFloat($('.purchaseEdit_taxAmt').html());
   let totalNetAmount = parseFloat($('.purchaseEdit_netTotalAmt').html());
   let paymentMode = $('#purchaseEdit_paymentMode').val();
+  let txn = $('#purchaseEdit-txn').val();
   let payAmount = $('#purchaseEdit_payAmount').val() || 0;
     $.ajax({
         url:purchaseUpdateDatas,
@@ -172,7 +173,7 @@ $('#purchaseEdit_form').on('submit',function(e){
             'X_CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
         },
         data:{
-            purchase_id:purchase_id,id:id,billNo:billNo,vendorID:vendorID,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount
+            purchase_id:purchase_id,id:id,billNo:billNo,vendorID:vendorID,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,txn:txn,payAmount:payAmount
         },
         success:function(response){
             if(response.success){
@@ -235,3 +236,14 @@ function getPurchaseMedicineSelectedEdit(id,randNum) {
         }
     });
 }
+$('#purchaseEdit_paymentMode').on('change',function(e){
+    e.preventDefault();
+    let pmode = $('#purchaseEdit_paymentMode').val();
+    if(pmode == 'Cash'){
+        $('.pmode').attr("colspan", "2");
+        $('.pmodeTxn').addClass('d-none');
+    }else{
+        $('.pmode').attr("colspan", "1");
+        $('.pmodeTxn').removeClass('d-none');
+    }
+});

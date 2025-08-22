@@ -1,45 +1,3 @@
-// // OLd Method of appending can be conplex over time
-// $(document).ready(function () {
-//     var maxGroup = 100;
-//     var rowCount = 0; // Track the row count
-
-//     $('.select2').select2({ width: 'resolve' });
-
-//     $(".addMore").click(function () {
-//         if ($('.fieldGroup').length < maxGroup) {
-//             rowCount++; // Increment row count
-
-//             var $clone = $(".fieldGroupCopy").clone().removeClass("fieldGroupCopy").addClass("fieldGroup").show();
-
-//             // Remove unnecessary Select2-generated DOM
-//             $clone.find('.select2').removeClass("select2-hidden-accessible").next('.select2').remove();
-
-//             // Assign unique IDs to each input/select
-//             $clone.find("select, input").each(function () {
-//                 var oldId = $(this).attr("id");
-//                 if (oldId) {
-//                     $(this).attr("id", oldId + "_" + rowCount); // Append rowCount to ID
-//                 }
-//             });
-
-//             // Append the modified clone
-//             $(".pharmacy-purchase-bill-table").append($clone);
-
-//             // Re-initialize Select2 for newly created selects
-//             $clone.find('.select2').select2({ width: 'resolve' });
-
-//         } else {
-//             alert('Maximum ' + maxGroup + ' groups are allowed.');
-//         }
-//     });
-
-//     $("body").on("click", ".remove", function () {
-//         $(this).closest(".fieldGroup").remove();
-//     });
-// });
-
- 
-
 
   // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
@@ -247,6 +205,7 @@ $('#purchaseAdd_form').on('submit',function(e){
         let totalTaxAmount = parseFloat($('.purchaseAdd_taxAmt').html());
         let totalNetAmount = parseFloat($('.purchaseAdd_netTotalAmt').html());
         let paymentMode = $('#purchaseAdd_paymentMode').val();
+        let txn = $('#purchaseAdd-txn').val();
         let payAmount = $('#purchaseAdd_payAmount').val() || 0;
         let dueAmount = totalNetAmount - payAmount;
         dueAmount = dueAmount.toFixed(2);
@@ -257,7 +216,7 @@ $('#purchaseAdd_form').on('submit',function(e){
                 'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
             },
             data:{
-                billNo:billNo,vendorID:vendorID,purchase_date:purchase_date,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
+                billNo:billNo,vendorID:vendorID,purchase_date:purchase_date,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,txn:txn,payAmount:payAmount,dueAmount:dueAmount
             },
             success:function(response){
                 if(response.success){
@@ -321,3 +280,14 @@ $('#purchaseAdd_form').on('submit',function(e){
             }
         });
     }
+$('#purchaseAdd_paymentMode').on('change',function(e){
+    e.preventDefault();
+    let pmode = $('#purchaseAdd_paymentMode').val();
+    if(pmode == 'Cash'){
+        $('.pmode').attr("colspan", "2");
+        $('.pmodeTxn').addClass('d-none');
+    }else{
+        $('.pmode').attr("colspan", "1");
+        $('.pmodeTxn').removeClass('d-none');
+    }
+});

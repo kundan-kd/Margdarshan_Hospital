@@ -134,7 +134,7 @@ Billing-add
                             <!-- replica table end -->
                         </tbody>
                     </table>
-                    <button type="button" class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowBilling()">
+                    <button type="button" class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowBilling2()">
                         <i class="ri-add-line"></i> Add
                     </button>
                 </div>
@@ -180,7 +180,7 @@ Billing-add
                         <td class="border-0 text-end fs-6">₹ <span class="billingAdd-totalNetAmount">0</span></td>
                       </tr>
                       <tr>
-                        <td colspan="2" class="border-0">
+                        <td class="border-0 pmode-billing" colspan="2">
                           <label for="billingAdd-paymentMode" style="display: none;">Payment Mode</label>
                           <select id="billingAdd-paymentMode" class="form-select form-select-sm select2-cls" onchange="validateField(this.id, 'select')">
                             <option value="">Select Payment Mode</option>
@@ -189,6 +189,9 @@ Billing-add
                           @endforeach
                         </select>
                          <div class="billingAdd-paymentMode_errorCls d-none"></div>
+                          <td class="border-0 pmodetxn_billing d-none">
+                          <input id="billingAdd-txn" type="text" class="form-control form-control-sm" placeholder="Txn. No.">
+                        </td>
                       </td>
                         <td class="border-0">
                           <input id="billingAdd-payAmount" type="number" step="0.01" class="form-control form-control-sm" placeholder="Payment Amount" readonly>

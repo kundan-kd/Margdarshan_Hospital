@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Discharge Summary</title>
+	<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
 	<style>
 	@media print {
 		body {
@@ -172,9 +173,12 @@
 				<div style="font-weight: bold;">Advice By</div>
 			</div>
 		</div>
-		<div style="text-align:center; margin-top: 20px;"> 
-            <button class="print-button no-print" onclick="window.print()">Print</button>
-        </div>
+		{{-- <div style="text-align:center; margin-top: 20px;"> 
+            <button onclick="window.print()"><i class="ri-printer-line" style="font-size: 20px;"></i></button>
+        </div> --}}
+		<div class="no-print" style="text-align:center; margin-top: 20px;">
+			<button onclick="window.print()"><i class="ri-printer-line" style="font-size: 20px;"></i></button>
+		</div>
 		
 	</div>
 </body>

@@ -36,6 +36,10 @@ let table_charge = $('#emergancy-charges-list').DataTable({
             name:'desc'
         },
         {
+            data:'qty',
+            name:'qty'
+        },
+        {
             data:'amount',
             name:'amount'
         },
@@ -54,15 +58,16 @@ $('#emergencyCharge-form').on('submit',function(e){
     if(name_check === true && amount_check === true){
        let patientId = $('#patient_Id').val();
        let name = $('#emergencyCharge-name').val();
+       let qty = $('#emergencyCharge-qty').val();
        let amount = $('#emergencyCharge-amount').val();
         $.ajax({
             url:emergencyChargeSubmit,
             type:"POST",
             data:{
-                patientId:patientId,name:name,amount:amount
+                patientId:patientId,name:name,qty:qty,amount:amount
             },
             headers:{
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success:function(response){
                 if(response.success){
@@ -103,6 +108,7 @@ function emergencyChargeEdit(id){
                 $('#emergency-add-charges').modal('show');
                 $('#emergencyChargeId').val(id);
                 $('#emergencyCharge-name').val(getData.title);
+                $('#emergencyCharge-qty').val(getData.qty);
                 $('#emergencyCharge-amount').val(getData.amount);
             }
         }
@@ -113,12 +119,13 @@ function emergencyChargeUpdate(id){
     let amount_check = validateField('emergencyCharge-amount', 'amount');
     if(name_check === true && amount_check === true){
        let name = $('#emergencyCharge-name').val();
+       let qty = $('#emergencyCharge-qty').val();
        let amount = $('#emergencyCharge-amount').val();
         $.ajax({
             url:emergencyChargeDataUpdate,
             type:"POST",
             data:{
-                id:id,name:name,amount:amount
+                id:id,name:name,qty:qty,amount:amount
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

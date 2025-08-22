@@ -345,6 +345,7 @@
                               <th class="fw-medium">Date</th>
                               <th class="fw-medium">Title</th>
                               <th class="fw-medium">Description</th>
+                              <th class="fw-medium">Quantity</th>
                               <th class="fw-medium">Amount</th>
                               <th class="fw-medium">Action</th>
                              </tr>
@@ -558,7 +559,11 @@
                   <input id="opdOutCharge-name" type="text" class="form-control form-control-sm" placeholder="Charge Name" oninput="validateField(this.id,'input')">
                   <div class="opdOutCharge-name_errorCls d-none"></div>
               </div>
-              <div class="col-md-6">
+                <div class="col-md-6">
+                <label class="form-label fw-medium" for="opdOutCharge-qty">Quantity</label>
+                  <input id="opdOutCharge-qty" type="number" class="form-control form-control-sm" placeholder="Quantity">
+              </div>
+              <div class="col-md-6 mt-1">
                 <label class="form-label fw-medium" for="opdOutCharge-amount">Amount</label> <sup class="text-danger">*</sup>
                   <input id="opdOutCharge-amount" type="number" class="form-control form-control-sm" placeholder="Charge Amount" oninput="validateField(this.id,'amount')">
                   <div class="opdOutCharge-amount_errorCls d-none"></div>

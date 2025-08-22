@@ -132,9 +132,9 @@ border:1px solid var(--input-form-light)!important;
   /* validateField custom validation css ends*/
   
  /* space between action buttons on forms */
- .w-32-px {
-    margin-right: 8px; /* Adjust spacing */
-}
+ /* .w-32-px {
+    margin-right: 8px; 
+  } */
  /* space between action buttons on forms ends*/
   /* border search start */
 .border-gradient-tab{

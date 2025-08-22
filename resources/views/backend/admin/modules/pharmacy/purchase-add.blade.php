@@ -174,13 +174,19 @@ purchase-add
                         <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_netTotalAmt">0</span></td>
                         </tr>
                         <tr>
-                        <td colspan="2" class="border-0">
+                        <td colspan="2" class="border-0 pmode">
                             <select id="purchaseAdd_paymentMode" class="form-select form-select-sm ">
-                            <option value="">Payment Mode</option>
-                            <option value="Card">Card</option>
-                            <option value="UPI">UPI</option>
-                            <option selected value="Cash">Cash</option>
-                        </select></td>
+                                <option value="">Payment Mode</option>
+                                <option selected value="Cash">Cash</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Card">Card</option>
+                                <option value="Internet Banking">Internet Banking</option>
+                                <option value="Others">Others</option>
+                            </select>
+                         <td class="border-0 pmodeTxn d-none">
+                          <input id="purchaseAdd-txn" type="text" class="form-control form-control-sm" placeholder="Transaction No.">
+                        </td>
+                        </td>
                         <td class="border-0">
                             <input id="purchaseAdd_payAmount" type="number" step="0.01" class="form-control form-control-sm" placeholder="Payment Amount" oninput="checkPayAmountPurchaseAdd(document.getElementsByClassName('purchaseAdd_netTotalAmt')[0].innerHTML,this.value)">
                              <div class="purchaseAdd_payAmount_cls"></div>

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->double('amount')->nullable();
             $table->double('discount_amount')->default(0);
             $table->string('payment_mode',20)->nullable();
+            $table->string('txn_no',100)->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
             $table->softDeletes();

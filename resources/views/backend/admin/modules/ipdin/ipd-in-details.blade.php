@@ -365,6 +365,7 @@
                               <th class="fw-medium">Date</th>
                               <th class="fw-medium">Title</th>
                               <th class="fw-medium">Description</th>
+                              <th class="fw-medium">Quantity</th>
                               <th class="fw-medium">Amount</th>
                               <th class="fw-medium">Action</th>
                              </tr>
@@ -1281,6 +1282,10 @@
                 <label class="form-label fw-medium" for="ipdCharge-name">Title</label> <sup class="text-danger">*</sup>
                   <input id="ipdCharge-name" type="text" class="form-control form-control-sm" placeholder="Charge Name" oninput="validateField(this.id,'input')">
                   <div class="ipdCharge-name_errorCls d-none"></div>
+              </div>
+               <div class="col-md-6">
+                <label class="form-label fw-medium" for="ipdCharge-qty">Quantity</label>
+                  <input id="ipdCharge-qty" type="number" class="form-control form-control-sm" placeholder="Quantity">
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-medium" for="ipdCharge-amount">Amount</label> <sup class="text-danger">*</sup>

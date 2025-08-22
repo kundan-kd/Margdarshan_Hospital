@@ -756,6 +756,7 @@ class EmergencyController extends Controller
     public function emergencyChargeSubmit(Request $request){
         $validator = Validator::make($request->all(),[
             'name' => 'required',
+            'qty' => 'nullable',
             'amount' => 'required'
         ]);
         if($validator->fails()){
@@ -766,6 +767,7 @@ class EmergencyController extends Controller
             $payment_bills->patient_id = $request->patientId;
             $payment_bills->amount_for = 'Charge';
             $payment_bills->title = $request->name;
+            $payment_bills->qty = $request->qty;
             $payment_bills->amount = $request->amount;
         if($payment_bills->save()){
             $timelines = new Timeline();
@@ -795,6 +797,9 @@ class EmergencyController extends Controller
             ->addColumn('desc',function($row){
                 return $row->title;
             })
+            ->addColumn('qty',function($row){
+                return $row->qty;
+            })
             ->addColumn('amount',function($row){
                 return $row->amount;
             })
@@ -817,6 +822,7 @@ class EmergencyController extends Controller
     public function emergencyChargeDataUpdate(Request $request){
          $update = PaymentBill::where('id',$request->id)->update([
             'title' => $request->name,
+            'qty' => $request->qty,
             'amount' => $request->amount
         ]);
         if($update){

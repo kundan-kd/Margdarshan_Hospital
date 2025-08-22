@@ -34,6 +34,7 @@ function billAmountSubmit(id){
     if(pmode_check === true && amt_check === true){
         let pay_amount = $('#billAdd-payAmount').val();
         let pmode = $('#billAdd-paymentMode').val();
+        let txn = $('#billAdd-txn').val();
         let type = "IPD";
         let discount_amount = parseFloat($('.bill-discountAmount').html() || 0);
         if(pmode ==''){
@@ -49,7 +50,7 @@ function billAmountSubmit(id){
                 headers:{
                     'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
                 },
-                data:{patientId:id,amount:pay_amount,pmode:pmode,type:type,discount_amount:discount_amount},
+                data:{patientId:id,amount:pay_amount,pmode:pmode,txn:txn,type:type,discount_amount:discount_amount},
                 success:function(response){
                     if(response.success){
                         toastSuccessAlert(response.success);
@@ -194,3 +195,14 @@ $('#discharge-summaryForm').on('submit', function(e) {
 function billAmountPrint(id){
     window.open('/bill-print/' + id);
 }
+$('#billAdd-paymentMode').on('change',function(e){
+    e.preventDefault();
+    let pmode = $('#billAdd-paymentMode').val();
+    if(pmode == 'Cash'){
+        $('.pmode').attr("colspan", "2");
+        $('.pmodeTxn').addClass('d-none');
+    }else{
+        $('.pmode').attr("colspan", "1");
+        $('.pmodeTxn').removeClass('d-none');
+    }
+})

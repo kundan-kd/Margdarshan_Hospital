@@ -36,6 +36,10 @@ let table_charge = $('#ipd-charges-list').DataTable({
             name:'desc'
         },
         {
+            data:'qty',
+            name:'qty'
+        },
+        {
             data:'amount',
             name:'amount'
         },
@@ -54,12 +58,13 @@ $('#ipdCharge-form').on('submit',function(e){
     if(name_check === true && amount_check === true){
        let patientId = $('#patient_Id').val();
        let name = $('#ipdCharge-name').val();
+       let qty = $('#ipdCharge-qty').val();
        let amount = $('#ipdCharge-amount').val();
         $.ajax({
             url:ipdChargeSubmit,
             type:"POST",
             data:{
-                patientId:patientId,name:name,amount:amount
+                patientId:patientId,name:name,qty:qty,amount:amount
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -103,6 +108,7 @@ function ipdChargeEdit(id){
                 $('#ipd-add-charges').modal('show');
                 $('#ipdChargeId').val(id);
                 $('#ipdCharge-name').val(getData.title);
+                $('#ipdCharge-qty').val(getData.qty);
                 $('#ipdCharge-amount').val(getData.amount);
             }
         }
@@ -113,12 +119,13 @@ function ipdChargeUpdate(id){
     let amount_check = validateField('ipdCharge-amount', 'amount');
     if(name_check === true && amount_check === true){
        let name = $('#ipdCharge-name').val();
+       let qty = $('#ipdCharge-qty').val();
        let amount = $('#ipdCharge-amount').val();
         $.ajax({
             url:ipdChargeDataUpdate,
             type:"POST",
             data:{
-                id:id,name:name,amount:amount
+                id:id,name:name,qty:qty,amount:amount
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

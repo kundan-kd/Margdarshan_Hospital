@@ -123,7 +123,7 @@ Discharge Billing
                         <td class="border-0 text-end fs-6">₹ <span class="bill-totalDueAmount">{{round(($total_amount + $pre_bed_amount ?? 0) - ($received_amount + $discount_amount) ?? 0)}}</span></td>
                       </tr>
                       <tr>
-                        <td colspan="2" class="border-0">
+                        <td colspan="2" class="border-0 pmode">
                            <label for="billAdd-paymentMode" style="display: none;">Payment Mode</label>
                           <select id="billAdd-paymentMode" class="form-select form-select-sm" onchange="validateField(this.id,'select')" {{$visibility}}>
                             <option value="">Select Payment Mode</option>
@@ -131,12 +131,16 @@ Discharge Billing
                             <option value="UPI">UPI</option>
                             <option value="Card">Card</option>
                             <option value="Internet Banking">Internet Banking</option>
+                            <option value="Others">Others</option>
                         </select>
                          <div class="billAdd-paymentMode_errorCls d-none"></div>
+                          <td class="border-0 pmodeTxn d-none">
+                          <input id="billAdd-txn" type="text" class="form-control form-control-sm" placeholder="Transaction No.">
+                        </td>
                       </td>
                         <td class="border-0">
                           <label for="billAdd-payAmount" style="display: none;">Pay Amount</label>
-                          <input id="billAdd-payAmount" type="number" class="form-control form-control-sm" placeholder="Payment Amount" oninput="checkPayAmount(this.value);validateField(this.id,'select')" {{$visibility}}>
+                          <input id="billAdd-payAmount" type="number" class="form-control form-control-sm" placeholder="Pay Amount" oninput="checkPayAmount(this.value);validateField(this.id,'select')" {{$visibility}}>
                            <div class="billAdd-payAmount_errorCls d-none"></div>
                         </td>
                       </tr>

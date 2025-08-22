@@ -10,7 +10,8 @@ class Appointment extends Model
 {
     use HasFactory,SoftDeletes;
     public function patient_data(){
-        return $this-> hasOne('App\Models\Patient','id','patient_id');
+        // return $this-> hasOne('App\Models\Patient','id','patient_id');
+        return $this->belongsTo(Patient::class,'patient_id');
     }
     public function user_data(){
         return $this-> hasOne('App\Models\User','id','doctor_id');

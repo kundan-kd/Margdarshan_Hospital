@@ -135,6 +135,7 @@ class BillingController extends Controller
         'totalTaxAmount' => 'required',
         'totalNetAmount' => 'required',
         'paymentMode' => 'nullable',
+        'txn' => 'nullable',
         'payAmount' => 'nullable'
     ]);
 
@@ -185,6 +186,7 @@ class BillingController extends Controller
             $payment_received->title = 'Medicine Billing Amount';
             $payment_received->amount = $request->payAmount;
             $payment_received->payment_mode = $request->paymentMode;
+            $payment_received->txn_no = $request->txn;
             $payment_received->save();
         }
             // Store purchase items

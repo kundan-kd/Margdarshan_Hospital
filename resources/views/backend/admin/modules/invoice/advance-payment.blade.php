@@ -4,6 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>MH Admission Form</title>
+	<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
 	<style>
 	* {
 		margin: 0;
@@ -229,7 +230,7 @@
 			</table>
 		</div>
 		<div class="no-print" style="text-align:center; margin-top: 20px;">
-			<button onclick="window.print()">Print this Page</button>
+			<button onclick="window.print()"><i class="ri-printer-line" style="font-size: 20px;"></i></button>
 		</div>
 	</div>
 </body>

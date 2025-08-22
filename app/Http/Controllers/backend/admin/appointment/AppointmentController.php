@@ -32,29 +32,30 @@ class AppointmentController extends Controller
     public function viewAppointments(Request $request){
      if($request->ajax()){
         $appointment = Appointment::get();
+            //  dd($appointment);
         return DataTables::of($appointment)
         ->addColumn('patient_id',function($row){
-            return $row->patient_data->patient_id;
+            return $row->patient_data->patient_id ?? '';
             // return '<a target="_blank" class="text-primary cursor-pointer" onclick="opdPatientUsingId('.$row->patient_id.')">'.$row->patient_data->patient_id.'</a>';
         })
         ->addColumn('patient_name',function($row){
-            return $row->patient_name;
+            return $row->patient_name ?? '';
         })
         ->addColumn('appointment_date',function($row){
-            return $row->appointment_date;
+            return $row->appointment_date ?? '';
         })
         ->addColumn('mobile',function($row){
-            return $row->patient_data->mobile; //fetched through modal relationship
+            return $row->patient_data->mobile ?? ''; //fetched through modal relationship
         })
         ->addColumn('gender',function($row){
-            return $row->patient_data->gender;
+            return $row->patient_data->gender ?? '';
         })
         ->addColumn('doctor',function($row){
-            return "Dr. ".$row->user_data->name;
+            return "Dr. ".$row->user_data->name ?? '';
         })
         
         ->addColumn('fee',function($row){
-            return $row->fee;
+            return $row->fee ?? '';
         })
         ->addColumn('paid_status',function($row){
             return $row->paid_status === 'Paid'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Paid</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white" >Unpaid</span>';  
@@ -66,19 +67,22 @@ class AppointmentController extends Controller
             $check_invoice = $row->paid_status == 'UnPaid' ? 'd-none' : '';
             $check_payment = $row->paid_status == 'Paid' ? 'd-none' : '';
             $check_visit = $row->status == 'Visited' ? 'd-none' : '';
-            return '
+           return '
+            <div class="d-flex gap-1">
                 <a href="javascript:void(0)" title="Appointment Bill" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center '.$check_invoice.'">
                     <iconify-icon icon="mdi:file-download-outline" onclick="printAppointmentBill(' . $row->id . ')"></iconify-icon>
                 </a>
                 <a href="javascript:void(0)" title="Bill Payment" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_payment.'">
-                    <iconify-icon icon="lucide:edit" onclick="appointmentEdit(' . $row->id . ')" ></iconify-icon>
+                    <iconify-icon icon="lucide:edit" onclick="appointmentEdit(' . $row->id . ')"></iconify-icon>
                 </a>
                 <a href="javascript:void(0)" title="Visit Date" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
-                    <iconify-icon icon="lucide:calendar" onclick="visitEdit(' . $row->id . ')" ></iconify-icon>
+                    <iconify-icon icon="lucide:calendar" onclick="visitEdit(' . $row->id . ')"></iconify-icon>
                 </a>
-                <a href="javascript:void(0)" title="Delete" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
-                    <iconify-icon icon="mingcute:delete-2-line" onclick="deleteReason(' . $row->id . ')"></iconify-icon>
-                </a>';
+                <!--<a href="javascript:void(0)" title="Delete" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
+                    <iconify-icon icon="mdi:close" style="font-size:18px;" onclick="deleteReason(' . $row->id . ')"></iconify-icon>
+                </a> -->
+            </div>';
+
         })
         ->rawColumns(['patient_id','paid_status','status','action'])
         ->make(true);
@@ -385,6 +389,14 @@ class AppointmentController extends Controller
     }
     public function deleteAppointmentData(Request $request){
         $patient_data = Appointment::where('id',$request->id)->get(['patient_id']);
+        $patient_details = Patient::where('id',$patient_data[0]->patient_id)->get();
+        //add canceled appointment to lead
+        $leads = new Lead();
+        $leads->name = $patient_details[0]->name ??'';
+        $leads->mobile = $patient_details[0]->mobile ?? '';
+        $leads->source = 'Appointment Cancelled';
+        $leads->address = $patient_details[0]->address ?? '';
+        $leads->save();
         $update = Appointment::where('id',$request->id)->update([
             'reason_for_delete' => $request->reason,
             'status' => 'Deleted'

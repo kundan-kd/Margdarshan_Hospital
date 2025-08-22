@@ -21,7 +21,64 @@ function setMedicineCategory(){
         }
     });
 }
+// function addNewRowBilling2(){
+//     let category_id = $('#billingAdd-category0').val();
+//     let category_name = $('#billingAdd-category0 option:selected').text();
+//     let name_id = $('#billingAdd-name0').val();
+//     let name = $('#billingAdd-name0 option:selected').text();
+//     let batch_id = $('#billingAdd-batch0').val();
+//     let batch_name = $('#billingAdd-batch0 option:selected').text();
+//     let expiry = $('#billingAdd-expiry0').val();
+//     let qty = $('#billingAdd-qty0').val();
+//     let avlQty = $('#billingAdd-avlQty0').val();
+//     let salesPrice = $('#billingAdd-salesPrice0').val();
+//     let amount = $('#billingAdd-amount0').val();
+//     let tax = $('#billingAdd-tax0').val();
+//     // console.log(category_id);
+//     // console.log(category_name);
+//     // console.log(name_id);
+//     // console.log(name);
+//     // console.log(batch_id);
+//     // console.log(batch_name);
+//     // console.log(expiry);
+//     // console.log(qty);
+//     // console.log(avlQty);
+//     // console.log(salesPrice);
+//     // console.log(amount);
+//     // console.log(tax);
 
+//       let itemDatas = '';
+// itemDatas += `<tr>
+//     <td>${category_name}
+//         <input type="hidden" name="billingAdd-category[]" value="${category_id}">
+//     </td>
+//     <td>${name}
+//         <input type="hidden" name="billingAdd-name[]" value="${name_id}">
+//     </td>
+//     <td>${batch_name}
+//         <input type="hidden" name="billingAdd-batch[]" value="${batch_id}">
+//     </td>
+//     <td>${expiry}
+//         <input type="hidden" name="billingAdd-expiry[]" value="${expiry}">
+//     </td>
+//     <td>${qty}
+//         <input type="hidden" name="billingAdd-qty[]" value="${qty}">
+//     </td>
+//     <td>${avlQty}
+//         <input type="hidden" name="billingAdd-avlQty[]" value="${avlQty}">
+//     </td>
+//     <td>${salesPrice}
+//         <input type="hidden" name="billingAdd-salesPrice[]" value="${salesPrice}">
+//     </td>
+//     <td>${amount}
+//         <input type="hidden" name="billingAdd-amount[]" value="${amount}">
+//     </td>
+//     <td>${tax}
+//         <input type="hidden" name="billingAdd-tax[]" value="${tax}">
+//     </td>
+// </tr>`;
+//           $('.newRowAppendBilling').parent().append(itemDatas); // Append properly to tbody
+//  }
 
 function addNewRowBilling() {
     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
@@ -348,6 +405,7 @@ $('#billingAdd-Form').on('submit',function(e){
         let totalTaxAmount = parseFloat($('.billingAdd-totalTax').html());
         let totalNetAmount = parseFloat($('.billingAdd-totalNetAmount').html());
         let paymentMode = $('#billingAdd-paymentMode').val();
+        let txn = $('#billingAdd-txn').val();
         let payAmount = $('#billingAdd-payAmount').val();
         let dueAmount = totalNetAmount - payAmount;
         dueAmount = dueAmount.toFixed(2);
@@ -360,7 +418,7 @@ $('#billingAdd-Form').on('submit',function(e){
                 'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
             },
             data:{
-                category:category,name:name,batchNo:batchNo,expiry:expiry,qty:qty,salesPrice:salesPrice,taxPer:taxPer,taxAmount:taxAmount,amount:amount,billNo:billNo,patientID:patientID,resDoctor:resDoctor,outDoctor:outDoctor,notes:notes,totalAmount:totalAmount,discountPer:discountPer,totalDiscountAmount:totalDiscountAmount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,payAmount:payAmount,dueAmount:dueAmount
+                category:category,name:name,batchNo:batchNo,expiry:expiry,qty:qty,salesPrice:salesPrice,taxPer:taxPer,taxAmount:taxAmount,amount:amount,billNo:billNo,patientID:patientID,resDoctor:resDoctor,outDoctor:outDoctor,notes:notes,totalAmount:totalAmount,discountPer:discountPer,totalDiscountAmount:totalDiscountAmount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,txn:txn,payAmount:payAmount,dueAmount:dueAmount
             },
             success:function(response){
                 if(response.success){
@@ -377,5 +435,16 @@ $('#billingAdd-Form').on('submit',function(e){
         });
     }else{
         console.log('Please fill all required fields');
+    }
+});
+$('#billingAdd-paymentMode').on('change',function(e){
+    e.preventDefault();
+    let pmode = $('#billingAdd-paymentMode').val();
+    if(pmode == 2){
+        $('.pmode-billing').attr("colspan", "2");
+        $('.pmodetxn_billing').addClass('d-none');
+    }else{
+        $('.pmode-billing').attr("colspan", "1");
+        $('.pmodetxn_billing').removeClass('d-none');
     }
 });

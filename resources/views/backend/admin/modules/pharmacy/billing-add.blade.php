@@ -83,7 +83,7 @@ Billing-add
                         <tbody>
                             <tr class="fieldGroup">
                             <td>
-                                    <select id="billingAdd-category0" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicine(this.value,0)" required>
+                                    <select id="billingAdd-category0" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicine(this.value,0)">
                                         <option value="" selected>Select</option>
                                         @foreach ($categories_data as $category)
                                             <option value="{{$category->id}}">{{$category->name}}</option>
@@ -91,12 +91,12 @@ Billing-add
                                     </select>
                                 </td>
                                 <td>
-                                    <select id="billingAdd-name0" name="billingAdd-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetails(this.value,0)" required>
+                                    <select id="billingAdd-name0" name="billingAdd-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetails(this.value,0)">
                                         <option value="" selected>Select</option>
                                     </select>
                                 </td>
                                 <td>
-                                    <select id="billingAdd-batch0" name="billingAdd-batch[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchExpiry(this.value,0)" required>
+                                    <select id="billingAdd-batch0" name="billingAdd-batch[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchExpiry(this.value,0)">
                                         <option selected>Select</option>
                                     </select>
                                 </td>
@@ -107,7 +107,7 @@ Billing-add
                                     </div>
                                 </td>
                                 <td>
-                                    <input id="billingAdd-qty0" name="billingAdd-qty[]" name="billingAdd-name" class="form-control form-control-sm" type="number" placeholder="Quantity" oninput="getBillingAmount(0)" required>
+                                    <input id="billingAdd-qty0" name="billingAdd-qty[]" name="billingAdd-name" class="form-control form-control-sm" type="number" placeholder="Quantity" oninput="getBillingAmount(0)">
                                 </td>
                                 <td>
                                     <input id="billingAdd-avlQty0" name="billingAdd-avlQty[]" type="number" class="form-control form-control-sm" value="" placeholder="Avilable Qty" readonly>
@@ -134,7 +134,7 @@ Billing-add
                             <!-- replica table end -->
                         </tbody>
                     </table>
-                    <button type="button" class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowBilling2()">
+                    <button type="button" class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowBilling()">
                         <i class="ri-add-line"></i> Add
                     </button>
                 </div>

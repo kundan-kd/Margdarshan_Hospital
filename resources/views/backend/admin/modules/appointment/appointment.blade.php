@@ -363,6 +363,39 @@ $ddate = date("d/m/yy");
         </div>
       </div>
     </div>
+      <div class="modal fade" id="appointment-dateedit-modal" tabindex="-1" role="dialog" aria-labelledby="appointment-dateedit-modal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white bedtype-title">Appointment Date Edit</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+               {{-- <form action="" id="apptEdit-form" class="needs-validation" novalidate="">
+                @csrf --}}
+                <div class="modal-body">
+                <div class="row gy-3">
+                  <div class="col-md-12">
+                    <input type="hidden" id="apptDateEdit_id">
+                    <label class="form-label" for="apptNewDate">Appointment New Date</label>
+                    <input type="date" id="apptNewDate" class="form-control form-control-sm" placeholder="DD-MM-YYYY" oninput="validateField(this.id,'select')">
+                    <div class="apptNewDate_errorCls d-none"></div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary btn-sm apptVisitSubmit" type="button" onclick="updateAppointmentDate(document.getElementById('apptDateEdit_id').value)">Submit</button>
+                        <button class="btn btn-primary-600  btn-sm fw-normal apptVisitSpinn d-none" type="button">
+                          <span class="sr-only">please wait...</span>
+                        </button>
+                    </div>
+             {{-- </form> --}}
+        </div>
+      </div>
+    </div>
   </div>
  <!-- paid amount model end-->
   <!-- delete reason modal start -->
@@ -415,6 +448,7 @@ $ddate = date("d/m/yy");
   const getDoctorAddedData = "{{route('appointment-booking.getDoctorAddedData')}}";
   const getDoctorData = "{{route('appointment-booking.getDoctorData')}}";
   const updateAppointmentVisitData = "{{route('appointment-booking.updateAppointmentVisitData')}}";
+  const appointmentDataUpdate = "{{route('appointment-booking.appointmentDataUpdate')}}";
   const getPatientDataUsingMobile ="{{route('common.getPatientData')}}"; // also used in ipd-in.blade
      const fillPatientData = "{{route('common.fillPatientData')}}"; 
 
@@ -471,6 +505,7 @@ $ddate = date("d/m/yy");
     getDatePicker('#dateAppt'); 
     // getDatePicker('#patientDOB'); 
     getDatePicker('#apptVisitDate'); 
+    getDatePicker('#apptNewDate'); 
 
 </script>
 

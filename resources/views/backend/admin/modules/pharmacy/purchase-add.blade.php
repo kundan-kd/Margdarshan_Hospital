@@ -92,7 +92,7 @@ purchase-add
                         <tbody>
                             <tr class="fieldGroup">
                                 <td>
-                                    <select id="purchaseAdd_category0" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" onchange="getPurchaseMedicine(this.value,0)" required>
+                                    <select id="purchaseAdd_category0" name="purchaseAdd_category[]" class="form-select form-select-sm select2-cls" onchange="getPurchaseMedicine(this.value,0)" >
                                         <option value="" selected disabled>Select</option>
                                         @foreach ($categories as $category)
                                             <option value="{{$category->id}}">{{$category->name}}</option>
@@ -100,34 +100,34 @@ purchase-add
                                     </select>
                                 </td>
                                 <td>
-                                    <select id="purchaseAdd_name0" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls" required onchange="getTaxValue(this.value,0)">
+                                    <select id="purchaseAdd_name0" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls"  onchange="getTaxValue(this.value,0)">
                                         <option value="" selected>Select</option>
                                     </select>
                                 </td>
                                 <td>
-                                    <input id="purchaseAdd_batch0" name="purchaseAdd_batch[]" class="form-control form-control-sm" type="text" placeholder="Batch No" required>
+                                    <input id="purchaseAdd_batch0" name="purchaseAdd_batch[]" class="form-control form-control-sm" type="text" placeholder="Batch No" >
                                 </td>
                                 <td>
-                                    <input id="purchaseAdd_expiry0" name="purchaseAdd_expiry[]" class="form-control form-control-sm expiry-date" type="text" placeholder="Expiry Date" required>
+                                    <input id="purchaseAdd_expiry0" name="purchaseAdd_expiry[]" class="form-control form-control-sm expiry-date" type="text" placeholder="Expiry Date" >
                                 </td>
                                 <td>
-                                    <input id="purchaseAdd_mrp0" name="purchaseAdd_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP" required step="0.01">
+                                    <input id="purchaseAdd_mrp0" name="purchaseAdd_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP"  step="0.01">
                                 </td>
                                 <td>
-                                    <input id="purchaseAdd_salesPrice0" name="purchaseAdd_salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sale Price" required step="0.01">
+                                    <input id="purchaseAdd_salesPrice0" name="purchaseAdd_salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sale Price"  step="0.01">
                                 </td>
                                 
                                 <td>
-                                    <input id="purchaseAdd_qty0" name="purchaseAdd_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" oninput="getAmount(0)" required>
+                                    <input id="purchaseAdd_qty0" name="purchaseAdd_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" oninput="getAmount(0)" >
                                 </td>
                                 <td>
-                                    <input id="purchaseAdd_purchaseRate0" name="purchaseAdd_purchaseRate[]" type="number" class="form-control form-control-sm" placeholder="Purchase Rate" oninput="getAmount(0)" required step="0.01">
+                                    <input id="purchaseAdd_purchaseRate0" name="purchaseAdd_purchaseRate[]" type="number" class="form-control form-control-sm" placeholder="Purchase Rate" oninput="getAmount(0)"  step="0.01">
                                 </td>
                                 <td>
                                     <input id="purchaseAdd_amount0" name="purchaseAdd_amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
                                 </td>
                                 <td>
-                                    <input id="purchaseAdd_tax0" name="purchaseAdd_tax[]" type="number" class="form-control form-control-sm" placeholder="Tax" oninput="getTax(0)" required readonly>
+                                    <input id="purchaseAdd_tax0" name="purchaseAdd_tax[]" type="number" class="form-control form-control-sm" placeholder="Tax" oninput="getTax(0)"  readonly>
                                 </td>
                                 
                                 

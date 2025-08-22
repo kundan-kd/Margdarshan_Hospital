@@ -519,6 +519,43 @@ function appointmentEdit(id){
         }
     });
 }
+function appointmentDateEdit(id){ 
+    $.ajax({
+        url: getAppointmentData,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:id},
+        success:function(response){
+            if(response.success){
+                getData = response.data[0];
+                // $('#appointment-edit-modal').modal('show');
+                 $('#appointment-dateedit-modal').modal('show');
+                $('#apptDateEdit_id').val(id);
+                $('#apptNewDate').val(getData.appointment_date);
+            }
+        }
+    });
+}
+function updateAppointmentDate(id){
+    let newDate = $('#apptNewDate').val();
+     $.ajax({
+        url: appointmentDataUpdate,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data:{id:id,newDate:newDate},
+        success:function(response){
+            if(response.success){
+                 $('#appointment-dateedit-modal').modal('hide');
+                $('#apptDateEdit_id').val('');
+                $('#appointment-book-table').DataTable().ajax.reload();
+            }
+        }
+    });
+}
 
 function updatePayment(id){
 let pay_amount = $('#apptEditPaymentAmt').val();

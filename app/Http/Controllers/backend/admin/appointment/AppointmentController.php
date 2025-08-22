@@ -78,6 +78,9 @@ class AppointmentController extends Controller
                 <a href="javascript:void(0)" title="Visit Date" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
                     <iconify-icon icon="lucide:calendar" onclick="visitEdit(' . $row->id . ')"></iconify-icon>
                 </a>
+                <a href="javascript:void(0)" title="Change Appointment Date" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.' ">
+                    <iconify-icon icon="lucide:calendar" onclick="appointmentDateEdit(' . $row->id . ')"></iconify-icon>
+                </a>
                 <!--<a href="javascript:void(0)" title="Delete" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
                     <iconify-icon icon="mdi:close" style="font-size:18px;" onclick="deleteReason(' . $row->id . ')"></iconify-icon>
                 </a> -->
@@ -411,6 +414,16 @@ class AppointmentController extends Controller
         }else{
             return response()->json(['error_success' => 'Appointment not cancelled']);
 
+        }
+    }
+    public function appointmentDataUpdate(Request $request){
+        $update = Appointment::where('id',$request->id)->update([
+            'appointment_date' => $request->newDate
+        ]);
+        if($update){
+             return response()->json(['success' => 'Appointment date updated successfully'],200);
+        }else{
+            return response()->json(['error_success' => 'Appointment date not updated']);
         }
     }
 }

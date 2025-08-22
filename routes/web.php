@@ -95,6 +95,7 @@ Route::post('/appointment-booking-doctor-list',[AppointmentController::class,'ge
 Route::post('/appointment-booking-doctor-added-data',[AppointmentController::class,'getDoctorAddedData'])->name('appointment-booking.getDoctorAddedData');
 Route::post('/appointment-booking-doctor-details',[AppointmentController::class,'getDoctorData'])->name('appointment-booking.getDoctorData');
 Route::post('/appointment-booking-visit-update',[AppointmentController::class,'updateVisitData'])->name('appointment-booking.updateAppointmentVisitData');
+Route::post('/appointment-booking-appointment-update',[AppointmentController::class,'appointmentDataUpdate'])->name('appointment-booking.appointmentDataUpdate');
 
 Route::get('/patient',[PatientController::class,'index'])->name('patient.index');
 Route::post('/patient-details',[PatientController::class,'viewPatients'])->name('patient.viewPatients');

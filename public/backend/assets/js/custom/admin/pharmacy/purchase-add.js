@@ -34,8 +34,74 @@ function setMedicineCategory(){
         }
     });
 }
+function addNewRow(){
+    let category_id = $('#purchaseAdd_category0').val();
+    let category_name = $('#purchaseAdd_category0 option:selected').text();
+    let name_id = $('#purchaseAdd_name0').val();
+    let name = $('#purchaseAdd_name0 option:selected').text();
+    let batch = $('#purchaseAdd_batch0').val();
+    let expiry = $('#purchaseAdd_expiry0').val();
+    let mrp = $('#purchaseAdd_mrp0').val();
+    let salesPrice = $('#purchaseAdd_salesPrice0').val();
+    let qty = $('#purchaseAdd_qty0').val();
+    let purchaseRate = $('#purchaseAdd_purchaseRate0').val();
+    let amount = $('#purchaseAdd_amount0').val();
+    let tax = $('#purchaseAdd_tax0').val();
 
-function addNewRow() {
+      let itemDatas = '';
+itemDatas += `<tr>
+    <td>${category_name}
+        <input type="hidden" name="purchaseAdd_category[]" value="${category_id}">
+    </td>
+    <td>${name}
+        <input type="hidden" name="purchaseAdd_name[]" value="${name_id}">
+    </td>
+    <td>${batch}
+        <input type="hidden" name="purchaseAdd_batch[]" value="${batch}">
+    </td>
+    <td>${expiry}
+        <input type="hidden" name="purchaseAdd_expiry[]" value="${expiry}">
+    </td>
+    <td>${mrp}
+        <input type="hidden" name="purchaseAdd_mrp[]" value="${mrp}">
+    </td>
+    <td>${salesPrice}
+        <input type="hidden" name="purchaseAdd_salesPrice[]" value="${salesPrice}">
+    </td>
+    <td>${qty}
+        <input type="hidden" name="purchaseAdd_qty[]" value="${qty}">
+    </td>
+    <td>${purchaseRate}
+        <input type="hidden" name="purchaseAdd_purchaseRate[]" value="${purchaseRate}">
+    </td>
+    <td>${amount}
+        <input type="hidden" name="purchaseAdd_amount[]" value="${amount}">
+    </td>
+    <td>${tax}
+        <input type="hidden" name="purchaseAdd_tax[]" value="${tax}">
+    </td>
+      <td>
+    <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowBilling(this)">
+        <i class="ri-close-line"></i>
+    </button>
+</td>
+</tr>`;
+          $('.newRowAppend').parent().append(itemDatas); // Append properly to tbody
+ 
+       // / Clear inputs
+    $('#purchaseAdd_category0').val('').change();
+    $('#purchaseAdd_name0').val('').change();
+    $('#purchaseAdd_batch0').val('');
+    $('#purchaseAdd_expiry0').val('');
+    $('#purchaseAdd_mrp0').val('');
+    $('#purchaseAdd_salesPrice0').val('');
+    $('#purchaseAdd_qty0').val('');
+    $('#purchaseAdd_purchaseRate0').val('');
+    $('#purchaseAdd_amount0').val('');
+    $('#purchaseAdd_tax0').val('');
+
+ }
+function addNewRow2() {
     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
     $('.randNumNew').html(rand);
     // $.ajax({
@@ -104,6 +170,11 @@ function addNewRow() {
  function removeRow(x){
     x.closest("tr").remove(); // remove entire row with tr selector
 }
+ function removeRowBilling(x){
+    x.closest("tr").remove(); // remove entire row with tr selector
+
+}
+
 
 function getAmount(randNum){
     let qty = parseFloat($('#purchaseAdd_qty' + randNum).val()) || 0; // Convert to number, default to 0 if invalid
@@ -187,16 +258,16 @@ $('#purchaseAdd_form').on('submit',function(e){
         let billNo = $('#purchaseAdd_billNo').val();
         let vendorID = $('#purchaseAdd_vendor').val();
         let purchase_date = $('#purchaseAdd_Date').val();
-        let category = $('select[name="purchaseAdd_category[]"]').map(function(){return $(this).val();}).get();
-        let name = $('select[name="purchaseAdd_name[]"]').map(function(){return $(this).val();}).get();
-        let batchNo = $('input[name="purchaseAdd_batch[]"]').map(function(){return $(this).val();}).get();
-        let expiry = $('input[name="purchaseAdd_expiry[]"]').map(function(){return $(this).val();}).get();
-        let mrp = $('input[name="purchaseAdd_mrp[]"]').map(function(){return $(this).val();}).get();
-        let salesPrice = $('input[name="purchaseAdd_salesPrice[]"]').map(function(){return $(this).val();}).get();
-        let tax = $('input[name="purchaseAdd_tax[]"]').map(function(){return $(this).val();}).get();
-        let qty = $('input[name="purchaseAdd_qty[]"]').map(function(){return $(this).val();}).get();
-        let purchaseRate = $('input[name="purchaseAdd_purchaseRate[]"]').map(function(){return $(this).val();}).get();
-        let amount = $('input[name="purchaseAdd_amount[]"]').map(function(){return $(this).val();}).get();
+        let category = $('input[name="purchaseAdd_category[]"]').map(function(){return $(this).val();}).get();
+        let name = $('input[name="purchaseAdd_name[]"]').map(function(){return $(this).val();}).get();
+        let batchNo = $('input[name="purchaseAdd_batch[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
+        let expiry = $('input[name="purchaseAdd_expiry[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
+        let mrp = $('input[name="purchaseAdd_mrp[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
+        let salesPrice = $('input[name="purchaseAdd_salesPrice[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
+        let tax = $('input[name="purchaseAdd_tax[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
+        let qty = $('input[name="purchaseAdd_qty[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
+        let purchaseRate = $('input[name="purchaseAdd_purchaseRate[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
+        let amount = $('input[name="purchaseAdd_amount[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
 
         let naration = $('#purchaseAdd_naration').val();
         let totalAmount = parseFloat($('.purchaseAdd_totalAmt').html());

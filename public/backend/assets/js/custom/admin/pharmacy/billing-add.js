@@ -21,135 +21,139 @@ function setMedicineCategory(){
         }
     });
 }
-// function addNewRowBilling2(){
-//     let category_id = $('#billingAdd-category0').val();
-//     let category_name = $('#billingAdd-category0 option:selected').text();
-//     let name_id = $('#billingAdd-name0').val();
-//     let name = $('#billingAdd-name0 option:selected').text();
-//     let batch_id = $('#billingAdd-batch0').val();
-//     let batch_name = $('#billingAdd-batch0 option:selected').text();
-//     let expiry = $('#billingAdd-expiry0').val();
-//     let qty = $('#billingAdd-qty0').val();
-//     let avlQty = $('#billingAdd-avlQty0').val();
-//     let salesPrice = $('#billingAdd-salesPrice0').val();
-//     let amount = $('#billingAdd-amount0').val();
-//     let tax = $('#billingAdd-tax0').val();
-//     // console.log(category_id);
-//     // console.log(category_name);
-//     // console.log(name_id);
-//     // console.log(name);
-//     // console.log(batch_id);
-//     // console.log(batch_name);
-//     // console.log(expiry);
-//     // console.log(qty);
-//     // console.log(avlQty);
-//     // console.log(salesPrice);
-//     // console.log(amount);
-//     // console.log(tax);
+function addNewRowBilling(){
+    let category_id = $('#billingAdd-category0').val();
+    let category_name = $('#billingAdd-category0 option:selected').text();
+    let name_id = $('#billingAdd-name0').val();
+    let name = $('#billingAdd-name0 option:selected').text();
+    let batch_id = $('#billingAdd-batch0').val();
+    let batch_name = $('#billingAdd-batch0 option:selected').text();
+    let expiry = $('#billingAdd-expiry0').val();
+    let qty = $('#billingAdd-qty0').val();
+    let avlQty = $('#billingAdd-avlQty0').val();
+    let salesPrice = $('#billingAdd-salesPrice0').val();
+    let amount = $('#billingAdd-amount0').val();
+    let tax = $('#billingAdd-tax0').val();
+    let taxAmount = $('#billingAdd-taxAmount0').val();
 
-//       let itemDatas = '';
-// itemDatas += `<tr>
-//     <td>${category_name}
-//         <input type="hidden" name="billingAdd-category[]" value="${category_id}">
-//     </td>
-//     <td>${name}
-//         <input type="hidden" name="billingAdd-name[]" value="${name_id}">
-//     </td>
-//     <td>${batch_name}
-//         <input type="hidden" name="billingAdd-batch[]" value="${batch_id}">
-//     </td>
-//     <td>${expiry}
-//         <input type="hidden" name="billingAdd-expiry[]" value="${expiry}">
-//     </td>
-//     <td>${qty}
-//         <input type="hidden" name="billingAdd-qty[]" value="${qty}">
-//     </td>
-//     <td>${avlQty}
-//         <input type="hidden" name="billingAdd-avlQty[]" value="${avlQty}">
-//     </td>
-//     <td>${salesPrice}
-//         <input type="hidden" name="billingAdd-salesPrice[]" value="${salesPrice}">
-//     </td>
-//     <td>${amount}
-//         <input type="hidden" name="billingAdd-amount[]" value="${amount}">
-//     </td>
-//     <td>${tax}
-//         <input type="hidden" name="billingAdd-tax[]" value="${tax}">
-//     </td>
-// </tr>`;
-//           $('.newRowAppendBilling').parent().append(itemDatas); // Append properly to tbody
-//  }
+      let itemDatas = '';
+itemDatas += `<tr>
+    <td>${category_name}
+        <input type="hidden" name="billingAdd-category[]" value="${category_id}">
+    </td>
+    <td>${name}
+        <input type="hidden" name="billingAdd-name[]" value="${name_id}">
+    </td>
+    <td>${batch_name}
+        <input type="hidden" name="billingAdd-batch[]" value="${batch_id}">
+    </td>
+    <td>${expiry}
+        <input type="hidden" name="billingAdd-expiry[]" value="${expiry}">
+    </td>
+    <td>${qty}
+        <input type="hidden" name="billingAdd-qty[]" value="${qty}">
+    </td>
+    <td>${avlQty}
+        <input type="hidden" name="billingAdd-avlQty[]" value="${avlQty}">
+    </td>
+    <td>${salesPrice}
+        <input type="hidden" name="billingAdd-salesPrice[]" value="${salesPrice}">
+    </td>
+    <td>${amount}
+        <input type="hidden" name="billingAdd-amount[]" value="${amount}">
+    </td>
+    <td>${tax}
+        <input type="hidden" name="billingAdd-tax[]" value="${tax}">
+    </td>
+    <td>
+        <input type="hidden" name="billingAdd-taxAmount[]" value="${taxAmount}">
+    </td>
+      <td>
+    <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowBilling(this)">
+        <i class="ri-close-line"></i>
+    </button>
+</td>
+</tr>`;
+          $('.newRowAppendBilling').parent().append(itemDatas); // Append properly to tbody
+ 
+       // / Clear inputs
+    $('#billingAdd-category0').val('').change();
+    $('#billingAdd-name0').val('').change();
+    $('#billingAdd-batch0').val('').change();
+    $('#billingAdd-expiry0').val('');
+    $('#billingAdd-qty0').val('');
+    $('#billingAdd-avlQty0').val('');
+    $('#billingAdd-salesPrice0').val('');
+    $('#billingAdd-amount0').val('');
+    $('#billingAdd-tax0').val('');
+    $('#billingAdd-taxAmount0').val('');
 
-function addNewRowBilling() {
-    let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
-    //   $.ajax({
-    //     url:getBillingCategoryDatas,
-    //     type:"GET",
-    //     success:function(response){
-    //         let getCategoryData = response.data;
+ }
+// function addNewRowBilling22() {
+//     let rand = Math.floor(Math.random() * 100000); // Generate a unique random number
             
             
-            let newRowDataBilling = `<tr class="fieldGroup">
-                              <td>
-                                  <select id="billingAdd-category${rand}" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicine(this.value,${rand})">
-                                        <option value="" selected disabled>Select</option>`;
-                                    medicineCategory.forEach(element =>{
-                                     newRowDataBilling += ` <option value="${element.id}">${element.name}</option>`;
-                                    });
-                                newRowDataBilling += ` </select>
-                              </td>
-                              <td>
-                                  <select id="billingAdd-name${rand}" name="billingAdd-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetails(this.value,${rand})">
-                                      <option selected disabled>Select</option>
-                                  </select>
-                              </td>
-                              <td>
-                                  <select id="billingAdd-batch${rand}" name="billingAdd-batch[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchExpiry(this.value,${rand})">
-                                      <option selected>Select</option>
-                                      <option value="1">Batch A</option>
-                                      <option value="2">Batch B</option>
-                                      <option value="3">Batch C</option>
-                                  </select>
-                              </td>
-                              <td>
-                                  <div class=" position-relative">
-                                      <input id="billingAdd-expiry${rand}" name="billingAdd-expiry[]" class="form-control radius-8 bg-base expiry-date${rand}"  type="text" placeholder="MM/YYYY" readonly>
+//             let newRowDataBilling = `<tr class="fieldGroup">
+//                               <td>
+//                                   <select id="billingAdd-category${rand}" name="billingAdd-category[]" class="form-select form-select-sm select2-cls w-100" onchange="getBillingMedicine(this.value,${rand})">
+//                                         <option value="" selected disabled>Select</option>`;
+//                                     medicineCategory.forEach(element =>{
+//                                      newRowDataBilling += ` <option value="${element.id}">${element.name}</option>`;
+//                                     });
+//                                 newRowDataBilling += ` </select>
+//                               </td>
+//                               <td>
+//                                   <select id="billingAdd-name${rand}" name="billingAdd-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetails(this.value,${rand})">
+//                                       <option selected disabled>Select</option>
+//                                   </select>
+//                               </td>
+//                               <td>
+//                                   <select id="billingAdd-batch${rand}" name="billingAdd-batch[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchExpiry(this.value,${rand})">
+//                                       <option selected>Select</option>
+//                                       <option value="1">Batch A</option>
+//                                       <option value="2">Batch B</option>
+//                                       <option value="3">Batch C</option>
+//                                   </select>
+//                               </td>
+//                               <td>
+//                                   <div class=" position-relative">
+//                                       <input id="billingAdd-expiry${rand}" name="billingAdd-expiry[]" class="form-control radius-8 bg-base expiry-date${rand}"  type="text" placeholder="MM/YYYY" readonly>
                                       
-                                  </div>
-                              </td>
-                              <td>
-                                  <input id="billingAdd-qty${rand}" name="billingAdd-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" oninput="getBillingAmount(${rand})">
-                              </td>
-                              <td>
-                                  <input id="billingAdd-avlQty${rand}" name="billingAdd-avlQty[]" type="number" class="form-control form-control-sm" placeholder="Avilable Qty" readonly>
-                              </td>
-                              <td>
-                                  <input id="billingAdd-salesPrice${rand}" name="billingAdd-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" readonly>
-                              </td>
-                               <td>
-                                  <input id="billingAdd-amount${rand}" name="billingAdd-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
-                              </td>
-                              <td>
-                                  <input id="billingAdd-tax${rand}" name="billingAdd-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" readonly>
-                              </td>
-                               <td style="display: none;">
-                                  <input id="billingAdd-taxAmount${rand}" name="billingAdd-taxAmount[]" class="form-control form-control-sm" type="text">
-                              </td>
+//                                   </div>
+//                               </td>
+//                               <td>
+//                                   <input id="billingAdd-qty${rand}" name="billingAdd-qty[]" class="form-control form-control-sm" type="number" placeholder="Quantity" oninput="getBillingAmount(${rand})">
+//                               </td>
+//                               <td>
+//                                   <input id="billingAdd-avlQty${rand}" name="billingAdd-avlQty[]" type="number" class="form-control form-control-sm" placeholder="Avilable Qty" readonly>
+//                               </td>
+//                               <td>
+//                                   <input id="billingAdd-salesPrice${rand}" name="billingAdd-salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sales Price" readonly>
+//                               </td>
+//                                <td>
+//                                   <input id="billingAdd-amount${rand}" name="billingAdd-amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
+//                               </td>
+//                               <td>
+//                                   <input id="billingAdd-tax${rand}" name="billingAdd-tax[]" class="form-control form-control-sm" type="number" placeholder="Tax" readonly>
+//                               </td>
+//                                <td style="display: none;">
+//                                   <input id="billingAdd-taxAmount${rand}" name="billingAdd-taxAmount[]" class="form-control form-control-sm" type="text">
+//                               </td>
                              
-                              <td>
-                                    <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowBilling(this)">
-                                      <i class="ri-close-line"></i>
-                                  </button>
-                              </td>
-                          </tr>`;
+//                               <td>
+//                                     <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowBilling(this)">
+//                                       <i class="ri-close-line"></i>
+//                                   </button>
+//                               </td>
+//                           </tr>`;
 
-                $('.newRowAppendBilling').parent().append(newRowDataBilling); // Append properly to tbody
-                getDatePicker('.expiry-date'+ rand); 
-                // Reinitialize Select2 for newly added row
-                $('.select2-cls').select2();
-    //   }
-    // });
-}
+//                 $('.newRowAppendBilling').parent().append(newRowDataBilling); // Append properly to tbody
+//                 getDatePicker('.expiry-date'+ rand); 
+//                 // Reinitialize Select2 for newly added row
+//                 $('.select2-cls').select2();
+//     //   }
+//     // });
+// }
  function removeRowBilling(x){
     x.closest("tr").remove(); // remove entire row with tr selector
      getBillingAmount();
@@ -385,15 +389,42 @@ $('#billingAdd-Form').on('submit',function(e){
     let patientIDCheck  = validateField('billingAdd-patient', 'select');
     let payment_mode  = validateField('billingAdd-paymentMode', 'select');
     if(patientIDCheck == true && payment_mode == true){
-        let category = $('select[name="billingAdd-category[]"]').map(function(){return $(this).val();}).get();
-        let name = $('select[name="billingAdd-name[]"]').map(function(){return $(this).val();}).get();
-        let batchNo = $('select[name="billingAdd-batch[]"]').map(function(){return $(this).val();}).get();
-        let expiry = $('input[name="billingAdd-expiry[]"]').map(function(){return $(this).val();}).get();
-        let qty = $('input[name="billingAdd-qty[]"]').map(function(){return $(this).val();}).get();
-        let salesPrice = $('input[name="billingAdd-salesPrice[]"]').map(function(){return $(this).val();}).get();
-        let taxPer = $('input[name="billingAdd-tax[]"]').map(function(){return $(this).val();}).get();
-        let taxAmount = $('input[name="billingAdd-taxAmount[]"]').map(function(){return $(this).val() || 0;}).get();
-        let amount = $('input[name="billingAdd-amount[]"]').map(function(){return $(this).val();}).get();
+ let category = $('input[name="billingAdd-category[]"]').map(function() {
+    return $(this).val();
+}).get().filter(val => val !== null && val !== '');
+
+let name = $('input[name="billingAdd-name[]"]').map(function() {
+    return $(this).val();
+}).get().filter(val => val !== null && val !== '');
+
+let batchNo = $('input[name="billingAdd-batch[]"]').map(function() {
+    return $(this).val();
+}).get().filter(val => val !== null && val !== '');
+
+let expiry = $('input[name="billingAdd-expiry[]"]').map(function() {
+    return $(this).val();
+}).get().filter(val => val !== null && val !== '');
+
+let qty = $('input[name="billingAdd-qty[]"]').map(function() {
+    return $(this).val();
+}).get().filter(val => val !== null && val !== '');
+
+let salesPrice = $('input[name="billingAdd-salesPrice[]"]').map(function() {
+    return $(this).val();
+}).get().filter(val => val !== null && val !== '');
+
+let taxPer = $('input[name="billingAdd-tax[]"]').map(function() {
+    return $(this).val();
+}).get().filter(val => val !== null && val !== '');
+
+let taxAmount = $('input[name="billingAdd-taxAmount[]"]').map(function() {
+    return $(this).val() || 0;
+}).get().filter(val => val !== null && val !== '');
+
+let amount = $('input[name="billingAdd-amount[]"]').map(function() {
+    return $(this).val();
+}).get().filter(val => val !== null && val !== '');
+
         let billNo = $('.billingAdd-billNo').html();
         let patientID = $('#billingAdd-patient').val();
         let resDoctor = $('#billingAdd-resDoctor').val();

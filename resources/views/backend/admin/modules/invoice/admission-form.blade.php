@@ -155,7 +155,7 @@
 		<div class="patient-info">
 			<div class="info-group">
 				<div class="info-row"> <span class="info-label">Patient ID:</span> <span class="info-value">{{$patients[0]->patient_id}}</span> </div>
-				<div class="info-row"> <span class="info-label">Admit Date & Time:</span> <span class="info-value">{{$patients[0]->created_at->format('d-m-Y h:i A')}}</span> </div>
+				<div class="info-row"> <span class="info-label">Admit Date & Time:</span> <span class="info-value">{{$patients[0]->created_at->setTimezone('Asia/Kolkata')->format('d-m-Y h:i A')}}</span> </div>
 				<div class="info-row"> <span class="info-label">Patient Name:</span> <span class="info-value">{{$patients[0]->name}}</span> </div>
 				<div class="info-row"> <span class="info-label">Guardian's Name:</span> <span class="info-value">{{$patients[0]->guardian_name}}</span> </div>
 				<div class="info-row"> <span class="info-label">Marital Status:</span> <span class="info-value">{{$patients[0]->marital_status}}</span> </div>

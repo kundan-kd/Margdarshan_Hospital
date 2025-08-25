@@ -65,7 +65,6 @@ class PurchaseController extends Controller
         }
     }
     public function purchaseAddDatas(Request $request){
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'billNo' => 'required',
             'vendorID' => 'required',

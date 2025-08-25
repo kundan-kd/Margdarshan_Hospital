@@ -102,8 +102,8 @@ function resetPatientAddPatient(){
     $('#patient-patientId').val('');
     $('.patient-patientName_errorCls').addClass('d-none');
     $('.patient-guardianName_errorCls').addClass('d-none');
-    $('.patient-patientBloodType_errorCls').addClass('d-none');
     $('.patient-enrtyType_errorCls').addClass('d-none');
+    $('.patient-patientBloodType_errorCls').addClass('d-none');
     $('.patient-patientDOB_errorCls').addClass('d-none');
     $('.patient-patientMStatus_errorCls').addClass('d-none');
     $('.patient-patientMobile_errorCls').addClass('d-none');

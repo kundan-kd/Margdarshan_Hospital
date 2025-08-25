@@ -221,7 +221,7 @@
             </select>
             <div class="ipd-patientMStatus_errorCls d-none"></div>
           </div>
-          <div class="col-6">
+            <div class="col-6">
             <label class="form-label fw-normal" for="ipd-entryType">Entry Type</label>
             <select class="form-select form-select-sm select2-cls" id="ipd-entryType" style="width: 100%" oninput="validateField(this.id,'select')">
               <option value="">Select</option>

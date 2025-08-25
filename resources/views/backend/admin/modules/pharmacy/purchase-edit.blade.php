@@ -148,7 +148,7 @@ purchase-edit
           <div class="row">
               <div class="col-md-6">
                   <label class="form-label">Note</label>
-                  <textarea id="purchaseAdd_naration" name="#0" class="form-control " rows="4" cols="50" placeholder="Note"></textarea>
+                  <textarea id="purchaseAdd_naration" name="#0" class="form-control " rows="4" cols="50" placeholder="Note">{{$purchase[0]->naration}}</textarea>
               </div>
                <div class="col-md-4 offset-2">
                   <table class="table table-sm">

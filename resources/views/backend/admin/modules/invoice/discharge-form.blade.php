@@ -173,9 +173,6 @@
 				<div style="font-weight: bold;">Advice By</div>
 			</div>
 		</div>
-		{{-- <div style="text-align:center; margin-top: 20px;"> 
-            <button onclick="window.print()"><i class="ri-printer-line" style="font-size: 20px;"></i></button>
-        </div> --}}
 		<div class="no-print" style="text-align:center; margin-top: 20px;">
 			<button onclick="window.print()"><i class="ri-printer-line" style="font-size: 20px;"></i></button>
 		</div>

@@ -129,6 +129,9 @@ purchase-add
                                 <td>
                                     <input id="purchaseAdd_tax0" name="purchaseAdd_tax[]" type="number" class="form-control form-control-sm" placeholder="Tax" oninput="getTax(0)"  readonly>
                                 </td>
+                                <td style="display: none;">
+                                    <input id="purchaseAdd_taxAmount0" name="purchaseAdd_taxAmount[]" type="number" class="form-control form-control-sm" placeholder="Tax"  readonly>
+                                </td>
                                 
                                 
                             </tr>

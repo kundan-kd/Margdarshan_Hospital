@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('name',150)->nullable();
             $table->string('guardian_name',150)->nullable();
             $table->string('gender',10)->nullable();
-            $table->string('entry_type',80)->nullable();
             $table->string('bloodtype',30)->nullable();
             $table->string('dob',150)->nullable();
             $table->string('marital_status',20)->nullable();

@@ -23,70 +23,73 @@ function setMedicineCategory(){
 }
 function addNewRowBilling(){
     let category_id = $('#billingAdd-category0').val();
-    let category_name = $('#billingAdd-category0 option:selected').text();
-    let name_id = $('#billingAdd-name0').val();
-    let name = $('#billingAdd-name0 option:selected').text();
-    let batch_id = $('#billingAdd-batch0').val();
-    let batch_name = $('#billingAdd-batch0 option:selected').text();
-    let expiry = $('#billingAdd-expiry0').val();
-    let qty = $('#billingAdd-qty0').val();
-    let avlQty = $('#billingAdd-avlQty0').val();
-    let salesPrice = $('#billingAdd-salesPrice0').val();
-    let amount = $('#billingAdd-amount0').val();
-    let tax = $('#billingAdd-tax0').val();
-    let taxAmount = $('#billingAdd-taxAmount0').val();
-
-      let itemDatas = '';
-itemDatas += `<tr>
-    <td>${category_name}
-        <input type="hidden" name="billingAdd-category[]" value="${category_id}">
-    </td>
-    <td>${name}
-        <input type="hidden" name="billingAdd-name[]" value="${name_id}">
-    </td>
-    <td>${batch_name}
-        <input type="hidden" name="billingAdd-batch[]" value="${batch_id}">
-    </td>
-    <td>${expiry}
-        <input type="hidden" name="billingAdd-expiry[]" value="${expiry}">
-    </td>
-    <td>${qty}
-        <input type="hidden" name="billingAdd-qty[]" value="${qty}">
-    </td>
-    <td>${avlQty}
-        <input type="hidden" name="billingAdd-avlQty[]" value="${avlQty}">
-    </td>
-    <td>${salesPrice}
-        <input type="hidden" name="billingAdd-salesPrice[]" value="${salesPrice}">
-    </td>
-    <td>${amount}
-        <input type="hidden" name="billingAdd-amount[]" value="${amount}">
-    </td>
-    <td>${tax}
-        <input type="hidden" name="billingAdd-tax[]" value="${tax}">
-    </td>
-    <td>
-        <input type="hidden" name="billingAdd-taxAmount[]" value="${taxAmount}">
-    </td>
-      <td>
-    <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowBilling(this)">
-        <i class="ri-close-line"></i>
-    </button>
-</td>
-</tr>`;
-          $('.newRowAppendBilling').parent().append(itemDatas); // Append properly to tbody
- 
-       // / Clear inputs
-    $('#billingAdd-category0').val('').change();
-    $('#billingAdd-name0').val('').change();
-    $('#billingAdd-batch0').val('').change();
-    $('#billingAdd-expiry0').val('');
-    $('#billingAdd-qty0').val('');
-    $('#billingAdd-avlQty0').val('');
-    $('#billingAdd-salesPrice0').val('');
-    $('#billingAdd-amount0').val('');
-    $('#billingAdd-tax0').val('');
-    $('#billingAdd-taxAmount0').val('');
+    if(category_id && category_id.length > 0) {
+        let category_name = $('#billingAdd-category0 option:selected').text();
+        let name_id = $('#billingAdd-name0').val();
+        let name = $('#billingAdd-name0 option:selected').text();
+        let batch_id = $('#billingAdd-batch0').val();
+        let batch_name = $('#billingAdd-batch0 option:selected').text();
+        let expiry = $('#billingAdd-expiry0').val();
+        let qty = $('#billingAdd-qty0').val();
+        let avlQty = $('#billingAdd-avlQty0').val();
+        let salesPrice = $('#billingAdd-salesPrice0').val();
+        let amount = $('#billingAdd-amount0').val();
+        let tax = $('#billingAdd-tax0').val();
+        let taxAmount = $('#billingAdd-taxAmount0').val();
+        let itemDatas = '';
+        itemDatas += `<tr>
+            <td>${category_name}
+                <input type="hidden" name="billingAdd-category[]" value="${category_id}">
+            </td>
+            <td>${name}
+                <input type="hidden" name="billingAdd-name[]" value="${name_id}">
+            </td>
+            <td>${batch_name}
+                <input type="hidden" name="billingAdd-batch[]" value="${batch_id}">
+            </td>
+            <td>${expiry}
+                <input type="hidden" name="billingAdd-expiry[]" value="${expiry}">
+            </td>
+            <td>${qty}
+                <input type="hidden" name="billingAdd-qty[]" value="${qty}">
+            </td>
+            <td>${avlQty}
+                <input type="hidden" name="billingAdd-avlQty[]" value="${avlQty}">
+            </td>
+            <td>${salesPrice}
+                <input type="hidden" name="billingAdd-salesPrice[]" value="${salesPrice}">
+            </td>
+            <td>${amount}
+                <input type="hidden" name="billingAdd-amount[]" value="${amount}">
+            </td>
+            <td>${tax}
+                <input type="hidden" name="billingAdd-tax[]" value="${tax}">
+            </td>
+            <td>
+                <input type="hidden" name="billingAdd-taxAmount[]" value="${taxAmount}">
+            </td>
+            <td>
+            <button class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowBilling(this)">
+                <i class="ri-close-line"></i>
+            </button>
+        </td>
+        </tr>`;
+        $('.newRowAppendBilling').parent().append(itemDatas); // Append properly to tbody
+        // / Clear inputs
+        $('#billingAdd-category0').val('').change();
+        $('#billingAdd-name0').val('').change();
+        $('#billingAdd-batch0').val('').change();
+        $('#billingAdd-expiry0').val('');
+        $('#billingAdd-qty0').val('');
+        $('#billingAdd-avlQty0').val('');
+        $('#billingAdd-salesPrice0').val('');
+        $('#billingAdd-amount0').val('');
+        $('#billingAdd-tax0').val('');
+        $('#billingAdd-taxAmount0').val('');
+    }else{
+         toastErrorAlert('Please add items to proceed');
+    }
+   
 
  }
 // function addNewRowBilling22() {

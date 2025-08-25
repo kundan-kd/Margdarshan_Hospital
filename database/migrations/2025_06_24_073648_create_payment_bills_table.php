@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('amount_for',20)->nullable();
             $table->integer('days')->nullable();
             $table->string('title',200)->nullable();
-             $table->integer('qty')->default(0);
+            $table->integer('qty')->default(0);
             $table->double('amount')->default(0);
             $table->string('payment_mode',20)->nullable();
             $table->string('status')->nullable();

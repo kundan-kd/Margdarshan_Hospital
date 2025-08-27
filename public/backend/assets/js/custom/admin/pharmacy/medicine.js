@@ -7,6 +7,9 @@ let table = $('#medicine-create-table').DataTable({
         headers:{
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
         },
+        data:function(d){
+            d.name = $('#medicine_search').val();
+        },
         error:function(xhr,thrown){
            console.log(xhr.responseText);
            alert('Error: '+thrown);
@@ -287,4 +290,6 @@ function medicineDelete(id){
 function medicineDetails(id){
     window.open('medicine-view/'+id, '_blank');
 }
-
+function getListFilter(){
+    $('#medicine-create-table').DataTable().ajax.reload();
+}

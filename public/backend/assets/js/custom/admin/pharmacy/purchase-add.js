@@ -15,31 +15,79 @@
     getDatePicker('.expiry-date'); 
 
 let medicineCategory = [];
-setMedicineCategory();
+// setMedicineCategory();
 
-function setMedicineCategory(){
-    $.ajax({
-        url:getCategoryDatas,
-        type:"GET",
-        success:function(response){
-            medicineCategory = [];
-            $('#purchaseAdd_category0').empty();
-            let categoryDropdown ='';
-            categoryDropdown +=`<option value="">Select</option>`;
-            response.categoryList.forEach(element =>{
-                medicineCategory.push(element);
-                categoryDropdown += ` <option value="${element.id}">${element.name}</option>`;
-            });
-            $('#purchaseAdd_category0').append(categoryDropdown);
+// function setMedicineCategory(){
+//     $.ajax({
+//         url:getCategoryDatas,
+//         type:"GET",
+//         success:function(response){
+//             medicineCategory = [];
+//             $('#purchaseAdd_category0').empty();
+//             let categoryDropdown ='';
+//             categoryDropdown +=`<option value="">Select</option>`;
+//             response.categoryList.forEach(element =>{
+//                 medicineCategory.push(element);
+//                 categoryDropdown += ` <option value="${element.id}">${element.name}</option>`;
+//             });
+//             $('#purchaseAdd_category0').append(categoryDropdown);
+//         }
+//     });
+// }
+// console.log(medicineCategory);
+function getMedicineNames(catId,search){
+    if(search.length > 3){
+        if(catId == '' || catId == null){
+        toastErrorAlert('Kindly select a category to continue.');
+        return;
         }
-    });
+    $('.name-loader').removeClass('d-none');
+    $('.medicine-name-list').empty();
+        $.ajax({
+            url:getMedicineData,
+            type:"POST",
+            data:{catId:catId,search:search},
+            headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+            success:function(response){
+                $('.name-loader').addClass('d-none');
+                if(response.success){
+                    const getData = response.data;
+                    if (!getData || getData.length === 0) {
+                        $('.medicine-name-list').append(`<li class="list-group-item">No Data Found!</li>`);
+                    } else {
+                        getData.forEach(function(element){
+                                $('.medicine-name-list').append(
+                                `<li class="list-group-item" data-name-id="${element.id}" data-taxes="${element.taxes}" data-name="${element.name}">${element.name}</li>`
+                            );
+                        })
+                    
+                    }
+                }
+            }
+        });
+    }else{
+        $('.medicine-name-list').empty();
+    }
 }
+$(document).on('click', '.medicine-name-list li', function() {
+    let medicineId = $(this).data('name-id'); // Get the clicked patient's ID
+    let name = $(this).data('name'); // Get the clicked patient's ID
+    let tax = $(this).data('taxes'); // Get the clicked patient's ID
+    if(medicineId != undefined){
+    $('#purchaseAdd_name0').val(name);
+    $('#purchaseAdd_nameId0').val(medicineId);
+    $('#purchaseAdd_tax0').val(Math.round(tax));
+    $('.medicine-name-list').empty();
+    }
+});
 function addNewRow(){
     let category_id = $('#purchaseAdd_category0').val();
     if (category_id && category_id.length > 0) {
         let category_name = $('#purchaseAdd_category0 option:selected').text();
-        let name_id = $('#purchaseAdd_name0').val();
-        let name = $('#purchaseAdd_name0 option:selected').text();
+        let name_id = $('#purchaseAdd_nameId0').val();
+        let name = $('#purchaseAdd_name0').val();
         let batch = $('#purchaseAdd_batch0').val();
         let expiry = $('#purchaseAdd_expiry0').val();
         let mrp = $('#purchaseAdd_mrp0').val();
@@ -224,16 +272,16 @@ $('#purchaseAdd_form').on('submit',function(e){
     }   
 });
     function getPurchaseMedicine(id,randNum){
-        let medicineDropdown1 = $("#purchaseAdd_name" + randNum);
-        medicineDropdown1.find("option:not(:first)").remove();
-        medicineCategory.forEach(element => {
-            if(element.id == parseInt(id)){
-                element.medicine.forEach(element_medicine => {
-                    medicineDropdown1.append(`<option value="${element_medicine.id}">${element_medicine.name}</option>`);
-                });
-            }
-        });
-        medicineDropdown1.trigger("change");
+        // let medicineDropdown1 = $("#purchaseAdd_name" + randNum);
+        // medicineDropdown1.find("option:not(:first)").remove();
+        // medicineCategory.forEach(element => {
+        //     if(element.id == parseInt(id)){
+        //         element.medicine.forEach(element_medicine => {
+        //             medicineDropdown1.append(`<option value="${element_medicine.id}">${element_medicine.name}</option>`);
+        //         });
+        //     }
+        // });
+        // medicineDropdown1.trigger("change");
     }
     function getTaxValue(id,randNum){
          let category = $("#purchaseAdd_category" + randNum).val();

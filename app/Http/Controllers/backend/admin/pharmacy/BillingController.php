@@ -99,14 +99,17 @@ class BillingController extends Controller
     
     public function getMedicineNames(Request $request){
         // dd($request->all());
-        $getData = Medicine::where('category_id',$request->id)->get();
-        $billingItemData = BillingItem::where('id',$request->billingItemID)->get();
-        return response()->json(['success'=>'Medicine data found','data'=>$getData,'billingItem'=>$billingItemData],200);
+        $getData = PurchaseItem::where('category_id',$request->id)->get();
+        // $billingItemData = BillingItem::where('id',$request->billingItemID)->get();
+        // return response()->json(['success'=>'Medicine data found','data'=>$getData,'billingItem'=>$billingItemData],200);
+        return response()->json(['success'=>'Medicine data found','data'=>$getData],200);
     }
     public function getBatchNumbers(Request $request){
+        // dd($request->id);
         $getPurchaseData = PurchaseItem::where('name_id',$request->id)->get();
-        $getBillingData = BillingItem::where('name_id',$request->id)->get();
-        return response()->json(['success'=>'Batch number found','data'=>$getPurchaseData,'billingData'=>$getBillingData],200);
+        // $getBillingData = BillingItem::where('name_id',$request->id)->get();
+        // return response()->json(['success'=>'Batch number found','data'=>$getPurchaseData,'billingData'=>$getBillingData],200);
+        return response()->json(['success'=>'Batch number found','data'=>$getPurchaseData],200);
     }
     public function getBatchExpiryDate(Request $request){
         $getData = PurchaseItem::where('id',$request->id)->get();

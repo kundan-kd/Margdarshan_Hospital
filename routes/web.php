@@ -122,7 +122,8 @@ Route::get('/purchase-edit/{id}',[PurchaseController::class,'purchaseEditPage'])
 Route::post('/purchase-update',[PurchaseController::class,'purchaseUpdateDatas'])->name('purchase.purchaseUpdateDatas');
 Route::post('/purchase-details-delete',[PurchaseController::class,'deletePurchasedetails'])->name('purchase.deletePurchasedetails');
 Route::get('/purchase-edit-details',[PurchaseController::class,'getPurchaseNamesSelectEdit'])->name('purchase.getPurchaseNamesSelectEdit');
-Route::get('/purchase-category-data',[PurchaseController::class,'getCategoryDatas'])->name('purchase.getCategoryDatas');
+// Route::get('/purchase-category-data',[PurchaseController::class,'getCategoryDatas'])->name('purchase.getCategoryDatas');
+Route::get('/purchase-list-data',[PurchaseController::class,'getPurchaseDatasAll'])->name('purchase.getPurchaseDatasAll');
 Route::get('/purchase-view/{id}',[PurchaseController::class,'pruchaseViewIndex']);
 Route::post('/purchase-data',[PurchaseController::class,'getPurchaseData'])->name('purchase.getPurchaseData');
 
@@ -475,6 +476,7 @@ Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])
 Route::get('/barcode', [CommonController::class, 'barCodeGenerate']);
 Route::post('/common-patient-data',[CommonController::class,'getPatientData'])->name('common.getPatientData');
 Route::post('/common-patient-data-fill',[CommonController::class,'fillPatientData'])->name('common.fillPatientData');
+Route::post('/common-medicine-data',[CommonController::class,'getMedicineData'])->name('common.getMedicineData');
 
 Route::get('/process-center-analytics',[LeadController::class,'analytics'])->name('sales.analytics');
 Route::get('/process-center-lead',[LeadController::class,'lead'])->name('sales.lead');

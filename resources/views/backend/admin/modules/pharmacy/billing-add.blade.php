@@ -317,7 +317,7 @@ Billing-add
     }
     getDatePicker('#billingAdd-patientDOB'); 
  const getBillingMedicineNames = "{{route('billing.getMedicineNames')}}";
- const getBillingCategoryDatas = "{{route('purchase.getCategoryDatas')}}";
+ const getPurchaseDatasAll = "{{route('purchase.getPurchaseDatasAll')}}";
  const getBatchNumbers = "{{route('billing-add.getBatchNumbers')}}"; // also used in billing-edit.js
  const getBatchExpiryDate = "{{route('billing-add.getBatchExpiryDate')}}";
  const billingAddNewPatient = "{{route('appointment-patient.addNewPatient')}}"; //this route is used here from 'appointment.blade.php' page

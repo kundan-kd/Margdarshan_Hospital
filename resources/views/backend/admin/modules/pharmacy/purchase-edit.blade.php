@@ -46,7 +46,7 @@ purchase-edit
                                   Category
                               </th>
                               <th class="text-nowrap text-neutral-700">
-                                  Name
+                                  Name <div class="spinner-border spinner-border-sm name-edit-loader d-none" role="status"></div>
                               </th>
                               <th class="text-nowrap text-neutral-700">
                                   Batch
@@ -83,7 +83,7 @@ purchase-edit
                               <td>
                                 <input type="hidden" id="purchaseEdit_id{{$purchaseItem->id}}" name="purchaseEdit_id[]" value="{{$purchaseItem->id}}">
                              
-                                  <select id="purchaseEdit_category{{$purchaseItem->id}}" name="purchaseEdit_category[]" class="form-select form-select-sm select2Edit-cls" onchange="getPurchaseMedicineEdit(this.value,{{$purchaseItem->id}})"required>
+                                  <select id="purchaseEdit_category{{$purchaseItem->id}}" name="purchaseEdit_category[]" class="form-select form-select-sm select2Edit-cls" onchange="getPurchaseMedicineEdit(this.value,{{$purchaseItem->id}})" disabled>
                                       <option value="" disabled>Select</option>
                                       @foreach ($categories as $category)
                                         <option value="{{$category->id}}"{{ $purchaseItem->category_id == $category->id ? 'selected' : '' }}> {{$category->name}}
@@ -92,17 +92,26 @@ purchase-edit
 
                                   </select>
                               </td>
-                              <td>
+                              {{-- <td>
                                   <select id="purchaseEdit_name{{$purchaseItem->id}}" name="purchaseEdit_name[]" class="form-select form-select-sm select2Edit-cls" required>
                                       <option value="" selected disabled>Select</option>
-                                       {{-- data appended by purchase-edit.js using getPurchaseMedicineSelectedEdit function --}}
+                                    
                                   </select>
+                              </td> --}}
+                              <td>
+                                  <input id="purchaseEdit_name{{$purchaseItem->id}}" class="form-control form-control-sm" type="text" value="{{$purchaseItem->name}}" readonly>
+                                  <input type="hidden" id="purchaseEdit_nameId{{$purchaseItem->id}}" name="purchaseEdit_name[]" value="{{$purchaseItem->name_id}}">
+                                    <div class="d-block position-relative" style="z-index :99;">
+                                        <ul class="search-item list-group position-absolute rounded-0 medicine-edit-name-list{{$purchaseItem->id}}">
+                                          <!-- dropdown list of patients appended here using JS -->
+                                        </ul>
+                                    </div>
                               </td>
                               <td>
-                                  <input id="purchaseEdit_batch{{$purchaseItem->id}}" name="purchaseEdit_batch[]" class="form-control form-control-sm" type="text" value="{{$purchaseItem->batch_no}}" required>
+                                  <input id="purchaseEdit_batch{{$purchaseItem->id}}" name="purchaseEdit_batch[]" class="form-control form-control-sm" type="text" value="{{$purchaseItem->batch_no}}" readonly>
                               </td>
                               <td>
-                                  <input id="purchaseEdit_expiry{{$purchaseItem->id}}" name="purchaseEdit_expiry[]" class="form-control form-control-sm expiry-date" type="text" value="{{$purchaseItem->expiry}}" required>
+                                  <input id="purchaseEdit_expiry{{$purchaseItem->id}}" name="purchaseEdit_expiry[]" class="form-control form-control-sm expiry-date" type="text" value="{{$purchaseItem->expiry}}" disabled>
                               </td>
                               <td>
                                   <input id="purchaseEdit_mrp{{$purchaseItem->id}}" name="purchaseEdit_mrp[]" class="form-control form-control-sm" type="number"value="{{$purchaseItem->mrp}}" required step="0.01">
@@ -121,7 +130,7 @@ purchase-edit
                                   <input id="purchaseEdit_amount{{$purchaseItem->id}}" name="purchaseEdit_amount[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->amount}}" readonly>
                               </td>
                               <td>
-                                  <input id="purchaseEdit_tax{{$purchaseItem->id}}" name="purchaseEdit_tax[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->tax}}" oninput="getTaxEdit({{$purchaseItem->id}})" required>
+                                  <input id="purchaseEdit_tax{{$purchaseItem->id}}" name="purchaseEdit_tax[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->tax}}" oninput="getTaxEdit({{$purchaseItem->id}})" readonly>
                               </td>
                               @php
                                   $taxx = ($purchaseItem->amount * $purchaseItem->tax)/100;
@@ -137,11 +146,11 @@ purchase-edit
                       </tbody>
                     
                   </table>
-                    <div>
+                    {{-- <div>
                         <button type="button" class="mx-1 fw-semibold w-64-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowEdit()">
                         <i class="ri-add-line">Add</i>
                         </button>
-                    </div>
+                    </div> --}}
               </div>
           </div>
 
@@ -248,22 +257,21 @@ purchase-edit
 @section('extra-js')
 <script>
 // Function to get purchase medicine name based on selected category for each row
-window.onload = function() {
-    document.querySelectorAll('[id^="purchaseEdit_category"]').forEach(function(selectElement) {
-        var selectedValue = selectElement.value;
-        var purchaseItemId = selectElement.id.replace("purchaseEdit_category", "");
+// window.onload = function() {
+//     document.querySelectorAll('[id^="purchaseEdit_category"]').forEach(function(selectElement) {
+//         var selectedValue = selectElement.value;
+//         var purchaseItemId = selectElement.id.replace("purchaseEdit_category", "");
         
-        if (selectedValue) {
-            getPurchaseMedicineSelectedEdit(selectedValue, purchaseItemId);
-        }
-    });
-};
+//         if (selectedValue) {
+//             getPurchaseMedicineSelectedEdit(selectedValue, purchaseItemId);
+//         }
+//     });
+// };
 </script>
 <script>
   const purchaseUpdateDatas = "{{route('purchase.purchaseUpdateDatas')}}";
   const getPurchaseNamesEdit = "{{route('billing.getMedicineNames')}}";
   const getPurchaseNamesSelectEdit = "{{route('purchase.getPurchaseNamesSelectEdit')}}";
-  const getCategoryEditDatas = "{{route('purchase.getCategoryDatas')}}";
   const getPurchaseData = "{{route('purchase.getPurchaseData')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/pharmacy/purchase-edit.js')}}"></script>

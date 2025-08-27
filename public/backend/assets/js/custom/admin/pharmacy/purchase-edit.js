@@ -99,7 +99,7 @@ function updateAmountEdit(){
     $('.purchaseEdit_netTotalAmt').html(netamount.toFixed(2));
     let paid_amount = parseFloat($('.purchaseEdit_paidAmt').html());
     let due_amount = netamount - paid_amount;
-    $('.purchaseEdit_dueAmt').html(due_amount);
+    $('.purchaseEdit_dueAmt').html(Math.round(due_amount));
 }
 function getAmountEdit(randNum){
     let qty = parseFloat($('#purchaseEdit_qty' + randNum).val()) || 0; // Convert to number, default to 0 if invalid
@@ -148,7 +148,7 @@ $('#purchaseEdit_form').on('submit',function(e){
   let vendorID = $('#purchaseEdit_vendor').val();
   let id =  $('input[name="purchaseEdit_id[]"]').map(function(){return $(this).val();}).get();
   let category = $('select[name="purchaseEdit_category[]"]').map(function(){return $(this).val();}).get();
-  let name = $('select[name="purchaseEdit_name[]"]').map(function(){return $(this).val();}).get();
+  let name = $('input[name="purchaseEdit_name[]"]').map(function(){return $(this).val();}).get();
   let batchNo = $('input[name="purchaseEdit_batch[]"]').map(function(){return $(this).val();}).get();
   let expiry = $('input[name="purchaseEdit_expiry[]"]').map(function(){return $(this).val();}).get();
   let mrp = $('input[name="purchaseEdit_mrp[]"]').map(function(){return $(this).val();}).get();
@@ -196,23 +196,23 @@ function deleteRowEdit(x){
 }
 
 function getPurchaseMedicineEdit(id,randNum) {
-    $.ajax({
-        url: getPurchaseNamesEdit,
-        type: "GET",
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data: { id: id },
-        success: function (response) {
-            let getData = response.data;
-            let medicineDropdown = $("#purchaseEdit_name" + randNum);
-            medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
-            getData.forEach(element => {
-                medicineDropdown.append(`<option value="${element.id}">${element.name}</option>`);
-            });
-            medicineDropdown.trigger("change"); // Refresh Select2 dropdown
-        }
-    });
+    // $.ajax({
+    //     url: getPurchaseNamesEdit,
+    //     type: "GET",
+    //     headers: {
+    //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //     },
+    //     data: { id: id },
+    //     success: function (response) {
+    //         let getData = response.data;
+    //         let medicineDropdown = $("#purchaseEdit_name" + randNum);
+    //         medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
+    //         getData.forEach(element => {
+    //             medicineDropdown.append(`<option value="${element.id}">${element.name}</option>`);
+    //         });
+    //         medicineDropdown.trigger("change"); // Refresh Select2 dropdown
+    //     }
+    // });
 }
 function getPurchaseMedicineSelectedEdit(id,randNum) {
     let purchaseID = $('#purchaseEdit_id' + randNum).val();

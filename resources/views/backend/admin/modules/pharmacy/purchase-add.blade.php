@@ -4,6 +4,11 @@ purchase-add
 @endsection
 @section('extra-css')
 <link rel="stylesheet" href="{{asset('backend/assets/css/custom/admin/pharmacy/purchase.css')}}">
+<style>
+    .medicine-name-list li{
+        cursor: pointer;
+    }
+</style>
 @endsection
 @section('main-container')
   <div class="dashboard-main-body">
@@ -56,7 +61,7 @@ purchase-add
                                     Category
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
-                                    Name
+                                    Name <div class="spinner-border spinner-border-sm name-loader d-none" role="status"></div>
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
                                     Batch
@@ -69,8 +74,7 @@ purchase-add
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
                                     Sale Price
-                                </th>
-                                
+                                </th>                             
                                 <th class="text-nowrap text-neutral-700">
                                     Qty
                                 </th>
@@ -100,9 +104,17 @@ purchase-add
                                     </select>
                                 </td>
                                 <td>
-                                    <select id="purchaseAdd_name0" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls"  onchange="getTaxValue(this.value,0)">
+                                    {{-- <select id="purchaseAdd_name0" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls"  onchange="getTaxValue(this.value,0)">
                                         <option value="" selected>Select</option>
-                                    </select>
+                                    </select> --}}
+                                      <input id="purchaseAdd_name0" class="form-control form-control-sm" type="text" placeholder="Medicine Name" oninput="getMedicineNames(document.getElementById('purchaseAdd_category0').value,this.value)">
+                                      <input type="hidden" id="purchaseAdd_nameId0" name="purchaseAdd_name[]">
+
+                                      <div class="d-block position-relative" style="z-index :99;">
+                                            <ul class="search-item list-group position-absolute rounded-0 medicine-name-list">
+                                            <!-- dropdown list of patients appended here using JS -->
+                                            </ul>
+                                    </div>
                                 </td>
                                 <td>
                                     <input id="purchaseAdd_batch0" name="purchaseAdd_batch[]" class="form-control form-control-sm" type="text" placeholder="Batch No" >
@@ -259,7 +271,7 @@ purchase-add
     getDatePicker('#purchaseAdd_Date'); 
     const purchaseAddDatas = "{{route('purchase.purchaseAddDatas')}}";
      const getPurchaseNames = "{{route('billing.getMedicineNames')}}";
-     const getCategoryDatas = "{{route('purchase.getCategoryDatas')}}";
+     const getMedicineData = "{{route('common.getMedicineData')}}";
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/pharmacy/purchase-add.js')}}"></script>
 @endsection

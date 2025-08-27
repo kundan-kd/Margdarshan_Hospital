@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('purchase_id')->nullable();
             $table->string('category_id',80)->nullable();
             $table->string('name_id',100)->nullable();
+            $table->string('name',255)->nullable();
             $table->string('batch_no',100)->nullable();
             $table->string('expiry',40)->nullable();
             $table->double('mrp')->default(0);

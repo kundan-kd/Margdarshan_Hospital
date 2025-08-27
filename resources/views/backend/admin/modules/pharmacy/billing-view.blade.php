@@ -37,7 +37,7 @@ Medicin Bill Details
                               <th class="text-nowrap text-neutral-700">
                                   Medicine Category
                               </th>
-                              <th class="text-nowrap text-neutral-700">
+                              <th class="text-nowrap text-neutral-700" style="width: 100px;">
                                   Mediciane Name
                               </th>
                               <th class="text-nowrap text-neutral-700">
@@ -64,7 +64,7 @@ Medicin Bill Details
                     @foreach ( $billingItems as $items)
                       <tr>
                         <td class="text-neutral-700">{{$items->categoryData->name}}</td>
-                        <td class="text-neutral-700">{{$items->medicineNameData->name}}</td>
+                        <td class="text-neutral-700" style="width: 100px;">{{$items->medicineNameData->name}}</td>
                         <td class="text-neutral-700">{{$items->batchData->batch_no}}</td>
                         <td class="text-neutral-700">{{$items->expiry}}</td>
                         <td class="text-neutral-700">{{$items->qty}}</td>

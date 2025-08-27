@@ -7,6 +7,7 @@ use App\Models\Medication;
 use App\Models\Medicine;
 use App\Models\Patient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class CommonController extends Controller
@@ -35,7 +36,10 @@ public function getPatientData(Request $request){
 public function fillPatientData(Request $request){
     $getData = Patient::where('id',$request->id)->get();
     return response()->json(['success'=>'Patient detail found','data'=>$getData],200);
-
+}
+public function getMedicineData(Request $request){
+    $getData = Medicine::where('category_id',$request->catId)->where('name','LIKE',($request->search).'%')->get(['id','name','taxes']);
+    return response()->json(['success'=>'Medicine data fetched','data'=>$getData],200);
 }
     
 }

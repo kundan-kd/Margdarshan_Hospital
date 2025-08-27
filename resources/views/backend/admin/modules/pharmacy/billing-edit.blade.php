@@ -211,7 +211,6 @@ Sale Return
      const billingEditAutoLoadData = "{{route('billing-edit.billingEditAutoLoadData')}}";
      const getBillingNamesSelectEdit = "{{route('billing-edit.getBillingNamesSelectEdit')}}";
      const getBatchExpiryDateEdit = "{{route('billing-add.getBatchExpiryDate')}}";
-     const getBillingCategoryDataEdit = "{{route('purchase.getCategoryDatas')}}"; //also used somewhere
      const getBillingMedicineNameEdit = "{{route('billing.getMedicineNames')}}"; //also used in billing-add.js
      const getBatchNumberEdit =  "{{route('billing-add.getBatchNumbers')}}"; //also used in billing-add.js
      const billingEditDatas =  "{{route('billing-Edit.billingEditDatas')}}"; //also used in billing-add.js    

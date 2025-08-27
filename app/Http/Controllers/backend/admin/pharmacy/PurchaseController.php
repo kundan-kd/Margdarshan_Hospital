@@ -120,10 +120,12 @@ class PurchaseController extends Controller
             }
             // Insert purchase items into purchase_items table
             foreach ($request->category as $index => $category) {
+                $medicineName = Medicine::where('id',$request->name[$index])->pluck('name');
                 $purchaseItem = new PurchaseItem();
                 $purchaseItem->purchase_id = $purchase->id;
                 $purchaseItem->category_id = $category;
                 $purchaseItem->name_id = $request->name[$index];
+                $purchaseItem->name = $medicineName[0];
                 $purchaseItem->batch_no = $request->batchNo[$index];
                 $purchaseItem->expiry = $request->expiry[$index];
                 $purchaseItem->mrp = $request->mrp[$index];
@@ -154,12 +156,14 @@ class PurchaseController extends Controller
         }
     }
     public function purchaseEditPage($id){
-        $categories = MedicineCategory::where('status',1)->get();
-        $medicines = Medicine::get(); // to fetch distinct categories of medicines category_id field required
+         $categories = MedicineCategory::where('status',1)->get();
+        // $medicines = Medicine::get();
         $purchase = Purchase::where('id',$id)->get();
         $vendors = Vendor::where('status',1)->get();
-        $purchaseItems = PurchaseItem::with('categoryData','medicineNameData')->where('purchase_id',$id)->get(); // Fetching purchase items with their category_id and medicine name_id data
-        return view('backend.admin.modules.pharmacy.purchase-edit',compact('categories','medicines','purchase','vendors','purchaseItems'));
+        // $purchaseItems = PurchaseItem::with('categoryData','medicineNameData')->where('purchase_id',$id)->get(); // Fetching purchase items with their category_id and medicine name_id data
+        // return view('backend.admin.modules.pharmacy.purchase-edit',compact('categories','medicines','purchase','vendors','purchaseItems'));
+        $purchaseItems = PurchaseItem::where('purchase_id',$id)->get(); // Fetching purchase items with their category_id and medicine name_id data
+        return view('backend.admin.modules.pharmacy.purchase-edit',compact('categories','purchase','vendors','purchaseItems'));
     }
     public function purchaseUpdateDatas(Request $request){
         try {
@@ -192,12 +196,14 @@ class PurchaseController extends Controller
                         }
                 } else {
                     $old_purchase_itm_qty = PurchaseItem::where('id', $item_id)->value('qty');
+                    $medicineName = Medicine::where('id',$request->name[$key])->pluck('name');
                     // Update existing record
                     PurchaseItem::where('id', $item_id)
                         ->where('purchase_id', $purchase_id)
                         ->update([
                             'category_id' => $request->category[$key],
                             'name_id' => $request->name[$key],
+                            'name' => $medicineName[0],
                             'batch_no' => $request->batchNo[$key],
                             'expiry' => $request->expiry[$key],
                             'mrp' => $request->mrp[$key],
@@ -267,34 +273,37 @@ class PurchaseController extends Controller
          return response()->json(['success'=>'Medicine data found','data'=>$data],200);
     }
     
-    public function getCategoryDatas(){
-        $getData = MedicineCategory::where('status',1)->get(['id','name']);
-        $categoryList = [];
-        foreach($getData as $cate){
-            $billMedicine = [];
-            $medicines = $cate->medicineData;
-            foreach($medicines as $med){
-                $chk = PurchaseItem::where('name_id',$med->id)->get(['id','batch_no','expiry','qty','return_qty','stock_out','sales_price','tax']);
-                if(sizeOf($chk) > 0){
-                    $billMedicine[] =[
-                        'id' => $med->id,
-                        'name' => $med->name,
-                        'purchase' => $chk
-                    ];
-                }
-            }
+    // public function getCategoryDatas(){
+    //     $getData = MedicineCategory::where('status',1)->get(['id','name']);
+    //     $categoryList = [];
+    //     foreach($getData as $cate){
+    //         $billMedicine = [];
+    //         $medicines = $cate->medicineData;
+    //         foreach($medicines as $med){
+    //             $chk = PurchaseItem::where('name_id',$med->id)->get(['id','batch_no','expiry','qty','return_qty','stock_out','sales_price','tax']);
+    //             if(sizeOf($chk) > 0){
+    //                 $billMedicine[] =[
+    //                     'id' => $med->id,
+    //                     'name' => $med->name,
+    //                     'purchase' => $chk
+    //                 ];
+    //             }
+    //         }
             
-            $categoryList[]=[
-                'id' => $cate->id,
-                'name' => $cate->name,
-                'medicine' => $cate->medicineData,
-                'billMedicine' => $billMedicine
-            ];
-        }
+    //         $categoryList[]=[
+    //             'id' => $cate->id,
+    //             'name' => $cate->name,
+    //             'medicine' => $cate->medicineData,
+    //             'billMedicine' => $billMedicine
+    //         ];
+    //     }
         
-        return response()->json(['success'=>'Category data found','data'=>$getData,'categoryList' => $categoryList],200);   
+    //     return response()->json(['success'=>'Category data found','data'=>$getData,'categoryList' => $categoryList],200);   
+    // }
+    public function getPurchaseDatasAll(){
+        $getData = PurchaseItem::where('status',1)->get();
+        return response()->json(['success'=>'Purchase data found','data'=>$getData],200);   
     }
-    
     public function pruchaseViewIndex($id){
         // dd($request);
         $purchases = Purchase::with('vendorData')->where('id',$id)->get();

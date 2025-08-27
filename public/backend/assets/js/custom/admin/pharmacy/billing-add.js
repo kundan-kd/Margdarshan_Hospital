@@ -1,26 +1,48 @@
-let medicineCategory = [];
-setMedicineCategory();
-
-function setMedicineCategory(){
+let purchaseListData = [];
+getPurchaseData();
+function getPurchaseData(){
     $.ajax({
-        url:getBillingCategoryDatas,
+        url:getPurchaseDatasAll,
         type:"GET",
         success:function(response){
-            console.log(response.categoryList);
-            medicineCategory = [];
-            $('#billingAdd-category0').empty();
-            let categoryDropdown ='';
-            categoryDropdown +=`<option value="">Select</option>`;
-            response.categoryList.forEach(element =>{
-                if(element.billMedicine.length > 0){
-                    medicineCategory.push(element);
-                    categoryDropdown += ` <option value="${element.id}">${element.name}</option>`;
-                }
+            purchaseListData = [];
+            let getData = #response.data;
+            getData.forEach(element => {
+               
+                purchaseListData.push(element); 
             });
-            $('#billingAdd-category0').append(categoryDropdown);
+          
         }
     });
 }
+//  function fetchPurchaseData(){
+//     purchaseListData.forEach(function(element){
+//         // console.log(element);
+//     });
+//  }
+
+// setMedicineCategory();
+
+// function setMedicineCategory(){
+//     $.ajax({
+//         url:getBillingCategoryDatas,
+//         type:"GET",
+//         success:function(response){
+//             console.log(response.categoryList);
+//             medicineCategory = [];
+//             $('#billingAdd-category0').empty();
+//             let categoryDropdown ='';
+//             categoryDropdown +=`<option value="">Select</option>`;
+//             response.categoryList.forEach(element =>{
+//                 if(element.billMedicine.length > 0){
+//                     medicineCategory.push(element);
+//                     categoryDropdown += ` <option value="${element.id}">${element.name}</option>`;
+//                 }
+//             });
+//             $('#billingAdd-category0').append(categoryDropdown);
+//         }
+//     });
+// }
 function addNewRowBilling(){
     let category_id = $('#billingAdd-category0').val();
     if(category_id && category_id.length > 0) {
@@ -163,67 +185,79 @@ function addNewRowBilling(){
 
 }
 
-function getBillingMedicine(id,randNum){
-    let medicineDropdown1 = $("#billingAdd-name" + randNum);
-    medicineDropdown1.find("option:not(:first)").remove();
-    medicineCategory.forEach(element => {
-        if(element.id == parseInt(id)){
-            element.billMedicine.forEach(element_medicine => {
-                medicineDropdown1.append(`<option value="${element_medicine.id}">${element_medicine.name}</option>`);
-            });
-        }
-    });
-    medicineDropdown1.trigger("change");
-//  $.ajax({
-//         url:getBillingMedicineNames,
-//         type:"GET",
-//         headers:{
-//             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-//         },
-//         data:{id:id},
-//         success:function(response){
-//         let getData = response.data;
-//         let medicineDropdown1 = $("#billingAdd-name" + randNum); // Use the randNum to target the specific dropdown
-//         medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
-//         getData.forEach(element => {
-//             medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);
-//         });
-//         medicineDropdown1.trigger("change"); // Refresh Select2 dropdown
+// function getBillingMedicine(id,randNum){
+//     let medicineDropdown1 = $("#billingAdd-name" + randNum);
+//     medicineDropdown1.find("option:not(:first)").remove();
+//     medicineCategory.forEach(element => {
+//         if(element.id == parseInt(id)){
+//             element.billMedicine.forEach(element_medicine => {
+//                 medicineDropdown1.append(`<option value="${element_medicine.id}">${element_medicine.name}</option>`);
+//             });
 //         }
 //     });
-}
+//     medicineDropdown1.trigger("change");
+// //  $.ajax({
+// //         url:getBillingMedicineNames,
+// //         type:"GET",
+// //         headers:{
+// //             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+// //         },
+// //         data:{id:id},
+// //         success:function(response){
+// //         let getData = response.data;
+// //         let medicineDropdown1 = $("#billingAdd-name" + randNum); // Use the randNum to target the specific dropdown
+// //         medicineDropdown1.find("option:not(:first)").remove(); // empity dropdown except first one
+// //         getData.forEach(element => {
+// //             medicineDropdown1.append(`<option value="${element.id}">${element.name}</option>`);
+// //         });
+// //         medicineDropdown1.trigger("change"); // Refresh Select2 dropdown
+// //         }
+// //     });
+// }
+function getBillingMedicine(id,randNum){
+    // console.log(id,randNum);
+    //  $.ajax({
+    //     url:getBillingMedicineNames,
+    //     type:"GET",
+    //     headers:{
+    //         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+    //     },
+    //     data:{id:id},
+    //     success:function(response){
+    //         console.log(response);
+    //     let getData = response.data;
+    //     let medicine_name = $("#billingAdd-name" + randNum); // Use the randNum to target the specific dropdown
+    //     medicine_name.find("option:not(:first)").remove(); // empity dropdown except first one
+    //     getData.forEach(element => {
+    //         medicine_name.append(`<option value="${element.name_id}">${element.name_id}</option>`);
+    //     });
+    //     medicine_name.trigger("change"); // Refresh Select2 dropdown
+    //     }
+    // });
 
-function getBatchDetails(id,randB){
-    if(id !== ''){
-        let category = $("#billingAdd-category" + randB).val();
-        let batchDropdown2 = $("#billingAdd-batch" + randB);
-        batchDropdown2.find("option:not(:first)").remove();
-        medicineCategory.forEach(element => {
-            if(element.id == parseInt(category)){
-                element.billMedicine.forEach(element_medicine => {
-                    if(element_medicine.id == parseInt(id)){
-                        element_medicine.purchase.forEach(element_batch => {
-                            batchDropdown2.append(`<option value="${element_batch.id}">${element_batch.batch_no}</option>`);
-                        });
-                        batchDropdown2.trigger("change"); 
-                    }
-                });
-            }
-        });
-    }
-    // let medID = id;
-    // if(medID == null || medID == ''){
-    //     medID = 0;}
+
+     let medicineDropdown1 = $("#billingAdd-name" + randNum);
+    medicineDropdown1.find("option:not(:first)").remove();
+    purchaseListData.forEach(element => {
+        if(element.category_id == parseInt(id)){
+            // element.billMedicine.forEach(element_medicine => {
+                medicineDropdown1.append(`<option value="${element.name_id}">${element.name}</option>`);
+            // });
+        }
+    });
+}
+function getBatchDetails(id,randNum){
     // $.ajax({
     //         url:getBatchNumbers,
     //         type:"GET",
     //         headers:{
     //             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
     //         },
-    //         data:{id:medID},
+    //         data:{id:id},
     //         success:function(response){
+    //             console.log(response);
     //         let getData = response.data;
-    //         let batchDropdown2 = $("#billingAdd-batch" + randB); // Use the randNum to target the specific dropdown
+    //         let batchDropdown2 = $("#billingAdd-batch" + randNum); // Use the randNum to target the specific dropdown
     //         batchDropdown2.find("option:not(:first)").remove(); // empity dropdown except first one
     //         getData.forEach(element => {
     //             batchDropdown2.append(`<option value="${element.id}">${element.batch_no}</option>`);
@@ -231,53 +265,136 @@ function getBatchDetails(id,randB){
     //         batchDropdown2.trigger("change"); // Refresh Select2 dropdown
     //         }
     // });
-}
 
-function getBatchExpiry(id,randE){
     if(id !== ''){
-        let category = $("#billingAdd-category" + randE).val();
-        let name = $("#billingAdd-name" + randE).val();
-        let batchDropdown2 = $("#billingAdd-batch" + randE).val();
+        // let category = $("#billingAdd-category" + randB).val();
+        let batchDropdown2 = $("#billingAdd-batch" + randNum);
+        batchDropdown2.find("option:not(:first)").remove();
+        purchaseListData.forEach(element => {
+            if(element.name_id == parseInt(id)){
+                // element.billMedicine.forEach(element_medicine => {
+                //     if(element_medicine.id == parseInt(id)){
+                //         element_medicine.purchase.forEach(element_batch => {
+                    // console.log(element);
+                            batchDropdown2.append(`<option value="${element.id}">${element.batch_no}</option>`);
+                        // });
+                        // batchDropdown2.trigger("change"); 
+                //     }
+                // });
+            }
+        });
+//     }
+}
+}
+// function getBatchDetails(id,randB){
+//     if(id !== ''){
+//         let category = $("#billingAdd-category" + randB).val();
+//         let batchDropdown2 = $("#billingAdd-batch" + randB);
+//         batchDropdown2.find("option:not(:first)").remove();
+//         medicineCategory.forEach(element => {
+//             if(element.id == parseInt(category)){
+//                 element.billMedicine.forEach(element_medicine => {
+//                     if(element_medicine.id == parseInt(id)){
+//                         element_medicine.purchase.forEach(element_batch => {
+//                             batchDropdown2.append(`<option value="${element_batch.id}">${element_batch.batch_no}</option>`);
+//                         });
+//                         batchDropdown2.trigger("change"); 
+//                     }
+//                 });
+//             }
+//         });
+//     }
+//     // let medID = id;
+//     // if(medID == null || medID == ''){
+//     //     medID = 0;}
+//     // $.ajax({
+//     //         url:getBatchNumbers,
+//     //         type:"GET",
+//     //         headers:{
+//     //             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+//     //         },
+//     //         data:{id:medID},
+//     //         success:function(response){
+//     //         let getData = response.data;
+//     //         let batchDropdown2 = $("#billingAdd-batch" + randB); // Use the randNum to target the specific dropdown
+//     //         batchDropdown2.find("option:not(:first)").remove(); // empity dropdown except first one
+//     //         getData.forEach(element => {
+//     //             batchDropdown2.append(`<option value="${element.id}">${element.batch_no}</option>`);
+//     //         });
+//     //         batchDropdown2.trigger("change"); // Refresh Select2 dropdown
+//     //         }
+//     // });
+// }
+function getBatchExpiry(id,randNum){
+    if(id !== ''){
+        // let category = $("#billingAdd-category" + randE).val();
+        // let name = $("#billingAdd-name" + randE).val();
+        // let batchDropdown2 = $("#billingAdd-batch" + randE).val();
         
-        medicineCategory.forEach(element => {
-            if(element.id == parseInt(category)){
-                element.billMedicine.forEach(element_medicine => {
-                    if(element_medicine.id == parseInt(name)){
-                        element_medicine.purchase.forEach(element_batch => {
-                            if(element_batch.id == parseInt(id)){
-                                let avlQty = (parseFloat(element_batch.qty) + parseFloat(element_batch.return_qty)) - parseFloat(element_batch.stock_out);
-                                $("#billingAdd-expiry" + randE).val(element_batch.expiry); 
-                                $("#billingAdd-avlQty" + randE).val(avlQty); 
-                                $("#billingAdd-salesPrice" + randE).val(parseFloat(element_batch.sales_price)); 
-                                $("#billingAdd-tax" + randE).val(parseFloat(element_batch.tax));
-                            }
-                        });
-                    }
-                });
+        purchaseListData.forEach(element => {
+            if(element.id == parseInt(id)){
+                // element.billMedicine.forEach(element_medicine => {
+                //     if(element_medicine.id == parseInt(name)){
+                //         element_medicine.purchase.forEach(element_batch => {
+                //             if(element_batch.id == parseInt(id)){
+                                let avlQty = (parseFloat(element.qty) + parseFloat(element.return_qty)) - parseFloat(element.stock_out);
+                                $("#billingAdd-expiry" + randNum).val(element.expiry); 
+                                $("#billingAdd-avlQty" + randNum).val(avlQty); 
+                                $("#billingAdd-salesPrice" + randNum).val(parseFloat(element.sales_price)); 
+                                $("#billingAdd-tax" + randNum).val(parseFloat(element.tax));
+                //             }
+                //         });
+                //     }
+                // });
             }
         });
     }
-    // $.ajax({
-    //     url:getBatchExpiryDate,
-    //     type:"GET",
-    //     headers:{
-    //         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-    //     },
-    //     data:{id:id},
-    //     success:function(response){
-    //         if(response.data != ''){
-    //             let getData = response.data[0];
-    //             let avlQty = (parseFloat(getData.qty) + parseFloat(getData.return_qty)) - parseFloat(getData.stock_out);
-    //             $("#billingAdd-expiry" + randE).val(getData.expiry); 
-    //             $("#billingAdd-avlQty" + randE).val(avlQty); 
-    //             $("#billingAdd-salesPrice" + randE).val(getData.sales_price); 
-    //             $("#billingAdd-tax" + randE).val(getData.tax); 
-    //         }
-    //          getBillingAmount(randE);
-    //     }
-    // });
-   
 }
+// function getBatchExpiry(id,randE){
+//     if(id !== ''){
+//         let category = $("#billingAdd-category" + randE).val();
+//         let name = $("#billingAdd-name" + randE).val();
+//         let batchDropdown2 = $("#billingAdd-batch" + randE).val();
+        
+//         medicineCategory.forEach(element => {
+//             if(element.id == parseInt(category)){
+//                 element.billMedicine.forEach(element_medicine => {
+//                     if(element_medicine.id == parseInt(name)){
+//                         element_medicine.purchase.forEach(element_batch => {
+//                             if(element_batch.id == parseInt(id)){
+//                                 let avlQty = (parseFloat(element_batch.qty) + parseFloat(element_batch.return_qty)) - parseFloat(element_batch.stock_out);
+//                                 $("#billingAdd-expiry" + randE).val(element_batch.expiry); 
+//                                 $("#billingAdd-avlQty" + randE).val(avlQty); 
+//                                 $("#billingAdd-salesPrice" + randE).val(parseFloat(element_batch.sales_price)); 
+//                                 $("#billingAdd-tax" + randE).val(parseFloat(element_batch.tax));
+//                             }
+//                         });
+//                     }
+//                 });
+//             }
+//         });
+//     }
+//     // $.ajax({
+//     //     url:getBatchExpiryDate,
+//     //     type:"GET",
+//     //     headers:{
+//     //         'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+//     //     },
+//     //     data:{id:id},
+//     //     success:function(response){
+//     //         if(response.data != ''){
+//     //             let getData = response.data[0];
+//     //             let avlQty = (parseFloat(getData.qty) + parseFloat(getData.return_qty)) - parseFloat(getData.stock_out);
+//     //             $("#billingAdd-expiry" + randE).val(getData.expiry); 
+//     //             $("#billingAdd-avlQty" + randE).val(avlQty); 
+//     //             $("#billingAdd-salesPrice" + randE).val(getData.sales_price); 
+//     //             $("#billingAdd-tax" + randE).val(getData.tax); 
+//     //         }
+//     //          getBillingAmount(randE);
+//     //     }
+//     // });
+   
+// }
 
 function getBillingAmount(randA){
     let qty = parseFloat($("#billingAdd-qty" + randA).val());
@@ -482,3 +599,4 @@ $('#billingAdd-paymentMode').on('change',function(e){
         $('.pmodetxn_billing').removeClass('d-none');
     }
 });
+// console.log(purchaseListData);

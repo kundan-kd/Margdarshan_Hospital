@@ -11,6 +11,7 @@ use App\Models\MedicineGroup;
 use App\Models\PurchaseItem;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -26,7 +27,11 @@ class MedicineController extends Controller
     }
     public function medicineView(Request $request){
         if($request->ajax()){
-            $medicinecreate = Medicine::get();
+            if($request->name == null){
+                $medicinecreate = Medicine::query();
+            }else{
+                $medicinecreate = Medicine::where('name','LIKE','%'.($request->name).'%')->get();
+            }
             return DataTables::of($medicinecreate)
             ->addColumn('name',function($row){
                 return $row->name;
@@ -171,31 +176,31 @@ class MedicineController extends Controller
        public function medicineLowInventoryView(Request $request){
         if($request->ajax()){
              // Only get medicines where stock_in - stock_out is less than or equal to 0
-            $medicineLow = Medicine::get()->filter(function($row) {
-                return (($row->stock_in - $row->stock_out) <= 0) || (($row->stock_in - $row->stock_out) <= $row->re_ordering_level);
-            });
+            $medicineLow = DB::table('medicines')
+            ->select('id', 'name', 'stock_in', 'stock_out', 're_ordering_level')
+            ->whereRaw('(stock_in - stock_out) <= 0')
+            ->orWhereRaw('(stock_in - stock_out) <= re_ordering_level')
+            ->get();
+
             return DataTables::of($medicineLow)
             ->addColumn('name',function($row){
                 return $row->name;
             })
-            ->addColumn('category',function($row){
-                return $row->categoryData->name;
-            })
-            ->addColumn('company',function($row){
-                return $row->companyData->name;
-            })
-            ->addColumn('composition',function($row){
-                return $row->composition;
-            })
-            // ->addColumn('group',function($row){
-            //     return $row->groupData->name;
+            // ->addColumn('category',function($row){
+            //     return $row->categoryData->name;
             // })
-            ->addColumn('unit',function($row){
-                return $row->unitData->unit;
-            })
-            ->addColumn('hsn',function($row){
-                return $row->hsn_number;
-            })
+            // ->addColumn('company',function($row){
+            //     return $row->companyData->name;
+            // })
+            // ->addColumn('composition',function($row){
+            //     return $row->composition;
+            // })
+            // ->addColumn('unit',function($row){
+            //     return $row->unitData->unit;
+            // })
+            // ->addColumn('hsn',function($row){
+            //     return $row->hsn_number;
+            // })
             ->addColumn('re_ordering_level',function($row){
                 return $row->re_ordering_level;
             })

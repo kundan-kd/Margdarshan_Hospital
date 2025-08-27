@@ -3,25 +3,32 @@
 medicines
 @endsection
 @section('extra-css')
-{{-- /* Remove border from the Select2 container */
 <style>
-.selection + .select2-container--default .select2-selection--multiple,
-.selection + .select2-container--default .select2-selection--single {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
+.dt-search{
+    display: none;
 }
-</style> --}}
+</style>
 @endsection
 @section('main-container')
   <div class="dashboard-main-body">
+    <h6 class="fw-normal mb-0">Medicines</h6>
 
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-  <h6 class="fw-normal mb-0">Medicines</h6>
+  <div class="d-flex flex-wrap align-items-center justify-content-between mb-24">
+  <div class="d-flex align-items-center">
+    <input id="medicine_search" class="form-control form-control-sm" placeholder="Enter Medicine Name" style="width: 400px;">
+    <button class="btn btn-primary btn-sm ms-3" onclick="getListFilter()">Search</button>
+  </div>
+
   <div class="btns">
-    <a class="btn btn-primary-600  btn-sm fw-normal mx-2 createNewBtn" data-bs-toggle="modal" data-bs-target="#medician-list-add" onclick="resetMedicineAdd()"><i class="ri-add-line"></i>Add Medicine</a>
-    <a href="{{route('medicine.medicineLowInventory')}}" class="btn btn-danger-600  btn-sm fw-normal mx-2 inven"></i>Low Inventory</a>
-    <a class="btn btn-warning-600 fw-normal  btn-sm" id="excelBtn"><i class="ri-file-excel-2-line"></i> Excel</a>
+    <a class="btn btn-primary-600 btn-sm fw-normal mx-2 createNewBtn" data-bs-toggle="modal" data-bs-target="#medician-list-add" onclick="resetMedicineAdd()">
+      <i class="ri-add-line"></i> Add Medicine
+    </a>
+    <a href="{{route('medicine.medicineLowInventory')}}" class="btn btn-danger-600 btn-sm fw-normal mx-2 inven">
+      <i class="ri-alert-line"></i> Low Inventory
+    </a>
+    <a class="btn btn-warning-600 fw-normal btn-sm" id="excelBtn">
+      <i class="ri-file-excel-2-line"></i> Excel
+    </a>
   </div>
 </div>
     

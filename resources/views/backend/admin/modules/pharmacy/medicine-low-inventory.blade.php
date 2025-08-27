@@ -19,12 +19,11 @@ Low Inv. Medicine
           <thead>
             <tr>
               <th scope="col" class="fw-medium">Name</th>
-              <th scope="col" class="fw-medium">Category</th>
+              {{-- <th scope="col" class="fw-medium">Category</th>
               <th scope="col" class="fw-medium">Company</th>
               <th scope="col" class="fw-medium">Composition</th>
-              <!--<th scope="col" class="fw-medium">Group</th>-->
               <th scope="col" class="fw-medium">Unit</th>
-              <th scope="col" class="fw-medium">HSN</th>
+              <th scope="col" class="fw-medium">HSN</th> --}}
               <th scope="col" class="fw-medium">Re Order Level</th>
               <th scope="col" class="fw-medium">Current Stock</th>
             </tr>
@@ -58,30 +57,26 @@ Low Inv. Medicine
             data:'name',
             name:'name'
         },
-        {
-            data:'category',
-            name:'category'
-        },
-        {
-            data:'company',
-            name:'company'
-        },
-        {
-            data:'composition',
-            name:'composition'
-        },
         // {
-        //     data:'group',
-        //     name:'group'
+        //     data:'category',
+        //     name:'category'
         // },
-        {
-            data:'unit',
-            name:'unit'
-        },
-        {
-            data:'hsn',
-            name:'hsn'
-        },
+        // {
+        //     data:'company',
+        //     name:'company'
+        // },
+        // {
+        //     data:'composition',
+        //     name:'composition'
+        // },
+        // {
+        //     data:'unit',
+        //     name:'unit'
+        // },
+        // {
+        //     data:'hsn',
+        //     name:'hsn'
+        // },
         {
             data:'re_ordering_level',
             name:'re_ordering_level'

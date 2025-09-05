@@ -103,6 +103,7 @@ Route::post('/patient-add-new',[PatientController::class,'patientAddNewPatient']
 Route::post('/patient-data',[PatientController::class,'newPatientData'])->name('patient.newPatientData');
 Route::post('/patient-update',[PatientController::class,'patientAddNewPatientDataUpdate'])->name('patient.patientAddNewPatientDataUpdate');
 Route::post('/patient-delete',[PatientController::class,'deletePatientData'])->name('patient.deletePatientData');
+Route::get('/patient-history/{id}/{id2}',[PatientController::class,'patientHistory']);
 
 Route::get('/medicine',[MedicineController::class,'index'])->name('medicine.index');
 Route::get('/medicine-details',[MedicineController::class,'medicineView'])->name('medicine.medicineView');
@@ -282,7 +283,7 @@ Route::get('/billing-sale-return/{id}',[BillingController::class,'billingSaleRet
 
 Route::get('/opd-out',[OpdoutController::class,'index'])->name('opd-out.index');
 Route::post('/opd-out-view',[OpdoutController::class,'viewOpdOut'])->name('opd-out.viewOpdOut');
-Route::get('/opd-out-details/{id}',[OpdoutController::class,'opdOutDetails']);
+Route::get('/opd-out-details/{id}/{patient_id}',[OpdoutController::class,'opdOutDetails']);
 Route::post('/opd-out-movetoipd',[OpdoutController::class,'moveToIpdStatus'])->name('opd-out.moveToIpdStatus');
 // Route::post('/opd-out-movetoicu',[OpdoutController::class,'moveToIcuStatus'])->name('opd-out.moveToIcuStatus');
 Route::post('/opd-out-findinds-add',[OpdoutController::class,'opdOutFindingSubmit'])->name('opd-out.opdOutFindingSubmit');
@@ -457,9 +458,9 @@ Route::post('/emergency-advance-view',[EmergencyController::class,'viewEmergency
 Route::post('/emergency-advance-data',[EmergencyController::class,'getEmergencyAdvanceData'])->name('emergency-advance.getEmergencyAdvanceData');
 Route::post('/emergency-advance-update',[EmergencyController::class,'emergencyAdvanceDataUpdate'])->name('emergency-advance.emergencyAdvanceDataUpdate');
 
-Route::get('/patient-discharge-bills/{id}',[InvoiceController::class,'generateEmergencyBills']);
+Route::get('/patient-discharge-bills/{id}',[InvoiceController::class,'generateDischargeBill']);
 Route::post('/invoice-bill-payment',[InvoiceController::class,'payBillAmount'])->name('invoice.payBillAmount');
-Route::get('/discharge-bill-print/{id}',[InvoiceController::class,'dischargeBillPrint']);
+Route::get('/discharge-bill-print/{id}/{admit_id}',[InvoiceController::class,'dischargeBillPrint']);
 Route::post('/patient-discharge',[InvoiceController::class,'getPatientDischarge'])->name('invoice.getPatientDischarge');
 Route::post('/patient-invoice-add',[InvoiceController::class,'invoiceDataSubmit'])->name('invoice.invoiceDataSubmit');
 Route::get('/medicine-bill-print/{id}',[InvoiceController::class,'medicineBillPrint']);

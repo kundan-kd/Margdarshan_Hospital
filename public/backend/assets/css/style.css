@@ -12396,7 +12396,7 @@ div.dt-container .dt-paging .dt-paging-button:hover:hover, div.dt-container .dt-
   border: 1px solid var(--input-form-light);
   color: var(--text-primary-light) !important;
   background-color: var(--white);
-  padding: 0.5625rem 1.25rem;
+  padding: 0.5625rem 0.25rem;
 }
 
 .form-select::placeholder, .form-control::placeholder, textarea::placeholder {
@@ -15577,3 +15577,22 @@ td.fc-header-center {
 /* === footer css end === */
 
 
+/* ✅ For Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ✅ For Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Optional: prevent arrows appearing on hover/focus in some browsers */
+input[type=number]:hover,
+input[type=number]:focus {
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  appearance: none;
+}

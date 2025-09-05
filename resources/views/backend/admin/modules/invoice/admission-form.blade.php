@@ -152,9 +152,12 @@
 				<br> Email: info@margdarshanhospital.com</div>
 			<div class="form-title">ADMISSION FORM</div>
 		</div>
+		{{-- @php
+			dd($patients);
+		@endphp --}}
 		<div class="patient-info">
 			<div class="info-group">
-				<div class="info-row"> <span class="info-label">Patient ID:</span> <span class="info-value">{{$patients[0]->patient_id}}</span> </div>
+				<div class="info-row"> <span class="info-label">UHID:</span> <span class="info-value">{{$patients[0]->patient_id}}</span> </div>
 				<div class="info-row"> <span class="info-label">Admit Date & Time:</span> <span class="info-value">{{$patients[0]->created_at->setTimezone('Asia/Kolkata')->format('d-m-Y h:i A')}}</span> </div>
 				<div class="info-row"> <span class="info-label">Patient Name:</span> <span class="info-value">{{$patients[0]->name}}</span> </div>
 				<div class="info-row"> <span class="info-label">Guardian's Name:</span> <span class="info-value">{{$patients[0]->guardian_name}}</span> </div>
@@ -164,7 +167,7 @@
 			
 			</div>
 			<div class="info-group">
-				<div class="info-row"> <span class="info-label">Bed No:</span> <span class="info-value">{{$patients[0]->bedData->bed_no}}</span> </div>
+				<div class="info-row"> <span class="info-label">Bed No:</span> <span class="info-value">{{$patients[0]->bedData->bed_no ?? ''}}</span> </div>
 				<div class="info-row"> <span class="info-label">Age / Sex:</span> <span class="info-value">{{$patients[0]->gender}}</span> </div>
 				<div class="info-row"> <span class="info-label">Contact No:</span> <span class="info-value">{{$patients[0]->mobile}}</span> </div>
 				<div class="info-row"> <span class="info-label">Department:</span> <span class="info-value">{{$patients[0]->type}}</span> </div>

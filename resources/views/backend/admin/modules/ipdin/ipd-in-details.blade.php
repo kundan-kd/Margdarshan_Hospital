@@ -42,6 +42,9 @@
                   <button class="nav-link px-16 py-10 " id="pills-Visits-tab" data-bs-toggle="pill" data-bs-target="#pills-Visits" type="button" role="tab" aria-controls="pills-Visits" aria-selected="false">Visits</button>
                 </li>
                 <li class="nav-item" role="presentation">
+                  <button class="nav-link px-16 py-10 " id="patient-history-tab" data-bs-toggle="pill" data-bs-target="#patient-history" type="button" role="tab" aria-controls="patient-history" aria-selected="false">Patient History</button>
+                </li>
+                <li class="nav-item" role="presentation">
                   <button class="nav-link px-16 py-10 " id="pills-Medication-tab" data-bs-toggle="pill" data-bs-target="#pills-Medication" type="button" role="tab" aria-controls="pills-Medication" aria-selected="false">Medication</button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -245,6 +248,8 @@
                           <thead>
                              <tr>
                               <th class="fw-medium ">Visit ID</th>
+                              <th class="fw-medium ">Type</th>
+                              <th class="fw-medium ">Admit ID</th>
                               <th class="fw-medium ">Visit Date & Time</th>
                               <th class="fw-medium ">Consultant</th>
                               <th class="fw-medium ">Notes</th>
@@ -260,6 +265,61 @@
                   </div>
                 </div>
                 <!--  opd-visit-view Start -->
+
+                <div class="tab-pane fade" id="patient-history" role="tabpanel" aria-labelledby="patient-history-tab" tabindex="0">
+                  <div class="row">
+                    <div class="col-md-12 px-3">
+                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
+                        <h6 class="text-md fw-normal mb-0">Patient Visit History</h6>
+                      </div>
+                      <div class="card basic-data-table">
+                            <table class="table bordered-table mb-0 w-100" id="patient-history-list" data-page-length='10'>
+                          <thead>
+                             <tr>
+                              <th class="fw-medium ">Sr.No.</th>
+                              <th class="fw-medium ">Name</th>
+                              <th class="fw-medium ">Admit Id</th>
+                              <th class="fw-medium ">Type</th>
+                              <th class="fw-medium ">Admitted On</th>
+                              <th class="fw-medium ">Current Status</th>
+                              <th class="fw-medium ">Discharge On</th>
+                              <th class="fw-medium ">Action</th>
+                             </tr>
+                          </thead>
+                          <tbody>
+                            @php
+                              $i = 1;
+                              use Carbon\Carbon;
+                            @endphp
+                            @foreach ($admit_lists as $admit)
+                              <tr>
+                                <td class="text-start">{{$i}}</td>
+                                <td class="text-start">{{$admit->patientData->name}}</td>
+                                <td class="text-start">MHAI{{$admit->admit_id}}</td>
+                                <td class="text-start">{{$admit->type ?? 'NA'}}</td>
+                                <td class="text-start">{{$admit->created_at->format('d-m-Y h:i A')}}</td>
+                                <td class="text-start">{{$admit->current_status ?? 'NA'}}</td>
+                                <td class="text-start">
+                                  @if($admit->current_status === 'Discharged' && $admit->discharge_date)
+                                      {{ \Carbon\Carbon::parse($admit->discharge_date)->setTimezone('Asia/Kolkata')->format('d-m-Y h:i A') }}
+                                  @else
+                                      NA
+                                  @endif
+                                </td>
+                                <td><a href="javascript:void(0)" title="Discharge Bill" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center {{$admit->current_status == 'Discharged' ? '':'d-none'}}">
+                                    <iconify-icon icon="mdi:file-download-outline" onclick="printBill({{$admit->patient_id}} , {{$admit->admit_id}})"></iconify-icon>
+                                </a></td>
+                              </tr>
+                              @php
+                                $i++;
+                              @endphp
+                            @endforeach
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               <div class="modal fade" id="ipd-in-visit-view" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="opd-visit-viewLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                   <div class="modal-content">
@@ -319,6 +379,7 @@
                                   <thead>
                                     <tr >
                                       <th scope="col" class="fw-medium">Sample Date</th>
+                                      <th scope="col" class="fw-medium">Admit Id</th>
                                       <th scope="col" class="fw-medium">Tast Type</th>
                                       <th scope="col" class="fw-medium">Test Name</th>
                                       <th scope="col" class="fw-medium">Repost Date</th>
@@ -409,6 +470,7 @@
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Admit Id</th>
                               <th class="fw-medium">Nurse</th>
                               <th class="fw-medium">Note</th>
                               <th class="fw-medium">Comment</th>
@@ -436,6 +498,7 @@
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Admit Id</th>
                               <th class="fw-medium">Name</th>
                               <th class="fw-medium">Value</th>
                               <th class="fw-medium">Action</th>
@@ -1877,8 +1940,9 @@
           dropdownParent: $('#ipd-nurse-note')
       });
     });
-  const ipdFindingSubmit = "{{route('ipd.ipdFindingSubmit')}}";
   const ipdVisitMedicineName = "{{route('common.getMedicineName')}}";
+
+  const ipdFindingSubmit = "{{route('ipd.ipdFindingSubmit')}}";
   const calculateDischargeAmount = "{{route('ipd.calculateDischargeAmount')}}";
   const submitRestIpdAmount = "{{route('ipd.submitRestIpdAmount')}}";
   const patientDischargeStatus = "{{route('ipd.patientDischargeStatus')}}";

@@ -21,9 +21,9 @@
           @can('Emergency Move To ICU')
             <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="#"> <i class="ri-stethoscope-line"></i> Move to ICU</button>
           @endcan
-          <!--@can('Emergency Discharge')-->
-          <!--  <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="emergencyDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>-->
-          <!--@endcan-->
+          @can('Emergency Discharge')
+            <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="emergencyDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
+          @endcan
         </div>
     </div>
     @php
@@ -37,6 +37,9 @@
                 </li>
                 <li class="nav-item" role="presentation">
                   <button class="nav-link px-16 py-10 " id="pills-Visits-tab-emergency" data-bs-toggle="pill" data-bs-target="#pills-Visits-emergency" type="button" role="tab" aria-controls="pills-Visits-emergency" aria-selected="false">Visits</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link px-16 py-10 " id="patient-history-tab" data-bs-toggle="pill" data-bs-target="#patient-history" type="button" role="tab" aria-controls="patient-history" aria-selected="false">Patient History</button>
                 </li>
                 <li class="nav-item" role="presentation">
                   <button class="nav-link px-16 py-10 " id="pills-Medication-tab-emergency" data-bs-toggle="pill" data-bs-target="#pills-Medication-emergency" type="button" role="tab" aria-controls="pills-Medication-emergency" aria-selected="false">Medication</button>
@@ -275,6 +278,60 @@
                     </div>
                   </div>
                 </div>
+                  <div class="tab-pane fade" id="patient-history" role="tabpanel" aria-labelledby="patient-history-tab" tabindex="0">
+                  <div class="row">
+                    <div class="col-md-12 px-3">
+                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
+                        <h6 class="text-md fw-normal mb-0">Patient Visit History</h6>
+                      </div>
+                      <div class="card basic-data-table">
+                            <table class="table bordered-table mb-0 w-100" id="patient-history-list" data-page-length='10'>
+                          <thead>
+                             <tr>
+                              <th class="fw-medium ">Sr.No.</th>
+                              <th class="fw-medium ">Name</th>
+                              <th class="fw-medium ">Admit Id</th>
+                              <th class="fw-medium ">Type</th>
+                              <th class="fw-medium ">Admitted On</th>
+                              <th class="fw-medium ">Current Status</th>
+                              <th class="fw-medium ">Discharge On</th>
+                              <th class="fw-medium ">Action</th>
+                             </tr>
+                          </thead>
+                          <tbody>
+                            @php
+                              $i = 1;
+                               use Carbon\Carbon;
+                            @endphp
+                            @foreach ($admit_lists as $admit)
+                              <tr>
+                                <td class="text-start">{{$i}}</td>
+                                <td class="text-start">{{$admit->patientData->name}}</td>
+                                <td class="text-start">MHAI{{$admit->admit_id}}</td>
+                                <td class="text-start">{{$admit->type}}</td>
+                                <td class="text-start">{{$admit->created_at->format('d-m-Y h:i A')}}</td>
+                                <td class="text-start">{{$admit->current_status}}</td>
+                                <td class="text-start">
+                                  @if($admit->current_status === 'Discharged' && $admit->discharge_date)
+                                      {{ \Carbon\Carbon::parse($admit->discharge_date)->setTimezone('Asia/Kolkata')->format('d-m-Y h:i A') }}
+                                  @else
+                                      NA
+                                  @endif
+                                </td>
+                                <td><a href="javascript:void(0)" title="Discharge Bill" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center {{$admit->current_status == 'Discharged' ? '':'d-none'}}">
+                                    <iconify-icon icon="mdi:file-download-outline" onclick="printBill({{$admit->patient_id}} , {{$admit->admit_id}})"></iconify-icon>
+                                </a></td>
+                              </tr>
+                              @php
+                                $i++;
+                              @endphp
+                            @endforeach
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="tab-pane fade" id="pills-Medication-emergency" role="tabpanel" aria-labelledby="pills-Medication-tab-emergency" tabindex="0">
                   <div class="col-md-12 px-3">
                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
@@ -318,6 +375,7 @@
                                   <thead>
                                     <tr >
                                       <th scope="col" class="fw-medium">Sample Date</th>
+                                      <th scope="col" class="fw-medium">Admit Id</th>
                                       <th scope="col" class="fw-medium">Tast Type</th>
                                       <th scope="col" class="fw-medium">Test Name</th>
                                       <th scope="col" class="fw-medium">Repost Date</th>
@@ -377,6 +435,7 @@
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Admit Id</th>
                               <th class="fw-medium">Nurse</th>
                               <th class="fw-medium">Note</th>
                               <th class="fw-medium">Comment</th>
@@ -404,6 +463,7 @@
                           <thead>
                              <tr>
                               <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Admit Id</th>
                               <th class="fw-medium">Name</th>
                               <th class="fw-medium">Value</th>
                               <th class="fw-medium">Action</th>

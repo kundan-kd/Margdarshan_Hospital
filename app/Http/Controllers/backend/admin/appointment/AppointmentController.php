@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\backend\admin\appointment;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdmitList;
 use App\Models\Appointment;
 use App\Models\Department;
 use App\Models\Lead;
 use App\Models\Patient;
+use App\Models\PatientLog;
 use App\Models\PaymentBill;
 use App\Models\PaymentMode;
 use App\Models\PaymentReceived;
 use App\Models\RoomNumber;
+use App\Models\Timeline;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Picqer\Barcode\BarcodeGeneratorJPG;
 use Picqer\Barcode\BarcodeGeneratorPNG;
@@ -32,16 +37,16 @@ class AppointmentController extends Controller
     
     public function viewAppointments(Request $request){
         if($request->ajax()){
-            $appointment = Appointment::get();
-            return DataTables::of($appointment)
-            ->addColumn('patient_id',function($row){
-                return $row->patient_data->patient_id ?? '';
-            })
-            ->addColumn('patient_name',function($row){
-                return $row->patient_name ?? '';
-            })
+            $patient_log = PatientLog::where('type','OPD')->get();
+            return DataTables::of($patient_log)
             ->addColumn('appointment_date',function($row){
                 return $row->appointment_date ?? '';
+            })
+            ->addColumn('appointment_id',function($row){
+                return 'MHAP0'.$row->id ?? '';
+            })
+            ->addColumn('patient_name',function($row){
+                return $row->patient_data->name ?? '';
             })
             ->addColumn('mobile',function($row){
                 return $row->patient_data->mobile ?? ''; //fetched through modal relationship
@@ -55,16 +60,16 @@ class AppointmentController extends Controller
             ->addColumn('fee',function($row){
                 return $row->fee ?? '';
             })
-            ->addColumn('paid_status',function($row){
-                return $row->paid_status === 'Paid'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Paid</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white" >Unpaid</span>';  
+            ->addColumn('payment_status',function($row){
+                return $row->payment_status == 'Paid'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Paid</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white" >Unpaid</span>';  
             })
             ->addColumn('status',function($row){
-                return $row->status === 'Visited'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Visited</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white" >Pending</span>'; 
+                return $row->status == 'Pending' || $row->status == 'Cancelled'? '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white">'.$row->status.'</span>': '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white" >'.$row->status.'</span>'; 
             })
-           ->addColumn('action', function($row) {
-                $check_invoice = $row->paid_status == 'UnPaid' ? 'd-none' : '';
-                $check_payment = $row->paid_status == 'Paid' ? 'd-none' : '';
-                $check_visit = $row->status == 'Visited' ? 'd-none' : '';
+            ->addColumn('action', function($row) {
+                $check_invoice = $row->payment_status == 'UnPaid' ? 'd-none' : '';
+                $check_payment = $row->payment_status == 'Paid' ? 'd-none' : '';
+                $check_visit = ($row->status == 'Visited' || $row->status == 'Moved to IPD' || $row->status == 'Cancelled') ? 'd-none' : '';
                 return '
                 <div class="d-flex gap-1">
                     <a href="javascript:void(0)" title="Appointment Bill" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center '.$check_invoice.'">
@@ -84,20 +89,16 @@ class AppointmentController extends Controller
                     </a>-->
                 </div>';
             })
-            ->rawColumns(['patient_id','paid_status','status','action'])
+            ->rawColumns(['patient_id','payment_status','status','action'])
             ->make(true);
         }
     }
     
     public function addNewPatient(Request $request){
-        $existing_patient = Patient::where('mobile', $request->mobile)
-            ->where(function ($query) {
-                $query->where('type', 'OPD')
-                    ->orWhere('current_status', 'Admitted');
-            })->first();
+        $existing_patient = Patient::where('mobile', $request->mobile)->exists();
         if ($existing_patient) {
             return response()->json([
-                'alreadyFound' => 'Patient already exists with this mobile no.']);
+                'alreadyFound' => 'Patient already exists with this mobile number']);
         }
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -117,9 +118,8 @@ class AppointmentController extends Controller
         }
         $month = date('m');
         $year = date('y');
-        $existing_patient_data = Patient::where('mobile', $request->mobile)->first();
+        // $existing_patient_data = Patient::where('mobile', $request->mobile)->first();
         $patient = new Patient();
-        $patient->type = "OPD";
         $patient->name = $request->name;
         $patient->guardian_name = $request->guardian_name;
         $patient->gender = $request->gender;
@@ -133,11 +133,6 @@ class AppointmentController extends Controller
         $patient->address = $request->address;
 
         if ($patient->save()) {
-            if ($existing_patient_data) {
-                // Reuse patient_id and barcode from previous patient
-                $patient->patient_id = $existing_patient_data->patient_id;
-                $patient->barcode = $existing_patient_data->barcode;
-            } else {
                 // Generate new patient_id and barcode
                 $patient->patient_id = "MHPT" . $month . $year . $patient->id;
                 // Barcode generation logic
@@ -150,8 +145,14 @@ class AppointmentController extends Controller
                     file_put_contents($path, $barcode);
                     $patient->barcode = $fileName;
                 }
-            }
             $patient->save(); // Final save after assigning patient_id and barcode
+            $timelines = new Timeline();
+            $timelines->type = "OPD";
+            $timelines->patient_id = $patient->id;
+            $timelines->title = "Patient Added";
+            $timelines->desc = "New patient added";
+            $timelines->created_by = Auth::id();
+            $timelines->save();
             //lead convert when same mobile number patient get admitted
             $lead = Lead::where('mobile', $request->mobile)->where('lead_status', 'Pending')->whereNotNull('assign_to')->first();     
             if ($lead) {
@@ -167,56 +168,6 @@ class AppointmentController extends Controller
         }
         return response()->json(['error_success' => 'Patient not added']);
     }
-    
-    // public function addNewPatient(Request $request){
-    //      $validator = Validator::make($request->all(),[
-    //         'name' => 'required',
-    //         'guardian_name' => 'required',
-    //         'gender' => 'nullable',
-    //         'bloodtype' => 'nullable',
-    //         'dob' => 'required',
-    //         'mstatus' => 'required',
-    //         'mobile' => 'required',
-    //         'address' => 'required',
-    //         'alt_mobile' => 'nullable',
-    //         'allergy' => 'nullable'
-    //     ]);
-    //     if($validator->fails()){
-    //         return response()->json(['error_validation'=>$validator->errors()->all()],422);
-    //     }
-    //     $month = date('m'); // Gets the current month (e.g., "05")
-    //     $year = date('y'); // Gets the current year (e.g., "25")
-    //     $patient = new Patient();
-    //     $patient->type = "OPD";
-    //     $patient->name = $request->name;
-    //     $patient->guardian_name = $request->guardian_name;
-    //     $patient->gender = $request->gender;
-    //     $patient->bloodtype = $request->bloodtype;
-    //     $patient->dob = $request->dob;
-    //     $patient->marital_status = $request->mstatus;
-    //     $patient->mobile = $request->mobile;
-    //     $patient->alt_mobile = $request->alt_mobile;
-    //     $patient->known_allergies = $request->allergy;
-    //     $patient->address = $request->address;
-    //     if($patient->save()){
-    //         $patient->patient_id = "MHPT". $month.$year.$patient->id;
-    //         $patient->save();
-    //         //generate bar code
-    //         $generator = new BarcodeGeneratorPNG();
-    //         $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
-    //         if ($barcode) {
-    //               //generate barcode and store in storage/public/barcode
-    //                 $fileName = $patient->patient_id.'.' . time() . '.png';
-    //                  $path = public_path('backend/uploads/barcode/' . $fileName);
-    //                 file_put_contents($path, $barcode);
-    //                 $patient->barcode = $fileName; //store barcode name in database
-    //                 $patient->save();
-    //         }
-    //         return response()->json(['success'=>'New Patient added successfully'],201);
-    //     }else{
-    //         return response()->json(['error_success'=>'Patient not added'],500);
-    //     }
-    // }
     
     public function searchPatient(Request $request){
         $keyword = $request->input('name');
@@ -270,95 +221,75 @@ class AppointmentController extends Controller
     }
     
     public function appointmentBook(Request $request){
-        $check_patient = Appointment::where('patient_id',$request->patientID)->where('status','Pending')->exists();
-        if($check_patient){
-            return response()->json(['already_open'=>'Appointment for this patient is already open']);
-        }
-        $check_patient_admitted = Patient::where('id',$request->patientID)->where('current_status','Admitted')->exists();
-        if($check_patient_admitted){
-            return response()->json(['already_admitted'=>'This patient is already admitted, Kindly discharge before adding new']);
-        }
-        // $check_patient_discharge = Patient::where('id',$request->patientID)->where('current_status','Discharged')->exists();
-        // if($check_patient_discharge){
-        //      return response()->json(['already_discharged'=>'This patient is discharged, Kindly add as new Patient']);
-        // }
-        
-        $validator = Validator::make($request->all(),[
-            'patientID' => 'nullable',
-            'name' => 'required',
-            'departmentID' => 'required',
-            'doctorID' => 'required',
-            'date' => 'required',
-            // 'pmode' => 'required',
-            'rnum' => 'required',
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=>$validator->errors()->all()],200);
-        }
-        $month = date('m'); // Gets the current month (e.g., "05")
-        $year = date('y'); // Gets the current year (e.g., "25")
-        $prevPatientData = Patient::where('id',$request->patientID)->get();
-        if($prevPatientData[0]->current_status == 'Discharged'){
-            $patient_data = new Patient();
-            $patient_data->type = "OPD";
-            $patient_data->patient_id = $prevPatientData[0]->patient_id;
-            $patient_data->name = $prevPatientData[0]->name;
-            $patient_data->guardian_name = $prevPatientData[0]->guardian_name;
-            $patient_data->gender = $prevPatientData[0]->gender;
-            $patient_data->bloodtype = $prevPatientData[0]->bloodtype;
-            $patient_data->dob = $prevPatientData[0]->dob;
-            $patient_data->marital_status = $prevPatientData[0]->marital_status;
-            $patient_data->mobile = $prevPatientData[0]->mobile;
-            $patient_data->barcode = $prevPatientData[0]->barcode;
-            $patient_data->known_allergies = $prevPatientData[0]->allergy;
-            $patient_data->address = $prevPatientData[0]->address;
-            $patient_data->save();
-        }
-        
-        $appointment = new Appointment();
-        $appointment->type = 'OPD';
-        $appointment->patient_id = $patient_data->id ?? $request->patientID; // if previous patient with same details found then old Patient_id be updated else new.
-        $appointment->patient_name = $request->name;
-        $appointment->department_id = $request->departmentID;
-        $appointment->doctor_id = $request->doctorID;
-        $appointment->appointment_date = $request->date;
-        // $appointment->payment_mode = $request->pmode;
-        $appointment->room_number = $request->rnum;
-        $appointment->fee = $request->fee;
-        $appointment->paid_status = "UnPaid";
-        if($appointment->save()){
-            $appointment->token = "MHAP". $month.$year.$appointment->id;
-            $appointment->save();
-            $payment_bills = new PaymentBill();
-            $payment_bills->type = "OPD";
-            $payment_bills->type_id = $appointment->id;
-            $payment_bills->patient_id = $patient_data->id ?? $request->patientID;
-            $payment_bills->amount_for = 'OPD Consultant';
-            $payment_bills->title = 'OPD Appointment Fee';
-            $payment_bills->amount = $request->fee;
-            $payment_bills->save();
-            return response()->json(['success'=>'Appointment booked successfully'],200);
-        }else{
-            return response()->json(['error_success'=>'Appointment not booked'],500);
-        }
+        return DB::transaction(function () use ($request) {
+            $check_patient_admitted = Patient::where('id',$request->patientID)->where('current_status','Admitted')->exists();
+            if($check_patient_admitted){
+                return response()->json(['already_admitted'=>'This patient is already admitted']);
+            }
+            $validator = Validator::make($request->all(),[
+                'patientID' => 'nullable',
+                'name' => 'required',
+                'departmentID' => 'required',
+                'doctorID' => 'required',
+                'date' => 'required',
+                'rnum' => 'required',
+            ]);
+            if($validator->fails()){
+                return response()->json(['error_validation'=>$validator->errors()->all()],200);
+            }
+            $patient_log = new PatientLog();
+            $patient_log->patient_id = $request->patientID;
+            $patient_log->type = "OPD";
+            $patient_log->department_id = $request->departmentID;
+            $patient_log->doctor_id = $request->doctorID;
+            $patient_log->appointment_date = $request->date;
+            $patient_log->room_id = $request->rnum;
+            $patient_log->fee = $request->fee;
+            $patient_log->status = 'Pending';
+            if($patient_log->save()){
+                Patient::where('id',$request->patientID)->update([
+                    'appointment_status' => 1,
+                    'type' => 'OPD',
+                    'current_status' => 'OPD'
+                ]);
+                $payment_bills = new PaymentBill();
+                $payment_bills->type = "OPD";
+                $payment_bills->patient_id = $request->patientID;
+                $payment_bills->amount_for = 'OPD Consultant';
+                $payment_bills->title = 'OPD Appointment Fee';
+                $payment_bills->amount = $request->fee;
+                $payment_bills->save();
+
+                $timelines = new Timeline();
+                $timelines->type = "OPD";
+                $timelines->patient_id = $request->patientID;
+                $timelines->title = "Appointment Booked";
+                $timelines->desc = "OPD appointment booked";
+                $timelines->created_by = Auth::id();
+                $timelines->save();
+                return response()->json(['success'=>'Appointment booked successfully'],200);
+            }else{
+                return response()->json(['error_success'=>'Appointment not booked'],500);
+            }
+        });
     }
     
     public function getAppointmentData(Request $request){
-        $getData = Appointment::where('id',$request->id)->get();
+        $getData = PatientLog::where('id',$request->id)->get();
         return response()->json(['success'=>'Appointment details fetched successfully','data'=>$getData],200);
     }
     
     public function updateAppointmentData(Request $request){
-        $appointment_data = Appointment::where('id',$request->id)->get(['id','patient_id','fee']);
-        $update = Appointment::where('id',$request->id)->update([
+        $appointment_data = PatientLog::where('id',$request->id)->get(['id','patient_id','admit_id','fee']);
+        $update = PatientLog::where('id',$request->id)->update([
             'paid_amount' => $request->pay_amount,
-            'payment_mode' => $request->payment_mode,
-            'paid_status' => "Paid"
+            'payment_status' => "Paid"
         ]);
         if($update){
             if($request->pay_amount > 0){
                 $payment_received = new PaymentReceived();
                 $payment_received->patient_id = $appointment_data[0]->patient_id;
+                $payment_received->admit_id = $appointment_data[0]->admit_id;
                 $payment_received->type = 'OPD';
                 $payment_received->type_id = $appointment_data[0]->id;
                 $payment_received->amount_for = 'OPD Consultant';
@@ -374,30 +305,43 @@ class AppointmentController extends Controller
     }
     
     public function updateVisitData(Request $request){
-        $appointment_data = Appointment::where('id',$request->id)->get(['id','patient_id','fee','appointment_date','doctor_id']);
-        $update = Appointment::where('id',$request->id)->update([
-            'status' => "Visited"
-        ]);
-        if($update){
-            Patient::where('id',$appointment_data[0]->patient_id)->update([
-                'current_status' => 'Discharged',
-                'description' => 'Visited to OPD'
-            ]);
-            $visits = new Visit();
-            $visits->type = "OPD";
-            $visits->patient_id = $appointment_data[0]->patient_id;
-            $visits->appointment_id = $appointment_data[0]->id;
-            $visits->consult_doctor = $appointment_data[0]->doctor_id;
-            $visits->appointment_date = $appointment_data[0]->appointment_date;
-            $visits->visited_date = $request->visit_date;
-            $visits->paid_amount = $appointment_data[0]->fee;
-            $visits->save();
-            return response()->json(['success' => 'Visits updated successfully'],200);
-        }else{
-            return response()->json(['error_success' => 'Visits not updated']);
+        return DB::transaction(function () use ($request) {
+        $appointment_data = PatientLog::where('id', $request->id)->get(['id', 'patient_id','admit_id','fee', 'appointment_date', 'doctor_id']);
+        if($request->visit_date != $appointment_data[0]->appointment_date){
+             return response()->json(['error_visit_update' => 'Visit updates are allowed only on the appointment date']);
         }
+            $appointment_statuses = PatientLog::where('patient_id', $appointment_data[0]->patient_id)->pluck('status')->toArray(); 
+            // Only update Patient table if no status is 'Pending' in patient log
+            if (!in_array('Pending', $appointment_statuses)) {
+                Patient::where('id', $appointment_data[0]->patient_id)->update([
+                    'appointment_status' => 0,
+                    'current_status' => 'Visited',
+                    'description' => 'Visited to OPD'
+                ]);
+            }
+            // Update the current PatientLog status
+            $update = PatientLog::where('id', $request->id)->update([
+                'admit_id' => $appointment_data[0]->patient_id,
+                'status' => "Visited",
+                'description' => "Visited in OPD",
+            ]);
+            if ($update) {
+                $visits = new Visit();
+                $visits->type = "OPD";
+                $visits->patient_id = $appointment_data[0]->patient_id;
+                $visits->appointment_id = $appointment_data[0]->id;
+                $visits->consult_doctor = $appointment_data[0]->doctor_id;
+                $visits->appointment_date = $appointment_data[0]->appointment_date;
+                $visits->visited_date = $request->visit_date;
+                $visits->amount = $appointment_data[0]->fee;
+                $visits->paid_amount = $appointment_data[0]->fee;
+                $visits->save();
+                return response()->json(['success' => 'Visits updated successfully'], 200);
+            } else {
+                return response()->json(['error_success' => 'Visits not updated']);
+            }
+        });
     }
-    
     public function deleteAppointmentData(Request $request){
         $patient_data = Appointment::where('id',$request->id)->get(['patient_id']);
         $patient_details = Patient::where('id',$patient_data[0]->patient_id)->get();
@@ -421,12 +365,11 @@ class AppointmentController extends Controller
             return response()->json(['success' => 'Appointment cancelled successfully'],200);
         }else{
             return response()->json(['error_success' => 'Appointment not cancelled']);
-
         }
     }
     
     public function appointmentDataUpdate(Request $request){
-        $update = Appointment::where('id',$request->id)->update([
+        $update = PatientLog::where('id',$request->id)->update([
             'appointment_date' => $request->newDate
         ]);
         if($update){

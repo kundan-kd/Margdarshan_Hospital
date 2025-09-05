@@ -305,3 +305,4 @@ function emergencyVisitDelete(id){
         }
     });
 }    
+$('#patient-history-list').DataTable();

@@ -34,6 +34,10 @@ let table_lab = $('#ipd-lab-reports-list').DataTable({
             name:'created_at'
         },
         {
+            data:'admit_id',
+            name:'admit_id'
+        },
+        {
             data:'test_type',
             name:'test_type'
         },

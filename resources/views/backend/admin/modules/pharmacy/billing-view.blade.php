@@ -11,7 +11,6 @@ Medicin Bill Details
       <h6 class="fw-medium mb-0">Medicine Bill Details</h6>
    
     </div>
-  
     <div class="card basic-data-table">
       <div class="card-body">
          <div class="row">

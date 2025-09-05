@@ -15,6 +15,7 @@ return new class extends Migration
           $table->id();
             $table->string('type',30)->nullable();
             $table->integer('patient_id')->nullable();
+            $table->string('admit_id',30)->nullable();
             $table->integer('test_type_id')->nullable();
             $table->integer('test_name_id')->nullable();
             $table->double('amount')->default(0);

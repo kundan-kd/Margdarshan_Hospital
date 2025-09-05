@@ -53,7 +53,7 @@ Billing-add
                                 <th class="text-nowrap text-neutral-700">
                                     Medicine Category
                                 </th>
-                                <th class="text-nowrap text-neutral-700">
+                                <th class="text-nowrap text-neutral-700" style="width:250px;">
                                     Medicine Name
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
@@ -91,7 +91,7 @@ Billing-add
                                     </select>
                                 </td>
                                 <td>
-                                    <select id="billingAdd-name0" name="billingAdd-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetails(this.value,0)">
+                                    <select id="billingAdd-name0" name="billingAdd-name[]" class="form-select form-select-sm select2-cls w-100" onchange="getBatchDetails(this.value,0)" style="width: 250px;">
                                         <option value="" selected>Select</option>
                                     </select>
                                 </td>
@@ -107,7 +107,7 @@ Billing-add
                                     </div>
                                 </td>
                                 <td>
-                                    <input id="billingAdd-qty0" name="billingAdd-qty[]" name="billingAdd-name" class="form-control form-control-sm" type="number" placeholder="Quantity" oninput="getBillingAmount(0)">
+                                    <input id="billingAdd-qty0" name="billingAdd-qty[]" name="billingAdd-name" class="form-control form-control-sm" type="number" placeholder="Quantity" min="0" oninput="getBillingAmount(0)">
                                 </td>
                                 <td>
                                     <input id="billingAdd-avlQty0" name="billingAdd-avlQty[]" type="number" class="form-control form-control-sm" value="" placeholder="Avilable Qty" readonly>
@@ -125,6 +125,11 @@ Billing-add
                                 <td style="display: none;">
                                     <input id="billingAdd-taxAmount0" name="billingAdd-taxAmount[]" class="form-control form-control-sm" type="text">
                                 </td>
+                                <td>
+                                  <button type="button" class="mx-1 mt-1 fw-normal w-32-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowBilling()">
+                                      <i class="ri-add-line"></i>
+                                  </button>
+                                </td>
                                 
                             </tr>
                             <!-- replica table end -->
@@ -134,9 +139,9 @@ Billing-add
                             <!-- replica table end -->
                         </tbody>
                     </table>
-                    <button type="button" class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowBilling()">
+                    {{-- <button type="button" class="mx-1 fw-normal w-60-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRowBilling()">
                         <i class="ri-add-line"></i> Add
-                    </button>
+                    </button> --}}
                 </div>
             </div>
             <hr class="mb-3">

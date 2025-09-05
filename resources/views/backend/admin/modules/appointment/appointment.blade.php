@@ -32,9 +32,9 @@ Appointment
             <table class="table bordered-table mb-0" id="appointment-book-table" data-page-length='10'>
                 <thead>
                   <tr>
-                    <th scope="col" class="fw-medium">Patient ID</th>
-                    <th scope="col" class="fw-medium">Patient Name</th>
                     <th scope="col" class="fw-medium">Appointment Date</th>
+                    <th scope="col" class="fw-medium">Appointment ID</th>
+                    <th scope="col" class="fw-medium">Patient Name</th>
                     <th scope="col" class="fw-medium">Phone no</th>
                     <th scope="col" class="fw-medium">Gender</th>
                     <th scope="col" class="fw-medium">Doctor</th>
@@ -471,7 +471,7 @@ $ddate = date("d/m/yy");
     // Flat pickr or date picker js 
     function getDatePicker (receiveID) {
         flatpickr(receiveID, {
-            dateFormat: "d-m-Y ",
+            dateFormat: "Y-m-d",
         });
     }
     

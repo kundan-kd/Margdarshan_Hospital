@@ -77,11 +77,11 @@ function billAmountSubmit(id){
         console.log('Please fill required fields');
     }     
 }
-function billPrint(id){
-     window.open('/discharge-bill-print/' + id +'_blank');
+function billPrint(id,admit_id){
+    window.open('/discharge-bill-print/' + id + '/' + admit_id);
 }
 
-function billDischargeNPrint(id){
+function billDischargeNPrint(id,admit_id){
         Swal.fire({
         title: "Are you sure to discharge?",
         text: "You won't be able to revert this!",
@@ -107,7 +107,7 @@ function billDischargeNPrint(id){
                     if (response.success) {
                         Swal.fire("Discharged", response.success, "success");
                         setTimeout(function(){
-                             invoiceSubmit(id);
+                             invoiceSubmit(id,admit_id);
                         },1500);
                     } else {
                         Swal.fire("Error!", "Error", "error");
@@ -117,7 +117,7 @@ function billDischargeNPrint(id){
         }
     });
 }
-function invoiceSubmit(id){
+function invoiceSubmit(id,admit_id){
     let total_amount = parseFloat($('.bill-totalAmount').html() || 0);
     let discount_amount = parseFloat($('.bill-totalDiscountAmount').html() || 0);
     let paid_amount = parseFloat($('.bill-totalPaidAmount').html() || 0);
@@ -132,7 +132,7 @@ function invoiceSubmit(id){
             success:function(response){
                 console.log(response);
                 
-                billPrint(id) //print bill
+                billPrint(id,admit_id) //print bill
                 setTimeout(function(){
                     const url = `/patient-discharge-bills/${id}`;
                      window.location.href = url;

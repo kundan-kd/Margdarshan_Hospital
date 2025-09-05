@@ -29,6 +29,10 @@ let table_vital = $('#emergencyVital-list').DataTable({
             name:'date'
         },
         {
+            data:'admit_id',
+            name:'admit_id'
+        },
+        {
             data:'name',
             name:'name'
         },

@@ -110,6 +110,14 @@ let table_visit = $('#ipd-in-visit-list').DataTable({
             name:'visit_id'
         },
         {
+            data:'type',
+            name:'type'
+        },
+        {
+            data:'admit_id',
+            name:'admit_id'
+        },
+        {
             data:'visit_date',
             name:'visit_date'
         },
@@ -303,3 +311,4 @@ function ipdVisitDelete(id){
         }
     });
 }    
+$('#patient-history-list').DataTable();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\backend\admin\ipdin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdmitList;
 use App\Models\Bed;
 use App\Models\BedGroup;
 use App\Models\BedType;
@@ -14,6 +15,7 @@ use App\Models\Medication;
 use App\Models\MedicineCategory;
 use App\Models\NurseNote;
 use App\Models\Patient;
+use App\Models\PatientLog;
 use App\Models\PaymentBill;
 use App\Models\PaymentReceived;
 use App\Models\TestName;
@@ -26,6 +28,7 @@ use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Picqer\Barcode\BarcodeGeneratorJPG;
 use Picqer\Barcode\BarcodeGeneratorPNG;
@@ -53,14 +56,15 @@ class IpdinController extends Controller
         $emergencyAvailBeds = Bed::where('bed_group_id',6)->where('current_status','vacant')->where('status',1)->get();
         $icuAvailBeds = Bed::where('bed_group_id',4)->where('current_status','vacant')->where('status',1)->get();
         $ipdAvailablelBeds = Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get();
-        return view('backend.admin.modules.ipdin.ipd-in-details',compact('patients','medicineCategory','doctorData','nurseData','visitsData','medicationData','testtypes','testnames','labInvestigationData','emergencyAvailBeds','icuAvailBeds','ipdAvailablelBeds'));
+        $admit_lists = AdmitList::with('patientData')->where('patient_id',$id)->orderBy('id','desc')->get();
+        return view('backend.admin.modules.ipdin.ipd-in-details',compact('patients','medicineCategory','doctorData','nurseData','visitsData','medicationData','testtypes','testnames','labInvestigationData','emergencyAvailBeds','icuAvailBeds','ipdAvailablelBeds','admit_lists'));
     }
     public function viewPatients(Request $request){
         if($request->ajax()){
         if($request->patientType != null ){
             $patients = Patient::where('type',$request->patientType)->orWhere('current_status',$request->patientType)->get();
         }else{
-            $patients = Patient::whereIn('type', ['IPD', 'ICU'])->where('current_status','!=','Discharged')->get();
+            $patients = Patient::whereIn('type', ['IPD', 'ICU'])->get();
         }    
         return DataTables::of($patients)
         ->addColumn('patient_id',function($row){
@@ -100,23 +104,26 @@ class IpdinController extends Controller
         })
         ->addColumn('action', function($row) {
             $dischargeClass = ($row->current_status == 'Discharged') ? '' : 'd-none';
-            return '<a href="javascript:void(0)" title="Edit Patient" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+            return '<div class="d-flex gap-1">
+            <a href="javascript:void(0)" title="Edit Patient" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="lucide:edit" onclick="ipdPatientEdit(' . $row->id . ');getBedData(' . $row->id . ')"></iconify-icon>
                 </a>
                 <a href="javascript:void(0)" title="Discharge Bill" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center ' . $dischargeClass . '">
-                    <iconify-icon icon="mdi:file-download-outline" onclick="printBill(' . $row->id . ')"></iconify-icon>
+                    <iconify-icon icon="mdi:file-download-outline" onclick="printBill(' . $row->id . ','. $row->admit_id .')"></iconify-icon>
                 </a>
                 <a href="javascript:void(0)" title="Admission Form" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mdi:file-download-outline" onclick="admissionForm(' . $row->id . ')"></iconify-icon>
                 </a>
                 <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
                     <iconify-icon icon="mingcute:delete-2-line" onclick="ipdpatientDelete(' . $row->id . ')"></iconify-icon>
-                </a>-->';
+                </a>-->
+                </div>';
         })
         ->rawColumns(['patient_id','status','action'])
         ->make(true);
         }
     }
+     
     public function getBedDetailsIpd(Request $request){
         $getData = Bed::where('id',$request->id)->get();
         $bedtypename = BedType::where('id',$getData[0]->bed_type_id)->get(['name']);
@@ -136,105 +143,205 @@ class IpdinController extends Controller
          
     }
     public function addNewPatientIpd(Request $request){
-        if($request->id != ''){
-            $oldPatientId = Patient::where('id',$request->id)->get(['patient_id']);
-            $prevPatient = Patient::where('patient_id',$oldPatientId[0]->patient_id)->latest('id')->first();
-            if($prevPatient->current_status == "Admitted"){
-                return response()->json(['previous_admitted'=>'Kindly discharge this patient from '.$prevPatient->type.' before adding new']);
-            }
-            if($prevPatient->type == "OPD"){
-                return response()->json(['previous_added_opd'=>'This patient already found in OPD, Kindly move to IPD']);
-            }
-        }
-        $validator = Validator::make($request->all(),[
-            'name' => 'required',
-            'guardian_name' => 'required',
-            'gender' => 'nullable',
-            'entry_type' => 'required',
-            'bloodtype' => 'nullable',
-            'dob' => 'required',
-            'mstatus' => 'required',
-            'mobile' => 'required',
-            'address' => 'required',
-             'consultDoctor' => 'nullable',
-            'referPerson' => 'nullable',
-            'alt_mobile' => 'nullable',
-            'allergy' => 'nullable',
-            'bedNumId' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json(['error_validation'=>$validator->errors()->all()],422);
-        }
-        $now = Carbon::now();
-        $month = date('m'); // Gets the current month (e.g., "05")
-        $year = date('y'); // Gets the current year (e.g., "25")
-        $patient = new Patient();
-        $patient->type = "IPD";
-        $patient->name = $request->name;
-        $patient->guardian_name = $request->guardian_name;
-        $patient->gender = $request->gender;
-        $patient->entry_type = $request->entry_type;
-        $patient->bloodtype = $request->bloodtype;
-        $patient->dob = $request->dob;
-        $patient->marital_status = $request->mstatus;
-        $patient->mobile = $request->mobile;
-        $patient->alt_mobile = $request->alt_mobile;
-        $patient->known_allergies = $request->allergy;
-        $patient->address = $request->address;
-        $patient->attended_doctor_id = $request->consultDoctor;
-        $patient->reference_person = $request->referPerson;
-        $patient->bed_id = $request->bedNumId;
-        $patient->current_status = "Admitted";
-        if($patient->save()){
+        return DB::transaction(function () use ($request) {
             if($request->id != ''){
-                $oldPatientId = Patient::where('id',$request->id)->get(['patient_id','barcode']);
-                $patient->patient_id = $oldPatientId[0]->patient_id;
-                $patient->barcode = $oldPatientId[0]->barcode;
-                $patient->save();
-            }else{
-                $patient->patient_id = "MHPT". $month.$year.$patient->id;
-                $patient->save();
-                //generate bar code
-                $generator = new BarcodeGeneratorPNG();
-                $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
-                if ($barcode) {
-                    //generate barcode and store in storage/public/barcode
-                        $fileName = $patient->patient_id.'.' . time() . '.png';
-                        $path = public_path('backend/uploads/barcode/' . $fileName);
-                        file_put_contents($path, $barcode);
-                        $patient->barcode = $fileName; //store barcode name in database
-                        $patient->save();
-                } 
-                //generate bar code end
+                $oldPatientId = Patient::where('id',$request->id)->get(['patient_id']);
+                $prevPatient = Patient::where('patient_id',$oldPatientId[0]->patient_id)->latest('id')->first();
+                if($prevPatient->current_status == "Admitted"){
+                    return response()->json(['previous_admitted'=>'Kindly discharge this patient from '.$prevPatient->type.' before adding new']);
+                }
             }
-            //lead convert when same mobile number patient get admitted
-            $lead = Lead::where('mobile', $request->mobile)->where('lead_status', 'Pending')->whereNotNull('assign_to')->first();     
-            if ($lead) {
-                $lead->lead_status = 'Converted';
-                $lead->lead_patient_id = $patient->id;
-                $lead->lead_status_date = now();
-                $lead->save();
-
-                $patient->lead_id = $lead->id;
-                $patient->save();
-            }   
-            Bed::where('id',$request->bedNumId)->update([
-                'current_status' => 'occupied',
-                'occupied_by_patient_id' => $patient->id,
-                'occupied_date' => $now 
+            $check_prev_data = Patient::where('mobile',$request->mobile)->exists();
+            $validator = Validator::make($request->all(),[
+                'name' => 'required',
+                'guardian_name' => 'required',
+                'gender' => 'nullable',
+                'entry_type' => 'required',
+                'bloodtype' => 'nullable',
+                'dob' => 'required',
+                'mstatus' => 'required',
+                'mobile' => 'required',
+                'address' => 'required',
+                'consultDoctor' => 'nullable',
+                'referPerson' => 'nullable',
+                'alt_mobile' => 'nullable',
+                'allergy' => 'nullable',
+                'bedNumId' => 'required'
             ]);
-            // $bed_amount = Bed::where('id',$request->bedNumId)->get(['amount']);
-            $payment_bills = new PaymentBill();
-            $payment_bills->type = "IPD";
-            $payment_bills->patient_id = $patient->id;
-            $payment_bills->to_bed_id = $request->bedNumId;
-            $payment_bills->amount_for = 'Bed Charge';
-            $payment_bills->title = 'Patient Admitted to IPD';  // amount is updated here when move to other dept or discharge
-            $payment_bills->save();
-            return response()->json(['success'=>'New IPD Patient added successfully','data'=>$patient->id],200);
-        }else{
-            return response()->json(['error_success'=>'IPD Patient not added'],500);
-        }
+            if($validator->fails()){
+                return response()->json(['error_validation'=>$validator->errors()->all()],422);
+            }
+            $now = Carbon::now();
+            $admit_id = time();
+            if($check_prev_data){
+                $pre_patient_data = Patient::where('mobile',$request->mobile)->get();
+                Patient::where('id',$pre_patient_data[0]->id)->update([
+                    'type' => 'IPD',
+                    'previous_type' => $pre_patient_data[0]->type,
+                    'type_change_date' => $now,
+                    'admit_id' => $admit_id,
+                    'bed_id' => $request->bedNumId,
+                    'attended_doctor_id' => $request->consultDoctor,
+                    'reference_person' => $request->referPerson,
+                    'current_status' => 'Admitted',
+                    'admit_date' => $now,
+                    'discharge_date' => null,
+                ]);
+                Bed::where('id',$request->bedNumId)->update([
+                    'current_status' => 'occupied',
+                    'occupied_by_patient_id' => $pre_patient_data[0]->id,
+                    'occupied_date' => $now 
+                ]);
+                //if privious OPD status found Pending then make it cancelled
+                PatientLog::where('patient_id',$pre_patient_data[0]->id)->whereNull('admit_id')->where('status','Pending')->update([
+                    'admit_id' => '00000',
+                    'status'   => 'Cancelled',
+                    'description' => 'Revisit direct admit in IPD'
+                ]);
+
+                $patient_logs = new PatientLog();
+                $patient_logs->patient_id = $pre_patient_data[0]->id;
+                $patient_logs->admit_id = $admit_id;
+                $patient_logs->type = "IPD";
+                $patient_logs->bed_id = $request->bedNumId;
+                $patient_logs->doctor_id = $request->consultDoctor;
+                $patient_logs->reference_person = $request->referPerson;
+                $patient_logs->current_status = "Admitted";
+                if($patient_logs->save()){
+                    $payment_bills = new PaymentBill();
+                    $payment_bills->type = "IPD";
+                    $payment_bills->patient_id = $pre_patient_data[0]->id;
+                    $payment_bills->admit_id = $admit_id;
+                    $payment_bills->to_bed_id = $request->bedNumId;
+                    $payment_bills->amount_for = 'Bed Charge';
+                    $payment_bills->title = 'Patient Admitted to IPD';  // amount is updated here when move to other dept or discharge
+                    $payment_bills->save();
+
+                    //store admit_id for further patient revisit refrences
+                    $admit_data = new AdmitList();   
+                    $admit_data->patient_id = $pre_patient_data[0]->id;
+                    $admit_data->admit_id = $admit_id;
+                    $admit_data->type = "IPD";
+                    $admit_data->current_status = "Admitted";
+                    $admit_data->desc = "Patient revisit in IPD";
+                    $admit_data->save();
+
+                    $timelines = new Timeline();
+                    $timelines->type = "IPD";
+                    $timelines->patient_id = $pre_patient_data[0]->id;
+                    $timelines->admit_id = $admit_id;
+                    $timelines->title = "Patient Admitted";
+                    $timelines->desc = "Patient admitted to IPD";
+                    $timelines->bed_id = $request->bedNumId;
+                    $timelines->created_by = Auth::id();
+                    $timelines->save();
+                    return response()->json(['success'=>'New IPD Patient added successfully','data'=>$pre_patient_data[0]->id],200);
+                }else{
+                    return response()->json(['error_success'=>'IPD Patient not added'],500);
+                }
+            }else{
+                $month = date('m'); // Gets the current month (e.g., "05")
+                $year = date('y'); // Gets the current year (e.g., "25")
+                $patient = new Patient();
+                $patient->type = "IPD";
+                $patient->admit_id = $admit_id;
+                $patient->name = $request->name;
+                $patient->guardian_name = $request->guardian_name;
+                $patient->gender = $request->gender;
+                $patient->entry_type = $request->entry_type;
+                $patient->bloodtype = $request->bloodtype;
+                $patient->dob = $request->dob;
+                $patient->marital_status = $request->mstatus;
+                $patient->mobile = $request->mobile;
+                $patient->alt_mobile = $request->alt_mobile;
+                $patient->known_allergies = $request->allergy;
+                $patient->address = $request->address;
+                $patient->attended_doctor_id = $request->consultDoctor;
+                $patient->reference_person = $request->referPerson;
+                $patient->bed_id = $request->bedNumId;
+                $patient->current_status = "Admitted";
+                $patient->admit_date = $now;
+                if($patient->save()){
+                    // if($request->id != ''){
+                    //     $oldPatientId = Patient::where('id',$request->id)->get(['patient_id','barcode']);
+                    //     $patient->patient_id = $oldPatientId[0]->patient_id;
+                    //     $patient->barcode = $oldPatientId[0]->barcode;
+                    //     $patient->save();
+                    // }else{
+                        $patient->patient_id = "MHPT". $month.$year.$patient->id;
+                        $patient->save();
+                        //generate bar code
+                        $generator = new BarcodeGeneratorPNG();
+                        $barcode = $generator->getBarcode($patient->patient_id, $generator::TYPE_CODE_128);
+                        if ($barcode) {
+                            //generate barcode and store in storage/public/barcode
+                                $fileName = $patient->patient_id.'.' . time() . '.png';
+                                $path = public_path('backend/uploads/barcode/' . $fileName);
+                                file_put_contents($path, $barcode);
+                                $patient->barcode = $fileName; //store barcode name in database
+                                $patient->save();
+                        } 
+                        //generate bar code end
+                    // }
+                    //lead convert when same mobile number patient get admitted
+                    $lead = Lead::where('mobile', $request->mobile)->where('lead_status', 'Pending')->whereNotNull('assign_to')->first();     
+                    if ($lead) {
+                        $lead->lead_status = 'Converted';
+                        $lead->lead_patient_id = $patient->id;
+                        $lead->lead_status_date = now();
+                        $lead->save();
+
+                        $patient->lead_id = $lead->id;
+                        $patient->save();
+                    }   
+                    Bed::where('id',$request->bedNumId)->update([
+                        'current_status' => 'occupied',
+                        'occupied_by_patient_id' => $patient->id,
+                        'occupied_date' => $now 
+                    ]);
+                    $patient_logs = new PatientLog();
+                    $patient_logs->patient_id = $patient->id;
+                    $patient_logs->admit_id = $admit_id;
+                    $patient_logs->type = "IPD";
+                    $patient_logs->bed_id = $request->bedNumId;
+                    $patient_logs->doctor_id = $request->consultDoctor;
+                    $patient_logs->reference_person = $request->referPerson;
+                    $patient_logs->current_status = "Admitted";
+                    $patient_logs->save();
+
+                    $payment_bills = new PaymentBill();
+                    $payment_bills->type = "IPD";
+                    $payment_bills->patient_id = $patient->id;
+                    $payment_bills->admit_id = $admit_id;
+                    $payment_bills->to_bed_id = $request->bedNumId;
+                    $payment_bills->amount_for = 'Bed Charge';
+                    $payment_bills->title = 'Patient Admitted to IPD';  // amount is updated here when move to other dept or discharge
+                    $payment_bills->save();
+
+                    //store admit_id for further patient revisit refrences
+                    $admit_data = new AdmitList();   
+                    $admit_data->patient_id = $patient->id;
+                    $admit_data->admit_id = $admit_id;
+                    $admit_data->type = "IPD";
+                    $admit_data->current_status = "Admitted";
+                    $admit_data->desc = "New patient added from IPD";
+                    $admit_data->save();
+
+                    $timelines = new Timeline();
+                    $timelines->type = "IPD";
+                    $timelines->patient_id = $patient->id;
+                    $timelines->admit_id = $admit_id;
+                    $timelines->title = "Patient Added";
+                    $timelines->desc = "New patient admitted to IPD";
+                    $timelines->bed_id = $request->bedNumId;
+                    $timelines->created_by = Auth::id();
+                    $timelines->save();
+                    return response()->json(['success'=>'New IPD Patient added successfully','data'=>$patient->id],200);
+                }else{
+                    return response()->json(['error_success'=>'IPD Patient not added'],500);
+                }
+            }   
+        });
     }
       public function getIpdPatientData(Request $request){
        $getData = Patient::where('id',$request->id)->get();
@@ -281,136 +388,251 @@ class IpdinController extends Controller
     }
 
     function moveToIcuStatus(Request $request){
-        $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
-        $last_bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->get(); // Get the actual amount value
-        $old_bed_priority = BedGroup::where('id', $last_bed_amount[0]->bed_group_id)->get();
-        $new_bed_amount = Bed::where('id',$request->bed_id)->get(); // Get the actual amount value
-        $new_bed_priority = BedGroup::where('id', $new_bed_amount[0]->bed_group_id)->get();
-        $now = Carbon::now();
-        $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
-        $curr_status = Patient::where('id',$request->id)->get(['type']);
-        $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
-        $update = Patient::where('id',$request->id)->update([
-            'type' =>'ICU',
-            'bed_id' => $request->bed_id,
-            'previous_type'=>$curr_status[0]->type,
-            'type_change_date' => $now
-        ]);
-        if($update){
-            Bed::where('id',$request->bed_id)->update([
-                'current_status' => 'occupied',
-                'occupied_by_patient_id' => $request->id,
-                'occupied_date' =>$now
+        return DB::transaction(function () use ($request) {
+            $latest_patient_log = PatientLog::where('patient_id',$request->id)->latest()->first();
+            $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
+            $last_bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->get(); // Get the actual amount value
+            $old_bed_priority = BedGroup::where('id', $last_bed_amount[0]->bed_group_id)->get();
+            $new_bed_amount = Bed::where('id',$request->bed_id)->get(); // Get the actual amount value
+            $new_bed_priority = BedGroup::where('id', $new_bed_amount[0]->bed_group_id)->get();
+            $now = Carbon::now();
+            $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
+            $curr_status = Patient::where('id',$request->id)->get(['type','admit_id']);
+            $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
+            $update = Patient::where('id',$request->id)->update([
+                'type' =>'ICU',
+                'bed_id' => $request->bed_id,
+                'previous_type'=>$curr_status[0]->type,
+                'type_change_date' => $now
             ]);
-            Bed::where('id', $previous_bed_data[0]->id)->update([
-                'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
-                'previous_occupied_date' => $previous_bed_data[0]->occupied_date,
-                'occupied_by_patient_id' => null,
-                'occupied_date' => null,
-                'current_status' =>'vacant'
-            ]);
-            $payment_bills = new PaymentBill();
-            $payment_bills->type = "IPD";
-            $payment_bills->patient_id = $request->id;
-            $payment_bills->to_bed_id = $request->bed_id;
-            $payment_bills->amount_for = 'Bed Charge';
-            $payment_bills->title = 'Patient Moved to ICU';
-            $payment_bills->save();
-            $new_created_at = $payment_bills->created_at;
-            if ($previous_payment_bill) {
-                $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-                $created_at = new DateTime($previous_payment_bill->created_at);
-                $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
-                $interval = $created_at->diff($updated_at);
-                $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
-                $pre_bed_amount = $bed_amount * $occupied_days;
-                //if same day IPD to ICU move then higher amount will be added
-                    if(($interval->days ==0) && ($new_bed_priority[0]->priority < $old_bed_priority[0]->priority)){
-                        $pre_bed_amount =  $new_bed_amount[0]->amount * $occupied_days;
-                    }else{
-                        $pre_bed_amount = $last_bed_amount[0]->amount * $occupied_days;
+            if($update){
+                $patient_logs = new PatientLog();
+                $patient_logs->patient_id = $request->id;
+                $patient_logs->admit_id =  $curr_status[0]->admit_id;
+                $patient_logs->type = 'ICU';
+                $patient_logs->bed_id = $latest_patient_log->bed_id;
+                $patient_logs->doctor_id = $latest_patient_log->doctor_id;
+                $patient_logs->reference_person = $latest_patient_log->reference_person;
+                $patient_logs->current_status = "Moved";
+                $patient_logs->description = "Movement IPD to ICU";
+                $patient_logs->save();
+
+                Bed::where('id',$request->bed_id)->update([
+                    'current_status' => 'occupied',
+                    'occupied_by_patient_id' => $request->id,
+                    'occupied_date' =>$now
+                ]);
+                Bed::where('id', $previous_bed_data[0]->id)->update([
+                    'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
+                    'previous_occupied_date' => $previous_bed_data[0]->occupied_date,
+                    'occupied_by_patient_id' => null,
+                    'occupied_date' => null,
+                    'current_status' =>'vacant'
+                ]);
+                $payment_bills = new PaymentBill();
+                $payment_bills->type = "IPD";
+                $payment_bills->patient_id = $request->id;
+                $payment_bills->admit_id =  $curr_status[0]->admit_id;
+                $payment_bills->to_bed_id = $request->bed_id;
+                $payment_bills->amount_for = 'Bed Charge';
+                $payment_bills->title = 'Patient Moved to ICU';
+                $payment_bills->save();
+                // $new_created_at = $payment_bills->created_at;
+                if ($previous_payment_bill) {
+                    $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+                    $admitTime = new DateTime($previous_payment_bill->created_at);
+                    $dischargeTime = new DateTime();
+
+                    // 2:00 PM cut-off
+                    $cutOffHour = 14;
+                    $days = 0;
+
+                    // Clone dates to avoid modifying originals
+                    $admitDate = clone $admitTime;
+                    $dischargeDate = clone $dischargeTime;
+
+                    // Only dates (set time to 00:00:00)
+                    $admitDate->setTime(0, 0, 0);
+                    $dischargeDate->setTime(0, 0, 0);
+
+                    // Difference in days (full calendar days)
+                    $intervalDays = $admitDate->diff($dischargeDate)->days;
+
+                    // Add intermediate full days (excluding first and last day)
+                    if ($intervalDays > 1) {
+                        $days += $intervalDays - 1;
                     }
-                    PaymentBill::where('id',$previous_payment_bill->id)->update([
-                        'days' => $occupied_days,
-                        'amount' => $pre_bed_amount
-                    ]);
-            } // amount add to previous bed type for billing
-            $timelines = new Timeline();
-            $timelines->type = "IPD";
-            $timelines->patient_id = $request->id;
-            $timelines->title = "Moved to ICU";
-            $timelines->desc = "Moved to ICU on bed ".$bed_name[0]->bed_no." from IPD";
-            $timelines->created_by = Auth::id();
-            $timelines->save();
-            return response()->json(['success'=>'Successfully moved to ICU'],200);
-        }
+
+                    // Admit day logic
+                    if ((int)$admitTime->format('H') < $cutOffHour) {
+                        $days += 1;
+                    }
+
+                    // Discharge day logic
+                    if ((int)$dischargeTime->format('H') < $cutOffHour) {
+                        $days += 1;
+                    }
+
+                    // Handle same-day admit/discharge
+                    if ($intervalDays === 0) {
+                        // If admitted and discharged same day, and either side meets the <2PM rule
+                        if ((int)$admitTime->format('H') < $cutOffHour || (int)$dischargeTime->format('H') < $cutOffHour) {
+                            $days = 1;
+                        } else {
+                            $days = 0;
+                        }
+                    }
+                    $occupied_days = $days; // Ensure at least 1 day
+                    // $pre_bed_amount = $bed_amount * $occupied_days;
+
+                    //if same day IPD to ICU move then higher amount will be added
+                        if(($days ==0) && ($new_bed_priority[0]->priority < $old_bed_priority[0]->priority)){
+                            $pre_bed_amount =  $new_bed_amount[0]->amount * $occupied_days;
+                        }else{
+                            $pre_bed_amount = $last_bed_amount[0]->amount * $occupied_days;
+                        }
+                        PaymentBill::where('id',$previous_payment_bill->id)->update([
+                            'days' => $occupied_days,
+                            'qty' => $occupied_days,
+                            'amount' => $pre_bed_amount
+                        ]);
+                } // amount add to previous bed type for billing
+                $timelines = new Timeline();
+                $timelines->type = "IPD";
+                $timelines->patient_id = $request->id;
+                $timelines->admit_id = $curr_status[0]->admit_id;
+                $timelines->title = "Moved to ICU";
+                $timelines->desc = "Moved to ICU on bed ".$bed_name[0]->bed_no." from IPD";
+                $timelines->bed_id = $request->bed_id;
+                $timelines->created_by = Auth::id();
+                $timelines->save();
+                return response()->json(['success'=>'Successfully moved to ICU'],200);
+            }
+        });
     }
     public function moveToIpdStatusFromIcu(Request $request){
-        $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();// Get the most recent 'Bed Charge' payment bill for a specific patient
-        $last_bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->get(); // Get the actual amount value
-        $old_bed_priority = BedGroup::where('id', $last_bed_amount[0]->bed_group_id)->get();
-        $new_bed_amount = Bed::where('id',$request->bed_id)->get(); // Get the actual amount value
-        $new_bed_priority = BedGroup::where('id', $new_bed_amount[0]->bed_group_id)->get();
-        $now = Carbon::now();
-        $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
-        $curr_status = Patient::where('id',$request->id)->get(['type']);
-        $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
-        $update = Patient::where('id',$request->id)->update([
-            'type' =>'IPD',
-            'bed_id' => $request->bed_id,
-            'previous_type'=>$curr_status[0]->type,
-            'type_change_date' => $now
-        ]);
-        if($update){
-            Bed::where('id',$request->bed_id)->update([
-                'current_status' => 'occupied',
-                'occupied_by_patient_id' => $request->id,
-                'occupied_date' =>$now
+        return DB::transaction(function () use ($request) {
+            $latest_patient_log = PatientLog::where('patient_id',$request->id)->latest()->first();
+            $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();// Get the most recent 'Bed Charge' payment bill for a specific patient
+            $last_bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->get(); // Get the actual amount value
+            $old_bed_priority = BedGroup::where('id', $last_bed_amount[0]->bed_group_id)->get();
+            $new_bed_amount = Bed::where('id',$request->bed_id)->get(); // Get the actual amount value
+            $new_bed_priority = BedGroup::where('id', $new_bed_amount[0]->bed_group_id)->get();
+            $now = Carbon::now();
+            $previous_bed_data = Bed::where('occupied_by_patient_id',$request->id)->get();
+            $curr_status = Patient::where('id',$request->id)->get(['type','admit_id']);
+            $bed_name = Bed::where('id',$request->bed_id)->get(['bed_no']);
+            $update = Patient::where('id',$request->id)->update([
+                'type' =>'IPD',
+                'bed_id' => $request->bed_id,
+                'previous_type'=>$curr_status[0]->type,
+                'type_change_date' => $now
             ]);
-            Bed::where('id', $previous_bed_data[0]->id)->update([
-                'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
-                'previous_occupied_date' => $previous_bed_data[0]->occupied_date,
-                'occupied_by_patient_id' => null,
-                'occupied_date' => null,
-                'current_status' =>'vacant'
-            ]);
-            $payment_bills = new PaymentBill();
-            $payment_bills->type = "ICU";
-            $payment_bills->patient_id = $request->id;
-            $payment_bills->to_bed_id = $request->bed_id;
-            $payment_bills->amount_for = 'Bed Charge';
-            $payment_bills->title = 'Patient Moved to IPD';
-            $payment_bills->save();
-            $new_created_at = $payment_bills->created_at;
-            if ($previous_payment_bill) {
-                $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-                $created_at = new DateTime($previous_payment_bill->created_at);
-                $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
-                $interval = $created_at->diff($updated_at);
-                $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
-                $pre_bed_amount = $bed_amount * $occupied_days;
-               //if same day IPD to ICU move then higher amount will be added
-                    if(($interval->days ==0) && ($new_bed_priority[0]->priority < $old_bed_priority[0]->priority)){
-                        $pre_bed_amount =  $new_bed_amount[0]->amount * $occupied_days;
-                    }else{
-                        $pre_bed_amount = $last_bed_amount[0]->amount * $occupied_days;
-                    }
-                    PaymentBill::where('id',$previous_payment_bill->id)->update([
-                        'days' => $occupied_days,
-                        'amount' => $pre_bed_amount
-                    ]);
-             
-            } // amount add to previous bed type for billing
+            if($update){
+                $patient_logs = new PatientLog();
+                $patient_logs->patient_id = $request->id;
+                $patient_logs->admit_id =  $curr_status[0]->admit_id;
+                $patient_logs->type = 'IPD';
+                $patient_logs->bed_id = $latest_patient_log->bed_id;
+                $patient_logs->doctor_id = $latest_patient_log->doctor_id;
+                $patient_logs->reference_person = $latest_patient_log->reference_person;
+                $patient_logs->current_status = "Moved";
+                $patient_logs->description = "Movement ICU to IPD";
+                $patient_logs->save();
 
-            $timelines = new Timeline();
-            $timelines->type = "ICU";
-            $timelines->patient_id = $request->id;
-            $timelines->title = "Moved to IPD";
-            $timelines->desc = "Moved to IPD on bed ".$bed_name[0]->bed_no." from ICU";
-            $timelines->created_by = Auth::id();
-            $timelines->save();
-            return response()->json(['success'=>'Successfully moved to IPD'],200);
-        }
+                Bed::where('id',$request->bed_id)->update([
+                    'current_status' => 'occupied',
+                    'occupied_by_patient_id' => $request->id,
+                    'occupied_date' =>$now
+                ]);
+                Bed::where('id', $previous_bed_data[0]->id)->update([
+                    'previous_occupied_patient_id' => $previous_bed_data[0]->occupied_by_patient_id,
+                    'previous_occupied_date' => $previous_bed_data[0]->occupied_date,
+                    'occupied_by_patient_id' => null,
+                    'occupied_date' => null,
+                    'current_status' =>'vacant'
+                ]);
+                $payment_bills = new PaymentBill();
+                $payment_bills->type = "ICU";
+                $payment_bills->patient_id = $request->id;
+                $payment_bills->admit_id =  $curr_status[0]->admit_id;
+                $payment_bills->to_bed_id = $request->bed_id;
+                $payment_bills->amount_for = 'Bed Charge';
+                $payment_bills->title = 'Patient Moved to IPD';
+                $payment_bills->save();
+                // $new_created_at = $payment_bills->created_at;
+                if ($previous_payment_bill) {
+                    $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+                    $admitTime = new DateTime($previous_payment_bill->created_at);
+                    $dischargeTime = new DateTime();
+
+                    // 2:00 PM cut-off
+                    $cutOffHour = 14;
+                    $days = 0;
+
+                    // Clone dates to avoid modifying originals
+                    $admitDate = clone $admitTime;
+                    $dischargeDate = clone $dischargeTime;
+
+                    // Only dates (set time to 00:00:00)
+                    $admitDate->setTime(0, 0, 0);
+                    $dischargeDate->setTime(0, 0, 0);
+
+                    // Difference in days (full calendar days)
+                    $intervalDays = $admitDate->diff($dischargeDate)->days;
+
+                    // Add intermediate full days (excluding first and last day)
+                    if ($intervalDays > 1) {
+                        $days += $intervalDays - 1;
+                    }
+
+                    // Admit day logic
+                    if ((int)$admitTime->format('H') < $cutOffHour) {
+                        $days += 1;
+                    }
+
+                    // Discharge day logic
+                    if ((int)$dischargeTime->format('H') < $cutOffHour) {
+                        $days += 1;
+                    }
+
+                    // Handle same-day admit/discharge
+                    if ($intervalDays === 0) {
+                        // If admitted and discharged same day, and either side meets the <2PM rule
+                        if ((int)$admitTime->format('H') < $cutOffHour || (int)$dischargeTime->format('H') < $cutOffHour) {
+                            $days = 1;
+                        } else {
+                            $days = 0;
+                        }
+                    }
+                    $occupied_days = $days; // Ensure at least 1 day
+                    // $pre_bed_amount = $bed_amount * $occupied_days;
+                //if same day IPD to ICU move then higher amount will be added
+                        if(($days ==0) && ($new_bed_priority[0]->priority < $old_bed_priority[0]->priority)){
+                            $pre_bed_amount =  $new_bed_amount[0]->amount * $occupied_days;
+                        }else{
+                            $pre_bed_amount = $last_bed_amount[0]->amount * $occupied_days;
+                        }
+                        PaymentBill::where('id',$previous_payment_bill->id)->update([
+                            'days' => $occupied_days,
+                            'qty' => $occupied_days,
+                            'amount' => $pre_bed_amount
+                        ]);
+                
+                } // amount add to previous bed type for billing
+
+                $timelines = new Timeline();
+                $timelines->type = "ICU";
+                $timelines->patient_id = $request->id;
+                $timelines->admit_id = $curr_status[0]->admit_id;
+                $timelines->title = "Moved to IPD";
+                $timelines->desc = "Moved to IPD on bed ".$bed_name[0]->bed_no." from ICU";
+                $timelines->bed_id = $request->bed_id;
+                $timelines->created_by = Auth::id();
+                $timelines->save();
+                return response()->json(['success'=>'Successfully moved to IPD'],200);
+            }
+        });
     }
     public function calculateDischargeAmount(Request $request){
         $bill_amount = PaymentBill::where('patient_id',$request->id)->where('status',NULL)->sum('amount');
@@ -449,8 +671,8 @@ class IpdinController extends Controller
             return response()->json(['success'=>'Successfully discharged from IPD'],200);
         }
     }
-      function ipdVisitSubmit(Request $request){
-          $validator = Validator::make($request->all(),[
+        function ipdVisitSubmit(Request $request){
+            $validator = Validator::make($request->all(),[
                 'patientId' => 'required',
                 'consultDoctor' => 'nullable',
                 'charge' => 'required',
@@ -462,9 +684,11 @@ class IpdinController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
+        $admit_id = Patient::where('id',$request->patientId)->value('admit_id');
         $optoutVisit = new Visit();
         $optoutVisit->type = "IPD";
         $optoutVisit->patient_id = $request->patientId;
+        $optoutVisit->admit_id = $admit_id;
         $optoutVisit->consult_doctor = $request->consultDoctor;
         $optoutVisit->charge = $request->charge;
         $optoutVisit->discount = $request->discount;
@@ -476,6 +700,7 @@ class IpdinController extends Controller
             $payment_bills = new PaymentBill();
             $payment_bills->type = "IPD";
             $payment_bills->patient_id = $request->patientId;
+            $payment_bills->admit_id = $admit_id;
             $payment_bills->amount_for = 'IPD Visit';
             $payment_bills->title = 'Doctor New Visit';
             $payment_bills->amount = $request->amount;
@@ -484,8 +709,9 @@ class IpdinController extends Controller
             $timelines = new Timeline();
             $timelines->type = "IPD";
             $timelines->patient_id = $request->patientId;
+            $timelines->admit_id = $admit_id;
             $timelines->title = "IPD Visit";
-            $timelines->desc = "Doctor visited to IPD Patient at ".$optoutVisit->created_at;
+            $timelines->desc = "Doctor visited to IPD Patient";
             $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Doctor Visit added successfully'],200);
@@ -499,6 +725,13 @@ class IpdinController extends Controller
             return DataTables::of($opdoutVisit)
             ->addColumn('visit_id',function($row){
                 return 'MDVI0'.$row->id; //fetched through modal relationship
+            })
+            ->addColumn('Type',function($row){
+                return $row->type; //fetched through modal relationship
+            })
+            ->addColumn('admit_id',function($row){
+                $admit = $row->admit_id == null ? 'Not Admitted' : 'MDVI'.$row->admit_id;
+                return $admit; //fetched through modal relationship
             })
             ->addColumn('visit_date',function($row){
                 return $row->created_at
@@ -573,9 +806,11 @@ class IpdinController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
+        $admit_id = Patient::where('id',$request->patientId)->value('admit_id');
         $medicineDose = new Medication();
         $medicineDose->type = "IPD";
         $medicineDose->patient_id = $request->patientId;
+        $medicineDose->admit_id = $admit_id;
         $medicineDose->visit_id = $request->visitid;
         $medicineDose->medicine_category_id = $request->medCategory;
         $medicineDose->medicine_name_id = $request->medName;
@@ -585,6 +820,7 @@ class IpdinController extends Controller
              $timelines = new Timeline();
              $timelines->type = "IPD";
              $timelines->patient_id = $request->patientId;
+             $timelines->admit_id = $admit_id;
              $timelines->title = "Medicine Dose";
              $timelines->desc = "Medicine dose adviced";
              $timelines->created_by = Auth::id();
@@ -676,21 +912,24 @@ class IpdinController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
+        $admit_id = Patient::where('id',$request->patientId)->value('admit_id');
         $ipdLab = new LabInvestigation();
-            $ipdLab->type = "IPD";
-            $ipdLab->patient_id = $request->patientId;
-            $ipdLab->test_type_id = $request->testType;
-            $ipdLab->test_name_id = $request->testName;
-            $ipdLab->method = $request->method;
-            $ipdLab->amount = $request->amount;
-            $ipdLab->report_days = $request->reportDays;
-            $ipdLab->test_parameter = $request->testParameter;
-            $ipdLab->test_ref_range = $request->testRefRange;
-            $ipdLab->test_unit = $request->testUnit;
+        $ipdLab->type = "IPD";
+        $ipdLab->patient_id = $request->patientId;
+        $ipdLab->admit_id = $admit_id;
+        $ipdLab->test_type_id = $request->testType;
+        $ipdLab->test_name_id = $request->testName;
+        $ipdLab->method = $request->method;
+        $ipdLab->amount = $request->amount;
+        $ipdLab->report_days = $request->reportDays;
+        $ipdLab->test_parameter = $request->testParameter;
+        $ipdLab->test_ref_range = $request->testRefRange;
+        $ipdLab->test_unit = $request->testUnit;
         if($ipdLab->save()){
             $payment_bills = new PaymentBill();
             $payment_bills->type = "IPD";
             $payment_bills->patient_id = $request->patientId;
+            $payment_bills->admit_id = $admit_id;
             $payment_bills->amount_for = 'Lab Test';
             $payment_bills->title = 'Lab Test';
             $payment_bills->amount = $request->amount;
@@ -699,6 +938,7 @@ class IpdinController extends Controller
             $timelines = new Timeline();
              $timelines->type = "IPD";
              $timelines->patient_id = $request->patientId;
+             $timelines->admit_id = $admit_id;
              $timelines->title = "Lab Test";
              $timelines->desc = "Lab Test Created";
              $timelines->created_by = Auth::id();
@@ -717,6 +957,9 @@ class IpdinController extends Controller
                 ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
                 ->format('d-m-Y h:i A');      // Format as human-readable
             })
+            ->addColumn('admit_id',function($row){
+               return 'MHAI'.$row->admit_id;
+           })
             ->addColumn('test_type',function($row){
                 return $row->testTypeData->name;
             })
@@ -810,17 +1053,20 @@ class IpdinController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
-            $payment_bills = new PaymentBill();
-            $payment_bills->type = "IPD";
-            $payment_bills->patient_id = $request->patientId;
-            $payment_bills->amount_for = 'Charge';
-            $payment_bills->title = $request->name;
-            $payment_bills->qty = $request->qty;
-            $payment_bills->amount = $request->amount;
-            if($payment_bills->save()){
+        $admit_id = Patient::where('id',$request->patientId)->value('admit_id');
+        $payment_bills = new PaymentBill();
+        $payment_bills->type = "IPD";
+        $payment_bills->patient_id = $request->patientId;
+        $payment_bills->admit_id = $admit_id;
+        $payment_bills->amount_for = 'Charge';
+        $payment_bills->title = $request->name;
+        $payment_bills->qty = $request->qty;
+        $payment_bills->amount = $request->amount;
+        if($payment_bills->save()){
             $timelines = new Timeline();
             $timelines->type = "IPD";
             $timelines->patient_id = $request->patientId;
+            $timelines->admit_id = $admit_id;
             $timelines->title = "Charges";
             $timelines->desc = "Charges added for treatment or test";
             $timelines->created_by = Auth::id();
@@ -832,12 +1078,13 @@ class IpdinController extends Controller
     }
     public function viewIpdCharge(Request $request){
         if($request->ajax()){
-            $ipdCharges = PaymentBill::where('patient_id',$request->patient_id)->get();
+            $admit_id = Patient::where('id',$request->patient_id)->value('admit_id');
+            $ipdCharges = PaymentBill::where('patient_id',$request->patient_id)->where('admit_id',$admit_id)->get();
             return DataTables::of($ipdCharges)
             ->addColumn('created_at',function($row){
                 return $row->created_at
-                ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
-                ->format('d-m-Y h:i A');      // Format as human-readable
+                // ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
+                ->format('d-m-Y');      // Format as human-readable
             })
             ->addColumn('title',function($row){
                 return $row->amount_for;
@@ -852,7 +1099,8 @@ class IpdinController extends Controller
                 return $row->amount;
             })
             ->addColumn('action',function($row){
-                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center">
+                $visibility = $row->amount <= 0 ? 'd-none' : '';
+                return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center ' .$visibility.'">
                       <iconify-icon icon="lucide:edit" onclick="ipdChargeEdit('.$row->id.')"></iconify-icon>
                     </a>
                     <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
@@ -892,20 +1140,23 @@ class IpdinController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
+        $admit_id = Patient::where('id',$request->patientId)->value('admit_id');
         $ipdVItals = new Vital();
-            $ipdVItals->type = "IPD";
-            $ipdVItals->patient_id = $request->patientId;
-            $ipdVItals->name = $request->name;
-            $ipdVItals->value = $request->value;
-            $ipdVItals->date = $request->date;
+        $ipdVItals->type = "IPD";
+        $ipdVItals->patient_id = $request->patientId;
+        $ipdVItals->admit_id = $admit_id;
+        $ipdVItals->name = $request->name;
+        $ipdVItals->value = $request->value;
+        $ipdVItals->date = $request->date;
         if($ipdVItals->save()){
             $timelines = new Timeline();
-             $timelines->type = "IPD";
-             $timelines->patient_id = $request->patientId;
-             $timelines->title = "Vital";
-             $timelines->desc = "Vital added of patient";
-             $timelines->created_by = Auth::id();
-             $timelines->save();
+            $timelines->type = "IPD";
+            $timelines->patient_id = $request->patientId;
+            $timelines->admit_id = $admit_id;
+            $timelines->title = "Vital";
+            $timelines->desc = "Vital added of patient";
+            $timelines->created_by = Auth::id();
+            $timelines->save();
             return response()->json(['success'=>'VItal added successfully'],200);
         }else{
             return response()->json(['error_success'=>'VItal not added']);
@@ -917,6 +1168,9 @@ class IpdinController extends Controller
             return DataTables::of($ipdVital)
             ->addColumn('date',function($row){
                 return $row->date;
+            })
+            ->addColumn('admit_id',function($row){
+                return 'MHAI'.$row->admit_id;
             })
             ->addColumn('name',function($row){
                 return $row->name;
@@ -965,20 +1219,23 @@ class IpdinController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
+        $admit_id = Patient::where('id',$request->patientId)->value('admit_id');
         $ipdNurse = new NurseNote();
-            $ipdNurse->type = "IPD";
-            $ipdNurse->patient_id = $request->patientId;
-            $ipdNurse->nurse_id = $request->nurseId;
-            $ipdNurse->note = $request->note;
-            $ipdNurse->comment = $request->comment;
+        $ipdNurse->type = "IPD";
+        $ipdNurse->patient_id = $request->patientId;
+        $ipdNurse->admit_id = $admit_id;
+        $ipdNurse->nurse_id = $request->nurseId;
+        $ipdNurse->note = $request->note;
+        $ipdNurse->comment = $request->comment;
         if($ipdNurse->save()){
             $timelines = new Timeline();
-             $timelines->type = "IPD";
-             $timelines->patient_id = $request->patientId;
-             $timelines->title = "Nurse Note";
-             $timelines->desc = "Nurse Note added of patient";
-             $timelines->created_by = Auth::id();
-             $timelines->save();
+            $timelines->type = "IPD";
+            $timelines->patient_id = $request->patientId;
+            $timelines->admit_id = $admit_id;
+            $timelines->title = "Nurse Note";
+            $timelines->desc = "Nurse Note added of patient";
+            $timelines->created_by = Auth::id();
+            $timelines->save();
             return response()->json(['success'=>'Nurse note added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Nurse note not added']);
@@ -992,6 +1249,9 @@ class IpdinController extends Controller
                 return $row->created_at
                 ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
                 ->format('d-m-Y h:i A');      // Format as human-readable
+            })
+            ->addColumn('admit_id',function($row){
+                return 'MHAI'.$row->admit_id;
             })
             ->addColumn('name',function($row){
                 return $row->nurseData->name;
@@ -1042,20 +1302,23 @@ class IpdinController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
-          $optoutAdvance = new PaymentReceived();
-            $optoutAdvance->patient_id = $request->patientId;
-            $optoutAdvance->type = "IPD";
-            $optoutAdvance->amount_for = "Advance";
-            $optoutAdvance->amount = $request->amount;
-            $optoutAdvance->payment_mode = $request->pmode;
+        $admit_id = Patient::where('id',$request->patientId)->value('admit_id');
+        $optoutAdvance = new PaymentReceived();
+        $optoutAdvance->patient_id = $request->patientId;
+        $optoutAdvance->admit_id = $admit_id;
+        $optoutAdvance->type = "IPD";
+        $optoutAdvance->amount_for = "Advance";
+        $optoutAdvance->amount = $request->amount;
+        $optoutAdvance->payment_mode = $request->pmode;
         if($optoutAdvance->save()){
             $timelines = new Timeline();
-             $timelines->type = "IPD";
-             $timelines->patient_id = $request->patientId;
-             $timelines->title = "Advance";
-             $timelines->desc = "Advance Payment amount rs.".$request->amount." added";
-             $timelines->created_by = Auth::id();
-             $timelines->save();
+            $timelines->type = "IPD";
+            $timelines->patient_id = $request->patientId;
+            $timelines->admit_id = $admit_id;
+            $timelines->title = "Advance";
+            $timelines->desc = "Advance Payment amount rs.".$request->amount." added";
+            $timelines->created_by = Auth::id();
+            $timelines->save();
             return response()->json(['success'=>'Advance added successfully'],200);
         }else{
             return response()->json(['error_success'=>'Advance not added']);
@@ -1063,7 +1326,8 @@ class IpdinController extends Controller
     }
     public function viewIpdAdvance(Request $request){
         if($request->ajax()){
-            $advance = PaymentReceived::where('patient_id', $request->patient_id)->where(function($query) {
+            $admit_id = Patient::where('id',$request->patient_id)->value('admit_id');
+            $advance = PaymentReceived::where('patient_id', $request->patient_id)->where('admit_id',$admit_id)->where(function($query) {
                 $query->where('amount_for', 'Advance')->orWhere('amount_for', 'Discharge'); })->get();
             return DataTables::of($advance)
             ->addColumn('created_at',function($row){

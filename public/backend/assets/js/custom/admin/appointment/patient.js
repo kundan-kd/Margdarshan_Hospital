@@ -59,10 +59,10 @@ let table = $('#patient-table').DataTable({
             orderable: false,
             searchable: true
         },
-        {
-            data:'created_at',
-            name:'created_at'
-        },
+        // {
+        //     data:'created_at',
+        //     name:'created_at'
+        // },
         {
             data:'curr_status',
             name:'curr_status',
@@ -95,7 +95,9 @@ let table = $('#patient-table').DataTable({
 $('#excelBtn').on('click', function () {
     $('#hiddenExcelBtn').click(); // Trigger the hidden DataTables button
 });
-
+function patientHistory(id,admit_id){
+    window.open('patient-history/' + id + '/' + admit_id,'_blank');
+}
 function resetPatientAddPatient(){
     $('#patient-addPatientForm')[0].reset();
     $('#patient-add-appointmentLabel').html('Add Patient');

@@ -9,6 +9,7 @@ function resetAdvance(){
 $('#opd-ipdRoomForm').on('submit',function(e){
     e.preventDefault();
     let patient_id = $('#patient_Id').val();
+    let appointment_id = $('#appointment_Id').val();
     let bed = $('#opd-ipdRoom').val();
     let doctor_id = $('#opd-doctorID').val();
     let ref_person = $('#opd-referPerson').val();
@@ -33,15 +34,16 @@ $('#opd-ipdRoomForm').on('submit',function(e){
                 headers:{
                     'X-CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
                 },
-                data:{id:patient_id,bed_id:bed,doctor_id:doctor_id,ref_person:ref_person},
+                data:{appointment_id:appointment_id,id:patient_id,bed_id:bed,doctor_id:doctor_id,ref_person:ref_person},
                 success:function(response){
                     if (response.success) {
                         Swal.fire("Moved", response.success, "success");
                         setTimeout(function() {
                             window.location.href='/ipd-in';
                         }, 500); 
-                        
                         admissionForm(patient_id); // Ensure it executes after alert is shown
+                    } else if(response.error_movement){
+                        Swal.fire("warning!", response.error_movement, "warning");
                     } else {
                         Swal.fire("Error!", "Error", "error");
                     }
@@ -279,3 +281,7 @@ function summaryReport(id){
 function viewAdvancePdf(id) {
    window.open('/advance-payment-page/' + id);
 }
+function printBill(id,admit_id){
+    window.open('/discharge-bill-print/' + id + '/' + admit_id);
+}
+$('#patient-history-list').DataTable();

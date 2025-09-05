@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('type',20)->nullable();
             $table->integer('patient_id')->nullable();
+            $table->string('admit_id',30)->nullable();
             $table->string('title',100)->nullable();
             $table->text('desc')->nullable();
-            $table->string('created_by',50)->nullable();
+            $table->integer('bed_id')->nullable();
+            $table->integer('created_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

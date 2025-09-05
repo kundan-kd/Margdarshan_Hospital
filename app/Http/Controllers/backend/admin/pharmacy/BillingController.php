@@ -194,11 +194,13 @@ class BillingController extends Controller
         }
             // Store purchase items
             foreach ($request->category as $index => $category) {
+                $hsn = Medicine::where('id',$request->name[$index])->value('hsn_number');
                 $billingItems = new BillingItem();
                 $billingItems->billing_id = $billings->id;
                 $billingItems->category_id = $category;
                 $billingItems->name_id = $request->name[$index];
                 $billingItems->batch_no = $request->batchNo[$index];
+                $billingItems->hsn = $hsn;
                 $billingItems->expiry = $request->expiry[$index];
                 $billingItems->qty = $request->qty[$index];
                 $billingItems->sales_price = $request->salesPrice[$index];

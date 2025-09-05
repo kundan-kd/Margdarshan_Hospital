@@ -18,13 +18,15 @@ let table_opd_patients = $('#opd-out-list-table').DataTable({
         }
     },
     columns: [
+        { data: 'appointment_id', name: 'appointment_id' },
+        { data: 'appointment_date', name: 'appointment_date' },
         { data: 'token', name: 'token' },
         { data: 'patient_name', name: 'patient_name' },
         { data: 'gender', name: 'gender' },
         { data: 'mobile', name: 'mobile' },
         { data: 'doctor', name: 'doctor' },
         { data: 'room_no', name: 'room_no' },
-        { data: 'appointment_date', name: 'appointment_date' },
+        { data: 'status', name: 'status' },
         { data: 'action', name: 'action',orderable:false,searchable:false }
     ],
      dom: 'Blfrtip',
@@ -50,9 +52,10 @@ function getListFilter(){
     $('#opd-out-list-table').DataTable().ajax.reload();
 }
 
-function patientDetailsUsingToken(id){
-     window.open('opd-out-details/' + id, '_blank');
+function patientDetailsUsingToken(id, patient_id) {
+    window.location.href = 'opd-out-details/' + id + '/' + patient_id;
 }
+
 function summaryReport(id){
     window.open('/summary-report/' + id);
 }

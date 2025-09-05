@@ -246,7 +246,7 @@ function fillPatientFields(id){
         success: function(response) {
              console.log(response);
             if(response.success){
-                 $('.patient-data-list').addClass('d-none');
+                $('.patient-data-list').addClass('d-none');
                 let getData = response.data[0];
                 $('#ipdPatientId').val(getData.id);
                 $('#ipd-patientName').val(getData.name);
@@ -265,10 +265,8 @@ function fillPatientFields(id){
                     $(this).prop('checked', true);
                 }
                 });
-        
             }
-        
-    }
+        }
     });
 }
 $(document).on('click','#ipd-add-patient .modal-body',function(){
@@ -353,8 +351,8 @@ $('#ipd-addPatientForm').on('submit',function(e){
             console.log("Please fill all required fields");
         }    
 });
-  function printBill(id){
-         window.open('/discharge-bill-print/' + id +'_blank');
+    function printBill(id,admit_id){
+         window.open('/discharge-bill-print/' + id + '/' + admit_id);
     }
 function ipdPatientEdit(id){
  $.ajax({

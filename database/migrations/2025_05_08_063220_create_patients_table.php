@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('previous_type',20)->nullable();
             $table->string('type_change_date',30)->nullable();
             $table->string('patient_id',50)->nullable();
+            $table->string('admit_id',30)->nullable();
             $table->string('name',150)->nullable();
             $table->string('guardian_name',150)->nullable();
             $table->string('gender',10)->nullable();
@@ -32,7 +33,9 @@ return new class extends Migration
             $table->integer('attended_doctor_id')->nullable();
             $table->string('reference_person',100)->nullable();
             $table->integer('status')->default(1);
+            $table->integer('appointment_status')->default(0);
             $table->string('current_status',20)->nullable();
+            $table->dateTime('admit_date')->nullable();
             $table->dateTime('discharge_date')->nullable();
             $table->integer('discharge_form_generated')->default(0);
             $table->string('discharge_type',20)->nullable();

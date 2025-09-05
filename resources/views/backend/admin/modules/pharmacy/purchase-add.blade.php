@@ -19,7 +19,7 @@ purchase-add
     <div class="sumTaxAmountCls" style="display: none;"></div>
     <div class="pharmacy-purchase-wrapper card">
         <div class="card-header pb-4 border-bottom-0">
-                <div class="row bg-neutral-100 align-items-center mx-2 gy-2 pb-11">
+                <div class="row bg-neutral-100 align-items-center my-2 mx-2 gy-2 pb-11">
                     <div class="col-md-3">
                         <div class="d-flex align-items-center">
                             <label for="purchaseAdd_billNo" style="display:none;">Vendor Bill No.</label>
@@ -54,13 +54,13 @@ purchase-add
         <div class="card-body pharmacy-purchase-content pt-1">
             <div class="row mb-3">
                 <div class="col-md-12">
-                    <table class="pharmacy-purchase-bill-table table table-hover">
+                    <table class="pharmacy-purchase-bill-table table table-hover mb-11">
                         <thead >
                             <tr class="border-bottom">
                                 <th class="text-nowrap text-neutral-700">
                                     Category
                                 </th>
-                                <th class="text-nowrap text-neutral-700">
+                                <th class="text-nowrap text-neutral-700" style="width: 250px;">
                                     Name <div class="spinner-border spinner-border-sm name-loader d-none" role="status"></div>
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
@@ -79,13 +79,13 @@ purchase-add
                                     Qty
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
-                                    Purchase Rate
-                                </th>
-                                <th class="text-nowrap text-neutral-700">
-                                    Amount
+                                    Total Amount
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
                                     Tax (%)
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
+                                    Purchase Rate
                                 </th>
                                 
                                 <th class="text-nowrap text-neutral-700">
@@ -107,7 +107,7 @@ purchase-add
                                     {{-- <select id="purchaseAdd_name0" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls"  onchange="getTaxValue(this.value,0)">
                                         <option value="" selected>Select</option>
                                     </select> --}}
-                                      <input id="purchaseAdd_name0" class="form-control form-control-sm" type="text" placeholder="Medicine Name" oninput="getMedicineNames(document.getElementById('purchaseAdd_category0').value,this.value)">
+                                      <input id="purchaseAdd_name0" class="form-control form-control-sm" type="text" placeholder="Medicine Name" oninput="getMedicineNames(document.getElementById('purchaseAdd_category0').value,this.value)" style="width: 250px;">
                                       <input type="hidden" id="purchaseAdd_nameId0" name="purchaseAdd_name[]">
 
                                       <div class="d-block position-relative" style="z-index :99;">
@@ -126,23 +126,28 @@ purchase-add
                                     <input id="purchaseAdd_mrp0" name="purchaseAdd_mrp[]" class="form-control form-control-sm" type="number" placeholder="MRP"  step="0.01">
                                 </td>
                                 <td>
-                                    <input id="purchaseAdd_salesPrice0" name="purchaseAdd_salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sale Price"  step="0.01">
+                                    <input id="purchaseAdd_salesPrice0" name="purchaseAdd_salesPrice[]" type="number" class="form-control form-control-sm" placeholder="Sale Price" step="0.01">
                                 </td>
                                 
                                 <td>
-                                    <input id="purchaseAdd_qty0" name="purchaseAdd_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" oninput="getAmount(0)" >
+                                    <input id="purchaseAdd_qty0" name="purchaseAdd_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" min="0" oninput="getAmount(0)" >
                                 </td>
-                                <td>
-                                    <input id="purchaseAdd_purchaseRate0" name="purchaseAdd_purchaseRate[]" type="number" class="form-control form-control-sm" placeholder="Purchase Rate" oninput="getAmount(0)"  step="0.01">
-                                </td>
-                                <td>
-                                    <input id="purchaseAdd_amount0" name="purchaseAdd_amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" readonly>
+                                 <td>
+                                    <input id="purchaseAdd_amount0" name="purchaseAdd_amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" min="0" oninput="getAmount(0)">
                                 </td>
                                 <td>
                                     <input id="purchaseAdd_tax0" name="purchaseAdd_tax[]" type="number" class="form-control form-control-sm" placeholder="Tax" oninput="getTax(0)"  readonly>
                                 </td>
                                 <td style="display: none;">
                                     <input id="purchaseAdd_taxAmount0" name="purchaseAdd_taxAmount[]" type="number" class="form-control form-control-sm" placeholder="Tax"  readonly>
+                                </td>
+                                 <td>
+                                    <input id="purchaseAdd_purchaseRate0" name="purchaseAdd_purchaseRate[]" type="number" class="form-control form-control-sm" placeholder="Rate"  step="0.01" readonly>
+                                </td>
+                                <td>
+                                    <button type="button" class="mx-1 fw-semibold w-32-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRow()">
+                                <i class="ri-add-line"></i>
+                            </button>
                                 </td>
                                 
                                 
@@ -154,11 +159,11 @@ purchase-add
                             <!-- replica table end -->
                         </tbody>
                     </table>
-                    <div>
+                    {{-- <div>
                             <button type="button" class="mx-1 fw-semibold w-64-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRow()">
                                 <i class="ri-add-line">Add</i>
                             </button>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
 
@@ -173,13 +178,13 @@ purchase-add
                         <td class="border-0" colspan="2">Total</td>
                         <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_totalAmt">0</span></td>
                         </tr>
-                        {{-- <tr>
+                        <tr>
                         <td class="border-0 align-middle">Discount</td>
                         <td class="border-0"><div class="d-flex align-items-center">
-                            <input id="purchaseAdd_discount" class="form-control form-control-sm discount-value-field" type="text" value="0" placeholder="Discount" oninput="getDiscount(this.value)"><span class="ms-1">%</span></div>
+                            <input id="purchaseAdd_discount" class="form-control form-control-sm discount-value-field" type="text" placeholder="Discount" oninput="getDiscount(this.value)"><span class="ms-1">%</span></div>
                         </td>
                         <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_discountAmt">0</td>
-                        </tr> --}}
+                        </tr>
                         <tr>
                         <td class="border-0" colspan="2">Taxes</td>
                         <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_taxAmt">0</span></td>
@@ -222,50 +227,13 @@ purchase-add
     <form>
     </div>
 </div>
-<!-- modal extra-field start -->
-<div class="modal fade" id="extra-field" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="extra-fieldLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h6 class="modal-title fw-normal text-lg" id="extra-fieldLabel">Extra field</h6>
-              <button type="button" class="btn-close text-sm" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-               Extra field
-            </div>
-            <div class="modal-footer pt-2 pb-3 border-top-0">
-              <button type="button" class="btn btn-primary-600  btn-sm fw-normal">Save</button>
-              <button type="button" class="btn btn-lilac-600  btn-sm fw-normal">Save & Print</button>
-            </div>
-          </div>
-        </div>
-      </div>
-<!-- modal extra-field end -->
-
-<!-- modal payment-detail start -->
-<div class="modal fade" id="payment-detail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="payment-detailLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h6 class="modal-title fw-normal text-lg" id="payment-detailLabel">Extra field</h6>
-              <button type="button" class="btn-close text-sm" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-               Extra field
-            </div>
-            <div class="modal-footer pt-2 pb-3 border-top-0">
-              <button type="button" class="btn btn-primary-600  btn-sm fw-normal">Save</button>
-              <button type="button" class="btn btn-lilac-600  btn-sm fw-normal">Save & Print</button>
-            </div>
-          </div>
-        </div>
-      </div>
 @endsection
 @section('extra-js')
 <script>
         function getDatePicker(receiveID) {
         flatpickr(receiveID, {
             dateFormat: "d-m-Y",
+            
         });
     }
     getDatePicker('#purchaseAdd_Date'); 

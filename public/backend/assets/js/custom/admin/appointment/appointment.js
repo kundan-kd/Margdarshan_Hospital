@@ -18,17 +18,17 @@ let table = $('#appointment-book-table').DataTable({
         }
     },
     columns:[
-         {
-            data:'patient_id',
-            name:'patient_id'
+        {
+            data:'appointment_date',
+            name:'appointment_date'
+        },
+        {
+            data:'appointment_id',
+            name:'appointment_id'
         },
         {
             data:'patient_name',
             name:'patient_name'
-        },
-        {
-            data:'appointment_date',
-            name:'appointment_date'
         },
         {
             data:'mobile',
@@ -47,8 +47,8 @@ let table = $('#appointment-book-table').DataTable({
             name:'fee'
         },
         {
-            data:'paid_status',
-            name:'paid_status'
+            data:'payment_status',
+            name:'payment_status'
         },
         {
             data:'status',
@@ -283,7 +283,7 @@ function fillPatientFieldsOpd(id){
         
             }
         
-    }
+        }
     });
 }
 function getPatientDetails(id){
@@ -614,6 +614,10 @@ function updateVisit(id){
                     $('#appointment-visit-modal').modal('hide');
                     toastSuccessAlert(response.success);
                     $('#appointment-book-table').DataTable().ajax.reload();
+                    $('.apptVisitSpinn').addClass('d-none');
+                    $('.apptVisitSubmit').removeClass('d-none')
+                } else if(response.error_visit_update) {
+                    toastErrorAlert(response.error_visit_update);
                     $('.apptVisitSpinn').addClass('d-none');
                     $('.apptVisitSubmit').removeClass('d-none')
                 } else {

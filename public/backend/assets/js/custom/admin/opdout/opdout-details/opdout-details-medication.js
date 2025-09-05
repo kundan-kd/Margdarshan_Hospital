@@ -98,9 +98,9 @@ function medicinelist(medicine_cat_id,visit_id){
                     $('#opdOutMed-medName').append(`<option value="">Select</option>`);
                 medicineDetails.forEach(function(medData){
                     if(response.medicineNameId !=''){
-                        $('#opdOutMed-medName').append(`<option value="${medData.id}" ${medData.id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
+                        $('#opdOutMed-medName').append(`<option value="${medData.name_id}" ${medData.name_id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
                     }else{
-                        $('#opdOutMed-medName').append(`<option value="${medData.id}">${medData.name}</option>`);
+                        $('#opdOutMed-medName').append(`<option value="${medData.name_id}">${medData.name}</option>`);
 
                     }
                 });
@@ -133,6 +133,7 @@ $('#opdOutMed-form').on('submit',function(e){
                     $('#opd-add-medication-dose').modal('hide');
                     $('#opdOutMed-form')[0].reset();
                     toastSuccessAlert(response.success);
+                    $('#opdOutMed-medicineDoseList').DataTable().ajax.reload();
                 }else if(response.error_validation){
                     toastWarningAlert(response.error_validation);
                 }else{

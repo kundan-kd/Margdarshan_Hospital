@@ -15,26 +15,6 @@
     getDatePicker('.expiry-date'); 
 
 let medicineCategory = [];
-// setMedicineCategory();
-
-// function setMedicineCategory(){
-//     $.ajax({
-//         url:getCategoryDatas,
-//         type:"GET",
-//         success:function(response){
-//             medicineCategory = [];
-//             $('#purchaseAdd_category0').empty();
-//             let categoryDropdown ='';
-//             categoryDropdown +=`<option value="">Select</option>`;
-//             response.categoryList.forEach(element =>{
-//                 medicineCategory.push(element);
-//                 categoryDropdown += ` <option value="${element.id}">${element.name}</option>`;
-//             });
-//             $('#purchaseAdd_category0').append(categoryDropdown);
-//         }
-//     });
-// }
-// console.log(medicineCategory);
 function getMedicineNames(catId,search){
     if(search.length > 3){
         if(catId == '' || catId == null){
@@ -102,7 +82,7 @@ function addNewRow(){
             <td>${category_name}
                 <input type="hidden" name="purchaseAdd_category[]" value="${category_id}">
             </td>
-            <td>${name}
+            <td style="width: 250px;">${name}
                 <input type="hidden" name="purchaseAdd_name[]" value="${name_id}">
             </td>
             <td>${batch}
@@ -120,16 +100,16 @@ function addNewRow(){
             <td>${qty}
                 <input type="hidden" name="purchaseAdd_qty[]" value="${qty}">
             </td>
-            <td>${purchaseRate}
-                <input type="hidden" name="purchaseAdd_purchaseRate[]" value="${purchaseRate}">
-            </td>
             <td>${amount}
                 <input type="hidden" name="purchaseAdd_amount[]" value="${amount}">
             </td>
-            <td>${tax}
+            <td style="width: 50px;">${tax}
                 <input type="hidden" name="purchaseAdd_tax[]" value="${tax}">
             </td>
-            <td>
+            <td>${purchaseRate}
+                <input type="hidden" name="purchaseAdd_purchaseRate[]" value="${purchaseRate}">
+            </td>
+            <td style="display:none;">
                 <input type="hidden" name="purchaseAdd_taxAmount[]" value="${taxAmount}">
             </td>
             <td>
@@ -172,12 +152,20 @@ function removeRowPurchase(x){
     let newAmountWithTax = parseFloat(totalTaxAmount11) + parseFloat(totAmount);
     $('.purchaseAdd_taxAmt').html(totalTaxAmount11.toFixed(2));
     $('.purchaseAdd_netTotalAmt').html(newAmountWithTax.toFixed(2));
+    let tax = $('#purchaseAdd_discount').val();
+
+    let totalAmount = $('input[name="purchaseAdd_amount[]"]').map(function(){return $(this).val();}).get();
+    let sumAmount = totalAmount.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
+    $('.purchaseAdd_totalAmt').html(sumAmount.toFixed(2));
+    getDiscount(tax);
 }
 function getAmount(randNum){
     let qty = parseFloat($('#purchaseAdd_qty' + randNum).val()) || 0; // Convert to number, default to 0 if invalid
-    let purchaseRate = parseFloat($('#purchaseAdd_purchaseRate' + randNum).val()) || 0;
-    let amount = qty * purchaseRate;
-    $('#purchaseAdd_amount' + randNum).val(amount);
+    let qtyAmount = parseFloat($('#purchaseAdd_amount' + randNum).val()) || 0;
+    let tax = parseFloat($('#purchaseAdd_tax' + randNum).val()) || 0;
+    let taxAmt = (qtyAmount * tax)/100;
+    let purchaseRate = ((qtyAmount + taxAmt)/qty);
+    $('#purchaseAdd_purchaseRate' + randNum).val(purchaseRate.toFixed(2));
     let totalAmount = $('input[name="purchaseAdd_amount[]"]').map(function(){return $(this).val();}).get();
     let sumAmount = totalAmount.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
     let discountPer = parseFloat($('#purchaseAdd_discount').val()) || 0;
@@ -187,6 +175,19 @@ function getAmount(randNum){
     $('.purchaseAdd_discountAmt').html(totalDiscount.toFixed(2));
     $('.purchaseAdd_taxAmt').html(totalTax.toFixed(2));
     getTax(randNum);
+}
+function getDiscount(disc) {
+    let totalAmount = parseFloat($('.purchaseAdd_totalAmt').html()) || 0;
+    let discountPer = parseFloat(disc) || 0;
+    let totalDiscount = (totalAmount * discountPer) / 100;
+    let totalTax = parseFloat($('.purchaseAdd_taxAmt').html()) || 0;
+    let totalTaxAfterDiscount = totalTax - ((totalTax * discountPer) / 100);
+    let netAmountAfterDiscount = (totalAmount - totalDiscount) + totalTaxAfterDiscount;
+    $('.purchaseAdd_discountAmt').html(totalDiscount.toFixed(2));
+    $('.purchaseAdd_taxAmt').html(totalTaxAfterDiscount.toFixed(2));
+    $('.purchaseAdd_netTotalAmt').html(Math.round(netAmountAfterDiscount));
+
+
 }
 let totalTaxAmount = [];
 function getTax(randNum){
@@ -199,7 +200,7 @@ function getTax(randNum){
     let totAmount = $('.purchaseAdd_totalAmt').html();
     let newAmountWithTax = parseFloat(totalTaxAmount11) + parseFloat(totAmount);
     $('.purchaseAdd_taxAmt').html(totalTaxAmount11.toFixed(2));
-    $('.purchaseAdd_netTotalAmt').html(newAmountWithTax.toFixed(2));
+    $('.purchaseAdd_netTotalAmt').html(Math.round(newAmountWithTax));
 }
 function checkPayAmountPurchaseAdd(netAmount,amount){
     if(parseFloat(netAmount) < parseFloat(amount)){

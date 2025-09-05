@@ -12,7 +12,6 @@
           event.preventDefault()
           event.stopPropagation()
         }
-  
         form.classList.add('was-validated')
       }, false)
     })
@@ -40,66 +39,63 @@ function validateField(id,inputType) {
             return true;
         }
     } else if (inputType == "select") { // Validate dropdown
-      if (fieldValue != "") {
+        if (fieldValue != "") {
           error.html("");
           return true;
-      } else {
+        } else {
           error.html("This field is required").addClass("is_invalid");
           return false;
-      }
-      }else if (inputType == "email") {
-            let isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fieldValue);
-            if (!isValid) {
-                error.text("Invalid email format").addClass("is_invalid");
-                return false;
-            } else {
-                fieldID.removeClass("is_field_invalid");
-                error.html("");
-                return true;
-            }
-        } else if (inputType == "pin") {
-            let isValid = /^[0-9]{6}$/.test(fieldValue);
-            if (!isValid) {
-                error.text("Must be 6 digits").addClass("is_invalid");
-                return false;
-            } else {
-                error.html("");
-                return true;
-            }
-        } else if (inputType == "amount") {
-            if (fieldValue != undefined && fieldValue != null) {
-                let valueLength = fieldValue.length;
-                if (valueLength < 1) {
-                    error.text("Input Minimum 1 digit").addClass("is_invalid");
-                    return false;
-                }else if(fieldValue <= 0){
-                    error.text("Amount Should be greater then 0").addClass("is_invalid");
-                    return false;
-                } else {
-                    error.html("");
-                    return true;
-                }
-            }
+        }
+    }else if (inputType == "email") {
+        let isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fieldValue);
+        if (!isValid) {
+            error.text("Invalid email format").addClass("is_invalid");
+            return false;
         } else {
-            if (fieldValue != undefined && fieldValue != null) {
-                let valueLength = fieldValue.length;
-                if (valueLength < 3) {
-                    error.text("Input Minimum 3 characters").addClass("is_invalid");
-                    return false;
-                } else {
-                    error.html("");
-                    return true;
-                }
+            fieldID.removeClass("is_field_invalid");
+            error.html("");
+            return true;
+        }
+    } else if (inputType == "pin") {
+        let isValid = /^[0-9]{6}$/.test(fieldValue);
+        if (!isValid) {
+            error.text("Must be 6 digits").addClass("is_invalid");
+            return false;
+        } else {
+            error.html("");
+            return true;
+        }
+    } else if (inputType == "amount") {
+        if (fieldValue != undefined && fieldValue != null) {
+            let valueLength = fieldValue.length;
+            if (valueLength < 1) {
+                error.text("Input Minimum 1 digit").addClass("is_invalid");
+                return false;
+            }else if(fieldValue <= 0){
+                error.text("Amount Should be greater then 0").addClass("is_invalid");
+                return false;
+            } else {
+                error.html("");
+                return true;
             }
         }
-
-          return true; // Default return for valid input
-      }
+    } else {
+        if (fieldValue != undefined && fieldValue != null) {
+            let valueLength = fieldValue.length;
+            if (valueLength < 3) {
+                error.text("Input Minimum 3 characters").addClass("is_invalid");
+                return false;
+            } else {
+                error.html("");
+                return true;
+            }
+        }
+    }
+return true; // Default return for valid input
+}
 // Select2 Applied for search and dropdown similtanously
  $('.select2-cls').select2();
 //  Select2 Applied for search and dropdown ends
-
-
 // toast success alert start---------
 function toastSuccessAlert(message){
   $('.toast-alert-success-msg').html('');

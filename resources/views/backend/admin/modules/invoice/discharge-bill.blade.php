@@ -17,22 +17,24 @@ Discharge Billing
             @php
               $randomNumber = time().rand(10,99);
               date_default_timezone_set('Asia/Kolkata');
-               $dateTime = date('d/m/Y h:i A');   
-               $patientData = \App\Models\Patient::where('id',$patient_id)->get(['name','patient_id','current_status','discharge_form_generated']);
-               $visibility = '';
-               if($patientData[0]->current_status == 'Discharged'){
+              $dateTime = date('d/m/Y h:i A');   
+              $patientData = \App\Models\Patient::where('id',$patient_id)->get(['name','patient_id','current_status','discharge_form_generated']);
+              $visibility = '';
+              if($patientData[0]->current_status == 'Discharged'){
                 $visibility = 'disabled';
-               }
+              }
             @endphp
             <p class="mt-3 fw-medium">Patient ID : <span class="fw-normal billingAdd-billNo">{{$patientData[0]->patient_id}} ({{$patientData[0]->name}})</span></p>
-            <p class="mt-3 fw-medium mx-5">Date : <span class="fw-normal">{{ $dateTime}}</span></p>
           </div>
           {{-- <div class="d-flex align-items-center">
               <div class="mx-1">
-                <label for="billingAdd-patient" style="display: none;">Patient Name</label>
+                <label for="billingAdd-patient" style="display: none1;">Admit Date</label>
                <select id="billingAdd-patient" class="form-select form-select-sm select2-cls" oninput="validateField(this.id,'select')">
                 <option value="">Select Patient</option>
-                <option value="0">Cash</option>
+                @foreach ($admit_dates as $admit)
+                <option value="0">{{Cash}}</option>
+                  
+                @endforeach
              
               </select>
               <div class="billingAdd-patient_errorCls d-none"></div>
@@ -71,6 +73,7 @@ Discharge Billing
                               <td>{{$bills->title}}</td>
                               <td>{{$occupied_days ?? '-'}}</td>
                               <td>{{$pre_bed_amount ?? 0}}</td>
+                              {{-- <td>{{$pre_bed_amount_data}}</td> --}}
                             </tr>
                             @else
                              <tr>
@@ -78,7 +81,7 @@ Discharge Billing
                               <td>{{$bills->created_at->format('d-m-Y')}}</td>
                               <td>{{$bills->amount_for}}</td>
                               <td>{{$bills->title}}</td>
-                              <td>{{$bills->days ?? '-'}}</td>
+                              <td>{{$bills->qty ?? '-'}}</td>
                               <td>{{$bills->amount ?? 0}}</td>
                             </tr>
                             @endif
@@ -153,7 +156,7 @@ Discharge Billing
           <div class="text-end">
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 printBtn" onclick="billAmountPrint({{$patient_id}})"> Print</button>
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddSubmitBtn" {{$visibility}} onclick="billAmountSubmit({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Submit</button>
-                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddDischargePrintBtn {{((($total_amount + $pre_bed_amount ?? 0) - ($received_amount + $discount_amount)) <= 0) ? '' : 'd-none' }}" {{$visibility}} onclick="billDischargeNPrint({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge & Print</button>
+                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddDischargePrintBtn {{((($total_amount + $pre_bed_amount ?? 0) - ($received_amount + $discount_amount)) <= 0) ? '' : 'd-none' }}" {{$visibility}} onclick="billDischargeNPrint({{$patient_id}},{{$admit_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge & Print</button>
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 {{$patientData[0]->discharge_form_generated == 0 ? '':'d-none'}}" onclick="dischargeSummary({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge Summary</button>
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 {{$patientData[0]->discharge_form_generated == 1 ? '':'d-none'}}" onclick="dischargeFormPrint({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge Form</button>
                 {{-- <button type="button"class="btn btn-primary-600 btn-sm fw-normal mx-2 billPrintBtn d-none"onclick="billPrint({{ $patient_id }})"><i class="ri-checkbox-circle-line"></i> Print</button> --}}

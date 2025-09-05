@@ -320,7 +320,7 @@
                         <span>{{$patientData[0]->name ?? 'Cash'}}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Patient ID:</span>
+                        <span class="info-label">UHID:</span>
                         <span>{{$patientData[0]->patient_id ?? 'NA'}}</span>
                     </div>
                     <div class="info-row">
@@ -351,9 +351,10 @@
             <table class="services-table">
                 <thead>
                     <tr>
-                        <th>Sr.No.</th>
+                        {{-- <th>Sr.No.</th> --}}
                         <th>Medicine</th>
                         <th>Batch</th>
+                        <th>HSN</th>
                         <th>Expiry</th>
                         <th>Qty</th>
                         <th>Price</th>
@@ -362,27 +363,7 @@
                         <th class="text-end">Total</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @php
-                        $i = 1;
-                        @endphp
-                        @foreach ( $billing_items as $items)
-                          <tr>
-                            <td>{{$i}}</td>
-                            <td>{{$items->medicineNameData->name}}</td>
-                            <td>{{$items->batchData->batch_no}}</td>
-                            <td>{{$items->expiry}}</td>
-                            <td>{{$items->qty}}</td>
-                            <td>{{$items->sales_price}}</td>
-                            <td>{{$items->amount}}</td>
-                            <td>{{$items->tax_per}}</td>
-                            <td style="text-align:right;">{{$items->amount + $items->tax_amount}}</td>
-                        </tr>
-                        @php
-                          $i++
-                        @endphp
-                        @endforeach
-                </tbody>
+                  
             </table>
 
             <!-- Total Section -->

@@ -146,7 +146,7 @@
 		<div class="header">{{$patients[0]->discharge_type ?? 'DiSCHARGE'}} SUMMARY</div>
 		<div class="info-grid">
 			<div class="left-column">
-				<div class="info-row"> <span class="label">Patient ID:</span> <span class="value">{{$patients[0]->patient_id}}</span> </div>
+				<div class="info-row"> <span class="label">UHID:</span> <span class="value">{{$patients[0]->patient_id}}</span> </div>
 				<div class="info-row"> <span class="label">Patient Name:</span> <span class="value">{{$patients[0]->name}}</span> </div>
 				<div class="info-row"> <span class="label">Address:</span> <span class="value">{{$patients[0]->address}}</span> </div>
 				<div class="info-row"> <span class="label">Contact No:</span> <span class="value">{{$patients[0]->mobile}}</span> </div>
@@ -157,9 +157,9 @@
 				<div class="info-row"> <span class="label">Bed No:</span> <span class="value">{{$patients[0]->bedData->bed_no ?? 'NA'}}</span> </div>
 				<div class="info-row"> <span class="label">Age/Gender:</span> <span class="value">{{$patients[0]->gender}}</span> </div>
 				<div class="info-row"> <span class="label">Admission:</span> <span class="value">{{$patients[0]->created_at->format('d-m-Y')}}</span> </div>
-				<div class="info-row"> <span class="label">Discharge:</span> <span class="value">{{ date('d-m-Y', strtotime($patients[0]->discharge_date)) }}
-</span> </div>
+				<div class="info-row"> <span class="label">Discharge:</span> <span class="value">{{ date('d-m-Y', strtotime($patients[0]->discharge_date)) }}</span> </div>
 				<div class="info-row"> <span class="label">Patient Type:</span> <span class="value">General</span> </div>
+				<div class="info-row"> <span class="label">IP No.:</span> <span class="value">MHIP0{{$patients[0]->id}}</span> </div>
 			</div>
 		</div>
 		<div class="section">

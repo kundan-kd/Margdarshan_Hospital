@@ -97,9 +97,9 @@ function medicinelist(medicine_cat_id,visit_id){
                     $('#ipdMed-medName').append(`<option value="">Select</option>`);
                 medicineDetails.forEach(function(medData){
                     if(response.medicineNameId !=''){
-                        $('#ipdMed-medName').append(`<option value="${medData.id}" ${medData.id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
+                        $('#ipdMed-medName').append(`<option value="${medData.name_id}" ${medData.name_id == medicineName.medicine_name_id ? 'selected':''} >${medData.name}</option>`);
                     }else{
-                        $('#ipdMed-medName').append(`<option value="${medData.id}">${medData.name}</option>`);
+                        $('#ipdMed-medName').append(`<option value="${medData.name_id}">${medData.name}</option>`);
 
                     }
                 });

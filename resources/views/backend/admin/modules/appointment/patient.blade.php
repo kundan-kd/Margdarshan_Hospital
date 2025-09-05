@@ -19,7 +19,7 @@ Patient
       <h5 class="card-title mb-0 fw-medium">Patient Details</h5>
       <div class="d-flex flex-wrap align-items-center gap-2">
         @can('Appointment Patient Add')
-              <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#patient-add-patient" onclick="resetPatientAddPatient()"> <i class="ri-add-line"></i> Add OPD Patient</a>
+              <a class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#patient-add-patient" onclick="resetPatientAddPatient()"> <i class="ri-add-line"></i> Add Patient</a>
         @endcan
               <a class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-1" id="excelBtn"><i class="ri-file-excel-2-line"></i> Excel</a>
           </div>
@@ -31,14 +31,14 @@ Patient
               <tr>
                 <th scope="col" class="fw-medium">Patient ID</th>
                 <th scope="col" class="fw-medium">Name</th>
-                <th scope="col" class="fw-medium">Type</th>
+                <th scope="col" class="fw-medium">Current Type</th>
                 <th scope="col" class="fw-medium">Entry Type</th>
                 <th scope="col" class="fw-medium">Guardian</th>
                 <th scope="col" class="fw-medium">Gender</th>
                 <th scope="col" class="fw-medium">Blood Type</th>
                 <th scope="col" class="fw-medium">DOB</th>
                 <th scope="col" class="fw-medium">Phone</th>
-                <th scope="col" class="fw-medium">Admitted</th>
+                {{-- <th scope="col" class="fw-medium">Admitted</th> --}}
                 <th scope="col" class="fw-medium">Current Status</th>
                 <th scope="col" class="fw-medium">Action</th>
               </tr>

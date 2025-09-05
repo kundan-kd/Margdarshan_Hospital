@@ -29,6 +29,10 @@ let table_vital = $('#ipdVital-list').DataTable({
             name:'date'
         },
         {
+            data:'admit_id',
+            name:'admit_id'
+        },
+        {
             data:'name',
             name:'name'
         },

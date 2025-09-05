@@ -214,8 +214,9 @@ function processDischarge(id){
     });
 }
 function emergencyDischarge(id){
-     window.open('/patient-discharge-bills/' + id);
+    window.location.href = '/patient-discharge-bills/' + id;
 }
+
 function resetAdvance(){
     $('#emergency-add-advanceLabel').html('Add Advance Amount');
     $('#emergencyAdvanceId').val('');
@@ -401,4 +402,7 @@ $('#emergencyFinding-form').on('submit',function(e){
 
 function viewAdvancePdf(id) {
    window.open('/advance-payment-page/' + id);
+}
+function printBill(id,admit_id){
+    window.open('/discharge-bill-print/' + id + '/' + admit_id);
 }

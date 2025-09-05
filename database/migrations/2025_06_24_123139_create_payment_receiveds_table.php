@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('payment_receiveds', function (Blueprint $table) {
             $table->id();
             $table->integer('patient_id')->nullable();
+            $table->string('admit_id',30)->nullable();
             $table->string('type',20)->nullable();
             $table->integer('type_id')->nullable();
             $table->string('amount_for',20)->nullable();

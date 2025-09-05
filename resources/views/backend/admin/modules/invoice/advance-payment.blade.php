@@ -197,7 +197,7 @@
 		</div>
 		<div class="patient-info">
 			<div class="info-group">
-				<div class="info-row"> <span class="info-label">Patient ID:</span> <span class="info-value">{{$patients[0]->patient_id}}</span> </div>
+				<div class="info-row"> <span class="info-label">UHID:</span> <span class="info-value">{{$patients[0]->patient_id}}</span> </div>
 				<div class="info-row"> <span class="info-label">Admit Date & Time:</span> <span class="info-value">{{$patients[0]->created_at->format('d-m-Y h:i A')}}</span> </div>
 			
 			</div>

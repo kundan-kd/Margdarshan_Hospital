@@ -111,6 +111,10 @@ let table_visit = $('#opd-out-visit-list').DataTable({
             name:'visit_id'
         },
         {
+            data:'type',
+            name:'type'
+        },
+        {
             data:'appointment_date',
             name:'appointment_date'
         },
@@ -122,10 +126,6 @@ let table_visit = $('#opd-out-visit-list').DataTable({
             data:'doctor',
             name:'doctor'
         },
-        {
-            data:'paid_amount',
-            name:'paid_amount'
-        }
 
     ]
 });

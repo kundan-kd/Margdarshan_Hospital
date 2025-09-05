@@ -30,6 +30,10 @@ let table_nurse = $('#emergencyNurse-noteList').DataTable({
             name:'date'
         },
         {
+            data:'admit_id',
+            name:'admit_id'
+        },
+        {
             data:'name',
             name:'name',
             orderable:false,

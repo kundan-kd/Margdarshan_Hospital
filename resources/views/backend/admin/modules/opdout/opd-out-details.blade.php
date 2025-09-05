@@ -7,22 +7,22 @@
 </style>
 @endsection
 @section('main-container')
-{{-- @php
-  dd(Storage::url('barcodes/' . $patients[0]->barcode));
-@endphp --}}
 <div class="dashboard-main-body">
+  <input type="hidden" id="appointment_Id" value="{{$appointment_id}}">
   <input type="hidden" id="patient_Id" value="{{$patients[0]->id}}">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
      <h6 class="fw-normal mb-0">
-        OPD - Out Patient Details  
-        @if($patients[0]->type != 'OPD')
-            <span class="text-danger">(Moved to {{ $patients[0]->type }})</span>
-        @endif
+        OPD - Out Patient Details
+        <small class="text-muted ms-2">(Current Status: <span class="text-danger">{{ $patients[0]->type }}</span>)
+    </small>
     </h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
              <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" onclick="summaryReport({{$patients[0]->id}})">Summary Report</button>
+             @php
+               $appointment_status = \App\Models\PatientLog::where('id',$appointment_id)->value('status');
+             @endphp
           @can('OPD Move To IPD')
-            <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->type != 'OPD' ? 'disabled':''}}> <i class="ri-stethoscope-line"></i> Move to IPD</button>
+            <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIpdModel" {{$patients[0]->type != 'OPD' || $appointment_status != 'Pending' ? 'disabled':''}}> <i class="ri-stethoscope-line"></i> Move to IPD</button>
           @endcan
       </div>
     </div>
@@ -37,6 +37,9 @@
                 </li>
                 <li class="nav-item" role="presentation">
                   <button class="nav-link px-16 py-10 " id="pills-Visits-tab" data-bs-toggle="pill" data-bs-target="#pills-Visits" type="button" role="tab" aria-controls="pills-Visits" aria-selected="false">Visits</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link px-16 py-10 " id="patient-history-tab" data-bs-toggle="pill" data-bs-target="#patient-history" type="button" role="tab" aria-controls="patient-history" aria-selected="false">Patient History</button>
                 </li>
                 <li class="nav-item" role="presentation">
                   <button class="nav-link px-16 py-10 " id="pills-Medication-tab" data-bs-toggle="pill" data-bs-target="#pills-Medication" type="button" role="tab" aria-controls="pills-Medication" aria-selected="false">Medication</button>
@@ -241,14 +244,68 @@
                           <thead>
                              <tr>
                               <th class="fw-medium ">Visit ID</th>
+                              <th class="fw-medium ">Type</th>
                               <th class="fw-medium ">Appointment Date</th>
                               <th class="fw-medium ">Visited Date</th>
                               <th class="fw-medium ">Consultant Doctor</th>
-                              <th class="fw-medium ">Paid Amount</th>
                              </tr>
                           </thead>
                           <tbody>
                             {{-- data appended here using datatable from opdout-details-visit.js --}}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                  <div class="tab-pane fade" id="patient-history" role="tabpanel" aria-labelledby="patient-history-tab" tabindex="0">
+                  <div class="row">
+                    <div class="col-md-12 px-3">
+                       <div class="mb-2 d-flex justify-content-between align-items-center mb-11">
+                        <h6 class="text-md fw-normal mb-0">Patient Visit History</h6>
+                      </div>
+                      <div class="card basic-data-table">
+                            <table class="table bordered-table mb-0 w-100" id="patient-history-list" data-page-length='10'>
+                          <thead>
+                             <tr>
+                              <th class="fw-medium ">Sr.No.</th>
+                              <th class="fw-medium ">Name</th>
+                              <th class="fw-medium ">Admit Id</th>
+                              <th class="fw-medium ">Type</th>
+                              <th class="fw-medium ">Admitted On</th>
+                              <th class="fw-medium ">Current Status</th>
+                              <th class="fw-medium ">Discharge On</th>
+                              <th class="fw-medium ">Action</th>
+                             </tr>
+                          </thead>
+                          <tbody>
+                            @php
+                              $i = 1;
+                               use Carbon\Carbon;
+                            @endphp
+                            @foreach ($admit_lists as $admit)
+                              <tr>
+                                <td class="text-start">{{$i}}</td>
+                                <td class="text-start">{{$admit->patientData->name}}</td>
+                                <td class="text-start">MHAI{{$admit->admit_id}}</td>
+                                <td class="text-start">{{$admit->type ?? 'NA'}}</td>
+                                <td class="text-start">{{ $admit->created_at->setTimezone('Asia/Kolkata')->format('d-m-Y h:i A') }}</td>
+                                <td class="text-start">{{$admit->current_status ?? 'NA'}}</td>
+                                <td class="text-start">
+                                  @if($admit->current_status === 'Discharged' && $admit->discharge_date)
+                                      {{ \Carbon\Carbon::parse($admit->discharge_date)->setTimezone('Asia/Kolkata')->format('d-m-Y h:i A') }}
+                                  @else
+                                      NA
+                                  @endif
+                                </td>
+                                <td><a href="javascript:void(0)" title="Discharge Bill" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center {{$admit->current_status == 'Discharged' ? '':'d-none'}}">
+                                    <iconify-icon icon="mdi:file-download-outline" onclick="printBill({{$admit->patient_id}} , {{$admit->admit_id}})"></iconify-icon>
+                                </a></td>
+                              </tr>
+                              @php
+                                $i++;
+                              @endphp
+                            @endforeach
                           </tbody>
                         </table>
                       </div>

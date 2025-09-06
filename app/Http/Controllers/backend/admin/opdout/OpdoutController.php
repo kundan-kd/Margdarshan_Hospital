@@ -53,7 +53,7 @@ class OpdoutController extends Controller
                 return '<a target="_blank" class="text-primary cursor-pointer" onclick="patientDetailsUsingToken('.$row->id.','.$row->patient_id.')">'.'MHAP0'.$row->id.'</a>';
             })
             ->addColumn('appointment_date',function($row){
-                return $row->appointment_date ?? '';
+                return Carbon::parse($row->appointment_date)->format('d-m-Y') ?? '';
             })
            ->addColumn('token',function($row){
                 return $row->patient_data->patient_id;

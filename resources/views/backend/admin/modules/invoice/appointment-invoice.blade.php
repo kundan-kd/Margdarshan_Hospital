@@ -361,7 +361,7 @@
                 </thead>
                 <tbody>
                         <tr>
-                        <td>{{$appointments[0]->appointment_date}}</td>
+                        <td>{{\Carbon\Carbon::parse($appointments[0]->appointment_date)->format('d-m-Y')}}</td>
                         <td>{{$departmentData[0]->name}}</td>
                         <td>{{$doctorData[0]->name}}</td>
                         <td style="text-align:right;">{{$appointments[0]->fee}}</td>

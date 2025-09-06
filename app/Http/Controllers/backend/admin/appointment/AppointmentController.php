@@ -16,6 +16,7 @@ use App\Models\RoomNumber;
 use App\Models\Timeline;
 use App\Models\User;
 use App\Models\Visit;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +41,7 @@ class AppointmentController extends Controller
             $patient_log = PatientLog::where('type','OPD')->get();
             return DataTables::of($patient_log)
             ->addColumn('appointment_date',function($row){
-                return $row->appointment_date ?? '';
+                return Carbon::parse($row->appointment_date)->format('d-m-Y') ?? '';
             })
             ->addColumn('appointment_id',function($row){
                 return 'MHAP0'.$row->id ?? '';

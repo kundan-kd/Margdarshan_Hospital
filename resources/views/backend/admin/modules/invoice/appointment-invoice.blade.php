@@ -322,7 +322,7 @@
                         <span>{{$patientData[0]->name}}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Patient ID:</span>
+                        <span class="info-label">UHID:</span>
                         <span>{{$patientData[0]->patient_id}}</span>
                     </div>
                     <div class="info-row">

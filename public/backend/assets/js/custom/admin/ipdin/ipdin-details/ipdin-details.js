@@ -156,8 +156,8 @@ $('#ipd-icuBedForm').on('submit',function(e){
     });
     }
 })
-function ipdDischarge(id){
-    window.location.href = '/patient-discharge-bills/' + id;
+function ipdDischarge(id,admit_id){
+    window.location.href = '/patient-discharge-bills/' + id + '/' + admit_id;
 }
 function patientDischarge(id) {
     $.ajax({
@@ -441,4 +441,7 @@ function viewAdvancePdf(id) {
 }
 function printBill(id,admit_id){
     window.open('/discharge-bill-print/' + id + '/' + admit_id);
+}
+function dischargeFormPrint(id,admit_id){
+    window.open('/discharge-form-print/' + id + '/' + admit_id);
 }

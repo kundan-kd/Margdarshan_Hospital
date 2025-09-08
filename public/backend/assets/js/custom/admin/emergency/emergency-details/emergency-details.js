@@ -213,8 +213,8 @@ function processDischarge(id){
         }
     });
 }
-function emergencyDischarge(id){
-    window.location.href = '/patient-discharge-bills/' + id;
+function emergencyDischarge(id,admit_id){
+    window.location.href = '/patient-discharge-bills/' + id + '/' + admit_id;
 }
 
 function resetAdvance(){

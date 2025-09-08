@@ -22,7 +22,7 @@
             <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged'?'disabled':''}} onclick="#"> <i class="ri-stethoscope-line"></i> Move to ICU</button>
           @endcan
           @can('Emergency Discharge')
-            <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="emergencyDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
+            <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="emergencyDischarge({{$patients[0]->id}},{{$patients[0]->admit_id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
           @endcan
         </div>
     </div>

@@ -22,7 +22,7 @@
           <button type="button" class="btn btn-danger-600 fw-normal  btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#moveToIcuModel" {{$patients[0]->current_status == 'Discharged' || $patients[0]->type == 'ICU'?'disabled':''}}> <i class="ri-hotel-bed-line"></i> Move to ICU</button>
           @endcan
           @can('IPD Discharge')
-          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="ipdDischarge({{$patients[0]->id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
+          <button type="button" class="btn btn-success-600 fw-normal  btn-sm d-flex align-items-center gap-2" onclick="ipdDischarge({{$patients[0]->id}},{{$patients[0]->admit_id}})"> <i class="ri-thumb-up-line"></i> Discharge</button>
           @endcan
         </div>
         <!-- <div class="btns">
@@ -300,7 +300,7 @@
                                 <td class="text-start">{{$admit->created_at->format('d-m-Y h:i A')}}</td>
                                 <td class="text-start">{{$admit->current_status ?? 'NA'}}</td>
                                 <td class="text-start">
-                                  @if($admit->current_status === 'Discharged' && $admit->discharge_date)
+                                  @if($admit->current_status == 'Discharged' && $admit->discharge_date)
                                       {{ \Carbon\Carbon::parse($admit->discharge_date)->setTimezone('Asia/Kolkata')->format('d-m-Y h:i A') }}
                                   @else
                                       NA
@@ -308,7 +308,11 @@
                                 </td>
                                 <td><a href="javascript:void(0)" title="Discharge Bill" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center {{$admit->current_status == 'Discharged' ? '':'d-none'}}">
                                     <iconify-icon icon="mdi:file-download-outline" onclick="printBill({{$admit->patient_id}} , {{$admit->admit_id}})"></iconify-icon>
-                                </a></td>
+                                    </a>
+                                    <a href="javascript:void(0)" title="Discharge Bill" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center {{$admit->current_status == 'Discharged' ? '':'d-none'}}">
+                                    <iconify-icon icon="mdi:file-download-outline" onclick="dischargeFormPrint({{$admit->patient_id}} , {{$admit->admit_id}})"></iconify-icon>
+                                    </a>
+                                </td>
                               </tr>
                               @php
                                 $i++;

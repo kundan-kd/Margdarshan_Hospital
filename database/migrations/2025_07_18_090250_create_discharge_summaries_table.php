@@ -14,16 +14,14 @@ return new class extends Migration
         Schema::create('discharge_summaries', function (Blueprint $table) {
             $table->id();
             $table->integer('patient_id')->nullable();
+            $table->string('admit_id',30)->nullable();
+            $table->string('type',11)->nullable();
+            $table->integer('doctor_id')->nullable();
+            $table->integer('bed_id')->nullable();
+            $table->integer('admit_date')->nullable();
+            $table->integer('discharge_date')->nullable();
+            $table->string('patient_type',30)->nullable();
             $table->text('final_diagnosis')->nullable();
-            $table->text('chief_complaint')->nullable();
-            $table->text('past_history')->nullable();
-            $table->text('clinical_finding')->nullable();
-            $table->text('investigation')->nullable();
-            $table->text('brief_history')->nullable();
-            $table->text('condition_at_discharge')->nullable();
-            $table->text('medication_diet_instruction')->nullable();
-            $table->text('advice_on_discharge')->nullable();
-            $table->text('review_after')->nullable();
             $table->string('status',80)->nullable();
             $table->timestamps();
             $table->softDeletes();

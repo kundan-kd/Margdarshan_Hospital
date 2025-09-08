@@ -340,12 +340,12 @@
                 <div class="billing-info">
                     <div class="section-title">Billing Information</div>
                      <div class="info-row">
-                        <span class="info-label">Patient ID:</span>
+                        <span class="info-label">UHID:</span>
                         <span>{{$patientData[0]->patient_id}}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Admission Date:</span>
-                        <span>{{ date('d/m/Y', strtotime($patientData[0]->created_at)) }}</span>
+                        <span>{{ date('d/m/Y', strtotime($patientData[0]->admit_date)) }}</span>
                     </div>
                   
                         <div class="info-row">

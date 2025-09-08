@@ -150,16 +150,16 @@
 				<div class="info-row"> <span class="label">Patient Name:</span> <span class="value">{{$patients[0]->name}}</span> </div>
 				<div class="info-row"> <span class="label">Address:</span> <span class="value">{{$patients[0]->address}}</span> </div>
 				<div class="info-row"> <span class="label">Contact No:</span> <span class="value">{{$patients[0]->mobile}}</span> </div>
-				<div class="info-row"> <span class="label">Consultant:</span> <span class="value">Dr. {{$patients[0]->doctorData->name ?? 'NA'}}</span> </div>
-				<div class="info-row"> <span class="label">Department:</span> <span class="value">{{$patients[0]->type}}</span> </div>
+				<div class="info-row"> <span class="label">Consultant:</span> <span class="value">Dr. {{$dischargeSummary[0]->doctorData->name ?? 'NA'}}</span> </div>
+				<div class="info-row"> <span class="label">Department:</span> <span class="value">{{$dischargeSummary[0]->type}}</span> </div>
 			</div>
 			<div class="right-column">
-				<div class="info-row"> <span class="label">Bed No:</span> <span class="value">{{$patients[0]->bedData->bed_no ?? 'NA'}}</span> </div>
+				<div class="info-row"> <span class="label">Bed No:</span> <span class="value">{{$dischargeSummary[0]->bedData->bed_no ?? 'NA'}}</span> </div>
 				<div class="info-row"> <span class="label">Age/Gender:</span> <span class="value">{{$patients[0]->gender}}</span> </div>
-				<div class="info-row"> <span class="label">Admission:</span> <span class="value">{{$patients[0]->created_at->format('d-m-Y')}}</span> </div>
-				<div class="info-row"> <span class="label">Discharge:</span> <span class="value">{{ date('d-m-Y', strtotime($patients[0]->discharge_date)) }}</span> </div>
-				<div class="info-row"> <span class="label">Patient Type:</span> <span class="value">General</span> </div>
-				<div class="info-row"> <span class="label">IP No.:</span> <span class="value">MHIP0{{$patients[0]->id}}</span> </div>
+				<div class="info-row"> <span class="label">Admission:</span> <span class="value">{{\Carbon\Carbon::parse($dischargeSummary[0]->admit_date)->format('d-m-Y')}}</span> </div>
+				<div class="info-row"> <span class="label">Discharge:</span> <span class="value">{{\Carbon\Carbon::parse($dischargeSummary[0]->discharge_date)->format('d-m-Y')}}</span> </div>
+				<div class="info-row"> <span class="label">Patient Type:</span> <span class="value">{{$dischargeSummary[0]->patient_type ?? '' }}</span> </div>
+				<div class="info-row"> <span class="label">IP No.:</span> <span class="value">MHAI{{$dischargeSummary[0]->admit_id}}</span> </div>
 			</div>
 		</div>
 		<div class="section">

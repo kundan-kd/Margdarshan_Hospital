@@ -323,8 +323,8 @@ $('#emergency-addPatientForm').on('submit',function(e){
                             toastErrorAlert(response.previous_admitted);
                             $('.emergencyPatientSpinn').addClass('d-none'); 
                             $('.emergencyPatientSubmit').removeClass('d-none'); 
-                        }else if(response.previous_added_opd){
-                            toastErrorAlert(response.previous_added_opd);
+                        }else if(response.discharge_form_generate_issue){
+                            toastErrorAlert(response.discharge_form_generate_issue);
                             $('.emergencyPatientSpinn').addClass('d-none'); 
                             $('.emergencyPatientSubmit').removeClass('d-none'); 
                         }else{

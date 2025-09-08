@@ -1,25 +1,22 @@
-function getDiscountAmount(disPer){
-    console.log(disPer);
+function getDiscountAmount(disAmount){
     let total_amount = parseFloat($('.bill-totalAmount').html());
     let paid_amount = parseFloat($('.bill-totalPaidAmount').html());
-    let discount_amount = (total_amount * disPer || 0)/100;
-    let net_amount = total_amount - discount_amount;
-    let due_amount = net_amount - paid_amount;
-    // if(due_amount <= 0){
-    //     $('.billPrintBtn').removeClass('d-none');
-    // }else{
-    //     $('.billPrintBtn').addClass('d-none');
-    // }
-    $('.bill-discountAmount').html(Math.round(discount_amount));
+    let discountted_amount = parseFloat($('.bill-totalDiscountAmount').html());
+    // let discount_amount = (total_amount * disPer || 0)/100;
+    // let discount_amount = total_amount - disAmount;
+    let net_amount = total_amount - disAmount;
+    let due_amount = net_amount - (paid_amount + discountted_amount);
+    $('.bill-discountAmount').html(Math.round(disAmount));
     $('.bill-totalNetAmount').html(Math.round(net_amount));
     $('.bill-totalDueAmount').html(Math.round(due_amount));
-    $('.bill-totalDiscountAmount').html(Math.round(discount_amount));
+    // $('.bill-totalDiscountAmount').html(Math.round(disAmount));
     let pay_amount = $('#billAdd-payAmount').val();
     checkPayAmount(pay_amount);
 }
 
 function checkPayAmount(amount){
     let due_amount = parseFloat($('.bill-totalDueAmount').html());
+    let discountted_amount = parseFloat($('.bill-totalDiscountAmount').html());
     if(amount > due_amount){
         $('.bill-payAmount-error').removeClass('d-none').html('Pay amount exceeds due amount').addClass('text-danger');
         $('.billAddSubmitBtn').prop('disabled',true);
@@ -103,7 +100,7 @@ function billDischargeNPrint(id,admit_id){
                 },
                 data:{id:id},
                 success:function(response){
-                    console.log(response);
+                    // console.log(response);
                     if (response.success) {
                         Swal.fire("Discharged", response.success, "success");
                         setTimeout(function(){
@@ -134,23 +131,24 @@ function invoiceSubmit(id,admit_id){
                 
                 billPrint(id,admit_id) //print bill
                 setTimeout(function(){
-                    const url = `/patient-discharge-bills/${id}`;
+                    const url = `/patient-discharge-bills/${id}/${admit_id}`;
                      window.location.href = url;
 
                 },300);
             }
         });
 }
-function dischargeSummary(id){
-    window.location.href='/discharge-summary/' + id;
+function dischargeSummary(id,admit_id){
+    window.location.href='/discharge-summary/' + id + '/' + admit_id;
 }
-function dischargeFormPrint(id){
-    window.open('/discharge-form-print/' + id);
+function dischargeFormPrint(id,admit_id){
+    window.open('/discharge-form-print/' + id + '/' + admit_id);
 }
 
 $('#discharge-summaryForm').on('submit', function(e) {
     e.preventDefault(); // Prevent default form submission
     let patient_id = $('#patient_id').val();
+    let admit_id = $('#admit_id').val();
     let discharge_type = $('#discharg-type').val();  
     if(discharge_type == ''){
         $('.needs-validation').addClass('was-validated');
@@ -174,13 +172,13 @@ $('#discharge-summaryForm').on('submit', function(e) {
                     url: dischargeSummarySubmit, // Replace with your actual route
                     type: "POST",
                     data: {
-                        patient_id:patient_id,discharge_type:discharge_type,final_diagnosis:final_diagnosis,
+                        patient_id:patient_id,admit_id:admit_id,discharge_type:discharge_type,final_diagnosis:final_diagnosis,
                     },
                     success: function(response) {
                         toastSuccessAlert(response.success);
                         $('.needs-validation').removeClass('was-validated');
                         setTimeout(function(){
-                            window.location.href='/patient-discharge-bills/'+ patient_id;
+                            window.location.href='/patient-discharge-bills/'+ patient_id + '/' + admit_id; 
                         },1500);
                     },
                     error: function(xhr) {
@@ -192,8 +190,8 @@ $('#discharge-summaryForm').on('submit', function(e) {
         });
     }
 });
-function billAmountPrint(id){
-    window.open('/bill-print/' + id);
+function billAmountPrint(id,admit_id){
+    window.open('/bill-print/' + id + '/' + admit_id);
 }
 $('#billAdd-paymentMode').on('change',function(e){
     e.preventDefault();

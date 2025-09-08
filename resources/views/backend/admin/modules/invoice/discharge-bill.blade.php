@@ -73,7 +73,6 @@ Discharge Billing
                               <td>{{$bills->title}}</td>
                               <td>{{$occupied_days ?? '-'}}</td>
                               <td>{{$pre_bed_amount ?? 0}}</td>
-                              {{-- <td>{{$pre_bed_amount_data}}</td> --}}
                             </tr>
                             @else
                              <tr>
@@ -106,7 +105,7 @@ Discharge Billing
                       </tr>
                       <tr>
                         <td class="border-0 align-middle">Discount</td>
-                        <td class="border-0"><div class="d-flex align-items-center"><input id="bill-discountPer" class="form-control form-control-sm discount-value-field" type="number" placeholder="Discount" value="" oninput="getDiscountAmount(this.value)"><span class="ms-1">%</span></div></td>
+                        <td class="border-0"><div class="d-flex align-items-center"><span class="ms-1">₹</span><input id="bill-discountPer" class="form-control form-control-sm discount-value-field" type="number" placeholder="Discount" value="" oninput="getDiscountAmount(this.value)"></div></td>
                         <td class="border-0 text-end fs-6">₹ <span class="bill-discountAmount">0</span></td>
                       </tr>
                       <tr>
@@ -118,7 +117,7 @@ Discharge Billing
                         <td class="border-0 text-end fs-6">₹ <span class="bill-totalPaidAmount">{{$received_amount ?? 0}}</span></td>
                       </tr>
                       <tr>
-                        <td class="border-0" colspan="2">Discount Amount (₹)</td>
+                        <td class="border-0" colspan="2">Discounted Amount (₹)</td>
                         <td class="border-0 text-end fs-6">₹ <span class="bill-totalDiscountAmount">{{$discount_amount ?? 0}}</span></td>
                       </tr>
                       <tr>
@@ -154,11 +153,11 @@ Discharge Billing
         </div>
         <div class=" pharmacy-footer card-footer border-top">
           <div class="text-end">
-                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 printBtn" onclick="billAmountPrint({{$patient_id}})"> Print</button>
+                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 printBtn" onclick="billAmountPrint({{$patient_id}},{{$admit_id}})"> Print</button>
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddSubmitBtn" {{$visibility}} onclick="billAmountSubmit({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Submit</button>
                 <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 billAddDischargePrintBtn {{((($total_amount + $pre_bed_amount ?? 0) - ($received_amount + $discount_amount)) <= 0) ? '' : 'd-none' }}" {{$visibility}} onclick="billDischargeNPrint({{$patient_id}},{{$admit_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge & Print</button>
-                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 {{$patientData[0]->discharge_form_generated == 0 ? '':'d-none'}}" onclick="dischargeSummary({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge Summary</button>
-                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 {{$patientData[0]->discharge_form_generated == 1 ? '':'d-none'}}" onclick="dischargeFormPrint({{$patient_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge Form</button>
+                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 {{$patientData[0]->discharge_form_generated == 0 && $patientData[0]->current_status == 'Discharged' ? '':'d-none'}}" onclick="dischargeSummary({{$patient_id}},{{$admit_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge Summary</button>
+                <button type="button" class="btn btn-primary-600  btn-sm fw-normal mx-2 {{$patientData[0]->discharge_form_generated == 1 ? '':'d-none'}}" onclick="dischargeFormPrint({{$patient_id}},{{$admit_id}})"> <i class="ri-checkbox-circle-line"></i> Discharge Form</button>
                 {{-- <button type="button"class="btn btn-primary-600 btn-sm fw-normal mx-2 billPrintBtn d-none"onclick="billPrint({{ $patient_id }})"><i class="ri-checkbox-circle-line"></i> Print</button> --}}
                 <button class="btn btn-primary-600  btn-sm fw-normal billAddSpinnBtn d-none" type="button" disabled>
                     Please Wait...

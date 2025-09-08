@@ -92,7 +92,7 @@ class IpdinController extends Controller
             return $row->mobile;
         })
         ->addColumn('created_at',function($row){
-            $date = new \DateTime($row->created_at);
+            $date = new \DateTime($row->admit_date);
             $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
             return $date->format('d-m-Y h:i A');
         })
@@ -148,7 +148,10 @@ class IpdinController extends Controller
                 $oldPatientId = Patient::where('id',$request->id)->get(['patient_id']);
                 $prevPatient = Patient::where('patient_id',$oldPatientId[0]->patient_id)->latest('id')->first();
                 if($prevPatient->current_status == "Admitted"){
-                    return response()->json(['previous_admitted'=>'Kindly discharge this patient from '.$prevPatient->type.' before adding new']);
+                    return response()->json(['previous_admitted'=>'Please discharge this patient from '.$prevPatient->type.' before adding new']);
+                }
+                if($prevPatient->discharge_form_generated == 0){
+                    return response()->json(['discharge_form_generate_issue'=>'Please submit previous discharge summary before adding new']);
                 }
             }
             $check_prev_data = Patient::where('mobile',$request->mobile)->exists();
@@ -186,6 +189,8 @@ class IpdinController extends Controller
                     'current_status' => 'Admitted',
                     'admit_date' => $now,
                     'discharge_date' => null,
+                    'discharge_form_generated' => 0,
+                    'discharge_type' => null
                 ]);
                 Bed::where('id',$request->bedNumId)->update([
                     'current_status' => 'occupied',

@@ -333,8 +333,8 @@ $('#ipd-addPatientForm').on('submit',function(e){
                             toastErrorAlert(response.previous_admitted);
                             $('.ipdPatientSpinn').addClass('d-none'); 
                             $('.ipdPatientSubmit').removeClass('d-none'); 
-                        }else if(response.previous_added_opd){
-                            toastErrorAlert(response.previous_added_opd);
+                        }else if(response.discharge_form_generate_issue){
+                            toastErrorAlert(response.discharge_form_generate_issue);
                             $('.ipdPatientSpinn').addClass('d-none'); 
                             $('.ipdPatientSubmit').removeClass('d-none'); 
                         }else{

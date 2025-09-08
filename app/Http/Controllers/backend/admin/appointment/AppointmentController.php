@@ -85,9 +85,9 @@ class AppointmentController extends Controller
                     <a href="javascript:void(0)" title="Change Appointment Date" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.' ">
                         <iconify-icon icon="lucide:calendar" onclick="appointmentDateEdit(' . $row->id . ')"></iconify-icon>
                     </a>
-                    <!--<a href="javascript:void(0)" title="Delete" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
+                    <a href="javascript:void(0)" title="Delete" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center '.$check_visit.'">
                         <iconify-icon icon="mdi:close" style="font-size:18px;" onclick="deleteReason(' . $row->id . ')"></iconify-icon>
-                    </a>-->
+                    </a>
                 </div>';
             })
             ->rawColumns(['patient_id','payment_status','status','action'])
@@ -223,9 +223,12 @@ class AppointmentController extends Controller
     
     public function appointmentBook(Request $request){
         return DB::transaction(function () use ($request) {
-            $check_patient_admitted = Patient::where('id',$request->patientID)->where('current_status','Admitted')->exists();
-            if($check_patient_admitted){
+            $prevPatient = Patient::where('id',$request->patientID)->latest('id')->first();
+            if($prevPatient->current_status == "Admitted"){
                 return response()->json(['already_admitted'=>'This patient is already admitted']);
+            }
+            if($prevPatient->discharge_form_generated == 0){
+                return response()->json(['discharge_form_generate_issue'=>'Please submit previous discharge summary before adding new']);
             }
             $validator = Validator::make($request->all(),[
                 'patientID' => 'nullable',
@@ -344,25 +347,13 @@ class AppointmentController extends Controller
         });
     }
     public function deleteAppointmentData(Request $request){
-        $patient_data = Appointment::where('id',$request->id)->get(['patient_id']);
-        $patient_details = Patient::where('id',$patient_data[0]->patient_id)->get();
-        //add canceled appointment to lead
-        $leads = new Lead();
-        $leads->name = $patient_details[0]->name ??'';
-        $leads->mobile = $patient_details[0]->mobile ?? '';
-        $leads->source = 'Appointment Cancelled';
-        $leads->address = $patient_details[0]->address ?? '';
-        $leads->save();
-        $update = Appointment::where('id',$request->id)->update([
-            'reason_for_delete' => $request->reason,
-            'status' => 'Deleted'
+        $update = PatientLog::where('id',$request->id)->update([
+            'admit_id' => '000',
+            'appointment_cancel_reason' => $request->reason,
+            'status' => 'Cancelled',
+            'description' => 'Appointment cancelled by user ' . Auth::id()
         ]);
         if($update){
-            Patient::where('id',$patient_data[0]->patient_id)->update([
-                'description' => 'Appointment Cancelled'
-            ]);
-            Patient::where('id',$patient_data[0]->patient_id)->delete();
-            Appointment::where('id',$request->id)->delete();
             return response()->json(['success' => 'Appointment cancelled successfully'],200);
         }else{
             return response()->json(['error_success' => 'Appointment not cancelled']);

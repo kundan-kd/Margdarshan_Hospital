@@ -28,10 +28,7 @@ return new class extends Migration
             $table->string('appointment_cancel_reason',200)->nullable();
             $table->string('current_status',30)->nullable();
             $table->dateTime('discharge_date')->nullable();
-            $table->integer('discharge_form_generated')->nullable();
-            $table->string('discharge_type',20)->nullable();
             $table->text('description',20)->nullable();
-            $table->string('comment',200)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

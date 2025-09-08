@@ -13,6 +13,7 @@ Discharge Summary
         <div class="card">
         <div class="card-body">
             <input type="hidden" id="patient_id" value="{{$id}}">
+            <input type="hidden" id="admit_id" value="{{$admit_id}}">
             <form action="" id="discharge-summaryForm" class="needs-validation" novalidate>
                <div class="row justify-content-center">
                     <!-- Bed Group Column -->

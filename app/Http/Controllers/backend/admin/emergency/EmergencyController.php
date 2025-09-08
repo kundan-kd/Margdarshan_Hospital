@@ -80,7 +80,7 @@ class EmergencyController extends Controller
             return $row->mobile;
         })
         ->addColumn('created_at',function($row){
-            $date = new \DateTime($row->created_at);
+            $date = new \DateTime($row->admit_date);
             $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
             return $date->format('d-m-Y h:i A');
         })
@@ -115,6 +115,9 @@ class EmergencyController extends Controller
                 $prevPatient = Patient::where('patient_id',$oldPatientId[0]->patient_id)->latest('id')->first();
                 if($prevPatient->current_status == "Admitted"){
                     return response()->json(['previous_admitted'=>'Kindly discharge this patient from '.$prevPatient->type.' before adding new']);
+                }
+                if($prevPatient->discharge_form_generated == 0){
+                    return response()->json(['discharge_form_generate_issue'=>'Please submit previous discharge summary before adding new']);
                 }
             }
             $check_prev_data = Patient::where('mobile',$request->mobile)->exists();

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('type',11)->nullable();
             $table->string('current_status',20)->nullable();
             $table->dateTime('discharge_date')->nullable();
+            $table->integer('discharge_form_generated')->default(0);
+            $table->string('discharge_type',11)->nullable();
             $table->string('desc',150)->nullable();
             $table->timestamps();
             $table->softDeletes();

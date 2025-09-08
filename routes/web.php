@@ -458,7 +458,7 @@ Route::post('/emergency-advance-view',[EmergencyController::class,'viewEmergency
 Route::post('/emergency-advance-data',[EmergencyController::class,'getEmergencyAdvanceData'])->name('emergency-advance.getEmergencyAdvanceData');
 Route::post('/emergency-advance-update',[EmergencyController::class,'emergencyAdvanceDataUpdate'])->name('emergency-advance.emergencyAdvanceDataUpdate');
 
-Route::get('/patient-discharge-bills/{id}',[InvoiceController::class,'generateDischargeBill']);
+Route::get('/patient-discharge-bills/{id}/{admit_id}',[InvoiceController::class,'generateDischargeBill']);
 Route::post('/invoice-bill-payment',[InvoiceController::class,'payBillAmount'])->name('invoice.payBillAmount');
 Route::get('/discharge-bill-print/{id}/{admit_id}',[InvoiceController::class,'dischargeBillPrint']);
 Route::post('/patient-discharge',[InvoiceController::class,'getPatientDischarge'])->name('invoice.getPatientDischarge');
@@ -466,12 +466,12 @@ Route::post('/patient-invoice-add',[InvoiceController::class,'invoiceDataSubmit'
 Route::get('/medicine-bill-print/{id}',[InvoiceController::class,'medicineBillPrint']);
 Route::get('/appointment-bill-print/{id}',[InvoiceController::class,'appointmentBillPrint']);
 Route::get('/admission-form-print/{id}',[InvoiceController::class,'admissionFormPrint']);
-Route::get('/discharge-summary/{id}',[InvoiceController::class,'dischargeSummary']);
-Route::get('/discharge-form-print/{id}',[InvoiceController::class,'dischargeFormPrint']);
+Route::get('/discharge-summary/{id}/{admit_id}',[InvoiceController::class,'dischargeSummary']);
+Route::get('/discharge-form-print/{id}/{admit_id}',[InvoiceController::class,'dischargeFormPrint']);
 Route::post('/discharge-summary-added',[InvoiceController::class,'dischargeSummarySubmit'])->name('discharge.dischargeSummarySubmit');
 Route::get('/summary-report/{id}',[InvoiceController::class,'summaryRepoet']);
 Route::get('/advance-payment-page/{id}',[InvoiceController::class,'advancePaymentPage']);
-Route::get('/bill-print/{id}',[InvoiceController::class,'billPrint']);
+Route::get('/bill-print/{id}/{admit_id}',[InvoiceController::class,'billPrint']);
 
 Route::post('/common-medicine-name',[CommonController::class,'getMedicineName'])->name('common.getMedicineName');
 Route::get('/barcode', [CommonController::class, 'barCodeGenerate']);

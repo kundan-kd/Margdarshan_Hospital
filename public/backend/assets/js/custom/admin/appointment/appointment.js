@@ -445,10 +445,10 @@ $('#appointmentForm').on('submit',function(e){
                             toastErrorAlert(response.already_admitted);
                             $('.appointmentSpinn').addClass('d-none');
                             $('.appointmentSubmitBtn').removeClass('d-none');
-                        // }else if(response.already_discharged){
-                        //     toastErrorAlert(response.already_discharged);
-                        //     $('.appointmentSpinn').addClass('d-none');
-                        //     $('.appointmentSubmitBtn').removeClass('d-none');
+                        }else if(response.discharge_form_generate_issue){
+                            toastErrorAlert(response.discharge_form_generate_issue);
+                            $('.appointmentSpinn').addClass('d-none');
+                            $('.appointmentSubmitBtn').removeClass('d-none');
                         }else{
                             toastErrorAlert('Something went wrong, please try again');
                             $('.appointmentSpinn').addClass('d-none');
@@ -655,6 +655,7 @@ function reasonSubmitDelete(id){
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
+            console.log(response);
             if (response.success) {
                 $('#appointment-delete-modal').modal('hide');
                 $('#appointment-book-table').DataTable().ajax.reload();

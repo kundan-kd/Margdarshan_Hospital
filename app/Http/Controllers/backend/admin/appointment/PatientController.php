@@ -42,8 +42,8 @@ class PatientController extends Controller
         })->get();
         return DataTables::of($latestPatients)
         ->addColumn('patient_id',function($row){
-            return '<a target="_blank" class="text-primary cursor-pointer" onclick="patientHistory('.$row->id.','.$row->admit_id.')">'.$row->patient_id.'</a>';
-            // return $row->patient_id;
+            // return '<a target="_blank" class="text-primary cursor-pointer" onclick="patientHistory('.$row->id.','.$row->admit_id.')">'.$row->patient_id.'</a>';
+            return $row->patient_id;
         })
         ->addColumn('name',function($row){
             return $row->name;
@@ -171,7 +171,6 @@ class PatientController extends Controller
                 $lead->lead_patient_id = $patient->id;
                 $lead->lead_status_date = now();
                 $lead->save();
-
                 $patient->lead_id = $lead->id;
                 $patient->save();
             }

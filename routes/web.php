@@ -395,6 +395,8 @@ Route::post('/ipd-advance-view',[IpdinController::class,'viewIpdAdvance'])->name
 Route::post('/ipd-advance-data',[IpdinController::class,'getIpdAdvanceData'])->name('ipd-advance.getIpdAdvanceData');
 Route::post('/ipd-advance-update',[IpdinController::class,'ipdAdvanceDataUpdate'])->name('ipd-advance.ipdAdvanceDataUpdate');
 
+Route::post('/ipd-activity',[IpdinController::class,'viewIpdActivity'])->name('ipd-activity.viewIpdActivity');
+
 Route::get('/emergency',[EmergencyController::class,'index'])->name('emergency.index');
 Route::get('/emergency-details/{id}',[EmergencyController::class,'emergencyDetails']);
 Route::post('/emergency-patient-add',[EmergencyController::class,'addPatient'])->name('emergency-addPatient');

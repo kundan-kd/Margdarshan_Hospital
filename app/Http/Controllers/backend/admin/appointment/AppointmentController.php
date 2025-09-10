@@ -227,9 +227,9 @@ class AppointmentController extends Controller
             if($prevPatient->current_status == "Admitted"){
                 return response()->json(['already_admitted'=>'This patient is already admitted']);
             }
-            if($prevPatient->discharge_form_generated == 0){
-                return response()->json(['discharge_form_generate_issue'=>'Please submit previous discharge summary before adding new']);
-            }
+            // if($prevPatient->discharge_form_generated == 0){
+            //     return response()->json(['discharge_form_generate_issue'=>'Please submit previous discharge summary before adding new']);
+            // }
             $validator = Validator::make($request->all(),[
                 'patientID' => 'nullable',
                 'name' => 'required',

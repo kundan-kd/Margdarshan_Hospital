@@ -166,18 +166,18 @@ class OpdoutController extends Controller
                 $payment_bills->save();
 
                 $new_created_at = $payment_bills->created_at;
-                if ($previous_payment_bill) {
-                    $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-                $created_at = new DateTime($previous_payment_bill->created_at);
-                    $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
+                // if ($previous_payment_bill) {
+                //     $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+                // $created_at = new DateTime($previous_payment_bill->created_at);
+                //     $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
 
-                    $interval = $created_at->diff($updated_at);
-                    $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
-                    $pre_bed_amount = $bed_amount * $occupied_days;
-                    PaymentBill::where('id',$previous_payment_bill->id)->update([
-                        'amount' => $pre_bed_amount
-                    ]);
-                } // amount add to previous bed type for billing
+                //     $interval = $created_at->diff($updated_at);
+                //     $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
+                //     $pre_bed_amount = $bed_amount * $occupied_days;
+                //     PaymentBill::where('id',$previous_payment_bill->id)->update([
+                //         'amount' => $pre_bed_amount
+                //     ]);
+                // } // amount add to previous bed type for billing
                 //store admit_id for further patient revisit refrences
                 $admit_data = new AdmitList();   
                 $admit_data->patient_id = $request->id;

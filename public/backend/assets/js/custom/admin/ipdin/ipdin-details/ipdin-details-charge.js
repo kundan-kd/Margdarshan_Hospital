@@ -186,3 +186,4 @@ function ipdChargeDelete(id){
         }
     });
 }
+$('#ipd-timeline-list').DataTable();

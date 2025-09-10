@@ -52,7 +52,8 @@ class EmergencyController extends Controller
         $ipdAvailBeds = Bed::where('bed_group_id',5)->where('current_status','vacant')->where('status',1)->get();
         $icuAvailBeds = Bed::where('bed_group_id',4)->where('current_status','vacant')->where('status',1)->get();
         $admit_lists = AdmitList::with('patientData')->where('patient_id',$id)->orderBy('id','desc')->get();
-        return view('backend.admin.modules.emergency.emergency-details',compact('patients','medicineCategory','doctorData','nurseData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds','icuAvailBeds','admit_lists'));
+        $timelines = Timeline::where('patient_id',$id)->where('title','Charges')->orderBy('id','desc')->get();
+        return view('backend.admin.modules.emergency.emergency-details',compact('patients','medicineCategory','doctorData','nurseData','visitsData','medicationData','testtypes','testnames','labInvestigationData','ipdAvailBeds','icuAvailBeds','admit_lists','timelines'));
     }
        public function viewPatients(Request $request){
         if($request->ajax()){
@@ -116,9 +117,9 @@ class EmergencyController extends Controller
                 if($prevPatient->current_status == "Admitted"){
                     return response()->json(['previous_admitted'=>'Kindly discharge this patient from '.$prevPatient->type.' before adding new']);
                 }
-                if($prevPatient->discharge_form_generated == 0){
-                    return response()->json(['discharge_form_generate_issue'=>'Please submit previous discharge summary before adding new']);
-                }
+                // if($prevPatient->discharge_form_generated == 0){
+                //     return response()->json(['discharge_form_generate_issue'=>'Please submit previous discharge summary before adding new']);
+                // }
             }
             $check_prev_data = Patient::where('mobile',$request->mobile)->exists();
             $validator = Validator::make($request->all(),[
@@ -410,63 +411,36 @@ class EmergencyController extends Controller
                 $payment_bills->title = 'Patient Moved to IPD';
                 $payment_bills->save();
                 $new_created_at = $payment_bills->created_at;
+                $occupied_days = 0;
+                $pre_bed_amount = 0;
+            
                 if ($previous_payment_bill) {
-                    // $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-                    // $created_at = new DateTime($previous_payment_bill->created_at);
-                    // $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
-                    // $interval = $created_at->diff($updated_at);
-                    // $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
-                    // $pre_bed_amount = $bed_amount * $occupied_days;
-                     $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+                    $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
                     $admitTime = new DateTime($previous_payment_bill->created_at);
                     $dischargeTime = new DateTime();
-
-                    // 2:00 PM cut-off
-                    $cutOffHour = 14;
+                    $checkIn  = Carbon::parse($admitTime);   // e.g. 2025-09-01 13:45:18
+                    $checkOut = Carbon::parse($dischargeTime); // e.g. 2025-09-03 14:45:18
+                    $cutoffHour = 14;
                     $days = 0;
-
-                    // Clone dates to avoid modifying originals
-                    $admitDate = clone $admitTime;
-                    $dischargeDate = clone $dischargeTime;
-
-                    // Only dates (set time to 00:00:00)
-                    $admitDate->setTime(0, 0, 0);
-                    $dischargeDate->setTime(0, 0, 0);
-
-                    // Difference in days (full calendar days)
-                    $intervalDays = $admitDate->diff($dischargeDate)->days;
-
-                    // Add intermediate full days (excluding first and last day)
-                    if ($intervalDays > 1) {
-                        $days += $intervalDays - 1;
+                    // Case 1: If check-in before 2 PM, count first day
+                    if ($checkIn->hour < $cutoffHour) {
+                        $days++;
                     }
-
-                    // Admit day logic
-                    if ((int)$admitTime->format('H') < $cutOffHour) {
-                        $days += 1;
+                    // Case 2: Count full 24-hour blocks between check-in and check-out
+                    $days += $checkIn->diffInDays($checkOut);
+                
+                    // Case 3: If checkout is after 2 PM, add an extra day
+                    if ($checkOut->hour >= $cutoffHour) {
+                        $days++;
                     }
-
-                    // Discharge day logic
-                    if ((int)$dischargeTime->format('H') < $cutOffHour) {
-                        $days += 1;
-                    }
-
-                    // Handle same-day admit/discharge
-                    if ($intervalDays === 0) {
-                        // If admitted and discharged same day, and either side meets the <2PM rule
-                        if ((int)$admitTime->format('H') < $cutOffHour || (int)$dischargeTime->format('H') < $cutOffHour) {
-                            $days = 1;
-                        } else {
-                            $days = 0;
-                        }
-                    }
-                    $occupied_days = $days; // Ensure at least 1 day
-                    $pre_bed_amount = $bed_amount * $occupied_days;
-                    PaymentBill::where('id',$previous_payment_bill->id)->update([
-                        'days' => $occupied_days,
-                        'qty' => $occupied_days,
-                        'amount' => $pre_bed_amount
-                    ]);
+                    $occupied_days = round($days);
+                    $pre_bed_amount = $bed_amount * round($days);
+                    
+                        PaymentBill::where('id',$previous_payment_bill->id)->update([
+                            'days' => $occupied_days,
+                            'qty' => $occupied_days,
+                            'amount' => $pre_bed_amount
+                        ]);
                 } // amount add to previous bed type for billing
                 $timelines = new Timeline();
                 $timelines->type = "IPD";
@@ -528,58 +502,31 @@ class EmergencyController extends Controller
                 $payment_bills->title = 'Patient Moved to ICU';
                 $payment_bills->save();
                 $new_created_at = $payment_bills->created_at;
+                $occupied_days = 0;
+                $pre_bed_amount = 0;
                 if ($previous_payment_bill) {
-                    // $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-                    // $created_at = new DateTime($previous_payment_bill->created_at);
-                    // $updated_at = new DateTime($new_created_at); // assuming $new_created_at is a valid datetime string
-                    // $interval = $created_at->diff($updated_at);
-                    // $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
-                    // $pre_bed_amount = $bed_amount * $occupied_days;
-                     $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+                    
+                    $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
                     $admitTime = new DateTime($previous_payment_bill->created_at);
                     $dischargeTime = new DateTime();
-
-                    // 2:00 PM cut-off
-                    $cutOffHour = 14;
+                    $checkIn  = Carbon::parse($admitTime);   // e.g. 2025-09-01 13:45:18
+                    $checkOut = Carbon::parse($dischargeTime); // e.g. 2025-09-03 14:45:18
+                    $cutoffHour = 14;
                     $days = 0;
-
-                    // Clone dates to avoid modifying originals
-                    $admitDate = clone $admitTime;
-                    $dischargeDate = clone $dischargeTime;
-
-                    // Only dates (set time to 00:00:00)
-                    $admitDate->setTime(0, 0, 0);
-                    $dischargeDate->setTime(0, 0, 0);
-
-                    // Difference in days (full calendar days)
-                    $intervalDays = $admitDate->diff($dischargeDate)->days;
-
-                    // Add intermediate full days (excluding first and last day)
-                    if ($intervalDays > 1) {
-                        $days += $intervalDays - 1;
+                    // Case 1: If check-in before 2 PM, count first day
+                    if ($checkIn->hour < $cutoffHour) {
+                        $days++;
                     }
-
-                    // Admit day logic
-                    if ((int)$admitTime->format('H') < $cutOffHour) {
-                        $days += 1;
+                    // Case 2: Count full 24-hour blocks between check-in and check-out
+                    $days += $checkIn->diffInDays($checkOut);
+                
+                    // Case 3: If checkout is after 2 PM, add an extra day
+                    if ($checkOut->hour >= $cutoffHour) {
+                        $days++;
                     }
-
-                    // Discharge day logic
-                    if ((int)$dischargeTime->format('H') < $cutOffHour) {
-                        $days += 1;
-                    }
-
-                    // Handle same-day admit/discharge
-                    if ($intervalDays === 0) {
-                        // If admitted and discharged same day, and either side meets the <2PM rule
-                        if ((int)$admitTime->format('H') < $cutOffHour || (int)$dischargeTime->format('H') < $cutOffHour) {
-                            $days = 1;
-                        } else {
-                            $days = 0;
-                        }
-                    }
-                    $occupied_days = $days; // Ensure at least 1 day
-                    $pre_bed_amount = $bed_amount * $occupied_days;
+                    $occupied_days = round($days);
+                    $pre_bed_amount = $bed_amount * round($days);
+                    
                     PaymentBill::where('id',$previous_payment_bill->id)->update([
                         'days' => $occupied_days,
                         'qty' => $occupied_days,
@@ -1013,7 +960,7 @@ class EmergencyController extends Controller
             $timelines->patient_id = $request->patientId;
             $timelines->admit_id = $admit_id;
             $timelines->title = "Charges";
-            $timelines->desc = "Charges added for treatment or test";
+            $timelines->desc = "Charges added for treatment ₹".$request->amount;
             $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Charge added successfully'],200);
@@ -1021,9 +968,70 @@ class EmergencyController extends Controller
             return response()->json(['error_success'=>'Charge not added']);
         }
     }
-    public function viewEmergencyCharge(Request $request){
+    // public function viewEmergencyCharge(Request $request){
+    //     if($request->ajax()){
+    //         $admit_id = Patient::where('id',$request->patient_id)->value('admit_id');
+    //         $emergencyCharges = PaymentBill::where('patient_id',$request->patient_id)->where('admit_id',$admit_id)->get();
+    //         return DataTables::of($emergencyCharges)
+    //         ->addColumn('created_at',function($row){
+    //             return $row->created_at
+    //             ->setTimezone('Asia/Kolkata') // Convert to Kolkata timezone
+    //             ->format('d-m-Y h:i A');      // Format as human-readable
+    //         })
+    //         ->addColumn('title',function($row){
+    //             return $row->amount_for;
+    //         })
+    //         ->addColumn('desc',function($row){
+    //             return $row->title;
+    //         })
+    //         ->addColumn('qty',function($row){
+    //             return $row->qty;
+    //         })
+    //         ->addColumn('amount',function($row){
+    //             return $row->amount;
+    //         })
+    //         ->addColumn('action',function($row){
+    //             $visibility = $row->amount <= 0 ? 'd-none' : '';
+    //             return '<a href="javascript:void(0)" class="w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center      justify-content-center ' .$visibility.'">
+    //                   <iconify-icon icon="lucide:edit" onclick="emergencyChargeEdit('.$row->id.')"></iconify-icon>
+    //                 </a>
+    //                 <!--<a href="javascript:void(0)" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+    //                   <iconify-icon icon="mingcute:delete-2-line" onclick="emergencyChargeDelete('.$row->id.')"></iconify-icon>
+    //                 </a>-->';
+    //         })
+    //         ->rawColumns(['action'])
+    //         ->make(true);
+    //     }
+    // }
+     public function viewEmergencyCharge(Request $request){
         if($request->ajax()){
             $admit_id = Patient::where('id',$request->patient_id)->value('admit_id');
+            $previous_payment_bill = PaymentBill::where('patient_id', $request->patient_id)->where('admit_id',$admit_id)->where('amount_for', 'Bed Charge')->latest('id')->first();
+            $occupied_days = 0;
+            $pre_bed_amount = 0;
+            if($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL){
+                $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+                $admitTime = new DateTime($previous_payment_bill->created_at);
+                $dischargeTime = new DateTime();
+                
+                $checkIn  = Carbon::parse($admitTime);   // e.g. 2025-09-01 13:45:18
+                $checkOut = Carbon::parse($dischargeTime); // e.g. 2025-09-03 14:45:18
+                $cutoffHour = 14;
+                $days = 0;
+                // Case 1: If check-in before 2 PM, count first day
+                if ($checkIn->hour < $cutoffHour) {
+                    $days++;
+                }
+                // Case 2: Count full 24-hour blocks between check-in and check-out
+                $days += $checkIn->diffInDays($checkOut);
+            
+                // Case 3: If checkout is after 2 PM, add an extra day
+                if ($checkOut->hour >= $cutoffHour) {
+                    $days++;
+                }
+                $occupied_days = ceil($days);
+                $pre_bed_amount = $bed_amount * ceil($days);
+            }
             $emergencyCharges = PaymentBill::where('patient_id',$request->patient_id)->where('admit_id',$admit_id)->get();
             return DataTables::of($emergencyCharges)
             ->addColumn('created_at',function($row){
@@ -1037,11 +1045,11 @@ class EmergencyController extends Controller
             ->addColumn('desc',function($row){
                 return $row->title;
             })
-            ->addColumn('qty',function($row){
-                return $row->qty;
+            ->addColumn('qty', function ($row) use ($occupied_days) {
+                return $row->amount == 0 ? $occupied_days : $row->qty;
             })
-            ->addColumn('amount',function($row){
-                return $row->amount;
+            ->addColumn('amount', function ($row) use ($pre_bed_amount) {
+                return $row->amount == 0 ? $pre_bed_amount : $row->amount;
             })
             ->addColumn('action',function($row){
                 $visibility = $row->amount <= 0 ? 'd-none' : '';
@@ -1061,12 +1069,21 @@ class EmergencyController extends Controller
         return response()->json(['success'=>'Charge data fetched','data'=>$getData],200);
     }
     public function emergencyChargeDataUpdate(Request $request){
-         $update = PaymentBill::where('id',$request->id)->update([
+        $charge_data = PaymentBill::where('id',$request->id)->get(['patient_id','admit_id','amount']);
+        $update = PaymentBill::where('id',$request->id)->update([
             'title' => $request->name,
             'qty' => $request->qty,
             'amount' => $request->amount
         ]);
         if($update){
+            $timelines = new Timeline();
+            $timelines->type = "EMERGENCY";
+            $timelines->patient_id = $charge_data[0]->patient_id;
+            $timelines->admit_id = $charge_data[0]->admit_id;
+            $timelines->title = "Charges";
+            $timelines->desc = "Charges updated from ₹".$charge_data[0]->amount." to ₹".$request->amount;
+            $timelines->created_by = Auth::id();
+            $timelines->save();
             return response()->json(['success'=>'Charge updated successufuly'],200);
         }else{
             return response()->json(['error_success'=>'Charge data not updated']);

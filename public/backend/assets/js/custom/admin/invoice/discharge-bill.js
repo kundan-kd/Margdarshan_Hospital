@@ -16,7 +16,6 @@ function getDiscountAmount(disAmount){
 
 function checkPayAmount(amount){
     let due_amount = parseFloat($('.bill-totalDueAmount').html());
-    let discountted_amount = parseFloat($('.bill-totalDiscountAmount').html());
     if(amount > due_amount){
         $('.bill-payAmount-error').removeClass('d-none').html('Pay amount exceeds due amount').addClass('text-danger');
         $('.billAddSubmitBtn').prop('disabled',true);
@@ -100,7 +99,7 @@ function billDischargeNPrint(id,admit_id){
                 },
                 data:{id:id},
                 success:function(response){
-                    // console.log(response);
+                    console.log(response);
                     if (response.success) {
                         Swal.fire("Discharged", response.success, "success");
                         setTimeout(function(){
@@ -132,8 +131,7 @@ function invoiceSubmit(id,admit_id){
                 billPrint(id,admit_id) //print bill
                 setTimeout(function(){
                     const url = `/patient-discharge-bills/${id}/${admit_id}`;
-                     window.location.href = url;
-
+                    window.location.href = url;
                 },300);
             }
         });
@@ -178,7 +176,7 @@ $('#discharge-summaryForm').on('submit', function(e) {
                         toastSuccessAlert(response.success);
                         $('.needs-validation').removeClass('was-validated');
                         setTimeout(function(){
-                            window.location.href='/patient-discharge-bills/'+ patient_id + '/' + admit_id; 
+                           window.location.href='/patient-discharge-bills/'+ patient_id + '/' + admit_id;
                         },1500);
                     },
                     error: function(xhr) {

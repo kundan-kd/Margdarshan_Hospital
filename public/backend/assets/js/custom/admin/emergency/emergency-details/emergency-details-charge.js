@@ -186,3 +186,4 @@ function emergencyChargeDelete(id){
         }
     });
 }
+$('#emergancy-timeline-list').DataTable();

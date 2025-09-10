@@ -24,7 +24,7 @@ Discharge Billing
                 $visibility = 'disabled';
               }
             @endphp
-            <p class="mt-3 fw-medium">Patient ID : <span class="fw-normal billingAdd-billNo">{{$patientData[0]->patient_id}} ({{$patientData[0]->name}})</span></p>
+            <p class="mt-3 fw-medium">UHID : <span class="fw-normal billingAdd-billNo">{{$patientData[0]->patient_id}} ({{$patientData[0]->name}})</span></p>
           </div>
           {{-- <div class="d-flex align-items-center">
               <div class="mx-1">
@@ -117,7 +117,7 @@ Discharge Billing
                         <td class="border-0 text-end fs-6">₹ <span class="bill-totalPaidAmount">{{$received_amount ?? 0}}</span></td>
                       </tr>
                       <tr>
-                        <td class="border-0" colspan="2">Discounted Amount (₹)</td>
+                        <td class="border-0" colspan="2">Discount Amount (₹)</td>
                         <td class="border-0 text-end fs-6">₹ <span class="bill-totalDiscountAmount">{{$discount_amount ?? 0}}</span></td>
                       </tr>
                       <tr>

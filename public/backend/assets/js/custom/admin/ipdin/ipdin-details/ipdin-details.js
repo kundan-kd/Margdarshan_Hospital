@@ -435,6 +435,38 @@ $('#ipdFinding-form').on('submit',function(e){
         console.log('Please fill required field');
     }
 });
+let table_activity = $('#ipd-activity-list').DataTable({
+    // processing:true,
+    // serverSide:true,
+    // ajax:{
+    //     url:viewIpdActivity,
+    //     type:"POST",
+    //     headers:{
+    //       'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+    //     },
+    //     data: function(d){
+    //         d.patient_id = patientId;
+    //     },
+    //     error:function(xhr,thrown){
+    //         console.log(xhr.responseText);
+    //         alert('Error: '+thrown);
+    //     }
+    // },
+    // columns:[
+    //     {
+    //         data:'created_at',
+    //         name:'created_at'
+    //     },
+    //     {
+    //         data:'title',
+    //         name:'title'
+    //     },
+    //     {
+    //         data:'desc',
+    //         name:'desc'
+    //     }
+    // ]
+});
 
 function viewAdvancePdf(id) {
    window.open('/advance-payment-page/' + id);

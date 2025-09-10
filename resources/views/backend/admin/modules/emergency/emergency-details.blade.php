@@ -50,6 +50,9 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link px-16 py-10 " id="pills-charges-tab-emergency" data-bs-toggle="pill" data-bs-target="#pills-charges-emergency" type="button" role="tab" aria-controls="pills-charges-emergency" aria-selected="false">Charges</button>
                   </li>
+                   <li class="nav-item" role="presentation">
+                    <button class="nav-link px-16 py-10 " id="pills-timeline-tab" data-bs-toggle="pill" data-bs-target="#pills-timeline" type="button" role="tab" aria-controls="pills-timeline" aria-selected="false">Charges Timeline</button>
+                </li>
                   <li class="nav-item" role="presentation">
                     <button class="nav-link px-16 py-10 " id="pills-timeline-tab-emergency" data-bs-toggle="pill" data-bs-target="#pills-nurse-emergency" type="button" role="tab" aria-controls="pills-nurse-emergency" aria-selected="false">Nurse Note</button>
                   </li>
@@ -413,6 +416,37 @@
                           </thead>
                           <tbody>
 
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                 <div class="tab-pane fade" id="pills-timeline" role="tabpanel" aria-labelledby="pills-timeline-tab" tabindex="0">
+                  <div class="row">
+                    <div class="col-md-12 px-3">
+                      <div class="mb-2 mb-11 d-flex justify-content-between align-items-center">
+                          <h6 class="text-md fw-normal mb-0">Charges Timeline</h6>
+                        </div>
+                      <div class="table-responsive">
+                        <table class="table  striped-table w-100" id="emergancy-timeline-list">
+                          <thead>
+                             <tr>
+                              <th class="fw-medium">Date</th>
+                              <th class="fw-medium">Type</th>
+                              <th class="fw-medium">Description</th>
+                              <th class="fw-medium">Action By</th>
+                             </tr>
+                          </thead>
+                          <tbody>
+                           @foreach ($timelines as $timeline)
+                           <tr>
+                              <td class="text-start">{{$timeline->created_at->timezone('Asia/Kolkata')->format('d-m-Y h:i A')}}</td>
+                              <td>{{$timeline->type}}</td>
+                              <td>{{$timeline->desc}}</td>
+                              <td>{{$timeline->userData->name}}</td>
+                           </tr>
+                           @endforeach
                           </tbody>
                         </table>
                       </div>

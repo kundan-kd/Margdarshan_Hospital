@@ -655,7 +655,6 @@ function reasonSubmitDelete(id){
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
-            console.log(response);
             if (response.success) {
                 $('#appointment-delete-modal').modal('hide');
                 $('#appointment-book-table').DataTable().ajax.reload();

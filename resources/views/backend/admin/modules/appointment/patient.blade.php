@@ -29,7 +29,7 @@ Patient
           <table class="table bordered-table mb-0" id="patient-table" data-page-length='10'>
             <thead>
               <tr>
-                <th scope="col" class="fw-medium">Patient ID</th>
+                <th scope="col" class="fw-medium">UHID</th>
                 <th scope="col" class="fw-medium">Name</th>
                 <th scope="col" class="fw-medium">Current Type</th>
                 <th scope="col" class="fw-medium">Entry Type</th>

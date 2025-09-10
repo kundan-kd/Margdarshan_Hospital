@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Billing;
 use App\Models\EmailOtp;
+use App\Models\LabInvestigation;
+use App\Models\LabReport;
 use App\Models\Lead;
 use App\Models\Patient;
 use App\Models\PaymentReceived;
@@ -57,8 +59,9 @@ class AuthenticationController extends Controller
             ->value('total');
         $total_pharmacy_bill = Billing::selectRaw('SUM(paid_amount - return_amount) as total')
             ->value('total');
-        
-        return view('backend.admin.modules.dashboard',compact('appointments','opd_patients','ipd_patients','emergency_patients','doctors','total_income','leads','convertedLeads','assignLeads','UnAssignLeads','todayFollowup','duefollowup','today_pharmacy_bill','total_pharmacy_bill'));
+        $total_lab_report  = LabInvestigation::count();
+        $report_generated  = LabReport::count();
+        return view('backend.admin.modules.dashboard',compact('appointments','opd_patients','ipd_patients','emergency_patients','doctors','total_income','leads','convertedLeads','assignLeads','UnAssignLeads','todayFollowup','duefollowup','today_pharmacy_bill','total_pharmacy_bill','total_lab_report','report_generated'));
     }
     public function sendotp(Request $request){
         if ($request->ajax()) {

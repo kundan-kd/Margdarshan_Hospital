@@ -41,7 +41,7 @@
             <table class="table bordered-table mb-0 w-100" id="ipd-in-patient-list" data-page-length='10'>
               <thead>
                 <tr >
-                  <th scope="col" class="fw-medium">Patient ID</th>
+                  <th scope="col" class="fw-medium">UHID</th>
                   <th scope="col" class="fw-medium">Depertment</th>
                   <th scope="col" class="fw-medium">Bed No.</th>
                   <th scope="col" class="fw-medium">Name</th>

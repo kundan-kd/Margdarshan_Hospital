@@ -18,7 +18,7 @@ Medicin Bill Details
                 <div class="col-md-7 mt-3">
                   <table class="table table-borderless pharmacy-bill-detail-table">
                      <tr>
-                       <th class="fw-medium">Patient ID</th>
+                       <th class="fw-medium">UHID</th>
                        <td class="text-neutral-700">{{$patient_id}}</td>
                        <th class="fw-medium">Patient Name</th>
                        <td class="text-neutral-700">{{$patientName}}</td>

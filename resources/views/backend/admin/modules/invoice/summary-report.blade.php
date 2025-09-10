@@ -215,7 +215,7 @@
 					<tbody>
                         @foreach ($visitsData as $visits)
 						<tr>
-							<td>{{$visits->updated_at->format('d-m-Y')}}</td>
+							<td>{{$visits->updated_at->format('d-m-Y h:i A')}}</td>
 							<td>Dr. {{$visits->doctorData->name ?? 'NA'}}</td>
 						</tr>
                           @endforeach

@@ -8,6 +8,7 @@
         <h6 class="fw-normal mb-0">Dashboard</h6>
     </div>
     <div class="row gy-3">
+        
         @can('Dashboard Appointments')
         <div class="col-md-3">
           <div class="card shadow-none border bg-gradient-start-1 h-100">
@@ -93,6 +94,38 @@
         </div><!-- card end -->
       </div>
       @endcan
+      
+      <div class="col-md-3">
+        <div class="card shadow-none border bg-gradient-start-3 h-100">
+          <div class="card-body p-20">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <p class="fw-medium text-primary-light mb-1">Total Lab Test</p>
+                <h6 class="mb-0">{{$total_lab_report ?? 0}}</h6>
+              </div>
+              <div class="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
+                <iconify-icon icon="gridicons:multiple-users" class="text-white text-2xl mb-0"></iconify-icon>
+              </div>
+            </div>
+          </div>
+        </div><!-- card end -->
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-none border bg-gradient-start-3 h-100">
+          <div class="card-body p-20">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <p class="fw-medium text-primary-light mb-1">Report Generated</p>
+                <h6 class="mb-0">{{$report_generated ?? 0}}</h6>
+              </div>
+              <div class="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
+                <iconify-icon icon="gridicons:multiple-users" class="text-white text-2xl mb-0"></iconify-icon>
+              </div>
+            </div>
+          </div>
+        </div><!-- card end -->
+      </div>
+      
       @can('Dashboard Total Bill')
       <div class="col-md-3">
         <div class="card shadow-none border bg-gradient-start-5 h-100">

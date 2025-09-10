@@ -52,7 +52,7 @@
                 <tr>
                   <th scope="col" class="fw-medium">Appointment ID</th>
                   <th scope="col" class="fw-medium">Appointment Date</th>
-                  <th scope="col" class="fw-medium">Patient ID</th>
+                  <th scope="col" class="fw-medium">UHID</th>
                   <th scope="col" class="fw-medium">Patient Name</th>
                   <th scope="col" class="fw-medium">Gender</th>
                   <th scope="col" class="fw-medium">Phone</th>

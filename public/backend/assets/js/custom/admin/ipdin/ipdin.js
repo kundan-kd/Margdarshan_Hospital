@@ -65,12 +65,12 @@ let table_patient = $('#ipd-in-patient-list').DataTable({
             orderable: false,
             searchable: true
         },
-        {
-            data:'allergies',
-            name:'allergies',
-            orderable: false,
-            searchable: true
-        },
+        // {
+        //     data:'allergies',
+        //     name:'allergies',
+        //     orderable: false,
+        //     searchable: true
+        // },
         {
             data:'status',
             name:'status',
@@ -483,7 +483,7 @@ function ipdpatientDelete(id){
     });
 }
 function ipdPatientUsingId(id){
-    window.open('ipd-in-details/' + id, '_blank');
+    window.location.href= 'ipd-in-details/' + id;
 }
 function admissionForm(id){
     window.open('/admission-form-print/' + id);

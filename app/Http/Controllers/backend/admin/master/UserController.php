@@ -80,6 +80,8 @@ class UserController extends Controller
                     'bloodType' => 'required',
                     'fee' => 'nullable',
                     'opdRoom' => 'nullable',
+                    'degree' => 'nullable',
+                    'specialization' => 'nullable',
                     'salesTeam' => 'nullable',
                     'name' => 'required',
                     'fname' => 'required',
@@ -104,6 +106,8 @@ class UserController extends Controller
                 $user->bloodtype_id = $request->bloodType;
                 $user->fee = $request->fee ?? 0; // Default to 0 if fee is not provided
                 $user->room_number = $request->opdRoom ?? null; // Default to null if opdRoom is not provided
+                $user->degree = $request->degree ?? null; // Default to null if degree is not provided
+                $user->specialization = $request->specialization ?? null; // Default to null if specialization is not provided
                 $user->sales_team_id = $request->salesTeam;
                 $user->name = $request->name;
                 $user->fname = $request->fname;
@@ -155,6 +159,8 @@ class UserController extends Controller
                 'bloodtype_id' => $request->bloodType,
                 'fee' => $request->fee ?? 0,
                 'room_number' => $request->opdRoom ?? null,
+                'degree' => $request->degree ?? null,
+                'specialization' => $request->specialization ?? null,
                 'name' => $request->name,
                 'sales_team_id' => $request->salesTeam,
                 'fname' => $request->fname,

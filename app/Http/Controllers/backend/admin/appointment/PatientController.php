@@ -171,6 +171,7 @@ class PatientController extends Controller
                 $lead->lead_patient_id = $patient->id;
                 $lead->lead_status_date = now();
                 $lead->save();
+
                 $patient->lead_id = $lead->id;
                 $patient->save();
             }

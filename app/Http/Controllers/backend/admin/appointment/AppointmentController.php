@@ -69,7 +69,7 @@ class AppointmentController extends Controller
             })
             ->addColumn('action', function($row) {
                 $check_invoice = $row->payment_status == 'UnPaid' ? 'd-none' : '';
-                $check_payment = $row->payment_status == 'Paid' ? 'd-none' : '';
+                $check_payment = $row->payment_status == 'Paid' || $row->status == 'Cancelled' ? 'd-none' : '';
                 $check_visit = ($row->status == 'Visited' || $row->status == 'Moved to IPD' || $row->status == 'Cancelled') ? 'd-none' : '';
                 return '
                 <div class="d-flex gap-1">

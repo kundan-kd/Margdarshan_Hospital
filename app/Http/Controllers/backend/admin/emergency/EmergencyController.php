@@ -383,7 +383,7 @@ class EmergencyController extends Controller
                 $patient_logs->patient_id = $request->id;
                 $patient_logs->admit_id =  $curr_status[0]->admit_id;
                 $patient_logs->type = 'IPD';
-                $patient_logs->bed_id = $latest_patient_log->bed_id;
+                $patient_logs->bed_id = $request->bed_id;
                 $patient_logs->doctor_id = $latest_patient_log->doctor_id;
                 $patient_logs->reference_person = $latest_patient_log->reference_person;
                 $patient_logs->current_status = "Moved";
@@ -474,7 +474,7 @@ class EmergencyController extends Controller
                 $patient_logs->patient_id = $request->id;
                 $patient_logs->admit_id =  $curr_status[0]->admit_id;
                 $patient_logs->type = 'ICU';
-                $patient_logs->bed_id = $latest_patient_log->bed_id;
+                $patient_logs->bed_id = $request->bed_id;
                 $patient_logs->doctor_id = $latest_patient_log->doctor_id;
                 $patient_logs->reference_person = $latest_patient_log->reference_person;
                 $patient_logs->current_status = "Moved";

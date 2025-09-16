@@ -97,9 +97,9 @@ class IpdinController extends Controller
             $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
             return $date->format('d-m-Y h:i A');
         })
-        ->addColumn('allergies',function($row){
-            return $row->known_allergies;
-        })
+        // ->addColumn('allergies',function($row){
+        //     return $row->known_allergies;
+        // })
         ->addColumn('status',function($row){
             return $row->current_status === 'Discharged'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Discharged</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white" >Admitted</span>';   
         })
@@ -416,7 +416,7 @@ class IpdinController extends Controller
                 $patient_logs->patient_id = $request->id;
                 $patient_logs->admit_id =  $curr_status[0]->admit_id;
                 $patient_logs->type = 'ICU';
-                $patient_logs->bed_id = $latest_patient_log->bed_id;
+                $patient_logs->bed_id = $request->bed_id;
                 $patient_logs->doctor_id = $latest_patient_log->doctor_id;
                 $patient_logs->reference_person = $latest_patient_log->reference_person;
                 $patient_logs->current_status = "Moved";
@@ -515,7 +515,7 @@ class IpdinController extends Controller
                 $patient_logs->patient_id = $request->id;
                 $patient_logs->admit_id =  $curr_status[0]->admit_id;
                 $patient_logs->type = 'IPD';
-                $patient_logs->bed_id = $latest_patient_log->bed_id;
+                $patient_logs->bed_id = $request->bed_id;
                 $patient_logs->doctor_id = $latest_patient_log->doctor_id;
                 $patient_logs->reference_person = $latest_patient_log->reference_person;
                 $patient_logs->current_status = "Moved";

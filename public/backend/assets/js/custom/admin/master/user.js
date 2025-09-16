@@ -131,6 +131,8 @@ $('#addUser-form').on('submit',function(e){
     let userType = $('#user-userType').val();
     let fee = $('#user-fee').val();
     let opdRoom = $('#user-opdRoom').val();
+    let degree = $('#user-degree').val();
+    let specialization = $('#user-specialization').val();
     let salesTeam = $('#user-salesTeam').val();
     let bloodType = $('#user-bloodType').val();
     let name = $('#user-name').val();
@@ -159,7 +161,7 @@ $('#addUser-form').on('submit',function(e){
                     headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    data:{departmentID:departmentID,userType:userType,fee:fee,opdRoom:opdRoom,salesTeam:salesTeam,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
+                    data:{departmentID:departmentID,userType:userType,fee:fee,opdRoom:opdRoom,degree:degree,specialization:specialization,salesTeam:salesTeam,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
                     success:function(response){
                        if(response.success){
                             $('#add-user').modal('hide');
@@ -215,6 +217,8 @@ function userEdit(id){
                 $('#user-bloodType').val(getData.bloodtype_id);
                 $('#user-opdRoom').val(getData.room_number);
                 $('#user-fee').val(getData.fee);
+                $('#user-degree').val(getData.degree);
+                $('#user-specialization').val(getData.specialization);
                 $('#user-salesTeam').val(getData.sales_team_id);
                 $('#user-name').val(getData.name);
                 $('#user-fname').val(getData.fname);
@@ -253,6 +257,8 @@ function userAddUpdate() {
     let fee = $('#user-fee').val();
     let salesTeam = $('#user-salesTeam').val();
     let opdRoom = $('#user-opdRoom').val();
+    let degree = $('#user-degree').val();
+    let specialization = $('#user-specialization').val();
     let name = $('#user-name').val();
     let fname = $('#user-fname').val();
     let mname = $('#user-mname').val();
@@ -275,7 +281,7 @@ function userAddUpdate() {
             headers:{
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            data:{id:id,departmentID:departmentID,userType:userType,fee:fee,salesTeam:salesTeam,opdRoom:opdRoom,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
+            data:{id:id,departmentID:departmentID,userType:userType,fee:fee,salesTeam:salesTeam,opdRoom:opdRoom,degree:degree,specialization:specialization,bloodType:bloodType,name:name,fname:fname,mname:mname,dob:dob,doj:doj,pan:pan,adhar:adhar,email:email,mobile:mobile,pass:pass},
             success:function(response){
                 if(response.success){
                     $('#add-user').modal('hide');

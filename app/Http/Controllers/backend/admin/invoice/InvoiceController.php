@@ -18,6 +18,7 @@ use App\Models\PatientLog;
 use App\Models\PaymentBill;
 use App\Models\PaymentReceived;
 use App\Models\Timeline;
+use App\Models\User;
 use App\Models\Visit;
 use App\Models\Vital;
 use Carbon\Carbon;
@@ -116,8 +117,8 @@ class InvoiceController extends Controller
         $received_amount = PaymentReceived::where('patient_id',$id)->where('admit_id',$admit_id)->sum('amount');
         $discount_amount = PaymentReceived::where('patient_id',$id)->where('admit_id',$admit_id)->sum('discount_amount');
         $notes = Invoice::where('patient_id',$id)->where('admit_id',$admit_id)->get(['notes']);
-        // $admit_list = AdmitList::where('patient_id',$id)->where('admit_id',$admit_id)->get();
-        return view('backend.admin.modules.invoice.discharge-bill',compact('payment_bills','patient_id','admit_id','total_amount','received_amount','discount_amount','occupied_days','pre_bed_amount','notes'));
+        $admit_list = AdmitList::where('patient_id',$id)->where('admit_id',$admit_id)->get(['current_status','discharge_form_generated']);
+        return view('backend.admin.modules.invoice.discharge-bill',compact('payment_bills','patient_id','admit_id','total_amount','received_amount','discount_amount','occupied_days','pre_bed_amount','notes','admit_list'));
     }
     public function payBillAmount(Request $request){
           $validator = Validator::make($request->all(),[
@@ -297,12 +298,13 @@ class InvoiceController extends Controller
         }
     }
     public function summaryRepoet($id){
-        $patients = Patient::where('id',$id)->get();
+        $patient_logs = PatientLog::where('id',$id)->get(['patient_id','doctor_id']);
+        $patients = Patient::where('id',$patient_logs[0]->patient_id)->get();
         $visitsData = Visit::with('doctorData')->where('patient_id',$id)->where('type','OPD')->get();
         $medicationData = Medication::with('medicineNameData')->where('patient_id',$id)->get();
         $vitalsData = Vital::where('patient_id',$patients[0]->id)->get();
         $labInvestigationData = LabInvestigation::with('testNameData')->where('patient_id',$id)->get();
-        return view('backend.admin.modules.invoice.summary-report',compact('patients','visitsData','medicationData','vitalsData','labInvestigationData'));
+        return view('backend.admin.modules.invoice.summary-report',compact('patient_logs','patients','visitsData','medicationData','vitalsData','labInvestigationData'));
     }
     public function advancePaymentPage($id){
         $patients = Patient::where('id',$id)->get();

@@ -17,7 +17,7 @@
     </small>
     </h6>
         <div class="d-flex flex-wrap align-items-center gap-2">
-             <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" onclick="summaryReport({{$patients[0]->id}})">Summary Report</button>
+             <button type="button" class="btn btn-primary-600 fw-normal btn-sm d-flex align-items-center gap-2" onclick="summaryReport({{$appointment_id}})">Summary Report</button>
              @php
                $appointment_status = \App\Models\PatientLog::where('id',$appointment_id)->value('status');
              @endphp

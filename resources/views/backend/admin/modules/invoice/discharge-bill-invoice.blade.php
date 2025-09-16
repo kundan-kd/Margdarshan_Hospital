@@ -350,7 +350,7 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">Admission Date:</span>
-                        <span>{{ date('d/m/Y', strtotime($patientData[0]->created_at)) }}</span>
+                        <span>{{ date('d/m/Y', strtotime($patientData[0]->admit_date)) }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Discharge Date:</span>

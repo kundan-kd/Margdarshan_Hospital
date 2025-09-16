@@ -78,7 +78,7 @@ class OpdoutController extends Controller
             })
            ->addColumn('action',function($row){
                return ' <a href="javascript:void(0)" class="w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                    <iconify-icon icon="mdi:file-download-outline" onclick="summaryReport(' . $row->patient_id . ')"></iconify-icon>
+                    <iconify-icon icon="mdi:file-download-outline" onclick="summaryReport(' . $row->id . ')"></iconify-icon>
                 </a>';
             })
             ->rawColumns(['appointment_id','token','status','action'])

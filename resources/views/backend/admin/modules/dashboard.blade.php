@@ -256,6 +256,8 @@
           </div>
         </div><!-- card end -->
       </div>
+      </div>
+      <div class="row">
       <div class="col-md-6">
         <h6 class="fw-normal text-md mt-3">Due Followup</h6>
         <div class="table-responsive scroll-sm" style="max-height: 500px; overflow-y: auto;">
@@ -306,9 +308,10 @@
             </table>
         </div>
       </div>
+      </div>
       @endcan
     </div>
-  </div>
+  <!--</div>-->
 </div>
 @endsection
   

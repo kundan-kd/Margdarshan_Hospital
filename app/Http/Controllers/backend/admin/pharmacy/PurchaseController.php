@@ -35,7 +35,7 @@ class PurchaseController extends Controller
                 return date('d-m-Y', strtotime($row->purchase_date));
             })
             ->addColumn('vendor',function($row){
-                return $row->vendorData->name;
+                return $row->vendorData->name ?? '';
             })
             ->addColumn('bill_no',function($row){
                 return $row->bill_no;

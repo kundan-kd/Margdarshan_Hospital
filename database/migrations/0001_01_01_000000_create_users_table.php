@@ -35,8 +35,8 @@ return new class extends Migration
             $table->double('fee')->default(0);
             $table->integer('room_number')->nullable();
             $table->integer('sales_team_id')->nullable();
-            $table->string('specialization')->nullable();
-            $table->string('experience')->nullable();
+            $table->string('specialization',200)->nullable();
+            $table->string('degree',200)->nullable();
             $table->string('qualification')->nullable();
             $table->string('availability')->nullable();
             $table->string('image')->nullable();

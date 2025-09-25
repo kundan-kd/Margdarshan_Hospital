@@ -10,6 +10,7 @@ use App\Models\LabInvestigation;
 use App\Models\LabReport;
 use App\Models\Lead;
 use App\Models\Patient;
+use App\Models\PatientLog;
 use App\Models\PaymentReceived;
 use App\Models\User;
 use Carbon\Carbon;
@@ -40,9 +41,11 @@ class AuthenticationController extends Controller
         }
     }
     public function dashboard(){
-        $appointments = Appointment::count();
+        $tot_patients = Patient::count();
+        $appointments = PatientLog::where('status','!=','Cancelled')->count();
         $opd_patients = Patient::where('type','OPD')->count();
         $ipd_patients = Patient::where('type','IPD')->count();
+        $icu_patients = Patient::where('type','ICU')->count();
         $emergency_patients = Patient::where('type','EMERGENCY')->count();
         $doctors = User::where('usertype_id',2)->count();
         $total_income = PaymentReceived::sum('amount') + PaymentReceived::sum('discount_amount');
@@ -61,7 +64,7 @@ class AuthenticationController extends Controller
             ->value('total');
         $total_lab_report  = LabInvestigation::count();
         $report_generated  = LabReport::count();
-        return view('backend.admin.modules.dashboard',compact('appointments','opd_patients','ipd_patients','emergency_patients','doctors','total_income','leads','convertedLeads','assignLeads','UnAssignLeads','todayFollowup','duefollowup','today_pharmacy_bill','total_pharmacy_bill','total_lab_report','report_generated'));
+        return view('backend.admin.modules.dashboard',compact('tot_patients','appointments','opd_patients','ipd_patients','icu_patients','emergency_patients','doctors','total_income','leads','convertedLeads','assignLeads','UnAssignLeads','todayFollowup','duefollowup','today_pharmacy_bill','total_pharmacy_bill','total_lab_report','report_generated'));
     }
     public function sendotp(Request $request){
         if ($request->ajax()) {

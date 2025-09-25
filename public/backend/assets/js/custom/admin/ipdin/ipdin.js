@@ -65,12 +65,6 @@ let table_patient = $('#ipd-in-patient-list').DataTable({
             orderable: false,
             searchable: true
         },
-        // {
-        //     data:'allergies',
-        //     name:'allergies',
-        //     orderable: false,
-        //     searchable: true
-        // },
         {
             data:'status',
             name:'status',

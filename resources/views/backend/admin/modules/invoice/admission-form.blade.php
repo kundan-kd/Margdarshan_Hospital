@@ -152,6 +152,9 @@
 				<br> Email: info@margdarshanhospital.com</div>
 			<div class="form-title">ADMISSION FORM</div>
 		</div>
+		{{-- @php
+			dd($patients);
+		@endphp --}}
 		<div class="patient-info">
 			<div class="info-group">
 				<div class="info-row"> <span class="info-label">UHID:</span> <span class="info-value">{{$patients[0]->patient_id}}</span> </div>

@@ -51,7 +51,6 @@
                   <th scope="col" class="fw-medium">DOB</th>
                   <th scope="col" class="fw-medium">Phone</th>
                   <th scope="col" class="fw-medium">Admitted On</th>
-                  <!--<th scope="col" class="fw-medium">Allergies</th>-->
                   <th scope="col" class="fw-medium">Status</th>
                   <th scope="col" class="fw-medium">Action</th>
                 </tr>

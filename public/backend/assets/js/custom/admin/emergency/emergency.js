@@ -474,7 +474,7 @@ function emergencyPatientDelete(id){
     });
 }
 function emergencyPatientUsingId(id){
-   window.location.href= 'emergency-details/' + id;
+     window.location.href= 'emergency-details/' + id;
 }
 function admissionForm(id){
     window.open('/admission-form-print/' + id);

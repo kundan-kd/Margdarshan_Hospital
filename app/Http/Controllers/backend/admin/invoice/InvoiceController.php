@@ -18,7 +18,6 @@ use App\Models\PatientLog;
 use App\Models\PaymentBill;
 use App\Models\PaymentReceived;
 use App\Models\Timeline;
-use App\Models\User;
 use App\Models\Visit;
 use App\Models\Vital;
 use Carbon\Carbon;
@@ -32,86 +31,76 @@ class InvoiceController extends Controller
     public function generateDischargeBill($id,$admit_id){
         $patient_id = $id;
            // Get the most recent 'Bed Charge' payment bill for a specific patient
-        $previous_payment_bill = PaymentBill::where('patient_id', $id)->where('admit_id',$admit_id)->where('amount_for', 'Bed Charge')->latest('id')->first();
+        // $previous_payment_bill = PaymentBill::where('patient_id', $id)->where('admit_id',$admit_id)->where('amount_for', 'Bed Charge')->latest('id')->first();
+        // $occupied_days = 0;
+        // $pre_bed_amount = 0;
+        //  if($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL){
+        //     $admitTime = new DateTime($previous_payment_bill->created_at);
+        //     $dischargeTime = new DateTime();
+        //     $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+        //     $checkIn  = Carbon::parse($admitTime);   // e.g. 2025-09-01 13:45:18
+        //     $checkOut = Carbon::parse($dischargeTime); // e.g. 2025-09-03 14:45:18
+        //     $cutoffHour = 14;
+        //     $days = 0;
+             
+        //     // Case 1: If check-in before 2 PM, count first day
+        //     if ($checkIn->hour < $cutoffHour) {
+        //         $days++;
+        //     }
+        //     // dump($days);
+        //     // Case 2: Count full 24-hour blocks between check-in and check-out
+        //     $days += $checkIn->diffInDays($checkOut);
+        //     //  dump($days,$checkIn,$checkOut);
+        //     if ($days > 0 && $days < 1) {
+        //         $days = 1;
+        //     }
+
+
+        //     // Case 3: If checkout is after 2 PM, add an extra day
+        //     if ($checkOut->hour >= $cutoffHour) {
+        //         $days++;
+        //     }
+        //     $occupied_days = (int)$days;
+        //     $pre_bed_amount = $bed_amount * (int)$days;
+        
+        //  }
+        
+        
+        $previous_payment_bill = PaymentBill::where('patient_id', $id)->where('admit_id', $admit_id)->where('amount_for', 'Bed Charge')->latest('id')->first();
         $occupied_days = 0;
         $pre_bed_amount = 0;
-         if($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL){
-            $admitTime = new DateTime($previous_payment_bill->created_at);
-            $dischargeTime = new DateTime();
-            $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-
-            // if($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL){
-            //     $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-               
-            //     $admitTime = new DateTime($previous_payment_bill->created_at);
-            //     $dischargeTime = new DateTime();
-    
-            //     // 2:00 PM cut-off
-            //     $cutOffHour = 14;
-            //     $days = 0;
-    
-            //     // Clone dates to avoid modifying originals
-            //     $admitDate = clone $admitTime;
-            //     $dischargeDate = clone $dischargeTime;
-    
-            //     // Only dates (set time to 00:00:00)
-            //     $admitDate->setTime(0, 0, 0);
-            //     $dischargeDate->setTime(0, 0, 0);
-    
-            //     // Difference in days (full calendar days)
-            //     $intervalDays = $admitDate->diff($dischargeDate)->days;
-    
-            //     // Add intermediate full days (excluding first and last day)
-            //     if ($intervalDays > 1) {
-            //         $days += $intervalDays - 1;
-            //     }
-    
-            //     // Admit day logic
-            //     if ((int)$admitTime->format('H') < $cutOffHour) {
-            //         $days += 1;
-            //     }
-    
-            //     // Discharge day logic
-            //     if ((int)$dischargeTime->format('H') < $cutOffHour) {
-            //         $days += 1;
-            //     }
-    
-            //     // Handle same-day admit/discharge
-            //     if ($intervalDays === 0) {
-            //         // If admitted and discharged same day, and either side meets the <2PM rule
-            //         if ((int)$admitTime->format('H') < $cutOffHour || (int)$dischargeTime->format('H') < $cutOffHour) {
-            //             $days = 1;
-            //         } else {
-            //             $days = 0;
-            //         }
-            //     }
-    
-            //     $occupied_days = $days;
-            //     $pre_bed_amount = $bed_amount * $days;
-            // }
-        
-        
-            $checkIn  = Carbon::parse($admitTime);   // e.g. 2025-09-01 13:45:18
-            $checkOut = Carbon::parse($dischargeTime); // e.g. 2025-09-03 14:45:18
+        if ($previous_payment_bill && ($previous_payment_bill->amount == 0 || $previous_payment_bill->amount === NULL)) {
+            $admitTime = Carbon::parse($previous_payment_bill->created_at);
+            $dischargeTime = Carbon::now(); // Or use actual discharge time if available
+            $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first();
             $cutoffHour = 14;
             $days = 0;
-            // Case 1: If check-in before 2 PM, count first day
-            if ($checkIn->hour < $cutoffHour) {
+            // Case 1: If admitted before 2 PM, count the admission day
+            if ($admitTime->hour < $cutoffHour) {
                 $days++;
             }
-            // Case 2: Count full 24-hour blocks between check-in and check-out
-            $days += $checkIn->diffInDays($checkOut);
+            // Start counting 2 PM crossovers from the first 2 PM after admit
+            $current = $admitTime->copy()->setTime($cutoffHour, 0);
+            while ($current < $dischargeTime) {
+                $days++;
+                $current->addDay(); // move to next day's cutoff
+            }
+            // Optional: Always count discharge day if after 2 PM
+            if ($dischargeTime->hour >= $cutoffHour) {
+                $days++;
+            }
+            // Ensure minimum 1 day
+            if ($days < 1) {
+                $days = 1;
+            }
+            $occupied_days = $days;
+            $pre_bed_amount = $bed_amount * $occupied_days;
+        }
         
-            // Case 3: If checkout is after 2 PM, add an extra day
-            if ($checkOut->hour >= $cutoffHour) {
-                $days++;
-            }
-            $occupied_days = round($days);
-            $pre_bed_amount = $bed_amount * round($days);
-            
-            
-            // dd($checkIn,$checkOut,$days,$occupied_days,$pre_bed_amount);
-         }
+        
+        
+         
+        //  dump($occupied_days,$pre_bed_amount);
         $payment_bills = PaymentBill::where('patient_id',$id)->where('admit_id',$admit_id)->get();
         $total_amount = PaymentBill::where('patient_id',$id)->where('admit_id',$admit_id)->sum('amount');
         $received_amount = PaymentReceived::where('patient_id',$id)->where('admit_id',$admit_id)->sum('amount');
@@ -160,18 +149,87 @@ class InvoiceController extends Controller
         $latest_patient_log = PatientLog::where('patient_id',$request->id)->latest()->first();
         $type = Patient::where('id',$request->id)->pluck('type');
         $now = now();
-          $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
-           if ($previous_payment_bill) {
-                $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-                $created_at = new DateTime($previous_payment_bill->created_at);
-                $updated_at = new DateTime(); // Current date and time
-                $interval = $created_at->diff($updated_at);
-                $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
-                $pre_bed_amount = $bed_amount * $occupied_days;
+        // $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
+        // if ($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL) {
+        //     $admitTime = new DateTime($previous_payment_bill->created_at);
+        //     $dischargeTime = new DateTime();
+        //     $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+        //     $checkIn  = Carbon::parse($admitTime);   // e.g. 2025-09-01 13:45:18
+        //     $checkOut = Carbon::parse($dischargeTime); // e.g. 2025-09-03 14:45:18
+        //     $cutoffHour = 14;
+        //     $days = 0;
+        //     // Case 1: If check-in before 2 PM, count first day
+        //     if ($checkIn->hour < $cutoffHour) {
+        //         $days++;
+        //     }
+        //     // Case 2: Count full 24-hour blocks between check-in and check-out
+        //     $days += $checkIn->diffInDays($checkOut);
+        //     if ($days > 0 && $days < 1) {
+        //         $days = 1;
+        //     }
+        
+        //     // Case 3: If checkout is after 2 PM, add an extra day
+        //     if ($checkOut->hour >= $cutoffHour) {
+        //         $days++;
+        //     }
+        //     $occupied_days = (int)$days;
+        //     $pre_bed_amount = $bed_amount * (int)$days;
+        //         PaymentBill::where('id',$previous_payment_bill->id)->update([
+        //             'amount' => $pre_bed_amount,
+        //             'qty' => $occupied_days
+        //         ]);
+        // } // amount add to previous bed type for billing
+        
+        
+        
+        
+        
+        
+        
+        
+        $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
+        $occupied_days = 0;
+        $pre_bed_amount = 0;
+        if ($previous_payment_bill && ($previous_payment_bill->amount == 0 || $previous_payment_bill->amount === NULL)) {
+            $admitTime = Carbon::parse($previous_payment_bill->created_at);
+            $dischargeTime = Carbon::now(); // Or use actual discharge time if available
+            $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first();
+            $cutoffHour = 14;
+            $days = 0;
+            // Case 1: If admitted before 2 PM, count the admission day
+            if ($admitTime->hour < $cutoffHour) {
+                $days++;
+            }
+            // Start counting 2 PM crossovers from the first 2 PM after admit
+            $current = $admitTime->copy()->setTime($cutoffHour, 0);
+            while ($current < $dischargeTime) {
+                $days++;
+                $current->addDay(); // move to next day's cutoff
+            }
+            // Optional: Always count discharge day if after 2 PM
+            if ($dischargeTime->hour >= $cutoffHour) {
+                $days++;
+            }
+            // Ensure minimum 1 day
+            if ($days < 1) {
+                $days = 1;
+            }
+            $occupied_days = $days;
+            $pre_bed_amount = $bed_amount * $occupied_days;
                 PaymentBill::where('id',$previous_payment_bill->id)->update([
-                    'amount' => $pre_bed_amount
-                ]);
-            } // amount add to previous bed type for billing
+                        'days' => $occupied_days,
+                        'qty' => $occupied_days,
+                        'amount' => $pre_bed_amount
+                    ]);
+        }
+        
+        
+        
+        
+        
+        
+        
+        
             PaymentBIll::where('admit_id',$latest_patient_log->admit_id)->update([
                 'status' => 'Discharged'
             ]); // for current patinet bill calculation
@@ -313,66 +371,73 @@ class InvoiceController extends Controller
     }
      public function billPrint($id,$admit_id){
         $patient_id = $id;
-        $previous_payment_bill = PaymentBill::where('patient_id', $id)->where('admit_id',$admit_id)->where('amount_for', 'Bed Charge')->latest('id')->first();
+        // $previous_payment_bill = PaymentBill::where('patient_id', $id)->where('admit_id',$admit_id)->where('amount_for', 'Bed Charge')->latest('id')->first();
+        // $occupied_days = 0;
+        // $pre_bed_amount = 0;
+        //   if($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL){
+        //     $admitTime = new DateTime($previous_payment_bill->created_at);
+        //     $dischargeTime = new DateTime();
+        //     $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
+        //     $checkIn  = Carbon::parse($admitTime);   // e.g. 2025-09-01 13:45:18
+        //     $checkOut = Carbon::parse($dischargeTime); // e.g. 2025-09-03 14:45:18
+        //     $cutoffHour = 14;
+        //     $days = 0;
+        //     // Case 1: If check-in before 2 PM, count first day
+        //     if ($checkIn->hour < $cutoffHour) {
+        //         $days++;
+        //     }
+        //     // Case 2: Count full 24-hour blocks between check-in and check-out
+        //     $days += $checkIn->diffInDays($checkOut);
+        //     if ($days > 0 && $days < 1) {
+        //         $days = 1;
+        //     }
+        
+        //     // Case 3: If checkout is after 2 PM, add an extra day
+        //     if ($checkOut->hour >= $cutoffHour) {
+        //         $days++;
+        //     }
+        //     $occupied_days = (int)$days;
+        //     $pre_bed_amount = $bed_amount * (int)$days;
+        //  }
+        
+        
+        
+        
+        
+        $previous_payment_bill = PaymentBill::where('patient_id', $id)->where('admit_id', $admit_id)->where('amount_for', 'Bed Charge')->latest('id')->first();
         $occupied_days = 0;
         $pre_bed_amount = 0;
-        // if($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL){
-        //     $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-        //     $created_at = new DateTime($previous_payment_bill->created_at);
-        //     $updated_at = new DateTime(); // Current date and time
-        //     $interval = $created_at->diff($updated_at);
-        //     $occupied_days = max((int)$interval->days, 1); // Ensure at least 1 day
-        //     $pre_bed_amount = $bed_amount * $occupied_days;
-        // }
-          if($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL){
-            $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first(); // Get the actual amount value
-           
-            $admitTime = new DateTime($previous_payment_bill->created_at);
-            $dischargeTime = new DateTime();
-
-            // 2:00 PM cut-off
-            $cutOffHour = 14;
+        if ($previous_payment_bill && ($previous_payment_bill->amount == 0 || $previous_payment_bill->amount === NULL)) {
+            $admitTime = Carbon::parse($previous_payment_bill->created_at);
+            $dischargeTime = Carbon::now(); // Or use actual discharge time if available
+            $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first();
+            $cutoffHour = 14;
             $days = 0;
-
-            // Clone dates to avoid modifying originals
-            $admitDate = clone $admitTime;
-            $dischargeDate = clone $dischargeTime;
-
-            // Only dates (set time to 00:00:00)
-            $admitDate->setTime(0, 0, 0);
-            $dischargeDate->setTime(0, 0, 0);
-
-            // Difference in days (full calendar days)
-            $intervalDays = $admitDate->diff($dischargeDate)->days;
-
-            // Add intermediate full days (excluding first and last day)
-            if ($intervalDays > 1) {
-                $days += $intervalDays - 1;
+            // Case 1: If admitted before 2 PM, count the admission day
+            if ($admitTime->hour < $cutoffHour) {
+                $days++;
             }
-
-            // Admit day logic
-            if ((int)$admitTime->format('H') < $cutOffHour) {
-                $days += 1;
+            // Start counting 2 PM crossovers from the first 2 PM after admit
+            $current = $admitTime->copy()->setTime($cutoffHour, 0);
+            while ($current < $dischargeTime) {
+                $days++;
+                $current->addDay(); // move to next day's cutoff
             }
-
-            // Discharge day logic
-            if ((int)$dischargeTime->format('H') < $cutOffHour) {
-                $days += 1;
+            // Optional: Always count discharge day if after 2 PM
+            if ($dischargeTime->hour >= $cutoffHour) {
+                $days++;
             }
-
-            // Handle same-day admit/discharge
-            if ($intervalDays === 0) {
-                // If admitted and discharged same day, and either side meets the <2PM rule
-                if ((int)$admitTime->format('H') < $cutOffHour || (int)$dischargeTime->format('H') < $cutOffHour) {
-                    $days = 1;
-                } else {
-                    $days = 0;
-                }
+            // Ensure minimum 1 day
+            if ($days < 1) {
+                $days = 1;
             }
-
             $occupied_days = $days;
-            $pre_bed_amount = $bed_amount * $days;
+            $pre_bed_amount = $bed_amount * $occupied_days;
         }
+    
+        
+        
+        
         $payment_bills = PaymentBill::where('patient_id',$id)->where('admit_id',$admit_id)->get();
         $total_amount = PaymentBill::where('patient_id',$id)->where('admit_id',$admit_id)->sum('amount');
         $received_amount = PaymentReceived::where('patient_id',$id)->where('admit_id',$admit_id)->sum('amount');

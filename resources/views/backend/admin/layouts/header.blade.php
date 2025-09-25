@@ -138,6 +138,9 @@
           <li>
             <a href="{{route('purchase.index')}}"><i class="ri-shopping-bag-4-line"></i>Purchase</a>
           </li>
+          <li>
+            <a href="{{route('company.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Company</a>
+          </li>
            <li>
             <a href="{{route('medicine-category.index')}}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>Medicine Category</a>
           </li>

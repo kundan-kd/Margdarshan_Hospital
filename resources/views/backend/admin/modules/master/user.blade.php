@@ -64,7 +64,7 @@ User
                   @endforeach --}}
                 </select>  
             </div>
-            <div class="col-6 opd-cls d-none">
+             <div class="col-6 opd-cls d-none">
               <label class="form-label fw-normal" for="user-degree">Degree</label>
               <input type="text" id="user-degree" class="form-control form-control-sm" placeholder="Enter Doctor Degree">
             </div>

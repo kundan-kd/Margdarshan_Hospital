@@ -483,27 +483,24 @@ class IpdinController extends Controller
                 
                 
                 
-                 if ($previous_payment_bill && ($previous_payment_bill->amount == 0 || $previous_payment_bill->amount === NULL)) {
+                if ($previous_payment_bill && ($previous_payment_bill->amount == 0 || $previous_payment_bill->amount === NULL)) {
                 $admitTime = Carbon::parse($previous_payment_bill->created_at);
                 $dischargeTime = Carbon::now(); // Or use actual discharge time if available
                 $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first();
                 $cutoffHour = 14;
                 $days = 0;
                 // Case 1: If admitted before 2 PM, count the admission day
-                if ($admitTime->hour < $cutoffHour) {
-                    $days++;
+                 if ($admitTime->hour < $cutoffHour) {
+                $days++;
                 }
-                // Start counting 2 PM crossovers from the first 2 PM after admit
+                 // Start from first 2 PM after admission
                 $current = $admitTime->copy()->setTime($cutoffHour, 0);
-                while ($current < $dischargeTime) {
+                 // Loop through each 2 PM until discharge
+                while ($current <= $dischargeTime) {
                     $days++;
-                    $current->addDay(); // move to next day's cutoff
+                    $current->addDay(); // move to next day's 2 PM
                 }
-                // Optional: Always count discharge day if after 2 PM
-                if ($dischargeTime->hour >= $cutoffHour) {
-                    $days++;
-                }
-                // Ensure minimum 1 day
+                // Ensure at least 1 day
                 if ($days < 1) {
                     $days = 1;
                 }
@@ -641,19 +638,16 @@ class IpdinController extends Controller
                 $days = 0;
                 // Case 1: If admitted before 2 PM, count the admission day
                 if ($admitTime->hour < $cutoffHour) {
-                    $days++;
+                $days++;
                 }
-                // Start counting 2 PM crossovers from the first 2 PM after admit
+                 // Start from first 2 PM after admission
                 $current = $admitTime->copy()->setTime($cutoffHour, 0);
-                while ($current < $dischargeTime) {
+                 // Loop through each 2 PM until discharge
+                while ($current <= $dischargeTime) {
                     $days++;
-                    $current->addDay(); // move to next day's cutoff
+                    $current->addDay(); // move to next day's 2 PM
                 }
-                // Optional: Always count discharge day if after 2 PM
-                if ($dischargeTime->hour >= $cutoffHour) {
-                    $days++;
-                }
-                // Ensure minimum 1 day
+                // Ensure at least 1 day
                 if ($days < 1) {
                     $days = 1;
                 }
@@ -1207,19 +1201,16 @@ class IpdinController extends Controller
                 $days = 0;
                 // Case 1: If admitted before 2 PM, count the admission day
                 if ($admitTime->hour < $cutoffHour) {
-                    $days++;
+                $days++;
                 }
-                // Start counting 2 PM crossovers from the first 2 PM after admit
+                 // Start from first 2 PM after admission
                 $current = $admitTime->copy()->setTime($cutoffHour, 0);
-                while ($current < $dischargeTime) {
+                 // Loop through each 2 PM until discharge
+                while ($current <= $dischargeTime) {
                     $days++;
-                    $current->addDay(); // move to next day's cutoff
+                    $current->addDay(); // move to next day's 2 PM
                 }
-                // Optional: Always count discharge day if after 2 PM
-                if ($dischargeTime->hour >= $cutoffHour) {
-                    $days++;
-                }
-                // Ensure minimum 1 day
+                // Ensure at least 1 day
                 if ($days < 1) {
                     $days = 1;
                 }

@@ -458,29 +458,26 @@ class EmergencyController extends Controller
                 $days = 0;
                 // Case 1: If admitted before 2 PM, count the admission day
                 if ($admitTime->hour < $cutoffHour) {
-                    $days++;
+                $days++;
                 }
-                // Start counting 2 PM crossovers from the first 2 PM after admit
+                 // Start from first 2 PM after admission
                 $current = $admitTime->copy()->setTime($cutoffHour, 0);
-                while ($current < $dischargeTime) {
+                 // Loop through each 2 PM until discharge
+                while ($current <= $dischargeTime) {
                     $days++;
-                    $current->addDay(); // move to next day's cutoff
+                    $current->addDay(); // move to next day's 2 PM
                 }
-                // Optional: Always count discharge day if after 2 PM
-                if ($dischargeTime->hour >= $cutoffHour) {
-                    $days++;
-                }
-                // Ensure minimum 1 day
+                // Ensure at least 1 day
                 if ($days < 1) {
                     $days = 1;
                 }
                 $occupied_days = $days;
                 $pre_bed_amount = $bed_amount * $occupied_days;
-                    PaymentBill::where('id',$previous_payment_bill->id)->update([
-                        'days' => $occupied_days,
-                        'qty' => $occupied_days,
-                        'amount' => $pre_bed_amount
-                    ]);
+                        PaymentBill::where('id',$previous_payment_bill->id)->update([
+                            'days' => $occupied_days,
+                            'qty' => $occupied_days,
+                            'amount' => $pre_bed_amount
+                        ]);
             }
                 
                 
@@ -592,19 +589,16 @@ class EmergencyController extends Controller
                 $days = 0;
                 // Case 1: If admitted before 2 PM, count the admission day
                 if ($admitTime->hour < $cutoffHour) {
-                    $days++;
+                $days++;
                 }
-                // Start counting 2 PM crossovers from the first 2 PM after admit
+                 // Start from first 2 PM after admission
                 $current = $admitTime->copy()->setTime($cutoffHour, 0);
-                while ($current < $dischargeTime) {
+                 // Loop through each 2 PM until discharge
+                while ($current <= $dischargeTime) {
                     $days++;
-                    $current->addDay(); // move to next day's cutoff
+                    $current->addDay(); // move to next day's 2 PM
                 }
-                // Optional: Always count discharge day if after 2 PM
-                if ($dischargeTime->hour >= $cutoffHour) {
-                    $days++;
-                }
-                // Ensure minimum 1 day
+                // Ensure at least 1 day
                 if ($days < 1) {
                     $days = 1;
                 }
@@ -1135,19 +1129,16 @@ class EmergencyController extends Controller
                 $days = 0;
                 // Case 1: If admitted before 2 PM, count the admission day
                 if ($admitTime->hour < $cutoffHour) {
-                    $days++;
+                $days++;
                 }
-                // Start counting 2 PM crossovers from the first 2 PM after admit
+                 // Start from first 2 PM after admission
                 $current = $admitTime->copy()->setTime($cutoffHour, 0);
-                while ($current < $dischargeTime) {
+                 // Loop through each 2 PM until discharge
+                while ($current <= $dischargeTime) {
                     $days++;
-                    $current->addDay(); // move to next day's cutoff
+                    $current->addDay(); // move to next day's 2 PM
                 }
-                // Optional: Always count discharge day if after 2 PM
-                if ($dischargeTime->hour >= $cutoffHour) {
-                    $days++;
-                }
-                // Ensure minimum 1 day
+                // Ensure at least 1 day
                 if ($days < 1) {
                     $days = 1;
                 }

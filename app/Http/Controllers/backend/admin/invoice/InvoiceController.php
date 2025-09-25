@@ -72,24 +72,22 @@ class InvoiceController extends Controller
         if ($previous_payment_bill && ($previous_payment_bill->amount == 0 || $previous_payment_bill->amount === NULL)) {
             $admitTime = Carbon::parse($previous_payment_bill->created_at);
             $dischargeTime = Carbon::now(); // Or use actual discharge time if available
+            // $dischargeTime = Carbon::parse("26-09-2025 14:10:00"); // Or use actual discharge time if available
             $bed_amount = Bed::where('id', $previous_payment_bill->to_bed_id)->pluck('amount')->first();
             $cutoffHour = 14;
             $days = 0;
-            // Case 1: If admitted before 2 PM, count the admission day
+
             if ($admitTime->hour < $cutoffHour) {
                 $days++;
             }
-            // Start counting 2 PM crossovers from the first 2 PM after admit
+             // Start from first 2 PM after admission
             $current = $admitTime->copy()->setTime($cutoffHour, 0);
-            while ($current < $dischargeTime) {
+             // Loop through each 2 PM until discharge
+            while ($current <= $dischargeTime) {
                 $days++;
-                $current->addDay(); // move to next day's cutoff
+                $current->addDay(); // move to next day's 2 PM
             }
-            // Optional: Always count discharge day if after 2 PM
-            if ($dischargeTime->hour >= $cutoffHour) {
-                $days++;
-            }
-            // Ensure minimum 1 day
+            // Ensure at least 1 day
             if ($days < 1) {
                 $days = 1;
             }
@@ -149,7 +147,7 @@ class InvoiceController extends Controller
         $latest_patient_log = PatientLog::where('patient_id',$request->id)->latest()->first();
         $type = Patient::where('id',$request->id)->pluck('type');
         $now = now();
-        // $previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
+        //$previous_payment_bill = PaymentBill::where('patient_id', $request->id)->where('amount_for', 'Bed Charge')->latest('id')->first();
         // if ($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL) {
         //     $admitTime = new DateTime($previous_payment_bill->created_at);
         //     $dischargeTime = new DateTime();
@@ -200,17 +198,14 @@ class InvoiceController extends Controller
             if ($admitTime->hour < $cutoffHour) {
                 $days++;
             }
-            // Start counting 2 PM crossovers from the first 2 PM after admit
+             // Start from first 2 PM after admission
             $current = $admitTime->copy()->setTime($cutoffHour, 0);
-            while ($current < $dischargeTime) {
+             // Loop through each 2 PM until discharge
+            while ($current <= $dischargeTime) {
                 $days++;
-                $current->addDay(); // move to next day's cutoff
+                $current->addDay(); // move to next day's 2 PM
             }
-            // Optional: Always count discharge day if after 2 PM
-            if ($dischargeTime->hour >= $cutoffHour) {
-                $days++;
-            }
-            // Ensure minimum 1 day
+            // Ensure at least 1 day
             if ($days < 1) {
                 $days = 1;
             }
@@ -372,8 +367,8 @@ class InvoiceController extends Controller
      public function billPrint($id,$admit_id){
         $patient_id = $id;
         // $previous_payment_bill = PaymentBill::where('patient_id', $id)->where('admit_id',$admit_id)->where('amount_for', 'Bed Charge')->latest('id')->first();
-        // $occupied_days = 0;
-        // $pre_bed_amount = 0;
+        //$occupied_days = 0;
+        //$pre_bed_amount = 0;
         //   if($previous_payment_bill->amount == 0 || $previous_payment_bill->amount == NULL){
         //     $admitTime = new DateTime($previous_payment_bill->created_at);
         //     $dischargeTime = new DateTime();
@@ -417,17 +412,14 @@ class InvoiceController extends Controller
             if ($admitTime->hour < $cutoffHour) {
                 $days++;
             }
-            // Start counting 2 PM crossovers from the first 2 PM after admit
+             // Start from first 2 PM after admission
             $current = $admitTime->copy()->setTime($cutoffHour, 0);
-            while ($current < $dischargeTime) {
+             // Loop through each 2 PM until discharge
+            while ($current <= $dischargeTime) {
                 $days++;
-                $current->addDay(); // move to next day's cutoff
+                $current->addDay(); // move to next day's 2 PM
             }
-            // Optional: Always count discharge day if after 2 PM
-            if ($dischargeTime->hour >= $cutoffHour) {
-                $days++;
-            }
-            // Ensure minimum 1 day
+            // Ensure at least 1 day
             if ($days < 1) {
                 $days = 1;
             }

@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>MH Admission Form</title>
+	<title>Advance Payment</title>
 	<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
 	<style>
 	* {
@@ -188,7 +188,7 @@
 <body>
 	<div class="container">
 		<div class="header">
-			<div class="hospital-logo"> <img src="https://mdh.techiesquad.in/backend/assets/images/logo.png" alt="logo" /> </div>
+			<div class="hospital-logo"> <img src="{{asset('backend/assets/images/logo.png')}}" alt="logo" /> </div>
 			{{-- <div class="hospital-details">G-86, Behind Manju Sinha Smriti Park,
                 <br>Kankarbagh, Patna – 800020
 				<br>Phone: +91 8210595186,

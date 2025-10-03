@@ -295,11 +295,14 @@
         <div class="invoice-header">
             <div class="hospital-info">
                 <div>
+                    @php
+                        $company_data = \App\Models\CompanyDetail::where('id',1)->get();
+                    @endphp
                     <div class="hospital-logo">Amriti Pharmacy</div>
                     <div class="hospital-details">
-                        G-86, Behind Manju Sinha Smriti Park,<br>Kankarbagh, Patna – 800020<br>
-                        Phone: +91 8210595186<br>
-                        Email: info@margdarshanhospital.com
+                        {{$company_data[0]->address_line1}},<br>{{$company_data[0]->address_line2}}<br>
+                        Phone: +91 {{$company_data[0]->mobile}}<br>
+                        Email: {{$company_data[0]->email}}
                     </div>
                 </div>
                 <div class="invoice-title">MEDICINE BILL</div>
@@ -443,8 +446,8 @@
 
         <!-- Footer -->
         <div class="footer">
-            <p><strong>Amriti Pharmacy</strong> | Licensed Healthcare Facility | Contact: 9876543210</p>
-            <p>For billing inquiries: info@margdarshanhospital.com</p>
+            <p><strong>Amriti Pharmacy</strong> | Licensed Healthcare Facility | Contact: {{$company_data[0]->mobile}}</p>
+            <p>For billing inquiries: {{$company_data[0]->email}}</p>
             <p>This is a computer-generated invoice. Please retain this document for your records.</p>
         </div>
     </div>

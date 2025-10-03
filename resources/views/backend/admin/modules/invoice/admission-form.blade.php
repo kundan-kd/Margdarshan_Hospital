@@ -145,11 +145,14 @@
 <body>
 	<div class="container">
 		<div class="header">
-			<div class="hospital-logo"> <img src="https://mdh.techiesquad.in/backend/assets/images/logo.png" alt="logo" /> </div>
-			<div class="hospital-details">G-86, Behind Manju Sinha Smriti Park,
-                <br>Kankarbagh, Patna – 800020
-				<br>Phone: +91 8210595186,
-				<br> Email: info@margdarshanhospital.com</div>
+			<div class="hospital-logo"> <img src="{{asset('backend/assets/images/logo.png')}}" alt="logo" /> </div>
+			@php
+                 $company_data = \App\Models\CompanyDetail::where('id',1)->get();
+            @endphp
+			<div class="hospital-details">{{$company_data[0]->address_line1}},
+                <br>{{$company_data[0]->address_line2}}
+				<br>Phone: +91 {{$company_data[0]->mobile}},
+				<br> Email: {{$company_data[0]->email}}</div>
 			<div class="form-title">ADMISSION FORM</div>
 		</div>
 		{{-- @php

@@ -1135,12 +1135,21 @@
 
   <script>
 // Flat pickr or date picker js 
+   function getDateTimePicker(receiveID) {
+    flatpickr(receiveID, {
+        enableTime: true,
+        dateFormat: "d-m-Y h:i K", // Includes hours and minutes AM/PM
+        time_24hr: true // Optional: use 24-hour format
+    });
+}
+getDateTimePicker('#opdOutVital-date');
+
     function getDatePicker (receiveID) {
         flatpickr(receiveID, {
             dateFormat: "d-m-Y",
         });
     }
-    getDatePicker('#opdOutVital-date'); 
+    // getDatePicker('#opdOutVital-date'); 
     getDatePicker('#opdOutVisit-admissionDate'); 
     getDatePicker('#opdOutVisit-visitDate'); 
     // Flat pickr or date picker js 

@@ -54,8 +54,9 @@ class UserController extends Controller
 
             ->addColumn('status',function($row){
                 $ischecked = $row->status == 1 ? 'checked':'';
+                $visibility = $row->id == 1 ? 'disabled' : '';
                 return '<div class="form-switch switch-primary">
-                                <input class="form-check-input" type="checkbox" role="switch" onclick="statusSwitch('.$row->id.')"'.$ischecked.'>
+                                <input class="form-check-input" type="checkbox" role="switch" onclick="statusSwitch('.$row->id.')"'.$ischecked.' '.$visibility.'>
                             </div>';
             })
             ->addColumn('action',function($row){
@@ -213,5 +214,20 @@ class UserController extends Controller
         }
         $getData = RoomNumber::where('status', 1)->where('current_status','vacant')->where('room_group_id',7)->get();
         return response()->json(['success' => 'OPD Rooms fetched successfully', 'data' => $getData,'roomData'=>$getRoomData], 200);
+    }
+    public function statusUpdate(Request $request){
+        $unitstatus = User::where('id',$request->id)->get(['status']);
+        $new_status = 1;
+        if($unitstatus[0]->status == 1){
+            $new_status = 0;
+        }
+        $update = User::where('id',$request->id)->update([
+            'status' => $new_status
+        ]);
+        if($update){
+            return response()->json(['success' => 'Status Updated Successfully'],200);
+        }else{
+            return response()->json(['error_success' => 'Status not changed']);
+        }
     }
 }

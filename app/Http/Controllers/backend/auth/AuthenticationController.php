@@ -32,6 +32,7 @@ class AuthenticationController extends Controller
             [
                'email' => strtolower($request->email),
                'password' => $request->password,
+               'status' => 1 // Only allow login if status is 1
             ],
         );
         if($auth){

@@ -209,6 +209,7 @@ Route::post('/user-data',[UserController::class,'getUserData'])->name('user.getU
 Route::post('/user-update',[UserController::class,'updateUser'])->name('user.updateUser');
 Route::post('/user-delete',[UserController::class,'deleteUserData'])->name('user.deleteUserData');
 Route::post('/user-opd-room',[UserController::class,'getOPDRoom'])->name('user.getOPDRoom');
+Route::post('/user-staus',[UserController::class,'statusUpdate'])->name('user.statusUpdate');
 
 Route::get('/roomtype',[RoomtypeController::class,'index'])->name('roomtype.index');
 Route::post('/roomtype-view',[RoomtypeController::class,'viewRoomTypes'])->name('roomtype.viewRoomTypes');

@@ -373,6 +373,7 @@
                         <th>Date</th>
                         <th>Title</th>
                         <th>Description</th>
+                        <th>Qty</th>
                         <th class="text-center">Amount</th>
                     </tr>
                 </thead>
@@ -387,6 +388,7 @@
                               <td>{{$bills->created_at->format('d-m-Y')}}</td>
                               <td>{{$bills->amount_for}}</td>
                               <td>{{$bills->title}}</td>
+                              <td>{{$bills->qty ?? 'NA'}}</td>
                               <td>{{$pre_bed_amount ?? 0}}</td>
                             </tr>
                             @else
@@ -395,6 +397,7 @@
                               <td>{{$bills->created_at->format('d-m-Y')}}</td>
                               <td>{{$bills->amount_for}}</td>
                               <td>{{$bills->title}}</td>
+                              <td>{{$bills->qty ?? 'NA'}}</td>
                               <td>{{$bills->amount ?? 0}}</td>
                             </tr>
                             @endif

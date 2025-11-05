@@ -228,6 +228,7 @@ User
      const updateUser = "{{route('user.updateUser')}}";
      const deleteUserData = "{{route('user.deleteUserData')}}";
      const getOPDRoom = "{{route('user.getOPDRoom')}}";
+     const statusUpdate = "{{route('user.statusUpdate')}}";
 </script>
   {{-----------external js files added for page functions------------}}
   <script src="{{asset('backend/assets/js/custom/admin/master/user.js')}}"></script>

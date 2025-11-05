@@ -373,6 +373,7 @@
                         <th>Sr.No.</th>
                         <th>Title</th>
                         <th>Description</th>
+                        <th>Qty</th>
                         <th class="text-center">Amount</th>
                     </tr>
                 </thead>
@@ -385,6 +386,7 @@
                             <td>{{$i}}</td>
                             <td>{{$bills->amount_for}}</td>
                             <td>{{$bills->title}}</td>
+                            <td>{{$bills->qty ?? 'NA'}}</td>
                             <td>{{$bills->amount}}</td>
                         </tr>
                         @php

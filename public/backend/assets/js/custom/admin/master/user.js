@@ -301,33 +301,32 @@ function userAddUpdate() {
 }
 
 
-// function statusSwitch(id){
-//     $.ajax({
-//         url: statusUpdate,
-//         type: "POST",
-//         data: {
-//             id: id
-//         },
-//         headers: {
-//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//         },
-//         success: function(response) {
-//             if(response.success){
-//                     $('#adduserModel').modal('hide');
-//                     $('#adduserForm').removeClass('was-validated');
-//                     $('#adduserForm')[0].reset();
-//                     $('#user-table').DataTable().ajax.reload();
-//                     toastSuccessAlert('Status updated successfully');
-//                 }else{
-//                     toastErrorAlert('error found!');
-//                 }
-//         },
-//         error: function(xhr, status, error) {
-//             console.error(xhr.responseText);
-//             alert("An error occurred: " + error);
-//         }
-//     });
-// }
+function statusSwitch(id){
+    $.ajax({
+        url: statusUpdate,
+        type: "POST",
+        data: {
+            id: id
+        },
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            if(response.success){
+                    $('#user-table').DataTable().ajax.reload();
+                    toastSuccessAlert(response.success);
+                }else if(response.error_success){
+                    toastErrorAlert(response.error_success);
+                }else{
+                    toastErrorAlert('something went wrong!');
+                }
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            alert("An error occurred: " + error);
+        }
+    });
+}
 
 function userDelete(id){
     Swal.fire({

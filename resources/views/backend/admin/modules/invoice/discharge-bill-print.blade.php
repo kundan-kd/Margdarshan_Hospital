@@ -324,7 +324,11 @@
                     <div class="info-row">
                         <span class="info-label">Patient Name:</span>
                         <span>{{$patientData[0]->name}}</span>
-                    </div>                
+                    </div>      
+                    <div class="info-row">
+                        <span class="info-label">IP No.:</span>
+                        <span>MHAI{{$patientData[0]->admit_id}}</span>
+                    </div>          
                     <div class="info-row">
                         <span class="info-label">Date of Birth:</span>
                          <span>{{ date('d/m/Y', strtotime($patientData[0]->dob)) }}</span>

@@ -1362,11 +1362,25 @@
       </div>
       <form id="ipdCharge-form">
         <div class="modal-body">
-          <div class="row">
+          <div class="row g-2">
               <div class="col-md-6">
                 <input type="hidden" id="ipdChargeId">
-                <label class="form-label fw-medium" for="ipdCharge-name">Title</label> <sup class="text-danger">*</sup>
-                  <input id="ipdCharge-name" type="text" class="form-control form-control-sm" placeholder="Charge Name" oninput="validateField(this.id,'input')">
+                <label class="form-label fw-medium" for="ipdCharge-type">Charge Type</label> <sup class="text-danger">*</sup>
+                  <select id="ipdCharge-type" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                    <option value="">Select</option>
+                    <option value="Bed Charge">Bed Charge</option>
+                    <option value="Doctor Visit">Doctor Visit</option>
+                    <option value="Lab">Lab Charge</option>
+                    <option value="Nursing">Nursing Charge</option>
+                    <option value="ICU">ICU Charge</option>
+                    <option value="NICU">NICU Charge</option>
+                    <option value="Other">Other Charge</option>
+                  </select>
+                  <div class="ipdCharge-type_errorCls d-none"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium" for="ipdCharge-name">Description</label> <sup class="text-danger">*</sup>
+                  <input id="ipdCharge-name" type="text" class="form-control form-control-sm" placeholder="Charge Desciption" oninput="validateField(this.id,'input')">
                   <div class="ipdCharge-name_errorCls d-none"></div>
               </div>
                <div class="col-md-6">
@@ -1964,12 +1978,17 @@ getDateTimePicker('#ipdVital-date');
     });
     $('#ipd-add-lab').on('shown.bs.modal', function () {
       $('.select2-cls').select2({
-          dropdownParent: $('#ipd-add-lab')
+          dropdownParent: $('#ipd-add-lab')                
       });
     });
-    $('#ipd-nurse-note').on('shown.bs.modal', function () {
+    $('#ipd-nurse-note').on('shown.bs.modal', function () {                 
       $('.select2-cls').select2({
           dropdownParent: $('#ipd-nurse-note')
+      });
+    });
+    $('#ipd-add-charges').on('show.bs.modal', function(){
+      $('.select2-cls').select2({
+        dropdownParent: $('#ipd-add-charges')
       });
     });
   const ipdVisitMedicineName = "{{route('common.getMedicineName')}}";

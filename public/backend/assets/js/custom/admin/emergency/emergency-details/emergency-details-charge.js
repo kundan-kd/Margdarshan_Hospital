@@ -53,10 +53,12 @@ let table_charge = $('#emergancy-charges-list').DataTable({
 });
 $('#emergencyCharge-form').on('submit',function(e){
     e.preventDefault();
+    let type_check = validateField('emergencyCharge-type', 'input');
     let name_check = validateField('emergencyCharge-name', 'input');
     let amount_check = validateField('emergencyCharge-amount', 'amount');
-    if(name_check === true && amount_check === true){
+    if(type_check === true && name_check === true && amount_check === true){
        let patientId = $('#patient_Id').val();
+       let type = $('#emergencyCharge-type').val();
        let name = $('#emergencyCharge-name').val();
        let qty = $('#emergencyCharge-qty').val();
        let amount = $('#emergencyCharge-amount').val();
@@ -64,7 +66,7 @@ $('#emergencyCharge-form').on('submit',function(e){
             url:emergencyChargeSubmit,
             type:"POST",
             data:{
-                patientId:patientId,name:name,qty:qty,amount:amount
+                patientId:patientId,type:type,name:name,qty:qty,amount:amount
             },
             headers:{
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -107,6 +109,7 @@ function emergencyChargeEdit(id){
                 $('.emergencyChargeUpdate').removeClass('d-none');
                 $('#emergency-add-charges').modal('show');
                 $('#emergencyChargeId').val(id);
+                $('#emergencyCharge-type').val(getData.amount_for);
                 $('#emergencyCharge-name').val(getData.title);
                 $('#emergencyCharge-qty').val(getData.qty);
                 $('#emergencyCharge-amount').val(getData.amount);
@@ -115,9 +118,11 @@ function emergencyChargeEdit(id){
     });
 }
 function emergencyChargeUpdate(id){
+    let type_check = validateField('emergencyCharge-type', 'select');
     let name_check = validateField('emergencyCharge-name', 'input');
     let amount_check = validateField('emergencyCharge-amount', 'amount');
-    if(name_check === true && amount_check === true){
+    if(type_check === true && name_check === true && amount_check === true){
+       let type = $('#emergencyCharge-type').val();
        let name = $('#emergencyCharge-name').val();
        let qty = $('#emergencyCharge-qty').val();
        let amount = $('#emergencyCharge-amount').val();
@@ -125,7 +130,7 @@ function emergencyChargeUpdate(id){
             url:emergencyChargeDataUpdate,
             type:"POST",
             data:{
-                id:id,name:name,qty:qty,amount:amount
+                id:id,type:type,name:name,qty:qty,amount:amount
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

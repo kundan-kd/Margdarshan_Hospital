@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\backend\admin\pharmacy;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\Composition;
 use App\Models\Medicine;
 use App\Models\MedicineCategory;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\PurchasePayment;
+use App\Models\Unit;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +26,11 @@ class PurchaseController extends Controller
     public function purchaseAdd(){
         $categories = MedicineCategory::where('status',1)->get();
         $vendors = Vendor::where('status',1)->get();
-        return view('backend.admin.modules.pharmacy.purchase-add',compact('categories','vendors'));
+         $categories = MedicineCategory::where('status',1)->get();
+        $companies = Company::where('status',1)->get();
+        $units = Unit::where('status',1)->get();
+        $compositions = Composition::where('status',1)->get();
+        return view('backend.admin.modules.pharmacy.purchase-add',compact('categories','vendors','categories','companies','units','compositions'));
     }
     public function purchaseView(Request $request){
         if($request->ajax()){

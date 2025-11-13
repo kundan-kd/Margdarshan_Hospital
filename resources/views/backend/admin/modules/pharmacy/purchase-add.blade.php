@@ -111,7 +111,7 @@ purchase-add
                                       <input type="hidden" id="purchaseAdd_nameId0" name="purchaseAdd_name[]">
 
                                       <div class="d-block position-relative" style="z-index :99;">
-                                            <ul class="search-item list-group position-absolute rounded-0 medicine-name-list">
+                                            <ul class="search-item list-group position-absolute rounded-0 medicine-name-list" style="width: -webkit-fill-available;">
                                             <!-- dropdown list of patients appended here using JS -->
                                             </ul>
                                     </div>
@@ -224,9 +224,108 @@ purchase-add
                 </button>
             </div>
         </div>
-    <form>
+    </form>
     </div>
 </div>
+<!-- medicine add model start -->
+   <!-- Modal to medician-list-add start -->
+<div class="modal fade" id="newMedicineAdd" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newMedicineAddLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content border-0">
+    <form id="newMedicineAdd_form">
+      <div class="modal-header bg-primary-600 p-11">
+        <h6 class="modal-title fw-normal text-lg text-white" id="newMedicineAddLabel">Add Medicine</h6>
+        <button type="button" class="btn-close btn-custom text-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+         <div class="row">
+          <input type="hidden" id="newMed_id">
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_name">Medicine Name</label>
+                <input id="newMed_name" type="text" class="form-control form-control-sm" placeholder=" Medicine Name" oninput="validateField(this.id,'input')">
+                  <div class="newMed_name_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_category">Category</label>
+                <select id="newMed_category" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                    <option value="">Select</option>
+                      @foreach ($categories as $category)
+                          <option value="{{$category->id}}">{{$category->name}}</option>
+                      @endforeach
+                  </select>
+                 <div class="newMed_category_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_company">Company</label>
+                <select id="newMed_company" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                    <option value="">Select</option>
+                    @foreach ($companies as $company)
+                          <option value="{{$company->id}}">{{$company->name}}</option>
+                    @endforeach
+                  </select>
+                 <div class="newMed_company_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_unit">Unit</label>
+                <select id="newMed_unit" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                   <option value="">Select</option>
+                    @foreach ($units as $unit)
+                          <option value="{{$unit->id}}">{{$unit->unit}}</option>
+                    @endforeach
+                  </select>
+                 <div class="newMed_unit_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_reOrderingLevel">Re-Ordering Level</label>
+              <input id="newMed_reOrderingLevel" type="number" class="form-control form-control-sm" placeholder="Re-Ordering Level" oninput="validateField(this.id,'select')">
+             <div class="newMed_reOrderingLevel_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_rack">Rack</label>
+                <input id="newMed_rack" type="text" class="form-control form-control-sm" placeholder="Rack">
+                <div class="newMed_rack_errorCls d-none"></div>
+            </div>
+          
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_composition">Composition</label>
+               <select id="newMed_composition" name="newMed_composition[]" class="form-select form-select-sm select2-cls" multiple="multiple" style="width: 100%" oninput="validateField(this.id,'select')">
+                   <option value="">Select</option>
+                    @foreach ($compositions as $composition)
+                          <option value="{{$composition->id}}">{{$composition->name}}</option>
+                    @endforeach
+                  </select>
+               <div class="newMed_composition_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_hsn">HSN Number</label>
+                <input id="newMed_hsn" type="text" class="form-control form-control-sm" placeholder="HSN Number" oninput="validateField(this.id,'input')">
+                <div class="newMed_hsn_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_taxes">Taxes</label>
+                <input id="newMed_taxes" type="number" class="form-control form-control-sm" placeholder="Taxes" oninput="validateField(this.id,'select')">
+                <div class="newMed_taxes_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_boxPacking">Box / Packing</label>
+                <input id="newMed_boxPacking" type="text" class="form-control form-control-sm" placeholder="Box / Packing" oninput="validateField(this.id,'select')">
+                 <div class="newMed_boxPacking_errorCls d-none"></div>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label fw-normal">Narration</label>
+                <textarea id="newMed_narration" name="#0" class="form-control " rows="2" placeholder="Narration"></textarea>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer pt-2 pb-3 border-top-0">
+        <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary-600  btn-sm fw-normal">Save</button>
+        {{-- <button type="button" class="btn btn-primary-600  btn-sm fw-normal medicineUpdateBtn d-none" onclick="medicineUpdate(document.getElementById('createMed_id').value)"><i class="ri-checkbox-circle-line"></i> Update</button> --}}
+         </form>
+      </div>
+    </div>
+  </div>
+  {{-- medicine add model end --}}
 @endsection
 @section('extra-js')
 <script>
@@ -237,9 +336,24 @@ purchase-add
         });
     }
     getDatePicker('#purchaseAdd_Date'); 
+    // Initialize Select2 for the main medicine dropdown with custom "No results" message
+
+// Handle click on the "Add New" badge inside the noResults message
+  $(document).on('click', '#addNewMedicine', function (e) {
+      e.preventDefault();
+      $('#newMedicineAdd').modal('show'); // Show modal to add new medicine
+  });
+
+// Reinitialize Select2 inside the modal only targetting inside model dropdown
+$('#newMedicineAdd').on('show.bs.modal', function () {
+  $('#newMedicineAdd .select2-cls').select2({
+    dropdownParent: $('#newMedicineAdd')
+  });
+});
     const purchaseAddDatas = "{{route('purchase.purchaseAddDatas')}}";
      const getPurchaseNames = "{{route('billing.getMedicineNames')}}";
      const getMedicineData = "{{route('common.getMedicineData')}}";
+     const newMedicineAdd = "{{route('medicine.medicineAdd')}}";  // this round is also used in medicine.blade.php
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/pharmacy/purchase-add.js')}}"></script>
 @endsection

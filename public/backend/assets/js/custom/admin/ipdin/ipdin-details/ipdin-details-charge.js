@@ -53,10 +53,12 @@ let table_charge = $('#ipd-charges-list').DataTable({
 });
 $('#ipdCharge-form').on('submit',function(e){
     e.preventDefault();
+    let type_check = validateField('ipdCharge-type', 'select');
     let name_check = validateField('ipdCharge-name', 'input');
     let amount_check = validateField('ipdCharge-amount', 'amount');
-    if(name_check === true && amount_check === true){
+    if(type_check === true && name_check === true && amount_check === true){
        let patientId = $('#patient_Id').val();
+       let type = $('#ipdCharge-type').val();
        let name = $('#ipdCharge-name').val();
        let qty = $('#ipdCharge-qty').val();
        let amount = $('#ipdCharge-amount').val();
@@ -64,10 +66,10 @@ $('#ipdCharge-form').on('submit',function(e){
             url:ipdChargeSubmit,
             type:"POST",
             data:{
-                patientId:patientId,name:name,qty:qty,amount:amount
+                patientId:patientId,type:type,name:name,qty:qty,amount:amount
             },
             headers:{
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success:function(response){
                 if(response.success){
@@ -101,12 +103,14 @@ function ipdChargeEdit(id){
         },
         data:{id:id},
         success:function(response){
+            console.log(response);
             if(response.success){
                let getData = response.data[0];
                 $('.ipdChargeSubmit').addClass('d-none');
                 $('.ipdChargeUpdate').removeClass('d-none');
                 $('#ipd-add-charges').modal('show');
                 $('#ipdChargeId').val(id);
+                $('#ipdCharge-type').val(getData.amount_for).change();
                 $('#ipdCharge-name').val(getData.title);
                 $('#ipdCharge-qty').val(getData.qty);
                 $('#ipdCharge-amount').val(getData.amount);
@@ -115,9 +119,11 @@ function ipdChargeEdit(id){
     });
 }
 function ipdChargeUpdate(id){
+    let name_type = validateField('ipdCharge-type', 'select');
     let name_check = validateField('ipdCharge-name', 'input');
     let amount_check = validateField('ipdCharge-amount', 'amount');
-    if(name_check === true && amount_check === true){
+    if(name_type === true && name_check === true && amount_check === true){
+       let type = $('#ipdCharge-type').val();
        let name = $('#ipdCharge-name').val();
        let qty = $('#ipdCharge-qty').val();
        let amount = $('#ipdCharge-amount').val();
@@ -125,7 +131,7 @@ function ipdChargeUpdate(id){
             url:ipdChargeDataUpdate,
             type:"POST",
             data:{
-                id:id,name:name,qty:qty,amount:amount
+                id:id,type:type,name:name,qty:qty,amount:amount
             },
             headers:{
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

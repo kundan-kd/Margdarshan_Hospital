@@ -35,7 +35,15 @@ function getMedicineNames(catId,search){
                 if(response.success){
                     const getData = response.data;
                     if (!getData || getData.length === 0) {
-                        $('.medicine-name-list').append(`<li class="list-group-item">No Data Found!</li>`);
+                        // $('.medicine-name-list').append(`<span><li class="list-group-item">No Data Found!</li><a href="#" id="addNewMedicine" class="badge bg-primary text-white ms-4">Add New</a></span>`);
+
+                        $('.medicine-name-list').append(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>No Data Found!</span>
+                            <a href="#" id="addNewMedicine" class="badge bg-primary text-white ms-4">Add New</a>
+                        </li>
+                        `);
+
                     } else {
                         getData.forEach(function(element){
                                 $('.medicine-name-list').append(
@@ -214,7 +222,7 @@ function checkPayAmountPurchaseAdd(netAmount,amount){
 }
 
 $('#purchaseAdd_form').on('submit',function(e){
-  e.preventDefault();
+    e.preventDefault();
     let billNo_check = validateField('purchaseAdd_billNo', 'input');
     let vendorID_check = validateField('purchaseAdd_vendor', 'select');
     let purchase_date_check = validateField('purchaseAdd_Date', 'select');
@@ -256,6 +264,7 @@ $('#purchaseAdd_form').on('submit',function(e){
                 billNo:billNo,vendorID:vendorID,purchase_date:purchase_date,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,txn:txn,payAmount:payAmount,dueAmount:dueAmount
             },
             success:function(response){
+                console.log(response);
                 if(response.success){
                     toastSuccessAlert('New Purchase added successfully');
                     setTimeout(function(){
@@ -306,4 +315,73 @@ $('#purchaseAdd_paymentMode').on('change',function(e){
         $('.pmode').attr("colspan", "1");
         $('.pmodeTxn').removeClass('d-none');
     }
+});
+
+$('#newMedicineAdd_form').on('submit',function(e){
+    e.preventDefault();
+    let createMed_name = validateField('newMed_name', 'Medicine select');
+    let createMed_category = validateField('newMed_category', 'select');
+    let createMed_company = validateField('newMed_company', 'select');
+    let createMed_unit = validateField('newMed_unit', 'select');
+    let createMed_reOrderingLevel = validateField('newMed_reOrderingLevel', 'select');
+    let createMed_hsn = validateField('newMed_hsn', 'input');
+    let createMed_taxes = validateField('newMed_taxes', 'select');
+    let createMed_boxPacking = validateField('newMed_boxPacking', 'select');
+    if(createMed_name === true && createMed_category === true && createMed_company === true && createMed_unit === true && createMed_reOrderingLevel === true && createMed_hsn === true && createMed_taxes === true && createMed_boxPacking === true){
+
+    let category = $('#newMed_category').val();
+    let company = $('#newMed_company').val();
+    let unit = $('#newMed_unit').val();
+    let re_order_level = $('#newMed_reOrderingLevel').val();
+    let rack = $('#newMed_rack').val();
+    let name = $('#newMed_name').val();
+    let composition_array = $('select[name="newMed_composition[]"]').map(function(){return $(this).val();}).get();
+    let hsn = $('#newMed_hsn').val();
+    let taxes = $('#newMed_taxes').val();
+    let box_pack = $('#newMed_boxPacking').val();
+    let narration = $('#newMed_narration').val();
+    $.ajax({
+        url:newMedicineAdd,
+        type:"POST",
+        headers:{
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data:{
+            category:category,company:company,unit:unit,re_order_level:re_order_level,rack:rack,name:name,composition:composition_array,hsn:hsn,taxes:taxes,box_pack:box_pack,narration:narration
+        },
+        success:function(response){
+            let getData = response.data;
+            if(response.success){
+                toastSuccessAlert(response.success);
+                $('.medicine-name-list').empty();
+                $('#purchaseAdd_category0').val(response.data.category_id).change();
+                // Directly fill the medicine name and ID into the input fields
+                $('#purchaseAdd_name0').val(getData.medicine_name);
+                $('#purchaseAdd_nameId0').val(getData.medicine_id);
+                $('#purchaseAdd_tax0').val(getData.taxes);
+            // Hide the modal and reset the form
+                $('#newMedicineAdd').modal('hide');
+                $('#newMedicineAdd_form')[0].reset();
+                // Reset Select2 dropdowns inside the modal
+                $('#newMed_category').val('').trigger('change');
+                $('#newMed_company').val('').trigger('change');
+                $('#newMed_unit').val('').trigger('change');
+                $('#newMed_composition').val('').trigger('change');
+            }else if(response.error_validation){
+                toastWarningAlert(response.error_validation);
+            }else{
+                toastErrorAlert('something error found');
+            }
+        },
+        error:function(xhr, error, thrown){
+            console.log(xhr.responseText);
+            alert('Error: '+thrown);
+        }
+    });
+}else{
+    console.log('Please fill all mandatory fields');
+}
+});
+$('#newMedicineAdd').on('hidden.bs.modal', function () {
+    $('#purchaseAdd_batch0').focus();
 });

@@ -917,11 +917,25 @@
       </div>
       <form id="emergencyCharge-form">
         <div class="modal-body">
-          <div class="row">
-              <div class="col-md-6">
+          <div class="row g-2">
+             <div class="col-md-6">
                 <input type="hidden" id="emergencyChargeId">
-                <label class="form-label fw-medium" for="emergencyCharge-name">Name</label> <sup class="text-danger">*</sup>
-                  <input id="emergencyCharge-name" type="text" class="form-control form-control-sm" placeholder="Charge Name" oninput="validateField(this.id,'input')">
+                <label class="form-label fw-medium" for="emergencyCharge-type">Charge Type</label> <sup class="text-danger">*</sup>
+                  <select id="emergencyCharge-type" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
+                    <option value="">Select</option>
+                    <option value="Bed Charge">Bed Charge</option>
+                    <option value="Doctor Visit">Doctor Visit</option>
+                    <option value="Lab">Lab Charge</option>
+                    <option value="Nursing">Nursing Charge</option>
+                    <option value="ICU">ICU Charge</option>
+                    <option value="NICU">NICU Charge</option>
+                    <option value="Other">Other Charge</option>
+                  </select>
+                  <div class="emergencyCharge-type_errorCls d-none"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium" for="emergencyCharge-name">Description</label> <sup class="text-danger">*</sup>
+                  <input id="emergencyCharge-name" type="text" class="form-control form-control-sm" placeholder="Charge Description" oninput="validateField(this.id,'input')">
                   <div class="emergencyCharge-name_errorCls d-none"></div>
               </div>
               <div class="col-md-6">
@@ -1409,6 +1423,11 @@ getDateTimePicker('#emergencyVital-date');
      $('#emergency-nurse-note').on('shown.bs.modal', function () {
         $('.select2-cls').select2({
             dropdownParent: $('#emergency-nurse-note')
+        });
+    });
+     $('#emergency-add-charges').on('shown.bs.modal', function () {
+        $('.select2-cls').select2({
+            dropdownParent: $('#emergency-add-charges')
         });
     });
       const emergencyFindingSubmit = "{{route('emergency.emergencyFindingSubmit')}}";

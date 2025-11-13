@@ -99,11 +99,10 @@ class MedicineController extends Controller
     }
     
      public function medicineAdd(Request $request){
-       // dd($request->all());
+        // dd($request->all());
         $validator = Validator::make($request->all(),[
         'category' => 'required',
         'company' => 'required',
-        // 'group' => 'required',
         'unit' => 'required',
         're_order_level' => 'required',
         'rack' => 'required',
@@ -117,6 +116,7 @@ class MedicineController extends Controller
         if($validator->fails()){
             return response()->json(['error_validation'=>$validator->errors()->all()],200);
         }
+        $data[] = '';
         $medicines = new Medicine();
         $medicines->name = $request->name;
         $medicines->category_id = $request->category;
@@ -131,7 +131,13 @@ class MedicineController extends Controller
         $medicines->box_packing = $request->box_pack;
         $medicines->narration = $request->narration;
         if($medicines->save()){
-            return response()->json(['success'=>'Medicine addedd successfully'],200);
+            $data = [
+                'medicine_id' => $medicines->id,
+                'medicine_name' => $request->name,
+                'category_id' => $request->category,
+                'taxes'=> $request->taxes
+            ];  
+            return response()->json(['success'=>'Medicine addedd successfully','data' => $data],200);
         }else{
             return response()->json(['error_success'=>'Medicine not added'],500);
         }

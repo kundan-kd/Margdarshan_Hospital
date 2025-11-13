@@ -132,7 +132,7 @@
         }
 
         .services-table td {
-            padding: 15px;
+            padding: 10px;
             border-bottom: 1px solid #e9ecef;
             font-size: 14px;
         }
@@ -287,6 +287,14 @@
         .bill-detail{
             font-weight: 600 ;
         }
+        .title-background{
+            background: #e8f1ff;
+        }
+        .title-color{
+            color: #737373;
+            padding-bottom: 4px !important;
+            padding-top: 4px !important;
+        }
     </style>
 </head>
 <body>
@@ -372,6 +380,126 @@
 
             <!-- Services Table -->
             <table class="services-table">
+    <thead>
+        <tr>
+            <th>Sr.No.</th>
+            {{-- <th>Title</th> --}}
+            <th>Description</th>
+            <th>Qty</th>
+            <th class="text-center">Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{-- Charge1 Section --}}
+        @php $i = 1; @endphp
+        @if($payment_bills->where('amount_for', 'Bed Charge')->count())
+           <tr class="title-background"><td colspan="5" class="text-center title-color"><strong>Bed Charges</strong></td></tr>
+            @foreach($payment_bills->where('amount_for', 'Bed Charge') as $bill)
+                <tr>
+                    <td>{{ $i++ }}</td>
+                    {{-- <td>{{ $bill->amount_for }}</td> --}}
+                    <td>{{ $bill->title }}</td>
+                    <td>{{ $bill->qty ?? 'NA' }}</td>
+                    <td>{{ $bill->amount }}</td>
+                </tr>
+            @endforeach
+        @endif
+
+        {{-- Charge2 Section --}}
+        @if($payment_bills->where('amount_for', 'Doctor Visit')->count())
+              <tr class="title-background"><td colspan="5" class="text-center title-color"><strong>Doctor Visit Charges</strong></td></tr>
+            @foreach($payment_bills->where('amount_for', 'Doctor Visit') as $bill)
+                <tr>
+                    <td>{{ $i++ }}</td>
+                    {{-- <td>{{ $bill->amount_for }}</td> --}}
+                    <td>{{ $bill->title }}</td>
+                    <td>{{ $bill->qty ?? 'NA' }}</td>
+                    <td>{{ $bill->amount }}</td>
+                </tr>
+            @endforeach
+        @endif
+        {{-- Charge2 Section --}}
+        @if($payment_bills->where('amount_for', 'Lab')->count())
+              <tr class="title-background"><td colspan="5" class="text-center title-color"><strong>Lab Charges</strong></td></tr>
+            @foreach($payment_bills->where('amount_for', 'Lab') as $bill)
+                <tr>
+                    <td>{{ $i++ }}</td>
+                    {{-- <td>{{ $bill->amount_for }}</td> --}}
+                    <td>{{ $bill->title }}</td>
+                    <td>{{ $bill->qty ?? 'NA' }}</td>
+                    <td>{{ $bill->amount }}</td>
+                </tr>
+            @endforeach
+        @endif
+        {{-- Charge2 Section --}}
+        @if($payment_bills->where('amount_for', 'Nursing')->count())
+              <tr class="title-background"><td colspan="5" class="text-center title-color"><strong>Nursing Charges</strong></td></tr>
+            @foreach($payment_bills->where('amount_for', 'Nursing') as $bill)
+                <tr>
+                    <td>{{ $i++ }}</td>
+                    {{-- <td>{{ $bill->amount_for }}</td> --}}
+                    <td>{{ $bill->title }}</td>
+                    <td>{{ $bill->qty ?? 'NA' }}</td>
+                    <td>{{ $bill->amount }}</td>
+                </tr>
+            @endforeach
+        @endif
+        {{-- Charge2 Section --}}
+        @if($payment_bills->where('amount_for', 'ICU')->count())
+              <tr class="title-background"><td colspan="5" class="text-center title-color"><strong>ICU Charges</strong></td></tr>
+            @foreach($payment_bills->where('amount_for', 'ICU') as $bill)
+                <tr>
+                    <td>{{ $i++ }}</td>
+                    {{-- <td>{{ $bill->amount_for }}</td> --}}
+                    <td>{{ $bill->title }}</td>
+                    <td>{{ $bill->qty ?? 'NA' }}</td>
+                    <td>{{ $bill->amount }}</td>
+                </tr>
+            @endforeach
+        @endif
+        {{-- Charge2 Section --}}
+        @if($payment_bills->where('amount_for', 'NICU')->count())
+              <tr class="title-background"><td colspan="5" class="text-center title-color"><strong>NICU Charges</strong></td></tr>
+            @foreach($payment_bills->where('amount_for', 'NICU') as $bill)
+                <tr>
+                    <td>{{ $i++ }}</td>
+                    {{-- <td>{{ $bill->amount_for }}</td> --}}
+                    <td>{{ $bill->title }}</td>
+                    <td>{{ $bill->qty ?? 'NA' }}</td>
+                    <td>{{ $bill->amount }}</td>
+                </tr>
+            @endforeach
+        @endif
+        {{-- Charge2 Section --}}
+        @if($payment_bills->where('amount_for', 'Other')->count())
+              <tr class="title-background"><td colspan="5" class="text-center title-color"><strong>Other Charges</strong></td></tr>
+            @foreach($payment_bills->where('amount_for', 'Other') as $bill)
+                <tr>
+                    <td>{{ $i++ }}</td>
+                    {{-- <td>{{ $bill->amount_for }}</td> --}}
+                    <td>{{ $bill->title }}</td>
+                    <td>{{ $bill->qty ?? 'NA' }}</td>
+                    <td>{{ $bill->amount }}</td>
+                </tr>
+            @endforeach
+        @endif
+
+        {{-- Others Section --}}
+        @if($payment_bills->whereNotIn('amount_for', ['Bed Charge', 'Doctor Visit','Lab','Nursing','ICU','NICU','Other'])->count())
+             <tr class="title-background"><td colspan="5" class="text-center title-color"><strong>Charges</strong></td></tr>
+            @foreach($payment_bills->whereNotIn('amount_for', ['Bed Charge', 'Doctor Visit','Lab','Nursing','ICU','NICU','Other']) as $bill)
+                <tr>
+                    <td>{{ $i++ }}</td>
+                    {{-- <td>{{ $bill->amount_for }}</td> --}}
+                    <td>{{ $bill->title }}</td>
+                    <td>{{ $bill->qty ?? 'NA' }}</td>
+                    <td>{{ $bill->amount }}</td>
+                </tr>
+            @endforeach
+        @endif
+    </tbody>
+</table>
+            {{-- <table class="services-table">
                 <thead>
                     <tr>
                         <th>Sr.No.</th>
@@ -398,7 +526,7 @@
                         @endphp
                         @endforeach
                 </tbody>
-            </table>
+            </table> --}}
 
             <!-- Total Section -->
             <div class="total-section">

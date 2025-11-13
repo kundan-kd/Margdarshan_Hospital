@@ -216,7 +216,7 @@ medicines
 
 });
   const medicineView = "{{route('medicine.medicineView')}}";
-  const medicineAdd = "{{route('medicine.medicineAdd')}}";
+  const medicineAdd = "{{route('medicine.medicineAdd')}}"; // this route also used in purchase-add.blade.php
   const getMedicineData = "{{route('medicine.getMedicineData')}}";
   const updateMedicineData = "{{route('medicine.updateMedicineData')}}";
   const deleteMedicineData = "{{route('medicine.deleteMedicineData')}}";

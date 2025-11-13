@@ -1092,6 +1092,7 @@ class IpdinController extends Controller
     }
      public function ipdChargeSubmit(Request $request){
         $validator = Validator::make($request->all(),[
+            'type' => 'required',
             'name' => 'required',
             'qty' => 'nullable',
             'amount' => 'required'
@@ -1104,7 +1105,7 @@ class IpdinController extends Controller
         $payment_bills->type = "IPD";
         $payment_bills->patient_id = $request->patientId;
         $payment_bills->admit_id = $admit_id;
-        $payment_bills->amount_for = 'Charge';
+        $payment_bills->amount_for = $request->type;
         $payment_bills->title = $request->name;
         $payment_bills->qty = $request->qty;
         $payment_bills->amount = $request->amount;
@@ -1114,7 +1115,7 @@ class IpdinController extends Controller
             $timelines->patient_id = $request->patientId;
             $timelines->admit_id = $admit_id;
             $timelines->title = "Charges";
-            $timelines->desc = "Charges added for treatment ₹".$request->amount;
+            $timelines->desc = "Charges added for ".$request->type." ₹".$request->amount;
             $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Charge added successfully'],200);
@@ -1261,6 +1262,7 @@ class IpdinController extends Controller
     public function ipdChargeDataUpdate(Request $request){
         $charge_data = PaymentBill::where('id',$request->id)->get(['patient_id','admit_id','amount']);
         $update = PaymentBill::where('id',$request->id)->update([
+            'amount_for' => $request->type,
             'title' => $request->name,
             'qty' => $request->qty,
             'amount' => $request->amount
@@ -1271,7 +1273,7 @@ class IpdinController extends Controller
             $timelines->patient_id = $charge_data[0]->patient_id;
             $timelines->admit_id = $charge_data[0]->admit_id;
             $timelines->title = "Charges";
-            $timelines->desc = "Charges updated from ₹".$charge_data[0]->amount." to ₹".$request->amount;
+            $timelines->desc =  $request->type." Charges updated from ₹".$charge_data[0]->amount." to ₹".$request->amount;
             $timelines->created_by = Auth::id();
             $timelines->save();
             return response()->json(['success'=>'Charge updated successufuly'],200);

@@ -17,6 +17,9 @@ Bulk Lead Add
   </div>
     <div class="card">
       <div class="card-body">
+         <div class="d-flex justify-content-end">
+            <a href="{{ asset('backend/uploads/csv-demo.csv') }}" download class="text-decoration-none text-primary">CSV Demo</a>
+        </div>
          <div class="row gy-3 mt-2">
           <form action="" id="lead-appendForm" class="needs-validation" novalidate>
                 <div class="row gy-3 mt-2">
@@ -109,6 +112,7 @@ Bulk Lead Add
                         </div>
                     </div>
                     <div class="col-md-12 d-flex justify-content-end">
+                         <button type="button" class="btn btn-primary-600  btn-sm fw-normal" style="margin: 8px;" data-bs-toggle="modal" data-bs-target="#addCSV">Upload</button>
                         <button type="submit" class="btn btn-primary-600  btn-sm fw-medium m-2 leadSubmit"> <i class="ri-checkbox-circle-line"></i> Add Bulk</button>
                         
                     </div>
@@ -145,7 +149,42 @@ Bulk Lead Add
       </div>
     </div>
   </div>
-
+  <!-- csv upload start -->
+  <div class="modal fade" id="addCSV" tabindex="-1" role="dialog" aria-labelledby="addCSV" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content border-0">
+        <div class="modal-toggle-wrapper  text-start dark-sign-up">
+          <div class="modal-header bg-primary-600 p-11">
+             <h6 class="modal-title fw-normal text-md text-white bedtype-title">Upload CSV</h6>
+                <button class="btn-close btn-custom py-0" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+              <form id="csv_form" class="needs-validation" novalidate="">
+                @csrf
+                <div class="modal-body">
+                <div class="row">
+                  <div class="col-md-12">
+                    <label class="form-label" for="csv_file">File <span><small>(format should be same as csv demo)</small></span></label>
+                    <input class="form-control form-control-sm" id="csv_file" type="file" style="background-image: none;padding-top: 5px !important;" required>
+                    <div class="invalid-feedback">
+                        Upload CSV file
+                    </div>
+                </div>
+                </div>
+                </div>
+                    <div class="modal-footer mt-3">
+                        <button class="btn btn-outline-danger btn-sm" type="button"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary btn-sm csvAddBtn" type="submit">Submit</button>
+                        <button class="btn btn-primary btn-sm csvSpinnBtn d-none" type="button" disabled>
+                        Please Wait...
+                        </button>
+                    </div>
+              </form>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- csv upload end-->
  @endsection
 @section('extra-js')
 <script>
@@ -155,6 +194,7 @@ Bulk Lead Add
   }
 });
     const addBulkLead = "{{route('sales.addBulkLead')}}";
+    const csvUpload = "{{ route('sales.csvUpload') }}";
 </script>
   {{-----------external js files added for page functions------------}}
   <script src="{{asset('backend/assets/js/custom/admin/sales/lead.js')}}"></script>

@@ -62,45 +62,122 @@ class LeadController extends Controller
    public function bulkLead(){
      return view('backend.admin.modules.sales.bulk-lead-add');
    }
- public function addBulkLead(Request $request){
+//  public function addBulkLead(Request $request){
+//     $validator = Validator::make($request->all(), [
+//         'name'    => 'required|array',
+//         'mobile'  => 'required|array',
+//         'source'  => 'required|array',
+//         'address' => 'required|array',
+//         'city'    => 'required|array',
+//         'state'   => 'required|array',
+//         'pin'     => 'required|array',
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json(['error_validation' => $validator->errors()->all(),], 422);
+//     }
+
+//     $leadData = [];
+
+//     foreach ($request->name as $index => $name) {
+//         $leadData[] = [
+//             'name'    => $name,
+//             'mobile'  => $request->mobile[$index],
+//             'source'  => $request->source[$index],
+//             'address' => $request->address[$index],
+//             'city'    => $request->city[$index],
+//             'state'   => $request->state[$index],
+//             'pin'     => $request->pin[$index],
+//             'created_by'    => Auth::id(),
+//             'created_at' => now(),
+//             'updated_at' => now(),
+//         ];
+//     }
+//     $leadInsert = Lead::insert($leadData); // insert input bulk array data in db at once
+//     if($leadInsert){
+//         return response()->json(['success' => 'Bulk lead added successfully'], 200);
+//     }else{
+//         return response()->json(['error_success' => 'Bulk lead not added']);
+//     }
+
+// }
+public function addBulkLead(Request $request)
+{
+    // Validate that 'leads' is an array and each item has required fields
     $validator = Validator::make($request->all(), [
-        'name'    => 'required|array',
-        'mobile'  => 'required|array',
-        'source'  => 'required|array',
-        'address' => 'required|array',
-        'city'    => 'required|array',
-        'state'   => 'required|array',
-        'pin'     => 'required|array',
+        'leads' => 'required|array',
+        'leads.*.name'    => 'required|string',
+        'leads.*.mobile'  => 'required|string',
+        'leads.*.source'  => 'required|string',
+        'leads.*.address' => 'required|string',
+        'leads.*.city'    => 'required|string',
+        'leads.*.state'   => 'required|string',
+        'leads.*.pin'     => 'required|string',
     ]);
 
     if ($validator->fails()) {
-        return response()->json(['error_validation' => $validator->errors()->all(),], 422);
+        return response()->json([
+            'error_validation' => $validator->errors()->all(),
+        ], 422);
     }
 
     $leadData = [];
 
-    foreach ($request->name as $index => $name) {
+    foreach ($request->leads as $lead) {
         $leadData[] = [
-            'name'    => $name,
-            'mobile'  => $request->mobile[$index],
-            'source'  => $request->source[$index],
-            'address' => $request->address[$index],
-            'city'    => $request->city[$index],
-            'state'   => $request->state[$index],
-            'pin'     => $request->pin[$index],
-            'created_by'    => Auth::id(),
+            'name'       => $lead['name'],
+            'mobile'     => $lead['mobile'],
+            'source'     => $lead['source'],
+            'address'    => $lead['address'],
+            'city'       => $lead['city'],
+            'state'      => $lead['state'],
+            'pin'        => $lead['pin'],
+            'created_by' => Auth::id(),
             'created_at' => now(),
             'updated_at' => now(),
         ];
     }
-    $leadInsert = Lead::insert($leadData); // insert input bulk array data in db at once
-    if($leadInsert){
+
+    $leadInsert = Lead::insert($leadData);
+
+    if ($leadInsert) {
         return response()->json(['success' => 'Bulk lead added successfully'], 200);
-    }else{
+    } else {
         return response()->json(['error_success' => 'Bulk lead not added']);
     }
-
 }
+    public function csvUpload(Request $request){
+      // Validate the uploaded file
+    $validator = Validator::make($request->all(), [
+        'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 422);
+    }
+
+    $file = $request->file('csv_file');
+
+    // Open and read the CSV file
+    $data = [];
+    if (($handle = fopen($file->getRealPath(), 'r')) !== false) {
+        $header = fgetcsv($handle); // Read the first row as header
+        while (($row = fgetcsv($handle)) !== false) {
+            $data[] = array_combine($header, $row); // Combine header with row values
+        }
+        fclose($handle);
+    }
+
+    // Now $data contains all CSV rows as associative arrays
+    return response()->json([
+        'success' => 'CSV processed successfully',
+        'data' => $data
+    ]);
+
+        
+    }
+
+
     public function leadCenter(){
     $leads = Lead::get();
     $salesTeamMember = User::where('status',1)->where('usertype_id',7)->get(['id','name','sales_team_id']);

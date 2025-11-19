@@ -63,6 +63,7 @@ $('.user-add').on('click',function(e){
     e.preventDefault();
     $('.user-title').html('Create user');
     $('#userID').val('');
+    $('#user-userType').prop('disabled',false);
     $('#addUser-form')[0].reset();
     $('.userAddUpdate').addClass('d-none');
     $('.userAddSubmit').removeClass('d-none');
@@ -214,6 +215,7 @@ function userEdit(id){
                 $('#userId').val(getData.id);
                 $('#user-departmentId').val(getData.department_id);
                 $('#user-userType').val(getData.usertype_id);
+                $('#user-userType').prop('disabled',true);
                 $('#user-bloodType').val(getData.bloodtype_id);
                 $('#user-opdRoom').val(getData.room_number);
                 $('#user-fee').val(getData.fee);

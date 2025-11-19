@@ -123,7 +123,7 @@
         </div><!-- card end -->
       </div>
       @endcan
-      
+       @can('Dashboard Appointments')
       <div class="col-md-3">
         <div class="card shadow-none border bg-gradient-start-3 h-100">
           <div class="card-body p-20">
@@ -154,7 +154,7 @@
           </div>
         </div><!-- card end -->
       </div>
-      
+      @endcan
       @can('Dashboard Total Bill')
       <div class="col-md-3">
         <div class="card shadow-none border bg-gradient-start-5 h-100">

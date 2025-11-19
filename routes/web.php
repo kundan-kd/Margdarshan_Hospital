@@ -487,6 +487,7 @@ Route::get('/process-center-lead',[LeadController::class,'lead'])->name('sales.l
 Route::post('/process-center-lead-add',[LeadController::class,'addLead'])->name('sales.addLead');
 Route::get('/process-center-bulk-lead',[LeadController::class,'bulkLead'])->name('sales.bulkLead');
 Route::post('/process-center-bulk-lead-add',[LeadController::class,'addBulkLead'])->name('sales.addBulkLead');
+Route::post('/process-center-csv-add',[LeadController::class,'csvUpload'])->name('sales.csvUpload');
 Route::get('/process-center-lead-center',[LeadController::class,'leadCenter'])->name('sales.leadCenter');
 Route::post('/process-center-lead-center-view',[LeadController::class,'viewSingleAssignLeads'])->name('sales.viewSingleAssignLeads');
 Route::post('/process-center-single-lead-assign',[LeadController::class,'assignSingleLead'])->name('sales.assignSingleLead');

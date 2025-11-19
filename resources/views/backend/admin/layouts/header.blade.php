@@ -157,25 +157,36 @@
           <span>Process Center</span> 
         </a>
         <ul class="sidebar-submenu">
+          @canany(['Sales Manager View', 'Sales Rep View'])
           <li>
             <a href="{{route('sales.analytics')}}"><i class="ri-file-chart-line"></i>Analytics</a>
-          </li>
+          </li>            
+          @endcanany
+          @can('Sales Manager View')
           <li>
             <a href="{{route('sales.lead')}}"><i class="ri-file-list-2-line"></i>Lead Add</a>
-          </li>
+          </li>            
+          @endcan
+          @can('Sales Manager View')
           <li>
             <a href="{{route('sales.bulkLead')}}"><i class="ri-file-list-3-line"></i>Bulk Lead Add</a>
           </li>
+          @endcan
+          @can('Sales Manager View')
           <li>
             <a href="{{route('sales.leadCenter')}}"><i class="ri-user-received-line"></i>Lead Center</a>
           </li> 
+          @endcan
+          @canany(['Sales Manager View', 'Sales Rep View'])
           <li>
             <a href="{{route('sales.processDesk')}}"><i class="ri-donut-chart-fill"></i>Process Desk</a>
           </li> 
+          @endcanany
+          @can('Sales Manager View')
           <li>
             <a href="{{route('sales.trash')}}"><i class="ri-delete-bin-line"></i>Trash List</a>
           </li> 
-          
+          @endcan
         </ul>
       </li>
     @endcan

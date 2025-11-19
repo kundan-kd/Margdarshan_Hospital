@@ -77,7 +77,8 @@ let table = $('#patient-table').DataTable({
         }
 
     ],
- dom: 'Blfrtip',
+    order: [[0, 'desc']], // Sort by patient_id (first column) in descending order
+    dom: 'Blfrtip',
     buttons: [
         {
             extend: 'excelHtml5',

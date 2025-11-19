@@ -62,7 +62,8 @@ let table = $('#appointment-book-table').DataTable({
         },
 
     ],
-     dom: 'Blfrtip',
+    order: [[1, 'desc']], // Sort by appointment_id (first column) in descending order
+    dom: 'Blfrtip',
     buttons: [
         {
             extend: 'excelHtml5',

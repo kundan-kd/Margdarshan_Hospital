@@ -29,7 +29,8 @@ let table_opd_patients = $('#opd-out-list-table').DataTable({
         { data: 'status', name: 'status' },
         { data: 'action', name: 'action',orderable:false,searchable:false }
     ],
-     dom: 'Blfrtip',
+    order: [[0, 'desc']], // Sort by appointment_id (first column) in descending order
+    dom: 'Blfrtip',
     buttons: [
         {
             extend: 'excelHtml5',

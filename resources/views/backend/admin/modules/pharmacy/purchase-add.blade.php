@@ -8,6 +8,19 @@ purchase-add
     .medicine-name-list li{
         cursor: pointer;
     }
+    #addNewMedicine{
+        position: absolute;
+        top: 10px;
+        right: 8px;
+        background-color: #0d6efd;
+        color: white;
+        padding: 4px 8px;
+        font-size: 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        line-height: 1;
+        z-index: 100;
+    }
 </style>
 @endsection
 @section('main-container')
@@ -60,7 +73,7 @@ purchase-add
                                 <th class="text-nowrap text-neutral-700">
                                     Category
                                 </th>
-                                <th class="text-nowrap text-neutral-700" style="width: 250px;">
+                                <th class="text-nowrap text-neutral-700" style="width: 230px;">
                                     Name <div class="spinner-border spinner-border-sm name-loader d-none" role="status"></div>
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
@@ -103,17 +116,19 @@ purchase-add
                                         @endforeach
                                     </select>
                                 </td>
-                                <td>
-                                    {{-- <select id="purchaseAdd_name0" name="purchaseAdd_name[]" class="form-select form-select-sm select2-cls"  onchange="getTaxValue(this.value,0)">
-                                        <option value="" selected>Select</option>
-                                    </select> --}}
-                                      <input id="purchaseAdd_name0" class="form-control form-control-sm" type="text" placeholder="Medicine Name" oninput="getMedicineNames(document.getElementById('purchaseAdd_category0').value,this.value)" style="width: 250px;">
-                                      <input type="hidden" id="purchaseAdd_nameId0" name="purchaseAdd_name[]">
+                               <td>
+                                    <div style="position: relative; width: 230px;">
+                                        <input id="purchaseAdd_name0" class="form-control form-control-sm" type="text" placeholder="Medicine Name"
+                                        oninput="getMedicineNames(document.getElementById('purchaseAdd_category0').value,this.value)" autocomplete="off"
+                                        style="width: 100%; padding-right: 60px;"/>
+                                        <span class="add-new-medicine d-none" id="addNewMedicine">Add New</span>
+                                    </div>
+                                    <input type="hidden" id="purchaseAdd_nameId0" name="purchaseAdd_name[]">
 
-                                      <div class="d-block position-relative" style="z-index :99;">
-                                            <ul class="search-item list-group position-absolute rounded-0 medicine-name-list" style="width: -webkit-fill-available;">
-                                            <!-- dropdown list of patients appended here using JS -->
-                                            </ul>
+                                    <div class="d-block position-relative" style="z-index: 99;">
+                                        <ul class="search-item list-group position-absolute rounded-0 medicine-name-list" style="width: -webkit-fill-available;">
+                                        <!-- dropdown list of patients appended here using JS -->
+                                        </ul>
                                     </div>
                                 </td>
                                 <td>
@@ -145,7 +160,7 @@ purchase-add
                                     <input id="purchaseAdd_purchaseRate0" name="purchaseAdd_purchaseRate[]" type="number" class="form-control form-control-sm" placeholder="Rate"  step="0.01" readonly>
                                 </td>
                                 <td>
-                                    <button type="button" class="mx-1 fw-semibold w-32-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore" onclick="addNewRow()">
+                                    <button type="button" class="mx-1 fw-semibold w-32-px h-32-px bg-primary-light text-primary-600 rounded d-inline-flex align-items-center justify-content-center addMore purchaseAddBtn" onclick="addNewRow()">
                                 <i class="ri-add-line"></i>
                             </button>
                                 </td>
@@ -239,12 +254,7 @@ purchase-add
       </div>
       <div class="modal-body">
          <div class="row">
-          <input type="hidden" id="newMed_id">
-            <div class="col-md-3 mb-3">
-              <label class="form-label fw-normal" for="newMed_name">Medicine Name</label>
-                <input id="newMed_name" type="text" class="form-control form-control-sm" placeholder=" Medicine Name" oninput="validateField(this.id,'input')">
-                  <div class="newMed_name_errorCls d-none"></div>
-            </div>
+          <input type="hidden" id="newMed_id">            
             <div class="col-md-3 mb-3">
               <label class="form-label fw-normal" for="newMed_category">Category</label>
                 <select id="newMed_category" class="form-select form-select-sm select2-cls" style="width: 100%" oninput="validateField(this.id,'select')">
@@ -254,6 +264,11 @@ purchase-add
                       @endforeach
                   </select>
                  <div class="newMed_category_errorCls d-none"></div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label fw-normal" for="newMed_name">Medicine Name</label>
+                <input id="newMed_name" type="text" class="form-control form-control-sm" placeholder=" Medicine Name" autocomplete="off" oninput="validateField(this.id,'input')">
+                  <div class="newMed_name_errorCls d-none"></div>
             </div>
             <div class="col-md-3 mb-3">
               <label class="form-label fw-normal" for="newMed_company">Company</label>
@@ -318,7 +333,7 @@ purchase-add
         </div>
       </div>
       <div class="modal-footer pt-2 pb-3 border-top-0">
-        <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-outline-danger btn-sm" type="button" data-bs-dismiss="modal" onclick="resetNewMedicineAdd()">Cancel</button>
         <button type="submit" class="btn btn-primary-600  btn-sm fw-normal">Save</button>
         {{-- <button type="button" class="btn btn-primary-600  btn-sm fw-normal medicineUpdateBtn d-none" onclick="medicineUpdate(document.getElementById('createMed_id').value)"><i class="ri-checkbox-circle-line"></i> Update</button> --}}
          </form>
@@ -340,9 +355,19 @@ purchase-add
 
 // Handle click on the "Add New" badge inside the noResults message
   $(document).on('click', '#addNewMedicine', function (e) {
-      e.preventDefault();
-      $('#newMedicineAdd').modal('show'); // Show modal to add new medicine
-  });
+    e.preventDefault();
+
+    let form = $('#newMedicineAdd_form');
+    let purchaseAdd_category0 = $('#purchaseAdd_category0');
+    let purchaseAdd_name0 = $('#purchaseAdd_name0');
+
+    if (form.length) form[0].reset();
+
+    $('#newMed_category').val(purchaseAdd_category0.val()).trigger('change');
+    $('#newMed_name').val(purchaseAdd_name0.val()).trigger('change');
+
+    $('#newMedicineAdd').modal('show');
+});
 
 // Reinitialize Select2 inside the modal only targetting inside model dropdown
 $('#newMedicineAdd').on('show.bs.modal', function () {

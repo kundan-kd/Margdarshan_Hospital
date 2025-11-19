@@ -35,16 +35,17 @@ function getMedicineNames(catId,search){
                 if(response.success){
                     const getData = response.data;
                     if (!getData || getData.length === 0) {
-                        // $('.medicine-name-list').append(`<span><li class="list-group-item">No Data Found!</li><a href="#" id="addNewMedicine" class="badge bg-primary text-white ms-4">Add New</a></span>`);
-
+                        $('.add-new-medicine').removeClass('d-none');
+                        $('.medicine-name-list').empty();
                         $('.medicine-name-list').append(`
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span>No Data Found!</span>
-                            <a href="#" id="addNewMedicine" class="badge bg-primary text-white ms-4">Add New</a>
                         </li>
                         `);
 
                     } else {
+                        $('.add-new-medicine').addClass('d-none');
+                        $('.medicine-name-list').empty();
                         getData.forEach(function(element){
                                 $('.medicine-name-list').append(
                                 `<li class="list-group-item" data-name-id="${element.id}" data-taxes="${element.taxes}" data-name="${element.name}">${element.name}</li>`
@@ -56,6 +57,7 @@ function getMedicineNames(catId,search){
             }
         });
     }else{
+        $('.add-new-medicine').addClass('d-none');
         $('.medicine-name-list').empty();
     }
 }
@@ -127,7 +129,7 @@ function addNewRow(){
         </td>
         </tr>`;
         $('.newRowAppend').parent().append(itemDatas); // Append properly to tbody
-        
+        $('.purchaseAddBtn').css('border','none');
         $('#purchaseAdd_category0').val('').change();
         $('#purchaseAdd_name0').val('').change();
         $('#purchaseAdd_batch0').val('');
@@ -242,7 +244,13 @@ $('#purchaseAdd_form').on('submit',function(e){
         let qty = $('input[name="purchaseAdd_qty[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
         let purchaseRate = $('input[name="purchaseAdd_purchaseRate[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
         let amount = $('input[name="purchaseAdd_amount[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
-       
+        if(category == '' || name == '' || batchNo =='' || qty =='' || amount ==''){
+            toastErrorAlert('Kindly add items before submit');
+            $('.purchaseAddSpinnBtn').addClass('d-none');
+            $('.purchaseAddSubmitBtn').removeClass('d-none');
+            $('.purchaseAddBtn').css('border','1px solid red');
+            return;
+        }
         let naration = $('#purchaseAdd_naration').val();
         let totalAmount = parseFloat($('.purchaseAdd_totalAmt').html());
         let totalDiscountPer = parseFloat($('#purchaseAdd_discount').val()) || 0;
@@ -264,12 +272,14 @@ $('#purchaseAdd_form').on('submit',function(e){
                 billNo:billNo,vendorID:vendorID,purchase_date:purchase_date,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,txn:txn,payAmount:payAmount,dueAmount:dueAmount
             },
             success:function(response){
-                console.log(response);
                 if(response.success){
+                    $('.purchaseAddBtn').css('border','none');
                     toastSuccessAlert('New Purchase added successfully');
                     setTimeout(function(){
                         window.location = '/purchase';
                     },2500);
+                }else if(response.error_validation){
+                    toastErrorAlert('Please fill all required fields');
                 }else{
                     toastErrorAlert('something error found');
                     $('.purchaseAddSpinnBtn').addClass('d-none');
@@ -282,20 +292,16 @@ $('#purchaseAdd_form').on('submit',function(e){
     }   
 });
     function getPurchaseMedicine(id,randNum){
-        // let medicineDropdown1 = $("#purchaseAdd_name" + randNum);
-        // medicineDropdown1.find("option:not(:first)").remove();
-        // medicineCategory.forEach(element => {
-        //     if(element.id == parseInt(id)){
-        //         element.medicine.forEach(element_medicine => {
-        //             medicineDropdown1.append(`<option value="${element_medicine.id}">${element_medicine.name}</option>`);
-        //         });
-        //     }
-        // });
-        // medicineDropdown1.trigger("change");
+        $('.add-new-medicine').addClass('d-none');
+        $('.medicine-name-list').empty();
+        $('#purchaseAdd_name0').val('');
+        $('#newMedicineAdd').on('hidden.bs.modal', function () {
+            $('#purchaseAdd_name0').focus();
+        });
     }
     function getTaxValue(id,randNum){
-         let category = $("#purchaseAdd_category" + randNum).val();
-         medicineCategory.forEach(element => {
+        let category = $("#purchaseAdd_category" + randNum).val();
+        medicineCategory.forEach(element => {
             if(element.id == parseInt(category)){
                 element.medicine.forEach(element_medicine => {
                     if(element_medicine.id == parseInt(id)){
@@ -316,7 +322,22 @@ $('#purchaseAdd_paymentMode').on('change',function(e){
         $('.pmodeTxn').removeClass('d-none');
     }
 });
-
+function resetNewMedicineAdd(){
+    $('#newMed_category').val('').trigger('change'); //reset select2 dropdown
+    $('#newMed_company').val('').trigger('change'); //reset select2 dropdown
+    $('#newMed_unit').val('').trigger('change'); //reset select2 dropdown
+    $('.newMed_name_errorCls').addClass('d-none');
+    $('.newMed_category_errorCls').addClass('d-none');
+    $('.newMed_company_errorCls').addClass('d-none');
+    $('.newMed_group_errorCls').addClass('d-none');
+    $('.newMed_unit_errorCls').addClass('d-none');
+    $('.newMed_reOrderingLevel_errorCls').addClass('d-none');
+    $('.newMed_rack_errorCls').addClass('d-none');
+    $('.newMed_composition_errorCls').addClass('d-none');
+    $('.newMed_hsn_errorCls').addClass('d-none');
+    $('.newMed_taxes_errorCls').addClass('d-none');
+    $('.newMed_boxPacking_errorCls').addClass('d-none');
+}
 $('#newMedicineAdd_form').on('submit',function(e){
     e.preventDefault();
     let createMed_name = validateField('newMed_name', 'Medicine select');
@@ -358,8 +379,9 @@ $('#newMedicineAdd_form').on('submit',function(e){
                 // Directly fill the medicine name and ID into the input fields
                 $('#purchaseAdd_name0').val(getData.medicine_name);
                 $('#purchaseAdd_nameId0').val(getData.medicine_id);
+                $('.add-new-medicine').addClass('d-none');
                 $('#purchaseAdd_tax0').val(getData.taxes);
-            // Hide the modal and reset the form
+                // Hide the modal and reset the form
                 $('#newMedicineAdd').modal('hide');
                 $('#newMedicineAdd_form')[0].reset();
                 // Reset Select2 dropdowns inside the modal
@@ -367,6 +389,10 @@ $('#newMedicineAdd_form').on('submit',function(e){
                 $('#newMed_company').val('').trigger('change');
                 $('#newMed_unit').val('').trigger('change');
                 $('#newMed_composition').val('').trigger('change');
+
+                $('#newMedicineAdd').on('hidden.bs.modal', function () {
+                    $('#purchaseAdd_batch0').focus();
+                });
             }else if(response.error_validation){
                 toastWarningAlert(response.error_validation);
             }else{
@@ -382,6 +408,4 @@ $('#newMedicineAdd_form').on('submit',function(e){
     console.log('Please fill all mandatory fields');
 }
 });
-$('#newMedicineAdd').on('hidden.bs.modal', function () {
-    $('#purchaseAdd_batch0').focus();
-});
+

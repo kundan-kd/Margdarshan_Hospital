@@ -127,8 +127,8 @@ Bulk Lead Add
                           <th scope="col">Mobile</th>
                           <th scope="col">Lead Source</th>
                           <th scope="col">Address</th>
-                          <th scope="col">State</th>
                           <th scope="col">City</th>
+                          <th scope="col">State</th>
                           <th scope="col" >Pin</th>
                           <th scope="col">Action</th>
                         </tr>

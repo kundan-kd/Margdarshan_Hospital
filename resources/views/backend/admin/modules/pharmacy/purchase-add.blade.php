@@ -123,7 +123,7 @@ purchase-add
                                         style="width: 100%; padding-right: 60px;"/>
                                         <span class="add-new-medicine d-none" id="addNewMedicine">Add New</span>
                                     </div>
-                                    <input type="hidden" id="purchaseAdd_nameId0" name="purchaseAdd_name[]">
+                                    <input type="hidden" id="purchaseAdd_nameId0">
 
                                     <div class="d-block position-relative" style="z-index: 99;">
                                         <ul class="search-item list-group position-absolute rounded-0 medicine-name-list" style="width: -webkit-fill-available;">

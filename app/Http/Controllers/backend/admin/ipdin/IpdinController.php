@@ -68,6 +68,7 @@ class IpdinController extends Controller
             $patients = Patient::whereIn('type', ['IPD', 'ICU'])->where('current_status','Admitted')->get();
         }    
         return DataTables::of($patients)
+        ->addColumn('admit_date', fn($row) => $row->admit_date) // raw numeric id
         ->addColumn('patient_id',function($row){
              return '<a target="_blank" class="text-primary cursor-pointer" onclick="ipdPatientUsingId('.$row->id.')">'.$row->patient_id.'</a>';
         })
@@ -95,7 +96,7 @@ class IpdinController extends Controller
         ->addColumn('created_at',function($row){
             $date = new \DateTime($row->admit_date);
             $date->setTimezone(new \DateTimeZone('Asia/Kolkata'));
-            return $date->format('d-m-Y h:i A');
+            return $date->format('d-m-Y');
         })
         ->addColumn('status',function($row){
             return $row->current_status === 'Discharged'? '<span class="badge text-sm fw-normal text-success-600 bg-success-100 px-18 py-8 radius-4 text-white">Discharged</span>': '<span class="badge text-sm fw-normal text-danger-600 bg-danger-100 px-18 py-8 radius-4 text-white" >Admitted</span>';   

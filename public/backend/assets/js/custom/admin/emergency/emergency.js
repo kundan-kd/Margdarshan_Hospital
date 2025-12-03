@@ -13,7 +13,14 @@ let table_patient_emergency = $('#emergency-patient-list').DataTable({
             alert('Error: '+thrown);
         }
     },
+    order:[[0,'desc']],
     columns:[
+        {
+            data:'admit_date',
+            name:'admit_date',
+            visible:false,
+            searchable:false
+        },
         {
             data:'patient_id',
             name:'patient_id'

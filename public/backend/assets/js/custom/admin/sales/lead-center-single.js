@@ -43,7 +43,14 @@ let table_lead_center_list = $('#lead-center-lists').DataTable({
             alert('Error: ' + thrown);
         }
     },
+    order:[[0,'desc']],
     columns:[
+        {
+            data:'id',
+            name:'id',
+            searchable:false,
+            visible:false // for display data in descending order
+        },
         {
             data:'name',
             name:'name'

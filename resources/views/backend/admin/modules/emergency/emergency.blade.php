@@ -31,6 +31,7 @@
             <table class="table bordered-table mb-0 w-100" id="emergency-patient-list" data-page-length='10'>
               <thead>
                 <tr>
+                  <th scope="col" class="fw-medium">Admit Date</th>
                   <th scope="col" class="fw-medium">UHID</th>
                   <th scope="col" class="fw-medium">Name</th>
                   <th scope="col" class="fw-medium">Bed No.</th>

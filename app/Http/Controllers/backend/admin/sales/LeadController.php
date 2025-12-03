@@ -186,6 +186,7 @@ class LeadController extends Controller
       if($request->ajax()){
            $leads = Lead::whereNull('assign_to')->get();
             return DataTables::of($leads)
+            ->addColumn('id',fn($row)=>$row->id) //for display data in descending order
             ->addColumn('name',function($row){
                 return $row->name;
             })
@@ -270,7 +271,8 @@ public function bulkLeadAssignPage(){
       if($request->ajax()){
             $leadss = Lead::whereNull('assign_to')->get();
             return DataTables::of($leadss)
-             ->addColumn('select',function($row){
+            ->addColumn('id',fn($row) => $row->id) // to display data in descending order
+            ->addColumn('select',function($row){
                 $visibility = $row->assign_to == NULL ? '':'disabled';
                 return '<div class="d-flex align-items-center gap-10">
                                         <div class="form-check style-check d-flex align-items-center">
@@ -386,6 +388,7 @@ public function bulkLeadAssignPage(){
         if($request->ajax()){
            $leads = Lead::whereNotNull('assign_to')->get();
             return DataTables::of($leads)
+            ->addColumn('id',fn($row) => $row->id) // to display data in descending order
             ->addColumn('name',function($row){
                 return $row->name;
             })

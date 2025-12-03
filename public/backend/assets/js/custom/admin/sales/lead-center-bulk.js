@@ -10,7 +10,14 @@ let table_lead_list = $('#lead-bulk-lists').DataTable({
             alert('Error: ' + thrown);
         }
     },
+    order:[[0,'desc']],
     columns:[
+        {
+            data:'id',
+            name:'id',
+            searchable:false,
+            visible:false //to display data in descending order
+        },
         {
             data:'select',
             name:'select',

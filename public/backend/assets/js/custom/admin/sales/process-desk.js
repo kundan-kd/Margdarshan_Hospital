@@ -9,7 +9,14 @@ let table_process_desk_list = $('#process-desk-table').DataTable({
             alert('Error: ' + thrown);
         }
     },
+    order:[[0,'desc']],
     columns:[
+        {
+            data:'id',
+            name:'id',
+            searchable:false,
+            visible:false // to display data in decending order
+        },
         {
             data:'name',
             name:'name'

@@ -59,6 +59,7 @@ class EmergencyController extends Controller
         if($request->ajax()){
         $patients = Patient::where('type','EMERGENCY')->get();
         return DataTables::of($patients)
+        ->addColumn('admit_date',fn($row)=> $row->admit_date)
         ->addColumn('patient_id',function($row){
              return '<a target="_blank" class="text-primary cursor-pointer" onclick="emergencyPatientUsingId('.$row->id.')">'.$row->patient_id.'</a>';
         })

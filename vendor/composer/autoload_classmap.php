@@ -37,7 +37,7 @@ return array(
     'App\\Http\\Controllers\\backend\\admin\\pharmacy\\MedicineController' => $baseDir . '/app/Http/Controllers/backend/admin/pharmacy/MedicineController.php',
     'App\\Http\\Controllers\\backend\\admin\\pharmacy\\PurchaseController' => $baseDir . '/app/Http/Controllers/backend/admin/pharmacy/PurchaseController.php',
     'App\\Http\\Controllers\\backend\\auth\\AuthenticationController' => $baseDir . '/app/Http/Controllers/backend/auth/AuthenticationController.php',
-    'App\\Http\\Middleware\\' => $baseDir . '/app/Http/Middleware/RedirectIfNotAuthenticated.php',
+    'App\\Http\\Middleware\\RedirectIfNotAuthenticated' => $baseDir . '/app/Http/Middleware/RedirectIfNotAuthenticated.php',
     'App\\Models\\Appointment' => $baseDir . '/app/Models/Appointment.php',
     'App\\Models\\Bed' => $baseDir . '/app/Models/Bed.php',
     'App\\Models\\BedGroup' => $baseDir . '/app/Models/BedGroup.php',

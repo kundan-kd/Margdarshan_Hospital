@@ -34,7 +34,9 @@ Lead Center
                           <th scope="col">State</th>
                           <th scope="col">City</th>
                           <th scope="col" >Pin</th>
+                          <th scope="col" >Campaign</th>
                           <th scope="col">Assigned To</th>
+                          <th scope="col">Lead Created</th>
                           <th scope="col">Action</th>
                         </tr>
                       </thead>

@@ -327,6 +327,7 @@ Billing-add
  const getBatchExpiryDate = "{{route('billing-add.getBatchExpiryDate')}}";
  const billingAddNewPatient = "{{route('appointment-patient.addNewPatient')}}"; //this route is used here from 'appointment.blade.php' page
  const billingAddDatas = "{{route('billing-add.billingAddDatas')}}";
+
 </script>
 <script src="{{asset('backend/assets/js/custom/admin/pharmacy/billing-add.js')}}"></script>
 @endsection

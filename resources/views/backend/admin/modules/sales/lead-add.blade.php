@@ -107,6 +107,13 @@ Lead Add
                             Enter Pin
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-medium">Campaign Name</label>
+                        <input type="text" id="campaign-name" class="form-control form-control-sm" placeholder="Campaign Name">
+                        <div class="invalid-feedback">
+                            Enter Campaign Name
+                        </div>
+                    </div>
                     {{-- <div class="col-md-6">
                         <label class="form-label fw-medium">Lead For Team</label>
                         <select id="lead-team" class="form-select form-select-sm" required>

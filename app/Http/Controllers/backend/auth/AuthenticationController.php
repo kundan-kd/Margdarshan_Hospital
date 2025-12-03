@@ -99,7 +99,7 @@ class AuthenticationController extends Controller
                ); // updating otp in db againt email id.
             }
             // Mail::send('backend.auth.otp-forgotpass', ['otp' => $otp], function ($message) use ($request) {
-            //    $message->to($request->input('email'))->subject('OTP For Password Reset');
+            //     $message->to($request->input('email'))->subject('OTP For Password Reset');
             // }); //OTP send on mail function
             return response()->json(['success' => 'OTP sent successfully']);
          } else {

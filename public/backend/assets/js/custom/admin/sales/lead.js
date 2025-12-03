@@ -10,7 +10,7 @@ $('#csv_form').on('submit', function(e) {
     formData.append('csv_file', csv_file);
     $('.csvAddBtn').addClass('d-none');
     $('.csvSpinnBtn').removeClass('d-none');
-    setTimeout(function(){
+    // setTimeout(function(){
     $.ajax({
         url: csvUpload,
         type: 'POST',
@@ -19,18 +19,18 @@ $('#csv_form').on('submit', function(e) {
         contentType: false,
         success: function(response) {
             if(response.success){
-                // console.log(response);
                 let data = response.data;
                 let content1= '';
                 data.forEach(element => {
                     content1 += `<tr>
-                    <td><input type="text" name="bulkLead-name[]" class="form-control form-control-sm" style="width: 100px; background-image:none;" value="${element.Name}"></td>
-                    <td><input type="text" name="bulkLead-mobile[]" class="form-control form-control-sm" style="width: 100px;background-image:none;" maxlength="10" value="${element.Mobile}"></td>
-                    <td><input type="text" name="bulkLead-source[]" class="form-control form-control-sm" style="width: 100px;background-image:none;" value="${element.Source}"></td>
-                    <td><input type="text" name="bulkLead-address[]" class="form-control form-control-sm" style="width: 100px;background-image:none;" value="${element.Address}"></td>
-                    <td><input type="text" name="bulkLead-city[]" class="form-control form-control-sm" style="width: 100px;background-image:none;" value="${element.City}"></td>
-                    <td><input type="text" name="bulkLead-state[]" class="form-control form-control-sm" style="width: 100px;background-image:none;" value="${element.State}"></td>
-                    <td><input type="text" name="bulkLead-pin[]" class="form-control form-control-sm" style="width: 100px;background-image:none;" maxlength="6" value="${element.Pin}"></td>
+                    <td><input type="text" name="bulkLead-name[]" class="form-control form-control-sm" style="width: 100px; background-image: none;" value="${element.Name}" placeholder="Name"></td>
+                    <td><input type="text" name="bulkLead-mobile[]" class="form-control form-control-sm" style="width: 100px; background-image: none;" maxlength="10" value="${element.Mobile}" placeholder="Mobile"></td>
+                    <td><input type="text" name="bulkLead-source[]" class="form-control form-control-sm" style="width: 100px; background-image: none;" value="${element.Source}" placeholder="Source"></td>
+                    <td><input type="text" name="bulkLead-address[]" class="form-control form-control-sm" style="width: 100px; background-image: none;" value="${element.Address}" placeholder="Address"></td>
+                    <td><input type="text" name="bulkLead-city[]" class="form-control form-control-sm" style="width: 100px; background-image: none;" value="${element.City}" placeholder="City"></td>
+                    <td><input type="text" name="bulkLead-state[]" class="form-control form-control-sm" style="width: 100px; background-image: none;" value="${element.State}" placeholder="State"></td>
+                    <td><input type="text" name="bulkLead-pin[]" class="form-control form-control-sm" style="width: 100px; background-image: none;" maxlength="6" value="${element.Pin}" placeholder="Pin"></td>
+                    <td><input type="text" name="bulkLead-campaign[]" class="form-control form-control-sm" style="width: 100px;background-image:none;" maxlength="6" value="${element.campaign}"></td>
                     <td>
                         <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" onclick="removeLeadRow(this)">
                         <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
@@ -92,7 +92,7 @@ $('#csv_form').on('submit', function(e) {
         }
 
     });
-    },700);
+    // },700);
 });
 
 $('#lead-addForm').on('submit',function(e){
@@ -104,6 +104,7 @@ $('#lead-addForm').on('submit',function(e){
     let city = $('#lead-city').val();
     let state = $('#lead-state').val();
     let pin = $('#lead-pin').val();
+    let campaign = $('#campaign-name').val();
      if(name == '' || mobile == '' || source =='' || address =='' || city =='' || state =='' || pin ==''){
         $('.needs-validation').addClass('was-validated');
     }else{
@@ -113,7 +114,7 @@ $('#lead-addForm').on('submit',function(e){
             url: addLead,
             type:"POST",
             data:{
-                name:name,mobile:mobile,source:source,address:address,city:city,state:state,pin:pin
+                name:name,mobile:mobile,source:source,address:address,city:city,state:state,pin:pin,campaign:campaign
             },
             success:function(response){
                 if(response.success){
@@ -150,6 +151,7 @@ $('#lead-addForm').on('submit',function(e){
     $('#lead-cityAppend').val('');
     $('#lead-stateAppend').val('');
     $('#lead-pinAppend').val('');
+    $('#lead-campaignAppend').val('');
  }
 $('#lead-appendForm').on('submit',function(e){
     e.preventDefault();
@@ -160,6 +162,7 @@ $('#lead-appendForm').on('submit',function(e){
     let city = $('#lead-cityAppend').val();
     let state = $('#lead-stateAppend').val();
     let pin = $('#lead-pinAppend').val();
+    let campaign = $('#lead-campaignAppend').val();
     if(name == '' || mobile == '' || source =='' || address =='' || city =='' || state =='' || pin ==''){
         $('.needs-validation').addClass('was-validated');
     }else{
@@ -172,6 +175,7 @@ $('#lead-appendForm').on('submit',function(e){
             <td><input type="text" name="bulkLead-city[]" class="form-control form-control-sm" style="width: 100px;" value="${city}"></td>
             <td><input type="text" name="bulkLead-state[]" class="form-control form-control-sm" style="width: 100px;" value="${state}"></td>
             <td><input type="text" name="bulkLead-pin[]" class="form-control form-control-sm" style="width: 100px;" value="${pin}"></td>
+            <td><input type="text" name="bulkLead-campaign[]" class="form-control form-control-sm" style="width: 100px;" value="${campaign}"></td>
             <td>
                 <button class="mx-1 remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle" onclick="removeLeadRow(this)">
                 <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
@@ -187,53 +191,6 @@ $('#lead-appendForm').on('submit',function(e){
 function removeLeadRow(x){
     $(x).closest('tr').remove();
 }
-// function submitBulkLead(){
-//  let name = $('input[name="bulkLead-name[]"').map(function(){return $(this).val()}).get();
-//  let mobile = $('input[name="bulkLead-mobile[]"').map(function(){return $(this).val()}).get();
-//  let source = $('input[name="bulkLead-source[]"').map(function(){return $(this).val()}).get();
-//  let address = $('input[name="bulkLead-address[]"').map(function(){return $(this).val()}).get();
-//  let city = $('input[name="bulkLead-city[]"').map(function(){return $(this).val()}).get();
-//  let state = $('input[name="bulkLead-state[]"').map(function(){return $(this).val()}).get();
-//  let pin = $('input[name="bulkLead-pin[]"').map(function(){return $(this).val()}).get();
-//     if(name.length === 0){
-//         toastErrorAlert('No data found');
-//         return;
-//     }else{
-//         $('.bulkLeadSubmit').addClass('d-none');
-//         $('.bulkLeadSpinn').removeClass('d-none');
-//         $.ajax({
-//             url: addBulkLead,
-//             type:"POST",
-//             data:{
-//                 name:name,mobile:mobile,source:source,address:address,city:city,state:state,pin:pin
-//             },
-//             success:function(response){
-//                 if(response.success){
-//                     toastSuccessAlert(response.success);
-//                     setTimeout(function(){
-//                         window.location.reload();
-//                     },1000);
-//                 }else if(response.error_validation){
-//                     toastWarningAlert(response.success);
-//                     $('.bulkLeadSpinn').addClass('d-none');
-//                     $('.bulkLeadSubmit').removeClass('d-none');
-//                 }else if(response.error_success){
-//                     toastErrorAlert(response.error_success);
-//                     $('.bulkLeadSpinn').addClass('d-none');
-//                     $('.bulkLeadSubmit').removeClass('d-none');
-//                 }else{
-//                     toastSuccessAlert('something went wrong');
-//                     $('.bulkLeadSpinn').addClass('d-none');
-//                     $('.bulkLeadSubmit').removeClass('d-none');
-//                 }
-//             },
-//             error: function(xhr, status, error) {
-//                 console.error(xhr.responseText);
-//                 alert("An error occurred: " + error);
-//             }
-//         });
-//     }
-// }
 function submitBulkLead() {
     let validRows = [];
     // Loop through each row in the table
@@ -246,11 +203,14 @@ function submitBulkLead() {
             address: row.find('input[name="bulkLead-address[]"]').val()?.trim(),
             city: row.find('input[name="bulkLead-city[]"]').val()?.trim(),
             state: row.find('input[name="bulkLead-state[]"]').val()?.trim(),
-            pin: row.find('input[name="bulkLead-pin[]"]').val()?.trim()
+            pin: row.find('input[name="bulkLead-pin[]"]').val()?.trim(),
+            campaign: row.find('input[name="bulkLead-campaign[]"]').val()?.trim()
         };
 
         // Check if all fields are filled
-        let allFilled = Object.values(rowData).every(val => val !== '');
+        let allFilled = Object.entries(rowData)
+            .filter(([key]) => key !== 'campaign')   // exclude compaign
+            .every(([_, val]) => val !== '');
 
         if (allFilled) {
             validRows.push(rowData);
@@ -310,6 +270,53 @@ function submitBulkLead() {
         }
     });
 }
+// function submitBulkLead(){
+//  let name = $('input[name="bulkLead-name[]"').map(function(){return $(this).val()}).get();
+//  let mobile = $('input[name="bulkLead-mobile[]"').map(function(){return $(this).val()}).get();
+//  let source = $('input[name="bulkLead-source[]"').map(function(){return $(this).val()}).get();
+//  let address = $('input[name="bulkLead-address[]"').map(function(){return $(this).val()}).get();
+//  let city = $('input[name="bulkLead-city[]"').map(function(){return $(this).val()}).get();
+//  let state = $('input[name="bulkLead-state[]"').map(function(){return $(this).val()}).get();
+//  let pin = $('input[name="bulkLead-pin[]"').map(function(){return $(this).val()}).get();
+//     if(name.length === 0){
+//         toastErrorAlert('No data found');
+//         return;
+//     }else{
+//         $('.bulkLeadSubmit').addClass('d-none');
+//         $('.bulkLeadSpinn').removeClass('d-none');
+//         $.ajax({
+//             url: addBulkLead,
+//             type:"POST",
+//             data:{
+//                 name:name,mobile:mobile,source:source,address:address,city:city,state:state,pin:pin
+//             },
+//             success:function(response){
+//                 if(response.success){
+//                     toastSuccessAlert(response.success);
+//                     setTimeout(function(){
+//                         window.location.reload();
+//                     },1000);
+//                 }else if(response.error_validation){
+//                     toastWarningAlert(response.success);
+//                     $('.bulkLeadSpinn').addClass('d-none');
+//                     $('.bulkLeadSubmit').removeClass('d-none');
+//                 }else if(response.error_success){
+//                     toastErrorAlert(response.error_success);
+//                     $('.bulkLeadSpinn').addClass('d-none');
+//                     $('.bulkLeadSubmit').removeClass('d-none');
+//                 }else{
+//                     toastSuccessAlert('something went wrong');
+//                     $('.bulkLeadSpinn').addClass('d-none');
+//                     $('.bulkLeadSubmit').removeClass('d-none');
+//                 }
+//             },
+//             error: function(xhr, status, error) {
+//                 console.error(xhr.responseText);
+//                 alert("An error occurred: " + error);
+//             }
+//         });
+//     }
+// }
 
 let table_trash_list = $('#lead-trash-lists').DataTable({
     processing: true,
@@ -408,4 +415,3 @@ function unTrashLead(id){
         }
     });
 }
-

@@ -23,7 +23,7 @@ class PurchaseController extends Controller
     public function index(){
         return view('backend.admin.modules.pharmacy.purchase');
     }
-    public function purchaseAdd(){
+  public function purchaseAdd(){
         $categories = MedicineCategory::where('status',1)->get();
         $vendors = Vendor::where('status',1)->get();
          $categories = MedicineCategory::where('status',1)->get();
@@ -72,7 +72,6 @@ class PurchaseController extends Controller
         }
     }
     public function purchaseAddDatas(Request $request){
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'billNo' => 'required',
             'vendorID' => 'required',

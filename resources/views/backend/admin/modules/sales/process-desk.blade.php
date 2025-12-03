@@ -29,6 +29,7 @@ Process Desk
                           <th scope="col">Assign To</th>
                           <th scope="col">Narations</th>
                           <th scope="col">Next Follow up</th>
+                          <th scope="col">Lead Created</th>
                           <th scope="col">Status</th>
                           <th scope="col">Action</th>
                         </tr>

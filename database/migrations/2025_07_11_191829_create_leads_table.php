@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('city',100)->nullable();
             $table->string('state',50)->nullable();
             $table->integer('pin')->nullable();
+            $table->string('campaign',100)->nullable();
             $table->string('team',50)->nullable();
             $table->integer('assign_to')->nullable();
             $table->dateTime('assign_date')->nullable();

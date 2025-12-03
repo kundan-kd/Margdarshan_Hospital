@@ -75,13 +75,17 @@ let table_lead_center_list = $('#lead-center-lists').DataTable({
             name: 'pin'
         },
         {
+            data: 'campaign',
+            name: 'campaign'
+        },
+        {
             data: 'assign_to',
             name: 'assign_to'
         },
-        // {
-        //     data: 'assign_date',
-        //     name: 'assign_date'
-        // },
+        {
+            data: 'created_at',
+            name: 'created_at'
+        },
         {
             data: 'action',
             name: 'action',

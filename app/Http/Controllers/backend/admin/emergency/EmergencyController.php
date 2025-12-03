@@ -900,12 +900,14 @@ class EmergencyController extends Controller
         $ipdLab->test_ref_range = $request->testRefRange;
         $ipdLab->test_unit = $request->testUnit;
         if($ipdLab->save()){
-            $payment_bills = new PaymentBill();
+            $payment_bills = new PaymentBill(); 
             $payment_bills->type = "EMERGENCY";
+            $payment_bills->type_id = $ipdLab->id;
             $payment_bills->patient_id = $request->patientId;
             $payment_bills->admit_id = $admit_id;
-            $payment_bills->amount_for = 'Lab Test';
-            $payment_bills->title = 'Lab Test';
+            $payment_bills->amount_for = 'Lab';
+            $payment_bills->title  = $ipdLab->testTypeData->name . ' (' . $ipdLab->testNameData->name . ')';
+            $payment_bills->qty = 1;
             $payment_bills->amount = $request->amount;
             $payment_bills->save();
 

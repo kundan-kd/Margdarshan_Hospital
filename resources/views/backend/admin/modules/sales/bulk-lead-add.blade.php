@@ -111,8 +111,15 @@ Bulk Lead Add
                             Enter Pin
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-medium">Campaign Name</label>
+                        <input type="text" id="lead-campaignAppend" class="form-control form-control-sm" placeholder="Campaign Name">
+                        <div class="invalid-feedback">
+                            Enter Campaign Name
+                        </div>
+                    </div>
                     <div class="col-md-12 d-flex justify-content-end">
-                         <button type="button" class="btn btn-primary-600  btn-sm fw-normal" style="margin: 8px;" data-bs-toggle="modal" data-bs-target="#addCSV">Upload</button>
+                         <button type="button" class="btn btn-primary-600  btn-sm fw-normal" style="margin: 8px;" data-bs-toggle="modal" data-bs-target="#addCSV">Upload CSV</button>
                         <button type="submit" class="btn btn-primary-600  btn-sm fw-medium m-2 leadSubmit"> <i class="ri-checkbox-circle-line"></i> Add Bulk</button>
                         
                     </div>

@@ -28,10 +28,6 @@ let table_process_desk_list = $('#process-desk-table').DataTable({
             data: 'assign_to',
             name: 'assign_to'
         },
-        // {
-        //     data: 'assign_date',
-        //     name: 'assign_date'
-        // },
         {
             data: 'naration',
             name: 'naration'
@@ -39,6 +35,10 @@ let table_process_desk_list = $('#process-desk-table').DataTable({
         {
             data: 'follow_up',
             name: 'follow_up'
+        },
+        {
+            data: 'created_at',
+            name: 'created_at'
         },
         {
             data: 'lead_status',

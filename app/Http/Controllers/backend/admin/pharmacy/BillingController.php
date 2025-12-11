@@ -195,6 +195,9 @@ class BillingController extends Controller
             // Store purchase items
             foreach ($request->category as $index => $category) {
                 $hsn = Medicine::where('id',$request->name[$index])->value('hsn_number');
+                $medNameId = $request->name[$index];
+                $medBatch = $request->batchNo[$index];
+                $purchase_price = PurchaseItem::where('name_id',$medNameId)->where('id',$medBatch)->value('purchase_rate');
                 $billingItems = new BillingItem();
                 $billingItems->billing_id = $billings->id;
                 $billingItems->category_id = $category;
@@ -203,6 +206,7 @@ class BillingController extends Controller
                 $billingItems->hsn = $hsn;
                 $billingItems->expiry = $request->expiry[$index];
                 $billingItems->qty = $request->qty[$index];
+                $billingItems->purchase_price = $purchase_price ?? '';
                 $billingItems->sales_price = $request->salesPrice[$index];
                 $billingItems->tax_per = $request->taxPer[$index];
                 $billingItems->tax_amount = $request->taxAmount[$index];

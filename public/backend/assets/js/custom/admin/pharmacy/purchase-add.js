@@ -87,67 +87,79 @@ function addNewRow(){
         let amount = $('#purchaseAdd_amount0').val();
         let tax = $('#purchaseAdd_tax0').val();
         let taxAmount = $('#purchaseAdd_taxAmount0').val();
-        let itemDatas = '';
-        itemDatas += `<tr>
-            <td>${category_name}
-                <input type="hidden" name="purchaseAdd_category[]" value="${category_id}">
+        if(category_id == ''){
+            toastErrorAlert('Category is required');
+        }else if(name_id == ''){
+            toastErrorAlert('Medicine Name is required');
+        }else if(batch == ''){
+            toastErrorAlert('Batch No. is required');
+        }else if(qty == ''){
+            toastErrorAlert('Qty is required');
+        }else if(amount == ''){
+            toastErrorAlert('Amount is required');
+        }else{
+            let itemDatas = '';
+            itemDatas += `<tr>
+                <td>${category_name}
+                    <input type="hidden" name="purchaseAdd_category[]" value="${category_id}">
+                </td>
+                <td style="width: 250px;">${name}
+                    <input type="hidden" name="purchaseAdd_name[]" value="${name_id}">
+                </td>
+                <td>${batch}
+                    <input type="hidden" name="purchaseAdd_batch[]" value="${batch}">
+                </td>
+                <td>${expiry}
+                    <input type="hidden" name="purchaseAdd_expiry[]" value="${expiry}">
+                </td>
+                <td>${mrp}
+                    <input type="hidden" name="purchaseAdd_mrp[]" value="${mrp}">
+                </td>
+                <td>${salesPrice}
+                    <input type="hidden" name="purchaseAdd_salesPrice[]" value="${salesPrice}">
+                </td>
+                <td>${qty}
+                    <input type="hidden" name="purchaseAdd_qty[]" value="${qty}">
+                </td>
+                <td>${amount}
+                    <input type="hidden" name="purchaseAdd_amount[]" value="${amount}">
+                </td>
+                <td style="width: 50px;">${tax}
+                    <input type="hidden" name="purchaseAdd_tax[]" value="${tax}">
+                </td>
+                <td>${purchaseRate}
+                    <input type="hidden" name="purchaseAdd_purchaseRate[]" value="${purchaseRate}">
+                </td>
+                <td style="display:none;">
+                    <input type="hidden" name="purchaseAdd_taxAmount[]" value="${taxAmount}">
+                </td>
+                <td>
+                <button type="button" class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowPurchase(this)">
+                    <i class="ri-close-line"></i>
+                </button>
             </td>
-            <td style="width: 250px;">${name}
-                <input type="hidden" name="purchaseAdd_name[]" value="${name_id}">
-            </td>
-            <td>${batch}
-                <input type="hidden" name="purchaseAdd_batch[]" value="${batch}">
-            </td>
-            <td>${expiry}
-                <input type="hidden" name="purchaseAdd_expiry[]" value="${expiry}">
-            </td>
-            <td>${mrp}
-                <input type="hidden" name="purchaseAdd_mrp[]" value="${mrp}">
-            </td>
-            <td>${salesPrice}
-                <input type="hidden" name="purchaseAdd_salesPrice[]" value="${salesPrice}">
-            </td>
-            <td>${qty}
-                <input type="hidden" name="purchaseAdd_qty[]" value="${qty}">
-            </td>
-            <td>${amount}
-                <input type="hidden" name="purchaseAdd_amount[]" value="${amount}">
-            </td>
-            <td style="width: 50px;">${tax}
-                <input type="hidden" name="purchaseAdd_tax[]" value="${tax}">
-            </td>
-            <td>${purchaseRate}
-                <input type="hidden" name="purchaseAdd_purchaseRate[]" value="${purchaseRate}">
-            </td>
-            <td style="display:none;">
-                <input type="hidden" name="purchaseAdd_taxAmount[]" value="${taxAmount}">
-            </td>
-            <td>
-            <button type="button" class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowPurchase(this)">
-                <i class="ri-close-line"></i>
-            </button>
-        </td>
-        </tr>`;
-        $('.newRowAppend').parent().append(itemDatas); // Append properly to tbody
-        $('.purchaseAddBtn').css('border','none');
-        $('#purchaseAdd_category0').val('').change();
-        $('#purchaseAdd_name0').val('').change();
-        $('#purchaseAdd_batch0').val('');
-        $('#purchaseAdd_expiry0').val('');
-        $('#purchaseAdd_mrp0').val('');
-        $('#purchaseAdd_salesPrice0').val('');
-        $('#purchaseAdd_qty0').val('');
-        $('#purchaseAdd_purchaseRate0').val('');
-        $('#purchaseAdd_amount0').val('');
-        $('#purchaseAdd_tax0').val('');
-        $('#purchaseAdd_taxAmount0').val('');
-        // manage tax amount when cancel added data
-        let taxAmount2 = $('input[name="purchaseAdd_taxAmount[]"]').map(function(){return $(this).val();}).get();
-        let totalTaxAmount11 = taxAmount2.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
-        let totAmount = $('.purchaseAdd_totalAmt').html();
-        let newAmountWithTax = parseFloat(totalTaxAmount11) + parseFloat(totAmount);
-        $('.purchaseAdd_taxAmt').html(totalTaxAmount11.toFixed(2));
-        $('.purchaseAdd_netTotalAmt').html(newAmountWithTax.toFixed(2));
+            </tr>`;
+            $('.newRowAppend').parent().append(itemDatas); // Append properly to tbody
+            $('.purchaseAddBtn').css('border','none');
+            $('#purchaseAdd_category0').val('').change();
+            $('#purchaseAdd_name0').val('').change();
+            $('#purchaseAdd_batch0').val('');
+            $('#purchaseAdd_expiry0').val('');
+            $('#purchaseAdd_mrp0').val('');
+            $('#purchaseAdd_salesPrice0').val('');
+            $('#purchaseAdd_qty0').val('');
+            $('#purchaseAdd_purchaseRate0').val('');
+            $('#purchaseAdd_amount0').val('');
+            $('#purchaseAdd_tax0').val('');
+            $('#purchaseAdd_taxAmount0').val('');
+            // manage tax amount when cancel added data
+            let taxAmount2 = $('input[name="purchaseAdd_taxAmount[]"]').map(function(){return $(this).val();}).get();
+            let totalTaxAmount11 = taxAmount2.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
+            let totAmount = $('.purchaseAdd_totalAmt').html();
+            let newAmountWithTax = parseFloat(totalTaxAmount11) + parseFloat(totAmount);
+            $('.purchaseAdd_taxAmt').html(totalTaxAmount11.toFixed(2));
+            $('.purchaseAdd_netTotalAmt').html(newAmountWithTax.toFixed(2));
+        }    
     }else{
         toastErrorAlert('Please add items to proceed');
     }

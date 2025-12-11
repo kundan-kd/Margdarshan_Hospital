@@ -15,4 +15,7 @@ class LabInvestigation extends Model
     public function testNameData(){
         return $this->belongsTo(TestName::class,'test_name_id');
     }
+    public function patientData(){
+        return $this->belongsTo(Patient::class,'patient_id');
+    }
 }

@@ -32,6 +32,11 @@ use App\Http\Controllers\backend\admin\opdout\OpdoutController;
 use App\Http\Controllers\backend\admin\pharmacy\BillingController;
 use App\Http\Controllers\backend\admin\pharmacy\MedicineController;
 use App\Http\Controllers\backend\admin\pharmacy\PurchaseController;
+use App\Http\Controllers\backend\admin\report\IcureportController;
+use App\Http\Controllers\backend\admin\report\IpdreportController;
+use App\Http\Controllers\backend\admin\report\LabreportController;
+use App\Http\Controllers\backend\admin\report\OpdreportController;
+use App\Http\Controllers\backend\admin\report\PharmacyreportController;
 use App\Http\Controllers\backend\admin\sales\LeadController;
 use App\Http\Middleware\RedirectIfNotAuthenticated;
 use App\Models\Company;
@@ -507,6 +512,30 @@ Route::get('/process-center-lead-trash',[LeadController::class,'trash'])->name('
 Route::post('/process-center-lead-trash-view',[LeadController::class,'viewTrashLead'])->name('sales.viewTrashLead');
 Route::post('/process-center-lead-trash-restore',[LeadController::class,'restoreLeadData'])->name('sales.restoreLeadData');
 
+Route::group(['prefix' => 'report'],function(){
+    Route::get('/opd-report',[OpdreportController::class,'index'])->name('report.opdReport');
+    Route::post('/opd-report-view',[OpdreportController::class,'viewReport'])->name('report.viewOpdReport');
+
+    Route::get('/appointment-billing-print/{id}',[InvoiceController::class,'appointmentBillPrint']);
+
+    Route::get('/icu-report',[IcureportController::class,'index'])->name('report.icuReport');
+    Route::post('/icu-report-view',[IcureportController::class, 'viewReport'])->name('report.viewIcuReport');
+
+    Route::get('/product-expiry-report',[PharmacyreportController::class, 'index'])->name('report.expiryReport');
+
+    Route::post('/product-expity-data',[PharmacyreportController::class, 'expiryData'])->name('report.expiryData');
+    Route::get('/profit-margin',[PharmacyreportController::class, 'profitMargin'])->name('report.profitMargin');
+    Route::post('/profit-margin-data',[PharmacyreportController::class, 'profitMarginData'])->name('report.profitMarginData');
+
+    Route::get('/lab-report',[LabreportController::class, 'index'])->name('report.labReport');
+    Route::post('/lab-report-data',[LabreportController::class, 'labReportData'])->name('report.labReportData');
+
+    Route::get('/consultant-report',[IpdreportController::class,'index'])->name('report.ipdReport');
+    Route::post('/consultant-report-data',[IpdreportController::class, 'consultantReportData'])->name('report.consultantReportData');
+
+    Route::get('/patient-billing-report',[IpdreportController::class,'billingReport'])->name('report.ipdBillingReport');
+    Route::post('/patient-billing-report-data',[IpdreportController::class, 'billingReportData'])->name('report.patientBillingReportData');
+});
 
 });
 

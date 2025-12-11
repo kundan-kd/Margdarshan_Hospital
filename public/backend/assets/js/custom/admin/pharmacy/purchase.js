@@ -27,6 +27,10 @@ let table = $('#purchase-list-table').DataTable({
             name:'bill_no'
         },
         {
+            data:'qty',
+            name:'qty'
+        },
+        {
             data:'net_amount',
             name:'net_amount'
         },

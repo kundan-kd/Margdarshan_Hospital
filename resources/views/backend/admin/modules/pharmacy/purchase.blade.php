@@ -35,6 +35,7 @@ purchase
               <th scope="col" class="fw-medium">Date & Time</th>
               <th scope="col" class="fw-medium">Vendor</th>
               <th scope="col" class="fw-medium">Bill No.</th>
+              <th scope="col" class="fw-medium">Total Items</th>
               <th scope="col" class="fw-medium">Total Amount</th>
               <th scope="col" class="fw-medium">Paid Amount</th>
               <th scope="col" class="fw-medium">Due Amount</th>

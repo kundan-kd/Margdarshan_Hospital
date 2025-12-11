@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('expiry',40)->nullable();
             $table->integer('qty')->nullable();
             $table->integer('avl_qty')->nullable();
+            $table->double('purchase_price')->default(0);
             $table->double('sales_price')->nullable();
             $table->double('tax_per')->nullable();
             $table->double('tax_amount')->nullable();

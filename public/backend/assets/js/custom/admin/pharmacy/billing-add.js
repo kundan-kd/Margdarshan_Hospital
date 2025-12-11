@@ -137,10 +137,10 @@ function getBatchExpiry(id,randNum){
                               let avlQty = (parseFloat(element.qty) + parseFloat(element.return_qty)) - parseFloat(element.stock_out);
                     let baseAmount = ((parseFloat(element.sales_price)) / ((parseFloat(element.tax) + 100) / 100));
                     let salesAmountWithoutTax = element.sales_price - baseAmount;
-                   console.log(element.sales_price);
-                   console.log(element.tax);
-                   console.log(baseAmount);
-                   console.log(salesAmountWithoutTax);
+                //    console.log(element.sales_price);
+                //    console.log(element.tax);
+                //    console.log(baseAmount);
+                //    console.log(salesAmountWithoutTax);
                     $("#billingAdd-expiry" + randNum).val(element.expiry); 
                     $("#billingAdd-avlQty" + randNum).val(avlQty); 
                     $("#billingAdd-salesPrice" + randNum).val(parseFloat(baseAmount.toFixed(2))); 

@@ -47,6 +47,10 @@ class PurchaseController extends Controller
             ->addColumn('bill_no',function($row){
                 return $row->bill_no;
             })
+            ->addColumn('qty',function($row){
+                $tot_qty = PurchaseItem::where('purchase_id', $row->id)->count();
+                return $tot_qty;
+            })
             ->addColumn('net_amount',function($row){
                 return $row->net_amount;
             })

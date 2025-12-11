@@ -150,46 +150,76 @@
         </ul>
       </li>
       @endcan
-    @can('Process Center Menu View')    
+      @can('Process Center Menu View')    
+        <li class="dropdown mb-1">
+          <a href="javascript:void(0)">
+            <i class="ri-customer-service-line"></i>
+            <span>Process Center</span> 
+          </a>
+          <ul class="sidebar-submenu">
+            @canany(['Sales Manager View', 'Sales Rep View'])
+            <li>
+              <a href="{{route('sales.analytics')}}"><i class="ri-file-chart-line"></i>Analytics</a>
+            </li>            
+            @endcanany
+            @can('Sales Manager View')
+            <li>
+              <a href="{{route('sales.lead')}}"><i class="ri-file-list-2-line"></i>Lead Add</a>
+            </li>            
+            @endcan
+            @can('Sales Manager View')
+            <li>
+              <a href="{{route('sales.bulkLead')}}"><i class="ri-file-list-3-line"></i>Bulk Lead Add</a>
+            </li>
+            @endcan
+            @can('Sales Manager View')
+            <li>
+              <a href="{{route('sales.leadCenter')}}"><i class="ri-user-received-line"></i>Lead Center</a>
+            </li> 
+            @endcan
+            @canany(['Sales Manager View', 'Sales Rep View'])
+            <li>
+              <a href="{{route('sales.processDesk')}}"><i class="ri-donut-chart-fill"></i>Process Desk</a>
+            </li> 
+            @endcanany
+            @can('Sales Manager View')
+            <li>
+              <a href="{{route('sales.trash')}}"><i class="ri-delete-bin-line"></i>Trash List</a>
+            </li> 
+            @endcan
+          </ul>
+        </li>
+      @endcan
+
+
+
       <li class="dropdown mb-1">
         <a href="javascript:void(0)">
-          <i class="ri-customer-service-line"></i>
-          <span>Process Center</span> 
+          <i class="ri-file-line" aria-hidden="true"></i>
+          <span class="sr-only">Report</span>
         </a>
         <ul class="sidebar-submenu">
-          @canany(['Sales Manager View', 'Sales Rep View'])
           <li>
-            <a href="{{route('sales.analytics')}}"><i class="ri-file-chart-line"></i>Analytics</a>
-          </li>            
-          @endcanany
-          @can('Sales Manager View')
+            <a href="{{route('report.opdReport')}}"><i class="ri-file-chart-line"></i>OPD</a>
+          </li>    
           <li>
-            <a href="{{route('sales.lead')}}"><i class="ri-file-list-2-line"></i>Lead Add</a>
-          </li>            
-          @endcan
-          @can('Sales Manager View')
+            <a href="{{route('report.ipdReport')}}"><i class="ri-file-chart-line"></i>IPD</a>
+          </li>  
           <li>
-            <a href="{{route('sales.bulkLead')}}"><i class="ri-file-list-3-line"></i>Bulk Lead Add</a>
+            <a href="{{route('report.icuReport')}}"><i class="ri-file-chart-line"></i>ICU</a>
           </li>
-          @endcan
-          @can('Sales Manager View')
           <li>
-            <a href="{{route('sales.leadCenter')}}"><i class="ri-user-received-line"></i>Lead Center</a>
+            <a href="{{route('report.expiryReport')}}"><i class="ri-file-chart-line"></i>Pharmacy</a>
           </li> 
-          @endcan
-          @canany(['Sales Manager View', 'Sales Rep View'])
           <li>
-            <a href="{{route('sales.processDesk')}}"><i class="ri-donut-chart-fill"></i>Process Desk</a>
+            <a href="{{route('report.labReport')}}"><i class="ri-file-chart-line"></i>Laboratory</a>
           </li> 
-          @endcanany
-          @can('Sales Manager View')
-          <li>
-            <a href="{{route('sales.trash')}}"><i class="ri-delete-bin-line"></i>Trash List</a>
-          </li> 
-          @endcan
         </ul>
       </li>
-    @endcan
+
+
+
+
       @can('Master Menu View')
       <li class="dropdown mb-1">
         <a href="javascript:void(0)">

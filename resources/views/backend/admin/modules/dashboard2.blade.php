@@ -92,7 +92,7 @@
                 </div>
 
                 {{-- New / Repeat Patients --}}
-                <div class="col-xxl-3 col-xl-4 col-sm-6">
+                <div class="col-xxl-4 col-xl-4 col-sm-6">
                     <div class="card p-3 shadow-2 radius-8 h-100 bg-gradient-end-6">
                         <div class="card-body p-0">
                             <div class="d-flex align-items-center gap-2 mb-8">
@@ -112,12 +112,12 @@
                 </div>
 
                 {{-- Emergency Added / Moved --}}
-                <div class="col-xxl-3 col-xl-4 col-sm-6">
+                <div class="col-xxl-4 col-xl-4 col-sm-6">
                     <div class="card p-3 shadow-2 radius-8 h-100 bg-gradient-end-4">
                         <div class="card-body p-0">
                             <div class="d-flex align-items-center gap-2 mb-8">
                                 <span class="w-48-px h-48-px bg-lilac-100 text-lilac-600 rounded-circle d-flex justify-content-center align-items-center">
-                                    <i class="ri-award-fill"></i>
+                                    <i class="ri-group-fill"></i>
                                 </span>
                                 <div>
                                     <h6 class="fw-semibold mb-2">
@@ -132,7 +132,7 @@
                 </div>
 
                 {{-- ICU Beds --}}
-                <div class="col-xxl-3 col-xl-4 col-sm-6">
+                <div class="col-xxl-4 col-xl-4 col-sm-6">
                     <div class="card p-3 shadow-2 radius-8 h-100 bg-gradient-end-1">
                         <div class="card-body p-0">
                             <div class="d-flex align-items-center gap-2 mb-8">
@@ -152,7 +152,7 @@
                 </div>
 
                 {{-- IPD Beds --}}
-                <div class="col-xxl-3 col-xl-4 col-sm-6">
+                <div class="col-xxl-4 col-xl-4 col-sm-6">
                     <div class="card p-3 shadow-2 radius-8 h-100 bg-gradient-end-1">
                         <div class="card-body p-0">
                             <div class="d-flex align-items-center gap-2 mb-8">
@@ -172,7 +172,7 @@
                 </div>
 
                 {{-- Average Stay --}}
-                <div class="col-xxl-3 col-xl-4 col-sm-6">
+                <div class="col-xxl-4 col-xl-4 col-sm-6">
                     <div class="card p-3 shadow-2 radius-8 h-100 bg-gradient-end-1">
                         <div class="card-body p-0">
                             <div class="d-flex align-items-center gap-2 mb-8">

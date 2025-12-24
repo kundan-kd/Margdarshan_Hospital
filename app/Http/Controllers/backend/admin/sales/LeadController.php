@@ -386,7 +386,11 @@ public function bulkLeadAssignPage(){
     }
     public function viewProcessDeskLeads(Request $request){
         if($request->ajax()){
-           $leads = Lead::whereNotNull('assign_to')->get();
+            if ($request->naration_id != null) {
+                $leads = Lead::whereNotNull('assign_to')->where('naration_list_id', $request->naration_id)->get();
+            } else {
+                $leads = Lead::whereNotNull('assign_to')->get();
+            }
             return DataTables::of($leads)
             ->addColumn('id',fn($row) => $row->id) // to display data in descending order
             ->addColumn('name',function($row){
@@ -406,20 +410,13 @@ public function bulkLeadAssignPage(){
                 $teamName = Team::where('id', $user->sales_team_id)->value('name');
                 return $user->name . ' (' . ($teamName ?? 'No Team') . ')';
             })
-            // ->addColumn('assign_date',function($row){
-            //      return $row->assign_date
-            //         ? Carbon::parse($row->assign_date)->timezone('Asia/Kolkata')->format('d-M-Y h:i A')
-            //         : '—';
-            // })
             ->addColumn('naration', function($row) {
                 $narationText = $row->narationListData->naration ?? 'NA';
                 return '<a href="javascript:void(0)" class="text-primary" data-bs-toggle="modal" data-bs-target="#narationView" onclick="getPrevNarations('.$row->id.')">'
                      . $narationText .
                      '</a>';
             })
-
             ->addColumn('follow_up',function($row){
-                // return $row->next_followup_date ? Carbon::parse($row->assign_date)->timezone('Asia/Kolkata')->format('d-M-Y'): 'NA';
                 return $row->next_followup_date ? date('d/m/Y', strtotime($row->next_followup_date)) : 'NA';
             })
             ->addColumn('created_at',function($row){

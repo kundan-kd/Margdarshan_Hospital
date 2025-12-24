@@ -4,17 +4,18 @@ Process Desk
 @endsection
 @section('main-container')
   <div class="dashboard-main-body">
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-      <h6 class="fw-normal mb-0">Process Desk</h6>
-      <!-- <div class="d-flex flex-wrap align-items-center gap-2">
-          <a href="create-bill.html" class="btn btn-primary-600 fw-normal  btn-sm d-flex align-items-center gap-1"> <i class="ri-add-line"></i> Create Bill</a>
-          <button type="button" class="btn btn-warning-600 fw-normal  btn-sm d-flex align-items-center gap-2"> <i class="ri-file-pdf-2-line"></i> Export</button>
-      </div> -->
-      <!-- <div class="btns">
-          <a class="btn btn-primary-600  btn-sm fw-medium mx-11" href="create-bill.html"><i class="ri-add-line mx-4 "></i>Create Bill</a>
-          <button class="btn btn-warning-600  btn-sm fw-medium"><i class="ri-file-pdf-2-line mx-4 "></i> Export</button>
-      </div> -->
-  </div>
+      <div class="row my-3">
+          <div class="col-md-4">
+              <div class="d-flex justify-content-between ">
+                <select id="narationId" class="select2-class form-select" onchange="getNarationFilter()">
+                    <option value=""> Select Narration</option>
+                    @foreach ($narationList as $naration)
+                    <option value="{{$naration->id}}">{{$naration->naration}}</option>
+                    @endforeach
+                </select>
+              </div>
+          </div>
+        </div>
     <div class="card">
       <div class="card-body">
          <div class="row gy-3 mt-2">
@@ -23,6 +24,7 @@ Process Desk
                     <table class="table bordered-table sm-table mb-0" id="process-desk-table">
                       <thead>
                         <tr>
+                          <th scope="col" style="display:none;">Name</th>
                           <th scope="col">Name</th>
                           <th scope="col">Mobile</th>
                           <th scope="col">Address</th>

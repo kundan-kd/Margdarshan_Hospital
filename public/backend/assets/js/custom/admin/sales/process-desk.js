@@ -4,6 +4,9 @@ let table_process_desk_list = $('#process-desk-table').DataTable({
     ajax:{
         url:viewProcessDeskLeads,
         type:"POST",
+        data: function(d){
+            d.naration_id = $('#narationId').val();   // custom filter
+        },
         error: function(xhr,error,thrown){
             console.log(xhr.responseText);
             alert('Error: ' + thrown);
@@ -256,4 +259,7 @@ function deleteLead(id){
             });
         }
     });
+}
+function getNarationFilter(){
+    $('#process-desk-table').DataTable().ajax.reload();
 }

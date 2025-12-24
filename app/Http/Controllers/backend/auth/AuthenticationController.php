@@ -87,7 +87,7 @@ class AuthenticationController extends Controller
          ];
       }
       $appointments = PatientLog::where('type','OPD')->count();
-      $appointment_visited = PatientLog::where('type','OPD')->where('status','Visited')->count();
+      $appointment_visited = PatientLog::where('type','OPD')->where('status','Visited')->orWhere('status','Moved to IPD')->count();
       $appoinrmentsCount = [                          
          'total_appointment' => $appointments,
          'walk_in' => $appointment_visited

@@ -1,6 +1,6 @@
 @extends('backend.admin.layouts.main')
 @section('title')
-    OPD Report
+    ICU Report
 @endsection
 @section('extra-css')
 <style>
@@ -16,7 +16,7 @@
   <div class="dashboard-main-body">
 
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-       <h6 class="fw-normal mb-0">OPD - Out Patient Report</h6>
+       <h6 class="fw-normal mb-0">ICU - Patient Report</h6>
      </div>
         <div class="row my-3">
         <div class="col-md-6">

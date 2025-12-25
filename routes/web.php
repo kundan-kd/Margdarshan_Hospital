@@ -37,6 +37,7 @@ use App\Http\Controllers\backend\admin\report\IpdreportController;
 use App\Http\Controllers\backend\admin\report\LabreportController;
 use App\Http\Controllers\backend\admin\report\OpdreportController;
 use App\Http\Controllers\backend\admin\report\PharmacyreportController;
+use App\Http\Controllers\backend\admin\report\ReportController;
 use App\Http\Controllers\backend\admin\sales\LeadController;
 use App\Http\Middleware\RedirectIfNotAuthenticated;
 use App\Models\Company;
@@ -513,6 +514,7 @@ Route::post('/process-center-lead-trash-view',[LeadController::class,'viewTrashL
 Route::post('/process-center-lead-trash-restore',[LeadController::class,'restoreLeadData'])->name('sales.restoreLeadData');
 
 Route::group(['prefix' => 'report'],function(){
+    Route::get('/report-dashboard',[ReportController::class,'index'])->name('report.reportDashboard');
     Route::get('/opd-report',[OpdreportController::class,'index'])->name('report.opdReport');
     Route::post('/opd-report-view',[OpdreportController::class,'viewReport'])->name('report.viewOpdReport');
 

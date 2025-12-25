@@ -190,35 +190,44 @@
           </ul>
         </li>
       @endcan
-
-
-
       <li class="dropdown mb-1">
-        <a href="javascript:void(0)">
+        <a href="#">
           <i class="ri-file-line" aria-hidden="true"></i>
           <span class="sr-only">Report</span>
         </a>
         <ul class="sidebar-submenu">
           <li>
-            <a href="{{route('report.opdReport')}}"><i class="ri-file-chart-line"></i>OPD</a>
-          </li>    
-          <li>
-            <a href="{{route('report.ipdReport')}}"><i class="ri-file-chart-line"></i>IPD</a>
-          </li>  
-          <li>
-            <a href="{{route('report.icuReport')}}"><i class="ri-file-chart-line"></i>ICU</a>
+            <a href="{{ route('report.reportDashboard') }}">
+              <i class="ri-file-chart-line"></i>Report Dashboard
+            </a>
           </li>
           <li>
-            <a href="{{route('report.expiryReport')}}"><i class="ri-file-chart-line"></i>Pharmacy</a>
-          </li> 
+            <a href="{{ route('report.opdReport') }}">
+              <i class="ri-file-chart-line"></i> OPD
+            </a>
+          </li>
           <li>
-            <a href="{{route('report.labReport')}}"><i class="ri-file-chart-line"></i>Laboratory</a>
-          </li> 
+            <a href="{{ route('report.ipdReport') }}">
+              <i class="ri-file-chart-line"></i> IPD
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('report.icuReport') }}">
+              <i class="ri-file-chart-line"></i> ICU
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('report.expiryReport') }}">
+              <i class="ri-file-chart-line"></i> Pharmacy
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('report.labReport') }}">
+              <i class="ri-file-chart-line"></i> Laboratory
+            </a>
+          </li>
         </ul>
       </li>
-
-
-
 
       @can('Master Menu View')
       <li class="dropdown mb-1">

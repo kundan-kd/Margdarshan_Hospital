@@ -44,96 +44,30 @@ class AuthenticationController extends Controller
         }
     }
     public function dashboard(){
-      //   $tot_patients = Patient::count();
-      //   $appointments = PatientLog::where('status','!=','Cancelled')->count();
-      //   $opd_patients = Patient::where('type','OPD')->count();
-      //   $ipd_patients = Patient::where('type','IPD')->count();
-      //   $icu_patients = Patient::where('type','ICU')->count();
-      //   $emergency_patients = Patient::where('type','EMERGENCY')->count();
-      //   $doctors = User::where('usertype_id',2)->count();
-      //   $total_income = PaymentReceived::sum('amount') + PaymentReceived::sum('discount_amount');
-      //   $leads = Lead::count();
-      //   $convertedLeads = Lead::where('lead_status','Converted')->count();
-      //   $assignLeads = Lead::whereNotNull('assign_to')->count();
-      //   $UnAssignLeads = Lead::whereNull('assign_to')->count();
-      //   $now = Carbon::now();
-      //   $formattedDate = $now->toDateString(); // Output: "2025-07-16"
-      //   $todayFollowup = Lead::where('next_followup_date',$formattedDate)->get();
-      //   $duefollowup = Lead::whereNull('naration')->get();
-      //   $today_pharmacy_bill = Billing::whereDate('created_at', $formattedDate)
-      //       ->selectRaw('SUM(paid_amount - return_amount) as total')
-      //       ->value('total');
-      //   $total_pharmacy_bill = Billing::selectRaw('SUM(paid_amount - return_amount) as total')
-      //       ->value('total');
-      //   $total_lab_report  = LabInvestigation::count();
-      //   $report_generated  = LabReport::count();
-      //   return view('backend.admin.modules.dashboard',compact('tot_patients','appointments','opd_patients','ipd_patients','icu_patients','emergency_patients','doctors','total_income','leads','convertedLeads','assignLeads','UnAssignLeads','todayFollowup','duefollowup','today_pharmacy_bill','total_pharmacy_bill','total_lab_report','report_generated'));
-
-
-
-
-
-
-
-
-
-      $doctors = User::where('usertype_id',2)->get(['id','name']);
-      $consultantCount = [];
-      foreach($doctors as $doctor){
-         $count = PatientLog::where('doctor_id',$doctor->id)->count();
-         $consultantCount[] = [
-            'doctor_name' => $doctor->name,
-            'patient_count' => $count
-         ];
-      }
-      $appointments = PatientLog::where('type','OPD')->count();
-      $appointment_visited = PatientLog::where('type','OPD')->where('status','Visited')->orWhere('status','Moved to IPD')->count();
-      $appoinrmentsCount = [                          
-         'total_appointment' => $appointments,
-         'walk_in' => $appointment_visited
-      ];
-      $totalBIlls = PaymentBill::sum('amount');
-      $billReceived = PaymentReceived::sum('amount') + PaymentReceived::sum('discount_amount');
-      $totalRevenue = [
-         'total_amount' => $totalBIlls,
-         'received_amount' => $billReceived
-      ];
-      $newPatients = PatientLog::select('patient_id')->groupBy('patient_id')->havingRaw('COUNT(*) = 1')->count();
-      $repeatPatient = PatientLog::select('patient_id')->groupBy('patient_id')->havingRaw('COUNT(*) > 1')->count();
-      $patientCounts = [
-         'repeat_patient' => $repeatPatient,
-         'new_patient' => $newPatients
-      ];
-      $emergencyAdded = PatientLog::where('type','EMERGENCY')->where('current_status','Admitted')->count();
-      $emergencyMoved = PatientLog::where('type','EMERGENCY')->where('description','Movement EMERGENCY to IPD')->orWhere('description','Movement EMERGENCY to ICU')->count();
-      $emergencyPatients = [
-         'admission' => $emergencyAdded,
-         'moved' => $emergencyMoved
-      ];
-      $icuBeds = Bed::where('bed_group_id',4)->count();
-      $icuBedOccupied = Bed::where('bed_group_id',4)->where('current_status','occupied')->count();
-      $icuBeds = [
-         'total' => $icuBeds,
-         'occupied' => $icuBedOccupied
-      ];
-      $today = Carbon::today();
-      $daily_lab = LabInvestigation::whereDate('created_at', $today)->count();
-      $weekly_lab = LabInvestigation::whereBetween('created_at', [$today->copy()->subDays(7),$today->endOfDay()])->count();
-      $monthly_lab = LabInvestigation::whereBetween('created_at', [$today->copy()->subDays(30),$today->endOfDay()])->count();
-      $lab_count = [
-         'today_lab' => $daily_lab,
-         'weekly_lab' => $weekly_lab,
-         'monthly_lab' => $monthly_lab
-      ];
-      $ipdBeds = Bed::where('bed_group_id',5)->count();
-      $ipdBedOccupied = Bed::where('bed_group_id',5)->where('current_status','occupied')->count();
-      $ipdBeds = [
-         'total' => $ipdBeds,
-         'occupied' => $ipdBedOccupied
-      ];
-      $avg_stay = PaymentBill::where('amount_for','Bed Charge')->avg('qty');
-      $average_stay = round($avg_stay);
-      return view('backend.admin.modules.dashboard2',compact('consultantCount','appoinrmentsCount','totalRevenue','patientCounts','emergencyPatients','icuBeds','lab_count','ipdBeds','average_stay'));
+        $tot_patients = Patient::count();
+        $appointments = PatientLog::where('status','!=','Cancelled')->count();
+        $opd_patients = Patient::where('type','OPD')->count();
+        $ipd_patients = Patient::where('type','IPD')->count();
+        $icu_patients = Patient::where('type','ICU')->count();
+        $emergency_patients = Patient::where('type','EMERGENCY')->count();
+        $doctors = User::where('usertype_id',2)->count();
+        $total_income = PaymentReceived::sum('amount') + PaymentReceived::sum('discount_amount');
+        $leads = Lead::count();
+        $convertedLeads = Lead::where('lead_status','Converted')->count();
+        $assignLeads = Lead::whereNotNull('assign_to')->count();
+        $UnAssignLeads = Lead::whereNull('assign_to')->count();
+        $now = Carbon::now();
+        $formattedDate = $now->toDateString(); // Output: "2025-07-16"
+        $todayFollowup = Lead::where('next_followup_date',$formattedDate)->get();
+        $duefollowup = Lead::whereNull('naration')->get();
+        $today_pharmacy_bill = Billing::whereDate('created_at', $formattedDate)
+            ->selectRaw('SUM(paid_amount - return_amount) as total')
+            ->value('total');
+        $total_pharmacy_bill = Billing::selectRaw('SUM(paid_amount - return_amount) as total')
+            ->value('total');
+        $total_lab_report  = LabInvestigation::count();
+        $report_generated  = LabReport::count();
+        return view('backend.admin.modules.dashboard',compact('tot_patients','appointments','opd_patients','ipd_patients','icu_patients','emergency_patients','doctors','total_income','leads','convertedLeads','assignLeads','UnAssignLeads','todayFollowup','duefollowup','today_pharmacy_bill','total_pharmacy_bill','total_lab_report','report_generated'));
     }
     public function sendotp(Request $request){
         if ($request->ajax()) {

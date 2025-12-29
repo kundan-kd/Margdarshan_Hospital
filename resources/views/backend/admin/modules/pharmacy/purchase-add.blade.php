@@ -95,6 +95,9 @@ purchase-add
                                     Total Amount
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
+                                    Discount (%)
+                                </th>
+                                <th class="text-nowrap text-neutral-700">
                                     Tax (%)
                                 </th>
                                 <th class="text-nowrap text-neutral-700">
@@ -147,8 +150,14 @@ purchase-add
                                 <td>
                                     <input id="purchaseAdd_qty0" name="purchaseAdd_qty[]" class="form-control form-control-sm" type="number" placeholder="Qty" min="0" oninput="getAmount(0)" >
                                 </td>
-                                 <td>
+                                <td>
                                     <input id="purchaseAdd_amount0" name="purchaseAdd_amount[]" type="number" class="form-control form-control-sm" placeholder="Amount" min="0" oninput="getAmount(0)">
+                                </td>
+                                <td>
+                                    <input id="purchaseAdd_discount0" name="purchaseAdd_discount[]" type="number" class="form-control form-control-sm" placeholder="Discount" min="0" oninput="getAmount(0)" value="0">
+                                </td>
+                                <td style="display: none;">
+                                    <input id="purchaseAdd_discoutAmount0" name="purchaseAdd_discoutAmount[]" type="number" class="form-control form-control-sm" placeholder="Discount Amount" min="0">
                                 </td>
                                 <td>
                                     <input id="purchaseAdd_tax0" name="purchaseAdd_tax[]" type="number" class="form-control form-control-sm" placeholder="Tax" oninput="getTax(0)"  readonly>
@@ -196,7 +205,7 @@ purchase-add
                         <tr>
                         <td class="border-0 align-middle">Discount</td>
                         <td class="border-0"><div class="d-flex align-items-center">
-                            <input id="purchaseAdd_discount" class="form-control form-control-sm discount-value-field" type="text" placeholder="Discount" oninput="getDiscount(this.value)"><span class="ms-1">%</span></div>
+                            <input id="purchaseAdd_discount" class="form-control form-control-sm discount-value-field d-none" type="text" placeholder="Discount" oninput="getDiscount(this.value)"><span class="ms-1 d-none">%</span></div>
                         </td>
                         <td class="border-0 text-end fs-6">₹ <span class="purchaseAdd_discountAmt">0</td>
                         </tr>

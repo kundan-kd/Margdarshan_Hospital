@@ -82,32 +82,62 @@ function addNewRowEdit(){
     x.closest("tr").remove(); // remove entire row with tr selector
     updateAmountEdit();
 }
- 
 function updateAmountEdit(){
-    let totalAmount = $('input[name="purchaseEdit_amount[]"]').map(function(){return $(this).val();}).get();
-    let sumTotalAmount = totalAmount.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
-    $('.purchaseEdit_totalAmt').html(sumTotalAmount.toFixed(2));
-    let discountPer = parseFloat($('#purchaseEdit_discount').val()) || 0;
-    let totalDiscountAmount = (sumTotalAmount * discountPer) / 100;
-    $('.purchaseEdit_discountAmt').html(totalDiscountAmount.toFixed(2));
-    let totalTaxAmount = $('input[name="purchaseEdit_taxAmount[]"]').map(function(){return $(this).val();}).get();
-    let sumTotalTaxAmount = totalTaxAmount.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
-    let taxfterDiscount = (sumTotalTaxAmount * discountPer) / 100;
-    let totalTaxAfterDiscount = sumTotalTaxAmount - taxfterDiscount;
-    $('.purchaseEdit_taxAmt').html(totalTaxAfterDiscount.toFixed(2));
-    let netamount = sumTotalAmount - totalDiscountAmount + totalTaxAfterDiscount;
-    $('.purchaseEdit_netTotalAmt').html(netamount.toFixed(2));
-    let paid_amount = parseFloat($('.purchaseEdit_paidAmt').html());
-    let due_amount = netamount - paid_amount;
-    $('.purchaseEdit_dueAmt').html(Math.round(due_amount));
+    let totalAmount = 0;
+    let totalDiscount = 0;
+    let totalTax = 0;
+
+    $('input[name="purchaseEdit_amount[]"]').each(function(){
+        totalAmount += parseFloat($(this).val()) || 0;
+    });
+
+    $('input[name="purchaseEdit_discountAmount[]"]').each(function(){
+        totalDiscount += parseFloat($(this).val()) || 0;
+    });
+
+    $('input[name="purchaseEdit_taxAmount[]"]').each(function(){
+        totalTax += parseFloat($(this).val()) || 0;
+    });
+
+    let netAmount = totalAmount - totalDiscount + totalTax;
+    let paidAmount = parseFloat($('.purchaseEdit_paidAmt').text()) || 0;
+    let due = netAmount - paidAmount;
+
+    $('.purchaseEdit_totalAmt').text(totalAmount.toFixed(2));
+    $('.purchaseEdit_totalDiscount').text(totalDiscount.toFixed(2));
+    $('.purchaseEdit_taxAmt').text(totalTax.toFixed(2));
+    $('.purchaseEdit_netTotalAmt').text(netAmount.toFixed(2));
+    $('.purchaseEdit_dueAmt').text(due.toFixed(2));
 }
-function getAmountEdit(randNum){
-    let qty = parseFloat($('#purchaseEdit_qty' + randNum).val()) || 0; // Convert to number, default to 0 if invalid
-    let purchaseRate = parseFloat($('#purchaseEdit_purchaseRate' + randNum).val()) || 0;
-    let amount = qty * purchaseRate;
-    $('#purchaseEdit_amount' + randNum).val(amount);
-    getTaxEdit(randNum);
+
+function getAmountEdit(id){
+    let qty = parseFloat($('#purchaseEdit_qty'+id).val()) || 1;
+    let amount = parseFloat($('#purchaseEdit_amount'+id).val()) || 0;
+    let discountPer = parseFloat($('#purchaseEdit_discount'+id).val()) || 0;
+    let taxPer = parseFloat($('#purchaseEdit_tax'+id).val()) || 0;
+
+    // 🔹 Discount
+    let discountAmt = (amount * discountPer) / 100;
+
+    // 🔹 Tax (after discount)
+    let taxableAmount = amount - discountAmt;
+    let taxAmt = (taxableAmount * taxPer) / 100;
+
+    // 🔹 Net row amount
+    let netRowAmount = taxableAmount + taxAmt;
+
+    // 🔹 Purchase rate (FINAL REQUIREMENT)
+    let purchaseRate = netRowAmount / qty;
+
+    // 🔹 Set values
+    $('#purchaseEdit_discountAmount'+id).val(discountAmt.toFixed(2));
+    $('#purchaseEdit_taxAmount'+id).val(taxAmt.toFixed(2));
+    $('#purchaseEdit_purchaseRate'+id).val(purchaseRate.toFixed(2));
+
+    updateAmountEdit();
 }
+
+
 
 function getTaxEdit(randNum){
      let tax = parseFloat($('#purchaseEdit_tax' + randNum).val()) || 0;
@@ -116,28 +146,22 @@ function getTaxEdit(randNum){
     $('#purchaseEdit_taxAmount'+randNum).val(taxAmount);
     updateAmountEdit();
 }
-function checkPayAmount(purchase_id,amount){
-    let totalNetAmount = parseFloat($('.purchaseEdit_netTotalAmt').html());
-    $.ajax({
-        url:getPurchaseData,
-        type:"POST",
-        headers:{
-            'X_CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
-        },
-        data:{id:purchase_id},
-        success:function(response){
-            let paid_amount = response.data[0].paid_amount;
-            if(totalNetAmount - (parseFloat(amount) + parseFloat(paid_amount)) < 0){
-                $('.purchaseEdit_payAmount_cls').html('Pay amount exceeds net amount.').css('color','red');
-                $('.purchaseEditUpdateBtn').prop('disabled',true);
-                return;
-            }else{
-                $('.purchaseEdit_payAmount_cls').html('');
-                $('.purchaseEditUpdateBtn').prop('disabled',false);
-            }
-        }
-    });
+
+function checkPayAmount(purchase_id, amount){
+    let net = parseFloat($('.purchaseEdit_netTotalAmt').text()) || 0;
+    let paid = parseFloat($('.purchaseEdit_paidAmt').text()) || 0;
+
+    if ((paid + parseFloat(amount)) > net){
+        $('.purchaseEdit_payAmount_cls')
+            .text('Pay amount exceeds net amount')
+            .css('color','red');
+        $('.purchaseEditUpdateBtn').prop('disabled', true);
+    } else {
+        $('.purchaseEdit_payAmount_cls').text('');
+        $('.purchaseEditUpdateBtn').prop('disabled', false);
+    }
 }
+
 
 $('#purchaseEdit_form').on('submit',function(e){
   e.preventDefault();
@@ -159,8 +183,8 @@ $('#purchaseEdit_form').on('submit',function(e){
   let amount = $('input[name="purchaseEdit_amount[]"]').map(function(){return $(this).val();}).get();
   let naration = $('#purchaseAdd_naration').val();
   let totalAmount = parseFloat($('.purchaseEdit_totalAmt').html());
-  let totalDiscountPer = parseFloat($('#purchaseEdit_discount').val()) || 0;
-  let totalDiscount = parseFloat($('.purchaseEdit_discountAmt').html() || 0);
+//   let totalDiscountPer = parseFloat($('#purchaseEdit_discount').val()) || 0;
+  let totalDiscount = parseFloat($('.purchaseEdit_totalDiscount').html() || 0);
   let totalTaxAmount = parseFloat($('.purchaseEdit_taxAmt').html());
   let totalNetAmount = parseFloat($('.purchaseEdit_netTotalAmt').html());
   let paymentMode = $('#purchaseEdit_paymentMode').val();
@@ -173,7 +197,7 @@ $('#purchaseEdit_form').on('submit',function(e){
             'X_CSRF_TOKEN':$('meta[name="csrf-token"]').attr('content')
         },
         data:{
-            purchase_id:purchase_id,id:id,billNo:billNo,vendorID:vendorID,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,txn:txn,payAmount:payAmount
+            purchase_id:purchase_id,id:id,billNo:billNo,vendorID:vendorID,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,txn:txn,payAmount:payAmount
         },
         success:function(response){
             if(response.success){
@@ -195,25 +219,6 @@ function deleteRowEdit(x){
     updateAmountEdit();
 }
 
-function getPurchaseMedicineEdit(id,randNum) {
-    // $.ajax({
-    //     url: getPurchaseNamesEdit,
-    //     type: "GET",
-    //     headers: {
-    //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //     },
-    //     data: { id: id },
-    //     success: function (response) {
-    //         let getData = response.data;
-    //         let medicineDropdown = $("#purchaseEdit_name" + randNum);
-    //         medicineDropdown.find("option:not(:first)").remove(); // empty dropdown except first one
-    //         getData.forEach(element => {
-    //             medicineDropdown.append(`<option value="${element.id}">${element.name}</option>`);
-    //         });
-    //         medicineDropdown.trigger("change"); // Refresh Select2 dropdown
-    //     }
-    // });
-}
 function getPurchaseMedicineSelectedEdit(id,randNum) {
     let purchaseID = $('#purchaseEdit_id' + randNum).val();
     $.ajax({

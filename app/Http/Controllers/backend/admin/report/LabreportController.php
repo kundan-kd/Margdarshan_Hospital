@@ -18,7 +18,8 @@ class LabreportController extends Controller
             if($request->start_date && $request->end_date){
                 $labData->whereBetween('created_at', [$request->start_date,$request->end_date]);
             }
-            return DataTables::of($labData)
+            $lab_data = $labData->get();
+            return DataTables::of($lab_data)
             ->addColumn('patient', function($row){
                 return $row->patientData->patient_id.' ('.$row->patientData->name.')';
             })

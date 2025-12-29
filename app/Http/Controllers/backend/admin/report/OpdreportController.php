@@ -20,8 +20,8 @@ class OpdreportController extends Controller
             if ($request->start_date && $request->end_date) {
                 $appointment->whereBetween('appointment_date', [$request->start_date, $request->end_date]);
             }
-
-            return DataTables::of($appointment)
+            $appointment_data = $appointment->get();
+            return DataTables::of($appointment_data)
             ->addColumn('opd_id',function($row){
                 return 'MHAP0'.$row->id;
             })

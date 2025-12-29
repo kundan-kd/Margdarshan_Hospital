@@ -1,5 +1,33 @@
 @extends('backend.admin.layouts.main')
+@section('extra-css')
+<style>
+/* Compact Appointment vs Walk-in card */
+.donut-chart-wrapper {
+    max-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+#statisticsDonutChart {
+    max-width: 160px;
+    max-height: 160px;
+    margin: auto;
+}
+
+/* Smaller indicator dots */
+.dot {
+    width: 10px;
+    height: 6px;
+    border-radius: 10px;
+}
+
+/* Reduce font sizes */
+.text-xs {
+    font-size: 11px;
+}
+</style>
+@endsection
 @section('title', 'Dashboard')
 
 @section('main-container')
@@ -35,37 +63,39 @@
         </div>
 
         {{-- Appointment vs Walk-in Analysis --}}
+       {{-- Appointment vs Walk-in Analysis --}}
         <div class="col-md-3">
-            <div class="card h-100 radius-8 border-0">
-                <div class="card-header border-bottom d-flex align-items-center justify-content-between">
-                    <h6 class="fw-bold text-lg mb-2">Appointment vs Walk-in Analysis</h6>
+            <div class="card radius-8 border-0 h-100">
+                <div class="card-header border-bottom py-12 px-16">
+                    <h6 class="fw-bold text-md mb-0">Appointment vs Walk-in</h6>
                 </div>
 
-                <div class="card-body p-24">
-                    <div class="position-relative">
-                        <div id="statisticsDonutChart" class="mt-36"></div>
+                <div class="card-body p-16">
+                    <div class="donut-chart-wrapper">
+                        <div id="statisticsDonutChart"></div>
                     </div>
 
-                    <ul class="row gy-4 mt-3">
+                    <ul class="row gy-2 mt-8">
                         <li class="col-6 text-center">
-                            <div class="d-flex align-items-center gap-2 justify-content-center">
-                                <span class="w-12-px h-8-px rounded-pill bg-success-600"></span>
-                                <span class="text-secondary-light text-sm">Walk-in</span>
+                            <div class="d-flex align-items-center gap-1 justify-content-center">
+                                <span class="dot bg-success-600"></span>
+                                <span class="text-secondary-light text-xs">Visited</span>
                             </div>
-                            <h6 class="text-primary-light fw-bold mb-0 walkin-appointment">00</h6>
+                            <h6 class="fw-semibold mb-0 walkin-appointment">00</h6>
                         </li>
 
                         <li class="col-6 text-center">
-                            <div class="d-flex align-items-center gap-2 justify-content-center">
-                                <span class="w-12-px h-8-px rounded-pill bg-warning-600"></span>
-                                <span class="text-secondary-light text-sm">Total Appointments</span>
+                            <div class="d-flex align-items-center gap-1 justify-content-center">
+                                <span class="dot bg-warning-600"></span>
+                                <span class="text-secondary-light text-xs">Appointments</span>
                             </div>
-                            <h6 class="text-primary-light fw-bold mb-0 total-appointment">00</h6>
+                            <h6 class="fw-semibold mb-0 total-appointment">00</h6>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
+
 
         {{-- Main Stats Section --}}
         <div class="col-xxxl-9">
@@ -442,60 +472,62 @@
     
     
   // ================================ User Activities Donut chart End ================================ 
-  let appoinrmentsCount = @json($appoinrmentsCount);
-  // Access values
-    let totalAppointment = appoinrmentsCount.total_appointment;
-    let walkIn = appoinrmentsCount.walk_in;
-    $('.total-appointment').text(totalAppointment);
-    $('.walkin-appointment').text(walkIn);
+    let appoinrmentsCount = @json($appoinrmentsCount);  
+    // Access values  
+    let totalAppointment = appoinrmentsCount.total_appointment;  
+    let walkIn = appoinrmentsCount.walk_in;  
+    let notMoved = totalAppointment - walkIn;  
 
-var options = { 
-    series: [totalAppointment, walkIn], 
-      colors: ['#FF9F29', '#45B369'],
-      labels: ['Appointments', 'Walk-in'] ,
-      legend: {
-          show: false 
-      },
-      chart: {
-        type: 'donut',    
-        height: 260,
-        sparkline: {
-          enabled: true // Remove whitespace
+    $('.total-appointment').text(totalAppointment);  
+    $('.walkin-appointment').text(walkIn);  
+    $('.notmoved-appointment').text(notMoved);  
+
+    var options = {
+        series: [totalAppointment, walkIn, notMoved],
+        colors: ['#FF9F29', '#45B369', '#212529'],
+        labels: ['Appointments', 'Visited', 'Not Moved'],
+        legend: {
+            show: false
         },
-        margin: {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
+        chart: {
+            type: 'donut',
+            // remove fixed height
+            width: '100%',   // let it scale with container
+            sparkline: {
+                enabled: true
+            }
         },
-        padding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        }
-      },
-      stroke: {
-        width: 0,
-      },
-      dataLabels: {
-        enabled: false
-      },
-      responsive: [{
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200
-          },
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }],
+        stroke: {
+            width: 0,
+        },
+        dataLabels: {
+            enabled: false
+        },
+        responsive: [
+            {
+                breakpoint: 1024,
+                options: {
+                    chart: {
+                        width: '100%' // tablet screens
+                    }
+                }
+            },
+            {
+                breakpoint: 768,
+                options: {
+                    chart: {
+                        width: '100%' // mobile screens
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        ]
     };
 
     var chart = new ApexCharts(document.querySelector("#statisticsDonutChart"), options);
-    chart.render();
+    chart.render(); 
   // ================================ User Activities Donut chart End ================================ 
 
   

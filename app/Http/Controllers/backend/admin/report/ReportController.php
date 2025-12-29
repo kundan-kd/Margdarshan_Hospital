@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backend\admin\report;
 use App\Http\Controllers\Controller;
 use App\Models\Bed;
 use App\Models\LabInvestigation;
+use App\Models\Patient;
 use App\Models\PatientLog;
 use App\Models\PaymentBill;
 use App\Models\PaymentReceived;
@@ -34,16 +35,30 @@ class ReportController extends Controller
          'total_amount' => $totalBIlls,
          'received_amount' => $billReceived
       ];
-      $newPatients = PatientLog::select('patient_id')->groupBy('patient_id')->havingRaw('COUNT(*) = 1')->count();
-      $repeatPatient = PatientLog::select('patient_id')->groupBy('patient_id')->havingRaw('COUNT(*) > 1')->count();
+      $newPatients = PatientLog::select('patient_id')
+      ->where('current_status', 'Admitted')
+      ->orWhere('status','Moved to IPD')
+      ->groupBy('patient_id')
+      ->havingRaw('COUNT(*) = 1')
+      ->count();
+      $repeatPatient = PatientLog::select('patient_id')
+         ->where('current_status', 'Admitted')
+         ->orWhere('status','Moved to IPD')
+         ->groupBy('patient_id')
+         ->havingRaw('COUNT(*) > 1')
+         ->count();
       $patientCounts = [
          'repeat_patient' => $repeatPatient,
          'new_patient' => $newPatients
       ];
+
       $emergencyAdded = PatientLog::where('type','EMERGENCY')->where('current_status','Admitted')->count();
-      $emergencyMoved = PatientLog::where('type','EMERGENCY')->where('description','Movement EMERGENCY to IPD')->orWhere('description','Movement EMERGENCY to ICU')->count();
+      $emergencyAvailable = Patient::where('type','EMERGENCY')->count();
+      $emergencyDischarge = Patient::where('type','EMERGENCY')->where('current_status','Discharged')->count();
+      $emergencyMoved = $emergencyAdded - $emergencyAvailable;
       $emergencyPatients = [
          'admission' => $emergencyAdded,
+         'discharge' => $emergencyDischarge,
          'moved' => $emergencyMoved
       ];
       $icuBeds = Bed::where('bed_group_id',4)->count();

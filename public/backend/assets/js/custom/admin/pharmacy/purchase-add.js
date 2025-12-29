@@ -72,158 +72,252 @@ $(document).on('click', '.medicine-name-list li', function() {
     $('.medicine-name-list').empty();
     }
 });
-function addNewRow(){
-    let category_id = $('#purchaseAdd_category0').val();
-    if (category_id && category_id.length > 0) {
-        let category_name = $('#purchaseAdd_category0 option:selected').text();
-        let name_id = $('#purchaseAdd_nameId0').val();
-        let name = $('#purchaseAdd_name0').val();
-        let batch = $('#purchaseAdd_batch0').val();
-        let expiry = $('#purchaseAdd_expiry0').val();
-        let mrp = $('#purchaseAdd_mrp0').val();
-        let salesPrice = $('#purchaseAdd_salesPrice0').val();
-        let qty = $('#purchaseAdd_qty0').val();
-        let purchaseRate = $('#purchaseAdd_purchaseRate0').val();
-        let amount = $('#purchaseAdd_amount0').val();
-        let tax = $('#purchaseAdd_tax0').val();
-        let taxAmount = $('#purchaseAdd_taxAmount0').val();
-        if(category_id == ''){
-            toastErrorAlert('Category is required');
-        }else if(name_id == ''){
-            toastErrorAlert('Medicine Name is required');
-        }else if(batch == ''){
-            toastErrorAlert('Batch No. is required');
-        }else if(qty == ''){
-            toastErrorAlert('Qty is required');
-        }else if(amount == ''){
-            toastErrorAlert('Amount is required');
-        }else{
-            let itemDatas = '';
-            itemDatas += `<tr>
-                <td>${category_name}
-                    <input type="hidden" name="purchaseAdd_category[]" value="${category_id}">
-                </td>
-                <td style="width: 250px;">${name}
-                    <input type="hidden" name="purchaseAdd_name[]" value="${name_id}">
-                </td>
-                <td>${batch}
-                    <input type="hidden" name="purchaseAdd_batch[]" value="${batch}">
-                </td>
-                <td>${expiry}
-                    <input type="hidden" name="purchaseAdd_expiry[]" value="${expiry}">
-                </td>
-                <td>${mrp}
-                    <input type="hidden" name="purchaseAdd_mrp[]" value="${mrp}">
-                </td>
-                <td>${salesPrice}
-                    <input type="hidden" name="purchaseAdd_salesPrice[]" value="${salesPrice}">
-                </td>
-                <td>${qty}
-                    <input type="hidden" name="purchaseAdd_qty[]" value="${qty}">
-                </td>
-                <td>${amount}
-                    <input type="hidden" name="purchaseAdd_amount[]" value="${amount}">
-                </td>
-                <td style="width: 50px;">${tax}
-                    <input type="hidden" name="purchaseAdd_tax[]" value="${tax}">
-                </td>
-                <td>${purchaseRate}
-                    <input type="hidden" name="purchaseAdd_purchaseRate[]" value="${purchaseRate}">
-                </td>
-                <td style="display:none;">
-                    <input type="hidden" name="purchaseAdd_taxAmount[]" value="${taxAmount}">
-                </td>
-                <td>
-                <button type="button" class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowPurchase(this)">
-                    <i class="ri-close-line"></i>
-                </button>
-            </td>
-            </tr>`;
-            $('.newRowAppend').parent().append(itemDatas); // Append properly to tbody
-            $('.purchaseAddBtn').css('border','none');
-            $('#purchaseAdd_category0').val('').change();
-            $('#purchaseAdd_name0').val('').change();
-            $('#purchaseAdd_batch0').val('');
-            $('#purchaseAdd_expiry0').val('');
-            $('#purchaseAdd_mrp0').val('');
-            $('#purchaseAdd_salesPrice0').val('');
-            $('#purchaseAdd_qty0').val('');
-            $('#purchaseAdd_purchaseRate0').val('');
-            $('#purchaseAdd_amount0').val('');
-            $('#purchaseAdd_tax0').val('');
-            $('#purchaseAdd_taxAmount0').val('');
-            // manage tax amount when cancel added data
-            let taxAmount2 = $('input[name="purchaseAdd_taxAmount[]"]').map(function(){return $(this).val();}).get();
-            let totalTaxAmount11 = taxAmount2.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
-            let totAmount = $('.purchaseAdd_totalAmt').html();
-            let newAmountWithTax = parseFloat(totalTaxAmount11) + parseFloat(totAmount);
-            $('.purchaseAdd_taxAmt').html(totalTaxAmount11.toFixed(2));
-            $('.purchaseAdd_netTotalAmt').html(newAmountWithTax.toFixed(2));
-        }    
-    }else{
-        toastErrorAlert('Please add items to proceed');
-    }
+// function addNewRow(){
+//     let category_id = $('#purchaseAdd_category0').val();
+//     if (category_id && category_id.length > 0) {
+//         let category_name = $('#purchaseAdd_category0 option:selected').text();
+//         let name_id = $('#purchaseAdd_nameId0').val();
+//         let name = $('#purchaseAdd_name0').val();
+//         let batch = $('#purchaseAdd_batch0').val();
+//         let expiry = $('#purchaseAdd_expiry0').val();
+//         let mrp = $('#purchaseAdd_mrp0').val();
+//         let salesPrice = $('#purchaseAdd_salesPrice0').val();
+//         let qty = $('#purchaseAdd_qty0').val();
+//         let purchaseRate = $('#purchaseAdd_purchaseRate0').val();
+//         let discount = $('#purchaseAdd_discount0').val();
+//         let amount = $('#purchaseAdd_amount0').val();
+//         let discountAmount = $('#purchaseAdd_discoutAmount0').val();
+//         let tax = $('#purchaseAdd_tax0').val();
+//         let taxAmount = $('#purchaseAdd_taxAmount0').val();
+//         if(category_id == ''){
+//             toastErrorAlert('Category is required');
+//         }else if(name_id == ''){
+//             toastErrorAlert('Medicine Name is required');
+//         }else if(batch == ''){
+//             toastErrorAlert('Batch No. is required');
+//         }else if(qty == ''){
+//             toastErrorAlert('Qty is required');
+//         }else if(amount == ''){
+//             toastErrorAlert('Amount is required');
+//         }else{
+//             let itemDatas = '';
+//             itemDatas += `<tr>
+//                 <td>${category_name}
+//                     <input type="hidden" name="purchaseAdd_category[]" value="${category_id}">
+//                 </td>
+//                 <td style="width: 250px;">${name}
+//                     <input type="hidden" name="purchaseAdd_name[]" value="${name_id}">
+//                 </td>
+//                 <td>${batch}
+//                     <input type="hidden" name="purchaseAdd_batch[]" value="${batch}">
+//                 </td>
+//                 <td>${expiry}
+//                     <input type="hidden" name="purchaseAdd_expiry[]" value="${expiry}">
+//                 </td>
+//                 <td>${mrp}
+//                     <input type="hidden" name="purchaseAdd_mrp[]" value="${mrp}">
+//                 </td>
+//                 <td>${salesPrice}
+//                     <input type="hidden" name="purchaseAdd_salesPrice[]" value="${salesPrice}">
+//                 </td>
+//                 <td>${qty}
+//                     <input type="hidden" name="purchaseAdd_qty[]" value="${qty}">
+//                 </td>
+//                 <td>${discount}
+//                     <input type="hidden" name="purchaseAdd_discount[]" value="${discount}">
+//                 </td>
+//                 <td>${amount}
+//                     <input type="hidden" name="purchaseAdd_amount[]" value="${amount}">
+//                 </td>
+//                 <td style="display:none;">
+//                     <input type="hidden" name="purchaseAdd_discoutAmount[]" value="${discountAmount}">
+//                 </td>
+//                 <td style="width: 50px;">${tax}
+//                     <input type="hidden" name="purchaseAdd_tax[]" value="${tax}">
+//                 </td>
+//                 <td>${purchaseRate}
+//                     <input type="hidden" name="purchaseAdd_purchaseRate[]" value="${purchaseRate}">
+//                 </td>
+//                 <td style="display:none;">
+//                     <input type="hidden" name="purchaseAdd_taxAmount[]" value="${taxAmount}">
+//                 </td>
+//                 <td>
+//                 <button type="button" class="mx-1 w-32-px h-32-px fw-semibold bg-danger-focus text-danger-main rounded d-inline-flex align-items-center justify-content-center remove" onclick="removeRowPurchase(this)">
+//                     <i class="ri-close-line"></i>
+//                 </button>
+//             </td>
+//             </tr>`;
+//             $('.newRowAppend').parent().append(itemDatas); // Append properly to tbody
+//             $('.purchaseAddBtn').css('border','none');
+//             $('#purchaseAdd_category0').val('').change();
+//             $('#purchaseAdd_name0').val('').change();
+//             $('#purchaseAdd_batch0').val('');
+//             $('#purchaseAdd_expiry0').val('');
+//             $('#purchaseAdd_mrp0').val('');
+//             $('#purchaseAdd_salesPrice0').val('');
+//             $('#purchaseAdd_qty0').val('');
+//             $('#purchaseAdd_purchaseRate0').val('');
+//             $('#purchaseAdd_discount0').val('');
+//             $('#purchaseAdd_amount0').val('');
+//             $('#purchaseAdd_discoutAmount0').val('');
+//             $('#purchaseAdd_tax0').val('');
+//             $('#purchaseAdd_taxAmount0').val('');
+//             // manage tax amount when cancel added data
+//             let discountAmt = $('input[name="purchaseAdd_discoutAmount[]"').map(function(){return $(this).val();}).get();
+//             let totDiscountAmount = discountAmt.map(Number).reduce((acc,val) => acc + val, 0);
+//             $('.purchaseAdd_discountAmt').html(totDiscountAmount);
+//             let taxAmount2 = $('input[name="purchaseAdd_taxAmount[]"]').map(function(){return $(this).val();}).get();
+//             let totalTaxAmount11 = taxAmount2.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
+//             let totAmount = $('.purchaseAdd_totalAmt').html();
+//             let newAmountWithTax = parseFloat(totalTaxAmount11) + parseFloat(totAmount) - parseFloat(totDiscountAmount);
+//             $('.purchaseAdd_taxAmt').html(totalTaxAmount11.toFixed(2));
+//             $('.purchaseAdd_netTotalAmt').html(newAmountWithTax.toFixed(2));
+//         }    
+//     }else{
+//         toastErrorAlert('Please add items to proceed');
+//     }
    
- }
+//  }
 
-function removeRowPurchase(x){
-    x.closest("tr").remove(); // remove entire row with tr selector
-    let taxAmount2 = $('input[name="purchaseAdd_taxAmount[]"]').map(function(){return $(this).val();}).get();
-    let totalTaxAmount11 = taxAmount2.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
-    let totAmount = $('.purchaseAdd_totalAmt').html();
-    let newAmountWithTax = parseFloat(totalTaxAmount11) + parseFloat(totAmount);
-    $('.purchaseAdd_taxAmt').html(totalTaxAmount11.toFixed(2));
-    $('.purchaseAdd_netTotalAmt').html(newAmountWithTax.toFixed(2));
-    let tax = $('#purchaseAdd_discount').val();
 
-    let totalAmount = $('input[name="purchaseAdd_amount[]"]').map(function(){return $(this).val();}).get();
-    let sumAmount = totalAmount.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
-    $('.purchaseAdd_totalAmt').html(sumAmount.toFixed(2));
-    getDiscount(tax);
+function addNewRow() {
+    let category_id = $('#purchaseAdd_category0').val();
+    let category_name = $('#purchaseAdd_category0 option:selected').text();
+    let name_id = $('#purchaseAdd_nameId0').val();
+    let name = $('#purchaseAdd_name0').val();
+    let batch = $('#purchaseAdd_batch0').val();
+    let expiry = $('#purchaseAdd_expiry0').val();
+    let mrp = $('#purchaseAdd_mrp0').val();
+    let salesPrice = $('#purchaseAdd_salesPrice0').val();
+    let qty = $('#purchaseAdd_qty0').val();
+    let discount = $('#purchaseAdd_discount0').val() || 0;
+    let amount = $('#purchaseAdd_amount0').val();
+    let discountAmount = $('#purchaseAdd_discoutAmount0').val() || 0;
+    let tax = $('#purchaseAdd_tax0').val();
+    let taxAmount = $('#purchaseAdd_taxAmount0').val();
+    let purchaseRate = $('#purchaseAdd_purchaseRate0').val();
+
+    if (!category_id) return toastErrorAlert('Category is required');
+    if (!name_id) return toastErrorAlert('Medicine Name is required');
+    if (!batch) return toastErrorAlert('Batch No. is required');
+    if (!qty) return toastErrorAlert('Qty is required');
+    if (!amount) return toastErrorAlert('Amount is required');
+
+    let row = `
+    <tr>
+        <td>${category_name}<input type="hidden" name="purchaseAdd_category[]" value="${category_id}"></td>
+        <td>${name}<input type="hidden" name="purchaseAdd_name[]" value="${name_id}"></td>
+        <td>${batch}<input type="hidden" name="purchaseAdd_batch[]" value="${batch}"></td>
+        <td>${expiry}<input type="hidden" name="purchaseAdd_expiry[]" value="${expiry}"></td>
+        <td>${mrp}<input type="hidden" name="purchaseAdd_mrp[]" value="${mrp}"></td>
+        <td>${salesPrice}<input type="hidden" name="purchaseAdd_salesPrice[]" value="${salesPrice}"></td>
+        <td>${qty}<input type="hidden" name="purchaseAdd_qty[]" value="${qty}"></td>
+        <td>${amount}<input type="hidden" name="purchaseAdd_amount[]" value="${amount}"></td>
+        <td>${discount}<input type="hidden" name="purchaseAdd_discount[]" value="${discount}"></td>
+        <td style="display:none"><input type="hidden" name="purchaseAdd_discoutAmount[]" value="${discountAmount}"></td>
+        <td>${tax}<input type="hidden" name="purchaseAdd_tax[]" value="${tax}"></td>
+        <td>${purchaseRate}<input type="hidden" name="purchaseAdd_purchaseRate[]" value="${purchaseRate}"></td>
+        <td style="display:none"><input type="hidden" name="purchaseAdd_taxAmount[]" value="${taxAmount}"></td>
+        <td>
+            <button type="button" class="w-32-px h-32-px bg-danger-focus text-danger-main rounded" onclick="removeRowPurchase(this)">
+                <i class="ri-close-line" style="margin-left: 8px;"></i>
+            </button>
+        </td>
+    </tr>`;
+
+    $('.pharmacy-purchase-bill-table tbody').append(row);
+    resetFirstRow();
+    recalculateSummary();
 }
-function getAmount(randNum){
-    let qty = parseFloat($('#purchaseAdd_qty' + randNum).val()) || 0; // Convert to number, default to 0 if invalid
-    let qtyAmount = parseFloat($('#purchaseAdd_amount' + randNum).val()) || 0;
-    let tax = parseFloat($('#purchaseAdd_tax' + randNum).val()) || 0;
-    let taxAmt = (qtyAmount * tax)/100;
-    let purchaseRate = ((qtyAmount + taxAmt)/qty);
-    $('#purchaseAdd_purchaseRate' + randNum).val(purchaseRate.toFixed(2));
-    let totalAmount = $('input[name="purchaseAdd_amount[]"]').map(function(){return $(this).val();}).get();
-    let sumAmount = totalAmount.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
-    let discountPer = parseFloat($('#purchaseAdd_discount').val()) || 0;
-    let totalDiscount = (sumAmount * discountPer) / 100;
-    let totalTax = parseFloat($('.purchaseAdd_taxAmt').html()) || 0;
-    $('.purchaseAdd_totalAmt').html(sumAmount.toFixed(2));
+function getAmount(i) {
+    let qty = parseFloat($('#purchaseAdd_qty' + i).val()) || 0;
+    let amount = parseFloat($('#purchaseAdd_amount' + i).val()) || 0;
+    let discount = parseFloat($('#purchaseAdd_discount' + i).val()) || 0;
+    let tax = parseFloat($('#purchaseAdd_tax' + i).val()) || 0;
+
+    let discountAmount = (amount * discount) / 100;
+    let amountAfterDiscount = amount - discountAmount;
+    let taxAmount = (amountAfterDiscount * tax) / 100;
+
+    $('#purchaseAdd_discoutAmount' + i).val(discountAmount.toFixed(2));
+    $('#purchaseAdd_taxAmount' + i).val(taxAmount.toFixed(2));
+
+    if (qty > 0) {
+        let purchaseRate = (amountAfterDiscount + taxAmount) / qty;
+        $('#purchaseAdd_purchaseRate' + i).val(purchaseRate.toFixed(2));
+    } else {
+        $('#purchaseAdd_purchaseRate' + i).val(0);
+    }
+
+    recalculateSummary();
+}
+function getTax(i) {
+    getAmount(i); // tax depends on amount & discount
+}
+
+function recalculateSummary() {
+    let totalAmount = 0;
+    let totalDiscount = 0;
+    let totalTax = 0;
+
+    $('input[name="purchaseAdd_amount[]"]').each(function () {
+        totalAmount += parseFloat(this.value) || 0;
+    });
+
+    $('input[name="purchaseAdd_discoutAmount[]"]').each(function () {
+        totalDiscount += parseFloat(this.value) || 0;
+    });
+
+    $('input[name="purchaseAdd_taxAmount[]"]').each(function () {
+        totalTax += parseFloat(this.value) || 0;
+    });
+
+    let netAmount = totalAmount - totalDiscount + totalTax;
+
+    $('.purchaseAdd_totalAmt').html(totalAmount.toFixed(2));
     $('.purchaseAdd_discountAmt').html(totalDiscount.toFixed(2));
     $('.purchaseAdd_taxAmt').html(totalTax.toFixed(2));
-    getTax(randNum);
+    $('.purchaseAdd_netTotalAmt').html(netAmount.toFixed(2));
 }
-function getDiscount(disc) {
-    let totalAmount = parseFloat($('.purchaseAdd_totalAmt').html()) || 0;
-    let discountPer = parseFloat(disc) || 0;
-    let totalDiscount = (totalAmount * discountPer) / 100;
-    let totalTax = parseFloat($('.purchaseAdd_taxAmt').html()) || 0;
-    let totalTaxAfterDiscount = totalTax - ((totalTax * discountPer) / 100);
-    let netAmountAfterDiscount = (totalAmount - totalDiscount) + totalTaxAfterDiscount;
+function resetFirstRow() {
+    $('#purchaseAdd_category0').val('').trigger('change');
+    $('#purchaseAdd_name0').val('');
+    $('#purchaseAdd_nameId0').val('');
+    $('#purchaseAdd_batch0').val('');
+    $('#purchaseAdd_expiry0').val('');
+    $('#purchaseAdd_mrp0').val('');
+    $('#purchaseAdd_salesPrice0').val('');
+    $('#purchaseAdd_qty0').val('');
+    $('#purchaseAdd_discount0').val('');
+    $('#purchaseAdd_amount0').val('');
+    $('#purchaseAdd_discoutAmount0').val(0);
+    $('#purchaseAdd_tax0').val('');
+    $('#purchaseAdd_taxAmount0').val('');
+    $('#purchaseAdd_purchaseRate0').val('');
+}
+
+function removeRowPurchase(btn) {
+    $(btn).closest('tr').remove();
+    let totalAmount = 0;
+    let totalDiscount = 0;
+    let totalTax = 0;
+    $('input[name="purchaseAdd_amount[]"]').each(function () {
+        totalAmount += parseFloat(this.value) || 0;
+    });
+    $('input[name="purchaseAdd_discoutAmount[]"]').each(function () {
+        totalDiscount += parseFloat(this.value) || 0;
+    });
+    $('input[name="purchaseAdd_taxAmount[]"]').each(function () {
+        totalTax += parseFloat(this.value) || 0;
+    });
+    let netAmount = totalAmount - totalDiscount + totalTax;
+    $('.purchaseAdd_totalAmt').html(totalAmount.toFixed(2));
     $('.purchaseAdd_discountAmt').html(totalDiscount.toFixed(2));
-    $('.purchaseAdd_taxAmt').html(totalTaxAfterDiscount.toFixed(2));
-    $('.purchaseAdd_netTotalAmt').html(Math.round(netAmountAfterDiscount));
-
-
+    $('.purchaseAdd_taxAmt').html(totalTax.toFixed(2));
+    $('.purchaseAdd_netTotalAmt').html(netAmount.toFixed(2));
 }
 let totalTaxAmount = [];
-function getTax(randNum){
-    let tax = parseFloat($('#purchaseAdd_tax' + randNum).val()) || 0;
-    let amount = parseFloat($('#purchaseAdd_amount' + randNum).val()) || 0;
-    let taxAmount = (amount * tax) / 100;
-    $('#purchaseAdd_taxAmount' + randNum).val(taxAmount);
-    let taxAmount2 = $('input[name="purchaseAdd_taxAmount[]"]').map(function(){return $(this).val();}).get();
-    let totalTaxAmount11 = taxAmount2.map(Number).reduce((acc, val) => acc + val, 0); // convert string into number then array sum
-    let totAmount = $('.purchaseAdd_totalAmt').html();
-    let newAmountWithTax = parseFloat(totalTaxAmount11) + parseFloat(totAmount);
-    $('.purchaseAdd_taxAmt').html(totalTaxAmount11.toFixed(2));
-    $('.purchaseAdd_netTotalAmt').html(Math.round(newAmountWithTax));
-}
+
 function checkPayAmountPurchaseAdd(netAmount,amount){
     if(parseFloat(netAmount) < parseFloat(amount)){
         $('.purchaseAdd_payAmount_cls').html('Pay amount exceeds net amount.').css('color','red');
@@ -255,6 +349,7 @@ $('#purchaseAdd_form').on('submit',function(e){
         let tax = $('input[name="purchaseAdd_tax[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
         let qty = $('input[name="purchaseAdd_qty[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
         let purchaseRate = $('input[name="purchaseAdd_purchaseRate[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
+        let discountPer = $('input[name="purchaseAdd_discount[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
         let amount = $('input[name="purchaseAdd_amount[]"]').map(function(){return $(this).val();}).get().filter(val => val !== null && val !== '');
         if(category == '' || name == '' || batchNo =='' || qty =='' || amount ==''){
             toastErrorAlert('Kindly add items before submit');
@@ -265,7 +360,7 @@ $('#purchaseAdd_form').on('submit',function(e){
         }
         let naration = $('#purchaseAdd_naration').val();
         let totalAmount = parseFloat($('.purchaseAdd_totalAmt').html());
-        let totalDiscountPer = parseFloat($('#purchaseAdd_discount').val()) || 0;
+        // let totalDiscountPer = parseFloat($('#purchaseAdd_discount').val()) || 0;
         let totalDiscount = parseFloat($('.purchaseAdd_discountAmt').html()) || 0;
         let totalTaxAmount = parseFloat($('.purchaseAdd_taxAmt').html());
         let totalNetAmount = parseFloat($('.purchaseAdd_netTotalAmt').html());
@@ -281,7 +376,7 @@ $('#purchaseAdd_form').on('submit',function(e){
                 'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
             },
             data:{
-                billNo:billNo,vendorID:vendorID,purchase_date:purchase_date,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscountPer:totalDiscountPer,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,txn:txn,payAmount:payAmount,dueAmount:dueAmount
+                billNo:billNo,vendorID:vendorID,purchase_date:purchase_date,category:category,name:name,batchNo:batchNo,expiry:expiry,mrp:mrp,salesPrice:salesPrice,tax:tax,qty:qty,purchaseRate:purchaseRate,discountPer:discountPer,amount:amount,naration:naration,totalAmount:totalAmount,totalDiscount:totalDiscount,totalTaxAmount:totalTaxAmount,totalNetAmount:totalNetAmount,paymentMode:paymentMode,txn:txn,payAmount:payAmount,dueAmount:dueAmount
             },
             success:function(response){
                 if(response.success){

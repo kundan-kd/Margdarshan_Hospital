@@ -27,6 +27,7 @@ return new class extends Migration
             $table->integer('return_qty')->default(0);
             $table->double('purchase_rate')->default(0);
             $table->double('amount')->default(0);
+            $table->double('discount_per')->default(0);
             $table->double('tax_amount')->default(0);
             $table->integer('status')->default(1);
             $table->timestamps();

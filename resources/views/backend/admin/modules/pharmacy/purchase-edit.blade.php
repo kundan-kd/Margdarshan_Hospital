@@ -6,6 +6,9 @@ purchase-edit
 <link rel="stylesheet" href="{{asset('backend/assets/css/custom/admin/pharmacy/purchase.css')}}">
 @endsection
 @section('main-container')
+@php
+  // dd($purchase);
+@endphp
   <div class="dashboard-main-body">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-normal mb-0">Edit Purchase</h6>
@@ -69,6 +72,9 @@ purchase-edit
                               <th class="text-nowrap text-neutral-700">
                                   Amount
                               </th>
+                              <th class="text-nowrap text-neutral-700">
+                                  Discount (%)
+                              </th>
                                <th class="text-nowrap text-neutral-700">
                                   Tax (%)
                               </th>
@@ -124,16 +130,25 @@ purchase-edit
                                   <input id="purchaseEdit_qty{{$purchaseItem->id}}" name="purchaseEdit_qty[]" class="form-control form-control-sm" type="number" value="{{$purchaseItem->qty}}" oninput="getAmountEdit({{$purchaseItem->id}})" required>
                               </td>
                               <td>
-                                  <input id="purchaseEdit_purchaseRate{{$purchaseItem->id}}" name="purchaseEdit_purchaseRate[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->purchase_rate}}" oninput="getAmountEdit({{$purchaseItem->id}})" required step="0.01">
+                                  <input id="purchaseEdit_purchaseRate{{$purchaseItem->id}}" name="purchaseEdit_purchaseRate[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->purchase_rate}}" oninput="getAmountEdit({{$purchaseItem->id}})" required step="0.01" readonly>
                               </td>
                               <td>
-                                  <input id="purchaseEdit_amount{{$purchaseItem->id}}" name="purchaseEdit_amount[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->amount}}" readonly>
+                                  <input id="purchaseEdit_amount{{$purchaseItem->id}}" name="purchaseEdit_amount[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->amount}}" oninput="getAmountEdit({{$purchaseItem->id}})">
+                              </td>
+                              <td>
+                                  <input id="purchaseEdit_discount{{$purchaseItem->id}}" name="purchaseEdit_discount[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->discount_per}}" oninput="getAmountEdit({{$purchaseItem->id}})">
+                              </td>
+                              @php
+                                  $discountAmt = ($purchaseItem->amount * $purchaseItem->discount_per)/100;
+                              @endphp
+                              <td style="display: none;">
+                                  <input id="purchaseEdit_discountAmount{{$purchaseItem->id}}" name="purchaseEdit_discountAmount[]" type="number" class="form-control form-control-sm" value="{{$discountAmt}}">
                               </td>
                               <td>
                                   <input id="purchaseEdit_tax{{$purchaseItem->id}}" name="purchaseEdit_tax[]" type="number" class="form-control form-control-sm" value="{{$purchaseItem->tax}}" oninput="getTaxEdit({{$purchaseItem->id}})" readonly>
                               </td>
                               @php
-                                  $taxx = ($purchaseItem->amount * $purchaseItem->tax)/100;
+                                  $taxx = (($purchaseItem->amount - $discountAmt) * $purchaseItem->tax)/100;
                               @endphp
                               <td style="display: none;">
                                   <input id="purchaseEdit_taxAmount{{$purchaseItem->id}}" name="purchaseEdit_taxAmount[]" type="text" class="form-control form-control-sm"value="{{$taxx}}">
@@ -164,6 +179,10 @@ purchase-edit
                     <tr>
                       <td class="border-0" colspan="2">Total</td>
                       <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_totalAmt">{{$purchase[0]->total_amount}}</span></td>
+                    </tr>
+                    <tr>
+                      <td class="border-0" colspan="2">Discount</td>
+                      <td class="border-0 text-end fs-6">₹ <span class="purchaseEdit_totalDiscount">{{$purchase[0]->total_discount}}</span></td>
                     </tr>
                     <tr>
                       <td class="border-0" colspan="2">Taxes</td>

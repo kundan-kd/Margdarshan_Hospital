@@ -60,6 +60,9 @@ purchase-edit
                               <th class="text-nowrap text-neutral-700">
                                  Amount (₹)
                               </th>
+                              <th class="text-nowrap text-neutral-700">
+                                 Discount (%)
+                              </th>
                               <th class="text-nowrap text-neutral-700 ">
                                   Tax (%)
                               </th>
@@ -69,24 +72,40 @@ purchase-edit
                           </tr>
                   </thead>
                   <tbody>
-                    @foreach ( $purchaseItems as $items)
-                    @php
-                      $tax_amount = round(($items->amount * $items->tax)/100);
-                      $amount_with_tax = $items->amount + $tax_amount;
-                    @endphp
+                    @foreach ($purchaseItems as $items)
+                      @php
+                          $amount = $items->amount;
+                          $discountPer = $items->discount_per ?? 0;
+                          $taxPer = $items->tax ?? 0;
+
+                          // discount amount
+                          $discountAmount = ($amount * $discountPer) / 100;
+
+                          // taxable amount
+                          $taxableAmount = $amount - $discountAmount;
+
+                          // tax amount
+                          $taxAmount = ($taxableAmount * $taxPer) / 100;
+
+                          // final amount with tax
+                          $amountWithTax = round($taxableAmount + $taxAmount, 2);
+                      @endphp
+
                       <tr>
-                        <td class="text-neutral-700">{{$items->categoryData->name}}</td>
-                        <td class="text-neutral-700">{{$items->medicineNameData->name}}</td>
-                        <td class="text-neutral-700">{{$items->batch_no}}</td>
-                        <td class="text-neutral-700">{{$items->expiry}}</td>
-                        <td class="text-neutral-700">{{$items->mrp}}</td>
-                         <td class="text-neutral-700">{{$items->purchase_rate}}</td>
-                        <td class="text-neutral-700">{{$items->qty}}</td>
-                        <td class="text-neutral-700">{{$items->amount}}</td>
-                        <td class="text-neutral-700">{{$items->tax}}</td>
-                        <td class="text-neutral-700">{{$amount_with_tax}}</td>
+                          <td class="text-neutral-700">{{ $items->categoryData->name }}</td>
+                          <td class="text-neutral-700">{{ $items->medicineNameData->name }}</td>
+                          <td class="text-neutral-700">{{ $items->batch_no }}</td>
+                          <td class="text-neutral-700">{{ $items->expiry }}</td>
+                          <td class="text-neutral-700">{{ $items->mrp }}</td>
+                          <td class="text-neutral-700">{{ $items->purchase_rate }}</td>
+                          <td class="text-neutral-700">{{ $items->qty }}</td>
+                          <td class="text-neutral-700">{{ number_format($amount, 2) }}</td>
+                          <td class="text-neutral-700">{{ $discountPer }}%</td>
+                          <td class="text-neutral-700">{{ $taxPer }}%</td>
+                          <td class="text-neutral-700 fw-bold">{{ number_format($amountWithTax, 2) }}</td>
                       </tr>
-                       @endforeach
+                  @endforeach
+
                   </tbody>
                   </table>
                 </div>
@@ -103,10 +122,10 @@ purchase-edit
                           <td class="text-neutral-700 fw-medium">Total</td>
                           <td class="text-neutral-700 text-end">₹ {{$purchases[0]->total_amount}}</td>
                         </tr>
-                        {{-- <tr>
+                        <tr>
                           <td class="text-neutral-700 fw-medium">Discount</td>
-                          <td class="text-neutral-700 text-end">{{$purchases[0]->total_discount_per}}%</td>
-                        </tr> --}}
+                          <td class="text-neutral-700 text-end">₹ {{$purchases[0]->total_discount}}</td>
+                        </tr>
                         <tr>
                           <td class="text-neutral-700 fw-medium">Tax Amount</td>
                           <td class="text-neutral-700 text-end">₹ {{$purchases[0]->total_tax}}</td>

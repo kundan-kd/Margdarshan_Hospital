@@ -89,6 +89,7 @@ class PurchaseController extends Controller
             'tax' => 'required|array',
             'qty' => 'required|array',
             'purchaseRate' => 'required|array',
+            'discountPer' => 'nullable',
             'amount' => 'required|array',
             'naration'=>'nullable',
             'totalAmount' => 'required',
@@ -111,7 +112,7 @@ class PurchaseController extends Controller
             $purchase->vendor_id = $request->vendorID;
             $purchase->purchase_date = Carbon::createFromFormat('d-m-Y', $request->purchase_date)->format('Y-m-d');
             $purchase->total_amount = $request->totalAmount;
-            $purchase->total_discount_per = $request->totalDiscountPer;
+            // $purchase->total_discount_per = $request->totalDiscountPer;
             $purchase->total_discount = $request->totalDiscount;
             $purchase->total_tax = $request->totalTaxAmount;
             $purchase->net_amount = $request->totalNetAmount;
@@ -131,21 +132,36 @@ class PurchaseController extends Controller
             }
             // Insert purchase items into purchase_items table
             foreach ($request->category as $index => $category) {
-                $medicineName = Medicine::where('id',$request->name[$index])->pluck('name');
+                $medicine = Medicine::findOrFail($request->name[$index]);
+
+                $amount = $request->amount[$index];
+                $discountPer = $request->discountPer[$index] ?? 0;
+                $taxPer = $request->tax[$index];
+
+                // calculate discount amount
+                $discountAmount = ($amount * $discountPer) / 100;
+
+                // taxable amount after discount
+                $taxableAmount = $amount - $discountAmount;
+
+                // calculate tax
+                $taxAmount = ($taxableAmount * $taxPer) / 100;
+
                 $purchaseItem = new PurchaseItem();
                 $purchaseItem->purchase_id = $purchase->id;
                 $purchaseItem->category_id = $category;
-                $purchaseItem->name_id = $request->name[$index];
-                $purchaseItem->name = $medicineName[0];
+                $purchaseItem->name_id = $medicine->id;
+                $purchaseItem->name = $medicine->name;
                 $purchaseItem->batch_no = $request->batchNo[$index];
                 $purchaseItem->expiry = $request->expiry[$index];
                 $purchaseItem->mrp = $request->mrp[$index];
                 $purchaseItem->sales_price = $request->salesPrice[$index];
-                $purchaseItem->tax = $request->tax[$index];
+                $purchaseItem->tax = $taxPer;
                 $purchaseItem->qty = $request->qty[$index];
                 $purchaseItem->purchase_rate = $request->purchaseRate[$index];
-                $purchaseItem->amount = $request->amount[$index];
-                $purchaseItem->tax_amount = ($request->amount[$index] * $request->tax[$index])/100;; 
+                $purchaseItem->discount_per = $discountPer;
+                $purchaseItem->amount = $amount;
+                $purchaseItem->tax_amount = $taxAmount;
                 //update stock_in for the medicine starts
                 $oldStocks = Medicine::where('id', $request->name[$index])->get(['stock_in']);
                 $oldMedicineStock = $oldStocks[0]->stock_in ?? 0;
@@ -251,7 +267,7 @@ class PurchaseController extends Controller
                 'vendor_id' => $request->vendorID,
                 'naration' => $request->naration,
                 'total_amount' => $request->totalAmount,
-                'total_discount_per' => $request->totalDiscountPer,
+                // 'total_discount_per' => $request->totalDiscountPer,
                 'total_discount' => $request->totalDiscount,
                 'total_tax' => $request->totalTaxAmount,
                 'net_amount' => $request->totalNetAmount,

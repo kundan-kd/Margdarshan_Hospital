@@ -190,45 +190,54 @@
           </ul>
         </li>
       @endcan
-      <li class="dropdown mb-1">
-        <a href="#">
-          <i class="ri-file-line" aria-hidden="true"></i>
-          <span class="sr-only">Report</span>
-        </a>
-        <ul class="sidebar-submenu">
-          <li>
-            <a href="{{ route('report.reportDashboard') }}">
-              <i class="ri-file-chart-line"></i>Report Dashboard
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('report.opdReport') }}">
-              <i class="ri-file-chart-line"></i> OPD
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('report.ipdReport') }}">
-              <i class="ri-file-chart-line"></i> IPD
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('report.icuReport') }}">
-              <i class="ri-file-chart-line"></i> ICU
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('report.expiryReport') }}">
-              <i class="ri-file-chart-line"></i> Pharmacy
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('report.labReport') }}">
-              <i class="ri-file-chart-line"></i> Laboratory
-            </a>
-          </li>
-        </ul>
-      </li>
-
+       <li class="dropdown mb-1">
+          <a href="#">
+            <i class="ri-file-line" aria-hidden="true"></i>
+            <span class="sr-only">Report</span>
+          </a>
+          <ul class="sidebar-submenu">
+            @can('Report Menu View')
+            <li>
+              <a href="{{ route('report.reportDashboard') }}">
+                <i class="ri-dashboard-line"></i> Report Dashboard
+              </a>
+            </li>
+            @endcan
+            @can('OPD Patient View')
+            <li>
+              <a href="{{ route('report.opdReport') }}">
+                <i class="ri-hospital-line"></i> OPD
+              </a>
+            </li>
+            @endcan
+            @can('IPD Patient View')
+            <li>
+              <a href="{{ route('report.ipdReport') }}">
+                <i class="ri-hotel-bed-line"></i> IPD
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('report.icuReport') }}">
+                <i class="ri-first-aid-kit-line"></i> ICU
+              </a>
+            </li>
+            <li>
+              @endcan
+              @can('Dashboard Today Pharmacy Bill')
+              <a href="{{ route('report.expiryReport') }}">
+                <i class="ri-capsule-line"></i> Pharmacy
+              </a>
+            </li>
+            @endcan
+            @can('Dashboard Appointments')
+            <li>
+              <a href="{{ route('report.labReport') }}">
+                <i class="ri-test-tube-line"></i> Laboratory
+              </a>
+            </li>
+            @endcan
+          </ul>
+        </li>
       @can('Master Menu View')
       <li class="dropdown mb-1">
         <a href="javascript:void(0)">
